@@ -1,6 +1,8 @@
 allow_embedding: false
 package_name: Material_Design_1
+db_schema: {}
 name: Material Design 1
-startup_form: Form1
+startup_form: form_main
 runtime_options: {version: 2, client_version: '3', server_version: python3-sandbox}
+metadata: {}
 services: []

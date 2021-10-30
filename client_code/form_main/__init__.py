@@ -1,8 +1,7 @@
-from ._anvil_designer import Form1Template
+from ._anvil_designer import form_mainTemplate
 from anvil import *
 
-class Form1(Form1Template):
-
+class form_main(form_mainTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
