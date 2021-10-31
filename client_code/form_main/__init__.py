@@ -1,5 +1,9 @@
 from ._anvil_designer import form_mainTemplate
 from anvil import *
+import anvil.server
+import anvil.tables as tables
+import anvil.tables.query as q
+from anvil.tables import app_tables
 from .form_sub1_dashb import form_sub1_dashb
 from .form_sub1_input import form_sub1_input
 from .form_sub1_reports import form_sub1_reports

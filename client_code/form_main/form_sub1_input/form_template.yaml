@@ -84,6 +84,7 @@ components:
         underline: false, icon: 'fa:plus'}
       name: input_button_plus
       layout_properties: {column: TOZXSD}
+      event_bindings: {click: input_button_plus_click}
   - type: RepeatingPanel
     properties: {spacing_above: none, spacing_below: none, item_template: form_main.form_sub1_input.RowTemplate1}
     name: repeating_panel_1

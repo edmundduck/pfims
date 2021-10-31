@@ -1,9 +1,44 @@
-services: []
+services:
+- source: /runtime/services/tables.yml
+  client_config: {}
+  server_config: {auto_create_missing_columns: false}
 package_name: STEA__Stock_Transaction_and_Evaluation_App_
 allow_embedding: false
 name: STEA (Stock Transaction and Evaluation App)
 runtime_options: {version: 2, client_version: '3', server_version: python3-sandbox}
 metadata: {}
 startup_form: form_main
-db_schema: {}
+db_schema:
+  temp_input:
+    title: temp_input
+    client: none
+    server: full
+    columns:
+    - name: date_sales
+      admin_ui: {width: 200}
+      type: date
+    - name: date_buy
+      admin_ui: {width: 200}
+      type: date
+    - name: symbol
+      admin_ui: {width: 200}
+      type: string
+    - name: qty
+      admin_ui: {width: 200}
+      type: number
+    - name: sales
+      admin_ui: {width: 200}
+      type: number
+    - name: cost
+      admin_ui: {width: 200}
+      type: number
+    - name: pnl
+      admin_ui: {width: 200}
+      type: number
+    - name: sell_price
+      admin_ui: {width: 200}
+      type: number
+    - name: buy_price
+      admin_ui: {width: 200}
+      type: number
 renamed: true
