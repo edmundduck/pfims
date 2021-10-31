@@ -47,5 +47,5 @@ components:
     icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
     underline: false, icon: 'fa:minus'}
   name: button_1
-  layout_properties: {column: YAYOIZ}
+  layout_properties: {column: TOZXSD}
 is_package: true

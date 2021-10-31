@@ -13,7 +13,8 @@ components:
     - {id: WXPMEY, title: Cost, data_key: column_4}
     - {id: LDRBZM, title: P&L, data_key: column_5}
     - {id: DGKRSZ, title: Detail, data_key: column_7}
-    - {id: YAYOIZ, title: '', data_key: column_6, width: '200'}
+    - {id: YAYOIZ, title: '', data_key: column_6, width: '50'}
+    - {id: TOZXSD, title: '', data_key: column_9, width: '50'}
     auto_header: true
     tooltip: ''
     border: ''
@@ -72,17 +73,17 @@ components:
         bold: false, checked: false, underline: false}
       name: input_chk_dtl
       layout_properties: {column: DGKRSZ}
+    - type: DatePicker
+      properties: {}
+      name: input_date
+      layout_properties: {column: DNGCRO}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: 'fa:plus'}
       name: input_button_plus
-      layout_properties: {column: YAYOIZ}
-    - type: DatePicker
-      properties: {}
-      name: input_date
-      layout_properties: {column: DNGCRO}
+      layout_properties: {column: TOZXSD}
   - type: RepeatingPanel
     properties: {spacing_above: none, spacing_below: none, item_template: form_main.form_sub1_input.RowTemplate1}
     name: repeating_panel_1
