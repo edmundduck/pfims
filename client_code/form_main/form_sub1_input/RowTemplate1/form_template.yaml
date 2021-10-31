@@ -1,4 +1,30 @@
 container: {type: DataRowPanel}
-components: []
+components:
+- type: TextBox
+  properties: {}
+  name: text_box_1
+  layout_properties: {column: RMITXR}
+- type: TextBox
+  properties: {}
+  name: text_box_2
+  layout_properties: {column: DMKCOL}
+- type: TextBox
+  properties: {}
+  name: text_box_3
+  layout_properties: {column: JRLRWP}
+- type: TextBox
+  properties: {}
+  name: text_box_4
+  layout_properties: {column: WXPMEY}
+- type: TextBox
+  properties: {}
+  name: text_box_5
+  layout_properties: {column: LDRBZM}
+- type: Button
+  properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+    foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+    underline: false, icon: 'fa:plus'}
+  name: button_1
+  layout_properties: {column: YAYOIZ}
 is_package: true
-untouched: true

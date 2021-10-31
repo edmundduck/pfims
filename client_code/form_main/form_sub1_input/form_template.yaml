@@ -4,10 +4,25 @@ container:
 components:
 - type: DataGrid
   properties:
+    role: null
     columns:
-    - {id: RMITXR, title: Column 1, data_key: column_1}
-    - {id: DMKCOL, title: Column 2, data_key: column_2}
-    - {id: JRLRWP, title: Column 3, data_key: column_3}
+    - {id: RMITXR, title: Symbol, data_key: column_1}
+    - {id: DMKCOL, title: Qty, data_key: column_2}
+    - {id: JRLRWP, title: Sales, data_key: column_3}
+    - {id: WXPMEY, title: Cost, data_key: column_4}
+    - {id: LDRBZM, title: P&L, data_key: column_5}
+    - {id: YAYOIZ, title: '', data_key: column_6, width: '50'}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 20
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
   name: data_grid_1
   layout_properties: {grid_position: 'NWFNJJ,IZRJKI'}
   components:
