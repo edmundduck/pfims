@@ -13,7 +13,7 @@ components:
     - {id: WXPMEY, title: Cost, data_key: column_4}
     - {id: LDRBZM, title: P&L, data_key: column_5}
     - {id: DGKRSZ, title: Detail, data_key: column_7}
-    - {id: YAYOIZ, title: '', data_key: column_6, width: '50'}
+    - {id: YAYOIZ, title: '', data_key: column_6, width: '200'}
     auto_header: true
     tooltip: ''
     border: ''
