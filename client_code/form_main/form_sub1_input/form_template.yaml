@@ -6,11 +6,13 @@ components:
   properties:
     role: null
     columns:
+    - {id: DNGCRO, title: Date, data_key: column_8}
     - {id: RMITXR, title: Symbol, data_key: column_1}
     - {id: DMKCOL, title: Qty, data_key: column_2}
     - {id: JRLRWP, title: Sales, data_key: column_3}
     - {id: WXPMEY, title: Cost, data_key: column_4}
     - {id: LDRBZM, title: P&L, data_key: column_5}
+    - {id: DGKRSZ, title: Detail, data_key: column_7}
     - {id: YAYOIZ, title: '', data_key: column_6, width: '50'}
     auto_header: true
     tooltip: ''
@@ -26,6 +28,61 @@ components:
   name: data_grid_1
   layout_properties: {grid_position: 'NWFNJJ,IZRJKI'}
   components:
+  - type: DataRowPanel
+    properties: {}
+    name: data_row_panel_1
+    layout_properties: {}
+    components:
+    - type: TextBox
+      properties: {}
+      name: input_symbol
+      layout_properties: {column: RMITXR}
+    - type: TextBox
+      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_qty
+      layout_properties: {column: DMKCOL}
+    - type: TextBox
+      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: $,
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_sales
+      layout_properties: {column: JRLRWP}
+    - type: TextBox
+      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: $,
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_cost
+      layout_properties: {column: WXPMEY}
+    - type: TextBox
+      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: $,
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_pnl
+      layout_properties: {column: LDRBZM}
+    - type: CheckBox
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+        foreground: '', allow_indeterminate: false, visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
+        bold: false, checked: false, underline: false}
+      name: input_chk_dtl
+      layout_properties: {column: DGKRSZ}
+    - type: Button
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+        foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: 'fa:plus'}
+      name: input_button_plus
+      layout_properties: {column: YAYOIZ}
+    - type: DatePicker
+      properties: {}
+      name: input_date
+      layout_properties: {column: DNGCRO}
   - type: RepeatingPanel
     properties: {spacing_above: none, spacing_below: none, item_template: form_main.form_sub1_input.RowTemplate1}
     name: repeating_panel_1

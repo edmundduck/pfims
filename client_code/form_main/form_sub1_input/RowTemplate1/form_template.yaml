@@ -1,30 +1,44 @@
 container: {type: DataRowPanel}
 components:
-- type: TextBox
+- type: CheckBox
+  properties: {role: null, align: center, tooltip: '', border: '', enabled: false,
+    foreground: '', allow_indeterminate: false, visible: true, text: '', font_size: null,
+    font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
+    bold: false, checked: false, underline: false}
+  name: check_box_1
+  layout_properties: {column: DGKRSZ}
+- type: DatePicker
+  properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
+    placeholder: '', border: '', enabled: false, foreground: '', visible: true, font_size: null,
+    font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
+    min_date: '', background: '', bold: false, underline: false, format: ''}
+  name: date_picker_1
+  layout_properties: {column: DNGCRO}
+- type: Label
   properties: {}
-  name: text_box_1
+  name: label_1
   layout_properties: {column: RMITXR}
-- type: TextBox
+- type: Label
   properties: {}
-  name: text_box_2
+  name: label_2
   layout_properties: {column: DMKCOL}
-- type: TextBox
+- type: Label
   properties: {}
-  name: text_box_3
+  name: label_3
   layout_properties: {column: JRLRWP}
-- type: TextBox
+- type: Label
   properties: {}
-  name: text_box_4
+  name: label_4
   layout_properties: {column: WXPMEY}
-- type: TextBox
+- type: Label
   properties: {}
-  name: text_box_5
+  name: label_5
   layout_properties: {column: LDRBZM}
 - type: Button
   properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
     foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
     icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: 'fa:plus'}
+    underline: false, icon: 'fa:minus'}
   name: button_1
   layout_properties: {column: YAYOIZ}
 is_package: true
