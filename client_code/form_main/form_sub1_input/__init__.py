@@ -12,7 +12,6 @@ class form_sub1_input(form_sub1_inputTemplate):
 
     # Any code you write here will run when the form opens.
     
-
   def input_button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
     if self.input_chk_dtl.checked is True:
@@ -38,3 +37,6 @@ class form_sub1_input(form_sub1_inputTemplate):
                         sell_price=0, 
                         buy_price=0)
 
+  def update_input_templ_name(templ_choice):
+    if templ_choice = "[New]":
+    else:
