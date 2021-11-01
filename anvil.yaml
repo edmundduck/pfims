@@ -41,4 +41,21 @@ db_schema:
     - name: buy_price
       admin_ui: {width: 200}
       type: number
+  temp_template:
+    title: temp_template
+    client: none
+    server: full
+    columns:
+    - name: template_id
+      admin_ui: {width: 200}
+      type: number
+    - name: template_name
+      admin_ui: {width: 200}
+      type: string
+    - name: template_create
+      admin_ui: {width: 200}
+      type: datetime
+    - name: template_lastsave
+      admin_ui: {width: 200}
+      type: datetime
 renamed: true
