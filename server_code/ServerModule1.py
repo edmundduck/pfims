@@ -27,3 +27,10 @@ def add_temp_input(date_sales, date_buy, symbol, qty, sales, cost, pnl, sell_pri
                                 pnl=pnl,
                                 sell_price=sell_price,
                                 buy_price=buy_price)
+  
+@anvil.server.callable
+def update_generate_input_templ_name(templ_choice):
+    if templ_choice == "[New]":
+      return "NewTemplate001"
+    else:
+      return "x"

@@ -11,7 +11,8 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
-    self.update_input_templ_name(self.input_dropdown_templ.selected_value)
+    self.input_templ_name.text = anvil.server.call('update_generate_input_templ_name', self.input_dropdown_templ.selected_value)
+    
     
   def input_button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -36,11 +37,9 @@ class form_sub1_input(form_sub1_inputTemplate):
                         cost=self.input_cost.text, 
                         pnl=self.input_pnl.text, 
                         sell_price=0, 
-                        buy_price=0)
+                        buy_price=0)      
 
-  def update_input_templ_name(self, templ_choice):
-    if templ_choice == "[New]":
-      self.input_templ_name.text = "NewTemplate000"
-    else:
-      self.input_templ_name.text = "x"
-      
+  def input_dropdown_templ_change(self, **event_args):
+    """This method is called when an item is selected"""
+    self.input_templ_name.text = anvil.server.call('update_generate_input_templ_name', self.input_dropdown_templ.selected_value)
+

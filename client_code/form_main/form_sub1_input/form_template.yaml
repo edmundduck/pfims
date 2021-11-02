@@ -51,6 +51,7 @@ components:
       include_placeholder: false
     name: input_dropdown_templ
     layout_properties: {}
+    event_bindings: {change: input_dropdown_templ_change}
 - type: DataGrid
   properties:
     role: null
