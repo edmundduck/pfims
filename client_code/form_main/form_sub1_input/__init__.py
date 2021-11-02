@@ -43,3 +43,8 @@ class form_sub1_input(form_sub1_inputTemplate):
     """This method is called when an item is selected"""
     self.input_templ_name.text = anvil.server.call('update_generate_input_templ_name', self.input_dropdown_templ.selected_value)
 
+  def input_dropdown_templ_show(self, **event_args):
+    """This method is called when the DropDown is shown on the screen"""
+    self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
+
+
