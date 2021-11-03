@@ -37,4 +37,4 @@ def update_generate_input_templ_name(templ_choice_id):
     
 @anvil.server.callable
 def get_input_templ_list():
-  return app_tables.temp_template.
+  return set(row['template_id'] for row in app_tables.temp_template.search())
