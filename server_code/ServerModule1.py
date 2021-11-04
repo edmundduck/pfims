@@ -34,9 +34,8 @@ def update_generate_input_templ_name(templ_choice_str):
       return "NewTemplate"
     else:
       templ_choice_id = templ_choice_str[:templ_choice_str.find("-")].strip()
-#      row = app_tables.temp_template.get(template_id=int(templ_choice_id))
-#      return row['template_name']
-      return ['template_name'] in app_tables.temp_template.get(template_id=int(templ_choice_id))
+      row = app_tables.temp_template.get(template_id=int(templ_choice_id))
+      return row['template_name']
     
 @anvil.server.callable
 def get_input_templ_list():
