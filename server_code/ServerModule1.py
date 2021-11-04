@@ -29,13 +29,17 @@ def add_temp_input(date_sales, date_buy, symbol, qty, sales, cost, pnl, sell_pri
                                 buy_price=buy_price)
   
 @anvil.server.callable
-def update_generate_input_templ_name(templ_choice_id):
-    if templ_choice_id == "[New]":
-      return "NewTemplate001"
+def update_generate_input_templ_name(templ_choice_str):
+    if templ_choice_str == "[New]":
+      return "NewTemplate"
     else:
-      return app_tables.temp_template.get(template_id=templ_choice_id)
+      templ_choice_id = templ_choice_str[:templ_choice_str.find("-")].strip()
+#      row = app_tables.temp_template.get(template_id=int(templ_choice_id))
+#      return row['template_name']
+      return ['template_name'] in app_tables.temp_template.get(template_id=int(templ_choice_id))
     
 @anvil.server.callable
 def get_input_templ_list():
-  print(list(row['template_name'] for row in app_tables.temp_template.search()))
-  return list(row['template_name'] for row in app_tables.temp_template.search())
+  content = list(str(row['template_id']) + " - " + row['template_name'] for row in app_tables.temp_template.search())
+  content.insert(0, "[NEW]")
+  return content
