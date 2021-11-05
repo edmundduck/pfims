@@ -11,7 +11,6 @@ class RowTemplate1(RowTemplate1Template):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
-    self.input_data_panel_readonly.item['symbol'] = "ABC"
 
   def input_button_edit_click(self, **event_args):
     """This method is called when the button is clicked"""

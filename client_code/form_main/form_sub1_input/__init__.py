@@ -30,7 +30,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_sell_price.text = self.input_sales.text / self.input_qty.text
     self.input_buy_price.text = self.input_cost.text / self.input_qty.text
     
-    self.new_data = {"sell_date": ,
+    self.new_data = {"sell_date": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
                     "symbol": self.input_symbol.text,
                     "qty": self.input_qty.text,
@@ -49,12 +49,23 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_repeating_panel.items = anvil.server.call('get_input_templ_items', 
                                                          self.input_dropdown_templ.selected_value)
 
+    # TODO - Test assigning values to RowTemplate1
+    grid = self.data_grid_1
+    #rp = RepeatingPanel(item_template=input_data_panel_readonly)
+    rp = self.input_repeating_panel
+    # Set its items property
+    rp.items = anvil.server.call('get_input_templ_items', 
+                                 self.input_dropdown_templ.selected_value)
+    
+    # Add the repeating panel to your data grid
+    #grid.add_component(rp)
+
   def input_dropdown_templ_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
     self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
     self.input_templ_name.text = anvil.server.call('get_input_templ_name', 
                                                    self.input_dropdown_templ.selected_value)
-
+    
   def button_save_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
     
