@@ -49,17 +49,6 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_repeating_panel.items = anvil.server.call('get_input_templ_items', 
                                                          self.input_dropdown_templ.selected_value)
 
-    # TODO - Test assigning values to RowTemplate1
-    grid = self.data_grid_1
-    #rp = RepeatingPanel(item_template=input_data_panel_readonly)
-    rp = self.input_repeating_panel
-    # Set its items property
-    rp.items = anvil.server.call('get_input_templ_items', 
-                                 self.input_dropdown_templ.selected_value)
-    
-    # Add the repeating panel to your data grid
-    #grid.add_component(rp)
-
   def input_dropdown_templ_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
     self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')

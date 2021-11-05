@@ -25,7 +25,7 @@ components:
     name: input_button_delete
     layout_properties: {column: TOZXSD}
   data_bindings:
-  - {property: item, code: 'self.item['''']'}
+  - {property: item, code: self.item}
 - type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
     visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
@@ -40,4 +40,5 @@ components:
       underline: false, icon: 'fa:floppy-o'}
     name: input_button_save
     layout_properties: {column: TOZXSD}
+  data_bindings: []
 is_package: true
