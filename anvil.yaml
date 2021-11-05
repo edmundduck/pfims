@@ -14,12 +14,15 @@ db_schema:
     client: none
     server: full
     columns:
-    - name: date_sales
+    - name: sell_date
       admin_ui: {width: 200}
       type: date
-    - name: date_buy
+    - name: buy_date
       admin_ui: {width: 200}
       type: date
+    - name: template_id
+      admin_ui: {width: 200}
+      type: number
     - name: symbol
       admin_ui: {width: 200}
       type: string
