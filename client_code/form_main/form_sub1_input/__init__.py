@@ -44,8 +44,10 @@ class form_sub1_input(form_sub1_inputTemplate):
     
   def input_dropdown_templ_change(self, **event_args):
     """This method is called when an item is selected"""
-    self.input_templ_name.text = anvil.server.call('update_generate_input_templ_name', 
+    self.input_templ_name.text = anvil.server.call('get_input_templ_name', 
                                                    self.input_dropdown_templ.selected_value)
+    self.input_repeating_panel.items = anvil.server.call('get_input_templ_items', 
+                                                         self.input_dropdown_templ.selected_value)
 
   def input_dropdown_templ_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
@@ -56,7 +58,8 @@ class form_sub1_input(form_sub1_inputTemplate):
   def button_save_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
     
-    templ_id = anvil.server.call('generate_new_templ_id')
+    templ_id = anvil.server.call('generate_new_templ_id', 
+                                 self.input_dropdown_templ.selected_value)
     
     anvil.server.call('upsert_temp_template',
                       template_id=templ_id,
@@ -75,3 +78,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                         sell_price=row['sell_price'], 
                         buy_price=row['buy_price'])
 
+    self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
+    self.input_dropdown_templ.selected_value = anvil.server.call('merge_templ_id_name', 
+                                                                 templ_id, 
+                                                                 self.input_templ_name.text)
