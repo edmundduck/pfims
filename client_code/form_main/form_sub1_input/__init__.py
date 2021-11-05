@@ -30,7 +30,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_sell_price.text = self.input_sales.text / self.input_qty.text
     self.input_buy_price.text = self.input_cost.text / self.input_qty.text
     
-    self.new_data = {"sell_date": self.input_selldate.date,
+    self.new_data = {"date_picker_1": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
 #                    "symbol": self.input_symbol.text,
                     "symbol": "XXX",
