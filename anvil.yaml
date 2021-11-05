@@ -22,7 +22,7 @@ db_schema:
       type: date
     - name: template_id
       admin_ui: {width: 200}
-      type: number
+      type: string
     - name: symbol
       admin_ui: {width: 200}
       type: string
@@ -51,7 +51,7 @@ db_schema:
     columns:
     - name: template_id
       admin_ui: {width: 200}
-      type: number
+      type: string
     - name: template_name
       admin_ui: {width: 200}
       type: string

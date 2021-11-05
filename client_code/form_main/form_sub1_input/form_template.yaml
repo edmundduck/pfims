@@ -38,7 +38,7 @@ components:
       border: ''
       enabled: true
       foreground: ''
-      items: ['[New]']
+      items: ['']
       visible: true
       font_size: null
       font: ''
@@ -65,8 +65,8 @@ components:
     - {id: LDRBZM, title: '*P&L', data_key: pnl}
     - {id: DGKRSZ, title: Sell Price, data_key: sell_price}
     - {id: IFVNQY, title: Buy Price, data_key: buy_price}
-    - {id: YAYOIZ, title: '', data_key: column_1, width: '40'}
-    - {id: TOZXSD, title: '', data_key: column_2, width: '40'}
+    - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '40'}
+    - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '40'}
     auto_header: true
     tooltip: ''
     border: ''
@@ -154,19 +154,22 @@ components:
   layout_properties: {slot: footer, grid_position: 'PJYNLV,PJONAN'}
   components:
   - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:Black', visible: true, text: Submit, font_size: null, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Primary 500', bold: false, underline: false, icon: ''}
-    name: button_3
+    properties: {role: null, align: center, tooltip: 'Once all transactions in a template
+        are submitted to the system, this template will be removed from input view.',
+      border: '', enabled: true, foreground: 'theme:Black', visible: true, text: Submit,
+      font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+      italic: false, background: 'theme:Primary 500', bold: false, underline: false,
+      icon: ''}
+    name: button_submit
     layout_properties: {}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:Black', visible: true, text: Save as Draft, font_size: null,
+      foreground: 'theme:Black', visible: true, text: Save Template, font_size: null,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
-    name: button_2
+    name: button_save_templ
     layout_properties: {}
+    event_bindings: {click: button_save_templ_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: 'theme:White', visible: true, text: Clear, font_size: null, font: '',
