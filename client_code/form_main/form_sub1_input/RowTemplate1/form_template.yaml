@@ -1,24 +1,34 @@
-container: {type: DataRowPanel}
+container:
+  type: DataRowPanel
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: false,
+    visible: true, font_size: null, font: '', spacing_above: none, spacing_below: none,
+    italic: false, background: '', bold: false, underline: false}
 components:
-- type: Button
-  properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-    foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
-    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: 'fa:pencil'}
-  name: button_2
-  layout_properties: {column: YAYOIZ}
-- type: Button
-  properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-    foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
-    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: 'fa:minus'}
-  name: button_1
-  layout_properties: {column: TOZXSD}
+- type: DataRowPanel
+  properties: {}
+  name: input_data_panel_readonly
+  layout_properties: {column: null}
+  components:
+  - type: Button
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: 'fa:pencil'}
+    name: input_button_edit
+    layout_properties: {column: YAYOIZ}
+    event_bindings: {click: input_button_edit_click}
+  - type: Button
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: 'fa:minus'}
+    name: input_button_delete
+    layout_properties: {column: TOZXSD}
 - type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
     visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
     italic: false, background: '', bold: false, underline: false}
-  name: input_editable_data_row
+  name: input_data_panel_editable
   layout_properties: {column: null}
   components:
   - type: Button
@@ -26,6 +36,6 @@ components:
       foreground: '', visible: true, text: button_3, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: 'fa:floppy-o'}
-    name: button_3
+    name: input_button_save
     layout_properties: {column: TOZXSD}
 is_package: true
