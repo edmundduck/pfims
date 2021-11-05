@@ -14,4 +14,18 @@ components:
     underline: false, icon: 'fa:minus'}
   name: button_1
   layout_properties: {column: TOZXSD}
+- type: DataRowPanel
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
+    visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
+    italic: false, background: '', bold: false, underline: false}
+  name: input_editable_data_row
+  layout_properties: {column: null}
+  components:
+  - type: Button
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: button_3, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: 'fa:floppy-o'}
+    name: button_3
+    layout_properties: {column: TOZXSD}
 is_package: true

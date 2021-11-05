@@ -144,7 +144,7 @@ components:
       name: input_buy_price
       layout_properties: {column: IFVNQY}
   - type: RepeatingPanel
-    properties: {spacing_above: none, spacing_below: none, item_template: form_main.form_sub1_input.RowTemplate1}
+    properties: {item_template: null}
     name: input_repeating_panel
     layout_properties: {}
 - type: FlowPanel
