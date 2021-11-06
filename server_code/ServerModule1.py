@@ -26,7 +26,10 @@ DEFAULT_NEW_TEMPL_NAME = "NewTemplate"
 
 # Internal function - Retrieve template ID by splitting template dropdown value
 def split_templ_id(templ_id):
-  return templ_id[:templ_id.find("-")].strip()
+  if templ_id.find("-") < 0:
+    return templ_id
+  else:
+    return templ_id[:templ_id.find("-")].strip()
 
 @anvil.server.callable
 # Generate template dropdown text for display

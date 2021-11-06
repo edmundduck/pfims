@@ -27,8 +27,8 @@ class form_sub1_input(form_sub1_inputTemplate):
     
   def input_button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.input_sell_price.text = self.input_sales.text / self.input_qty.text
-    self.input_buy_price.text = self.input_cost.text / self.input_qty.text
+    self.input_sell_price.text = float(self.input_sales.text) / float(self.input_qty.text)
+    self.input_buy_price.text = float(self.input_cost.text) / float(self.input_qty.text)
     
     self.new_data = {"sell_date": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
@@ -57,7 +57,6 @@ class form_sub1_input(form_sub1_inputTemplate):
     
   def button_save_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
-    
     templ_id = anvil.server.call('generate_new_templ_id', 
                                  self.input_dropdown_templ.selected_value)
     
@@ -66,6 +65,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                       template_name=self.input_templ_name.text)
     
     for row in self.input_repeating_panel.items:
+      print("row=", row['symbol'])
       anvil.server.call('upsert_temp_input', 
                         sell_date=row['sell_date'], 
                         buy_date=row['buy_date'], 
@@ -89,9 +89,9 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_buydate.date = ""
     self.input_symbol.text = ""
     self.input_qty.text = ""
-                    "sales": self.input_sales.text,
-                    "cost": self.input_cost.text,
-                    "pnl": self.input_pnl.text,
-                    "sell_price": self.input_sell_price.text,
-                    "buy_price": self.input_buy_price.text}   
+    self.input_sales.text = ""
+    self.input_cost.text = ""
+    self.input_pnl.text = ""
+    self.input_sell_price.text = ""
+    self.input_buy_price.text = ""
 

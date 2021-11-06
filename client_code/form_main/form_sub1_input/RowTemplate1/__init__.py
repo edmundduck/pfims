@@ -46,3 +46,8 @@ class RowTemplate1(RowTemplate1Template):
 
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
+
+  def input_button_delete_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    self.input_data_panel_readonly.remove_from_parent()
+
