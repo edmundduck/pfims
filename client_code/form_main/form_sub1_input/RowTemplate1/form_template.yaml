@@ -27,18 +27,55 @@ components:
   data_bindings:
   - {property: item, code: self.item}
 - type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: false,
     visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
     italic: false, background: '', bold: false, underline: false}
   name: input_data_panel_editable
   layout_properties: {column: null}
   components:
+  - type: DatePicker
+    properties: {}
+    name: input_row_selldate
+    layout_properties: {column: DNGCRO}
+  - type: DatePicker
+    properties: {}
+    name: input_row_buydate
+    layout_properties: {column: MOWHRG}
+  - type: TextBox
+    properties: {}
+    name: input_row_symbol
+    layout_properties: {column: RMITXR}
+  - type: TextBox
+    properties: {}
+    name: input_row_qty
+    layout_properties: {column: DMKCOL}
+  - type: TextBox
+    properties: {}
+    name: input_row_sales
+    layout_properties: {column: JRLRWP}
+  - type: TextBox
+    properties: {}
+    name: input_row_cost
+    layout_properties: {column: WXPMEY}
+  - type: TextBox
+    properties: {}
+    name: input_row_pnl
+    layout_properties: {column: LDRBZM}
+  - type: Label
+    properties: {}
+    name: input_row_sell_price
+    layout_properties: {column: DGKRSZ}
+  - type: Label
+    properties: {}
+    name: input_row_buy_price
+    layout_properties: {column: IFVNQY}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: button_3, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: 'fa:floppy-o'}
     name: input_button_save
-    layout_properties: {column: TOZXSD}
+    layout_properties: {column: YAYOIZ}
+    event_bindings: {click: input_button_save_click}
   data_bindings: []
 is_package: true

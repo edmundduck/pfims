@@ -82,3 +82,16 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_dropdown_templ.selected_value = anvil.server.call('merge_templ_id_name', 
                                                                  templ_id, 
                                                                  self.input_templ_name.text)
+
+  def input_button_erase_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    self.input_selldate.date = ""
+    self.input_buydate.date = ""
+    self.input_symbol.text = ""
+    self.input_qty.text = ""
+                    "sales": self.input_sales.text,
+                    "cost": self.input_cost.text,
+                    "pnl": self.input_pnl.text,
+                    "sell_price": self.input_sell_price.text,
+                    "buy_price": self.input_buy_price.text}   
+

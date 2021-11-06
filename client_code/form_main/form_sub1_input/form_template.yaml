@@ -123,14 +123,6 @@ components:
       properties: {}
       name: input_selldate
       layout_properties: {column: DNGCRO}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: 'fa:plus'}
-      name: input_button_plus
-      layout_properties: {column: TOZXSD}
-      event_bindings: {click: input_button_plus_click}
     - type: DatePicker
       properties: {}
       name: input_buydate
@@ -143,6 +135,22 @@ components:
       properties: {}
       name: input_buy_price
       layout_properties: {column: IFVNQY}
+    - type: Button
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+        foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: 'fa:plus'}
+      name: input_button_plus
+      layout_properties: {column: YAYOIZ}
+      event_bindings: {click: input_button_plus_click}
+    - type: Button
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+        foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: 'fa:eraser'}
+      name: input_button_erase
+      layout_properties: {column: TOZXSD}
+      event_bindings: {click: input_button_erase_click}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_sub1_input.RowTemplate1,
