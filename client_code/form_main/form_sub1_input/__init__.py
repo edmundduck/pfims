@@ -29,6 +29,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     """This method is called when the button is clicked"""
     self.input_sell_price.text = float(self.input_sales.text) / float(self.input_qty.text)
     self.input_buy_price.text = float(self.input_cost.text) / float(self.input_qty.text)
+    print(list(self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]))
     
     self.new_data = {"sell_date": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
@@ -67,9 +68,9 @@ class form_sub1_input(form_sub1_inputTemplate):
     for row in self.input_repeating_panel.items:
       print("row=", row['symbol'])
       anvil.server.call('upsert_temp_input', 
+                        template_id=templ_id, 
                         sell_date=row['sell_date'], 
                         buy_date=row['buy_date'], 
-                        template_id=templ_id, 
                         symbol=row['symbol'], 
                         qty=row['qty'], 
                         sales=row['sales'], 

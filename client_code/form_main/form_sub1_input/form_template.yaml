@@ -67,6 +67,7 @@ components:
     - {id: IFVNQY, title: Buy Price, data_key: buy_price}
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '40'}
     - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '40'}
+    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
     auto_header: true
     tooltip: ''
     border: ''
@@ -157,8 +158,7 @@ components:
       background: ''}
     name: input_repeating_panel
     layout_properties: {}
-    data_bindings:
-    - {property: items, code: 'self.item[''input_data_panel_readonly'']'}
+    data_bindings: []
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
