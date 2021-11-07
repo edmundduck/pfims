@@ -15,7 +15,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     # Initiate repeating panel items to an empty list otherwise will throw NoneType error
     self.input_repeating_panel.items = []
 
-    # Debug - populate test data - START
+    # TODO - Debug - populate test data - START
     self.input_selldate.date = "2021-05-10"
     self.input_buydate.date = "2021-04-19"
     self.input_symbol.text = "AMD"
@@ -23,7 +23,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_sales.text = 10000
     self.input_cost.text = 8000
     self.input_pnl.text = 2000
-    # Debug - populate test data - END
+    # TODO - Debug - populate test data - END
     
   def input_button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -46,8 +46,6 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "iid": int(last_iid)+1}
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
-    components = self.input_repeating_panel.get_components()
-    print(f"{components} components")
     
   def input_dropdown_templ_change(self, **event_args):
     """This method is called when an item is selected"""
@@ -72,6 +70,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                       template_name=self.input_templ_name.text)
     
     for row in self.input_repeating_panel.items:
+      # TODO - DEBUG
       print("symbol after clicking save=", row['symbol'])
       anvil.server.call('upsert_temp_input', 
                         iid=row['iid'], 

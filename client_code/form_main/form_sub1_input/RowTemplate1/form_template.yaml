@@ -3,6 +3,7 @@ container:
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: false,
     visible: true, font_size: null, font: '', spacing_above: none, spacing_below: none,
     italic: false, background: '', bold: false, underline: false}
+  data_bindings: []
 components:
 - type: DataRowPanel
   properties: {}
@@ -25,7 +26,8 @@ components:
     name: input_button_delete
     layout_properties: {column: TOZXSD}
     event_bindings: {click: input_button_delete_click}
-  data_bindings: []
+  data_bindings:
+  - {property: item, code: self.item}
 - type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: false,
     visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
@@ -85,5 +87,6 @@ components:
       icon: ''}
     name: input_row_iid
     layout_properties: {column: JNEVXO}
-  data_bindings: []
+  data_bindings:
+  - {property: item, code: self.item}
 is_package: true

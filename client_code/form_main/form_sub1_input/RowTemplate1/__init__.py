@@ -11,9 +11,15 @@ class RowTemplate1(RowTemplate1Template):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
+    # TODO - DEBUG
+    print("self.item =", self.item['symbol'])
 
   def input_button_edit_click(self, **event_args):
     """This method is called when the button is clicked"""
+    # TODO - DEBUG
+    print("symbol 1 when clicking edit=", self.item['symbol'])
+    print("symbol 2 when clicking edit=", self.input_data_panel_readonly.item['symbol'])
+    
     self.input_row_selldate.date = self.input_data_panel_readonly.item['sell_date']
     self.input_row_buydate.date = self.input_data_panel_readonly.item['buy_date']
     self.input_row_symbol.text = self.input_data_panel_readonly.item['symbol']
@@ -33,20 +39,37 @@ class RowTemplate1(RowTemplate1Template):
     self.input_row_sell_price.text = float(self.input_row_sales.text) / float(self.input_row_qty.text)
     self.input_row_buy_price.text = float(self.input_row_cost.text) / float(self.input_row_qty.text)
     
-    new_data = {"sell_date": self.input_row_selldate.date,
-                    "buy_date": self.input_row_buydate.date,
-                    "symbol": self.input_row_symbol.text,
-                    "qty": self.input_row_qty.text,
-                    "sales": self.input_row_sales.text,
-                    "cost": self.input_row_cost.text,
-                    "pnl": self.input_row_pnl.text,
-                    "sell_price": self.input_row_sell_price.text,
-                    "buy_price": self.input_row_buy_price.text,
-                    "iid": self.input_row_iid.text}
+    # Lesson learnt ... THIS LINE DOESN'T WORK!!
+    # new_data = {"sell_date": self.input_row_selldate.date,
+    #                "buy_date": self.input_row_buydate.date,
+    #                "symbol": self.input_row_symbol.text,
+    #                "qty": self.input_row_qty.text,
+    #                "sales": self.input_row_sales.text,
+    #                "cost": self.input_row_cost.text,
+    #                "pnl": self.input_row_pnl.text,
+    #                "sell_price": self.input_row_sell_price.text,
+    #                "buy_price": self.input_row_buy_price.text,
+    #                "iid": self.input_row_iid.text}
+    # self.item = self.input_row_symbol.text
+    # self.item = new_data
+    self.item = {"sell_date": self.input_row_selldate.date,
+                 "buy_date": self.input_row_buydate.date,
+                 "symbol": self.input_row_symbol.text,
+                 "qty": self.input_row_qty.text,
+                 "sales": self.input_row_sales.text,
+                 "cost": self.input_row_cost.text,
+                 "pnl": self.input_row_pnl.text,
+                 "sell_price": self.input_row_sell_price.text,
+                 "buy_price": self.input_row_buy_price.text,
+                 "iid": self.input_row_iid.text}
     
-    #self.input_data_panel_readonly.item = new_data
-    self.item = new_data
-    #self.refresh_data_bindings()
+    # TODO - DEBUG
+    self.refresh_data_bindings()
+    print("symbol 1 when clicking save=", self.input_row_symbol.text)
+    print("symbol 2 when clicking save=", self.item['symbol'])
+    self.parent.raise_event('x-refresh')
+    print("symbol 1 after x-refresh=", self.input_row_symbol.text)
+    print("symbol 2 after x-refresh=", self.item['symbol'])
 
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
