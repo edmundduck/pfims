@@ -17,19 +17,18 @@ class RowTemplate1(RowTemplate1Template):
   def input_button_edit_click(self, **event_args):
     """This method is called when the button is clicked"""
     # TODO - DEBUG
-    print("symbol 1 when clicking edit=", self.item['symbol'])
-    print("symbol 2 when clicking edit=", self.input_data_panel_readonly.item['symbol'])
+    print("symbol when clicking edit=", self.item['symbol'])
     
-    self.input_row_selldate.date = self.input_data_panel_readonly.item['sell_date']
-    self.input_row_buydate.date = self.input_data_panel_readonly.item['buy_date']
-    self.input_row_symbol.text = self.input_data_panel_readonly.item['symbol']
-    self.input_row_qty.text = self.input_data_panel_readonly.item['qty']
-    self.input_row_sales.text = self.input_data_panel_readonly.item['sales']
-    self.input_row_cost.text = self.input_data_panel_readonly.item['cost']
-    self.input_row_pnl.text = self.input_data_panel_readonly.item['pnl']
-    self.input_row_sell_price.text = self.input_data_panel_readonly.item['sell_price']
-    self.input_row_buy_price.text = self.input_data_panel_readonly.item['buy_price']
-    self.input_row_iid.text = self.input_data_panel_readonly.item['iid']
+    self.input_row_selldate.date = self.item['sell_date']
+    self.input_row_buydate.date = self.item['buy_date']
+    self.input_row_symbol.text = self.item['symbol']
+    self.input_row_qty.text = self.item['qty']
+    self.input_row_sales.text = self.item['sales']
+    self.input_row_cost.text = self.item['cost']
+    self.input_row_pnl.text = self.item['pnl']
+    self.input_row_sell_price.text = self.item['sell_price']
+    self.input_row_buy_price.text = self.item['buy_price']
+    self.input_row_iid.text = self.item['iid']
     
     self.input_data_panel_readonly.visible = False
     self.input_data_panel_editable.visible = True
@@ -65,11 +64,7 @@ class RowTemplate1(RowTemplate1Template):
     
     # TODO - DEBUG
     self.refresh_data_bindings()
-    print("symbol 1 when clicking save=", self.input_row_symbol.text)
-    print("symbol 2 when clicking save=", self.item['symbol'])
-    self.parent.raise_event('x-refresh')
-    print("symbol 1 after x-refresh=", self.input_row_symbol.text)
-    print("symbol 2 after x-refresh=", self.item['symbol'])
+    print("symbol when clicking edit save=", self.item['symbol'])
 
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
