@@ -44,6 +44,7 @@ class RowTemplate1(RowTemplate1Template):
     
     #self.input_data_panel_readonly.item = self.new_data
     self.item = self.new_data
+    self.refresh_data_bindings()
     #self.item['symbol'] = self.input_row_symbol.text
 
     self.input_data_panel_readonly.visible = True
