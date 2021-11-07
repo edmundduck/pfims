@@ -43,6 +43,7 @@ class RowTemplate1(RowTemplate1Template):
                     "buy_price": self.input_row_buy_price.text}
     
     self.input_data_panel_readonly.item = self.new_data
+    print("rowtempl_symbol=", self.input_data_panel_readonly.item['symbol'])
 
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
