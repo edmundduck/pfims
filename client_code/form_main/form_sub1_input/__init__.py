@@ -29,7 +29,10 @@ class form_sub1_input(form_sub1_inputTemplate):
     """This method is called when the button is clicked"""
     self.input_sell_price.text = float(self.input_sales.text) / float(self.input_qty.text)
     self.input_buy_price.text = float(self.input_cost.text) / float(self.input_qty.text)
-    print(list(self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]))
+
+    last_iid = 0
+    if len(self.input_repeating_panel.items) < 0:
+      last_iid = list(self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1])[-1][-1]
     
     self.new_data = {"sell_date": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
@@ -39,9 +42,12 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "cost": self.input_cost.text,
                     "pnl": self.input_pnl.text,
                     "sell_price": self.input_sell_price.text,
-                    "buy_price": self.input_buy_price.text}
+                    "buy_price": self.input_buy_price.text,
+                    "iid": last_iid+1}
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [self.new_data]
+    
+    print(list(self.input_repeating_panel.items))
     
   def input_dropdown_templ_change(self, **event_args):
     """This method is called when an item is selected"""
@@ -68,6 +74,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     for row in self.input_repeating_panel.items:
       print("row=", row['symbol'])
       anvil.server.call('upsert_temp_input', 
+                        iid=row['iid'], 
                         template_id=templ_id, 
                         sell_date=row['sell_date'], 
                         buy_date=row['buy_date'], 

@@ -25,10 +25,6 @@ components:
     name: input_button_delete
     layout_properties: {column: TOZXSD}
     event_bindings: {click: input_button_delete_click}
-  - type: Label
-    properties: {}
-    name: invisible_label_iid
-    layout_properties: {column: JNEVXO}
   data_bindings:
   - {property: item, code: self.item}
 - type: DataRowPanel
