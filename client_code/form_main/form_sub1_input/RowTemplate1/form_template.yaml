@@ -87,6 +87,5 @@ components:
       icon: ''}
     name: input_row_iid
     layout_properties: {column: JNEVXO}
-  data_bindings:
-  - {property: item, code: self.item}
+  data_bindings: []
 is_package: true
