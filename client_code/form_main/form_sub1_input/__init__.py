@@ -62,6 +62,10 @@ class form_sub1_input(form_sub1_inputTemplate):
     
   def button_save_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
+    # TODO - DEBUG
+    for c in self.input_repeating_panel.get_components():
+      print(c.input_data_panel_readonly.item)
+    
     templ_id = anvil.server.call('generate_new_templ_id', 
                                  self.input_dropdown_templ.selected_value)
     
