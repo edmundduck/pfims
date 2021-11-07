@@ -42,12 +42,13 @@ class RowTemplate1(RowTemplate1Template):
                     "sell_price": self.input_row_sell_price.text,
                     "buy_price": self.input_row_buy_price.text}
     
-    self.input_data_panel_readonly.item = self.new_data
-    print("rowtempl_symbol=", self.input_data_panel_readonly.item['symbol'])
+    #self.input_data_panel_readonly.item = self.new_data
+    self.item = self.new_data
+    #self.item['symbol'] = self.input_row_symbol.text
 
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
-
+    
   def input_button_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.input_data_panel_readonly.remove_from_parent()

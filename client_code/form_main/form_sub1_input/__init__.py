@@ -100,4 +100,3 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_pnl.text = ""
     self.input_sell_price.text = ""
     self.input_buy_price.text = ""
-

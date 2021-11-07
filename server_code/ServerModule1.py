@@ -40,9 +40,7 @@ def merge_templ_id_name(templ_id, templ_name):
 # DB table "temp_input" update/insert method
 def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, pnl, sell_price, buy_price):
   rows = app_tables.temp_input.search(template_id=template_id, iid=iid)
-  print(len(list(rows)))
   if len(list(rows)) != 0:
-    print("debugA")
     for r in rows:
       r.update(iid=iid, 
                template_id=template_id, 
@@ -56,7 +54,6 @@ def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales,
                sell_price=sell_price, 
                buy_price=buy_price)
   else:
-    print("debugB")
     app_tables.temp_input.add_row(iid=iid, 
                                   template_id=template_id, 
                                   sell_date=sell_date,
