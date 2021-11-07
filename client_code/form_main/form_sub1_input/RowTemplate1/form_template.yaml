@@ -25,8 +25,7 @@ components:
     name: input_button_delete
     layout_properties: {column: TOZXSD}
     event_bindings: {click: input_button_delete_click}
-  data_bindings:
-  - {property: item, code: self.item}
+  data_bindings: []
 - type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: false,
     visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
@@ -46,6 +45,7 @@ components:
     properties: {}
     name: input_row_symbol
     layout_properties: {column: RMITXR}
+    data_bindings: []
   - type: TextBox
     properties: {}
     name: input_row_qty
@@ -78,5 +78,12 @@ components:
     name: input_button_save
     layout_properties: {column: YAYOIZ}
     event_bindings: {click: input_button_save_click}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
+    name: input_row_iid
+    layout_properties: {column: JNEVXO}
   data_bindings: []
 is_package: true

@@ -34,7 +34,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     if len(self.input_repeating_panel.items) > 0:
       last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
     
-    self.new_data = {"sell_date": self.input_selldate.date,
+    new_data = {"sell_date": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
                     "symbol": self.input_symbol.text,
                     "qty": self.input_qty.text,
@@ -45,7 +45,9 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "buy_price": self.input_buy_price.text,
                     "iid": int(last_iid)+1}
     
-    self.input_repeating_panel.items = self.input_repeating_panel.items + [self.new_data]
+    self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
+    components = self.input_repeating_panel.get_components()
+    print(f"{components} components")
     
   def input_dropdown_templ_change(self, **event_args):
     """This method is called when an item is selected"""

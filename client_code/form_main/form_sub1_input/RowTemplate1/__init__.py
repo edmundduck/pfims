@@ -23,6 +23,7 @@ class RowTemplate1(RowTemplate1Template):
     self.input_row_pnl.text = self.input_data_panel_readonly.item['pnl']
     self.input_row_sell_price.text = self.input_data_panel_readonly.item['sell_price']
     self.input_row_buy_price.text = self.input_data_panel_readonly.item['buy_price']
+    self.input_row_iid.text = self.input_data_panel_readonly.item['iid']
     
     self.input_data_panel_readonly.visible = False
     self.input_data_panel_editable.visible = True
@@ -32,7 +33,7 @@ class RowTemplate1(RowTemplate1Template):
     self.input_row_sell_price.text = float(self.input_row_sales.text) / float(self.input_row_qty.text)
     self.input_row_buy_price.text = float(self.input_row_cost.text) / float(self.input_row_qty.text)
     
-    self.new_data = {"sell_date": self.input_row_selldate.date,
+    new_data = {"sell_date": self.input_row_selldate.date,
                     "buy_date": self.input_row_buydate.date,
                     "symbol": self.input_row_symbol.text,
                     "qty": self.input_row_qty.text,
@@ -40,17 +41,18 @@ class RowTemplate1(RowTemplate1Template):
                     "cost": self.input_row_cost.text,
                     "pnl": self.input_row_pnl.text,
                     "sell_price": self.input_row_sell_price.text,
-                    "buy_price": self.input_row_buy_price.text}
+                    "buy_price": self.input_row_buy_price.text,
+                    "iid": self.input_row_iid.text}
     
-    #self.input_data_panel_readonly.item = self.new_data
-    self.item = self.new_data
-    self.refresh_data_bindings()
-    #self.item['symbol'] = self.input_row_symbol.text
+    #self.input_data_panel_readonly.item = new_data
+    self.item = new_data
+    #self.refresh_data_bindings()
 
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
     
   def input_button_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
+    self.item.delete()
     self.input_data_panel_readonly.remove_from_parent()
 
