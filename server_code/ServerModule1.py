@@ -38,7 +38,7 @@ def merge_templ_id_name(templ_id, templ_name):
 
 @anvil.server.callable
 # DB table "temp_input" update/insert method
-def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, pnl, sell_price, buy_price):
+def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, pnl, sell_price, buy_price):
   rows = app_tables.temp_input.search(template_id=template_id, iid=iid)
   if len(list(rows)) != 0:
     for r in rows:
@@ -50,6 +50,7 @@ def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales,
                qty=int(qty), 
                sales=float(sales), 
                cost=float(cost), 
+               fee=float(fee), 
                pnl=float(pnl), 
                sell_price=float(sell_price), 
                buy_price=float(buy_price))
@@ -62,6 +63,7 @@ def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales,
                                   qty=int(qty),
                                   sales=float(sales),
                                   cost=float(cost),
+                                  fee=float(fee),
                                   pnl=float(pnl),
                                   sell_price=float(sell_price),
                                   buy_price=float(buy_price))

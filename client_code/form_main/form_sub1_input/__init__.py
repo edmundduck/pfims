@@ -22,13 +22,10 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_qty.text = 1000
     self.input_sales.text = 10000
     self.input_cost.text = 8000
-    self.input_pnl.text = 2000
     # TODO - Debug - populate test data - END
     
   def input_button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.input_sell_price.text = float(self.input_sales.text) / float(self.input_qty.text)
-    self.input_buy_price.text = float(self.input_cost.text) / float(self.input_qty.text)
 
     last_iid = 0
     if len(self.input_repeating_panel.items) > 0:
@@ -40,9 +37,10 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "qty": self.input_qty.text,
                     "sales": self.input_sales.text,
                     "cost": self.input_cost.text,
-                    "pnl": self.input_pnl.text,
-                    "sell_price": self.input_sell_price.text,
-                    "buy_price": self.input_buy_price.text,
+                    "fee": self.input_fee.text,
+                    "pnl": float(self.input_sales.text) - float(self.input_cost.text),
+                    "sell_price": float(self.input_sales.text) / float(self.input_qty.text),
+                    "buy_price": float(self.input_cost.text) / float(self.input_qty.text),
                     "iid": int(last_iid)+1}
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
@@ -98,6 +96,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                         qty=row['qty'], 
                         sales=row['sales'], 
                         cost=row['cost'], 
+                        fee=row['fee'], 
                         pnl=row['pnl'], 
                         sell_price=row['sell_price'], 
                         buy_price=row['buy_price'])
@@ -116,6 +115,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_qty.text = ""
     self.input_sales.text = ""
     self.input_cost.text = ""
+    self.input_fee.text = 0
     self.input_pnl.text = ""
     self.input_sell_price.text = ""
     self.input_buy_price.text = ""

@@ -57,13 +57,14 @@ components:
   properties:
     role: null
     columns:
-    - {id: DNGCRO, title: '*Sell Date', data_key: sell_date, width: '100'}
+    - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '100'}
     - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '100'}
-    - {id: RMITXR, title: '*Symbol', data_key: symbol}
-    - {id: DMKCOL, title: '*Qty', data_key: qty}
-    - {id: JRLRWP, title: '*Sales Amt', data_key: sales}
-    - {id: WXPMEY, title: '*Cost Amt', data_key: cost}
-    - {id: LDRBZM, title: '*P&L', data_key: pnl}
+    - {id: RMITXR, title: Symbol, data_key: symbol}
+    - {id: DMKCOL, title: Qty, data_key: qty}
+    - {id: JRLRWP, title: Sales Amt, data_key: sales}
+    - {id: WXPMEY, title: Cost Amt, data_key: cost}
+    - {id: LMHMKP, title: Fee, data_key: fee}
+    - {id: LDRBZM, title: P&L, data_key: pnl}
     - {id: DGKRSZ, title: Sell Price, data_key: sell_price}
     - {id: IFVNQY, title: Buy Price, data_key: buy_price}
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '40'}
@@ -114,13 +115,6 @@ components:
         background: '', bold: false, underline: false}
       name: input_cost
       layout_properties: {column: WXPMEY}
-    - type: TextBox
-      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
-        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
-        background: '', bold: false, underline: false}
-      name: input_pnl
-      layout_properties: {column: LDRBZM}
     - type: DatePicker
       properties: {}
       name: input_selldate
@@ -153,6 +147,17 @@ components:
       name: input_button_erase
       layout_properties: {column: TOZXSD}
       event_bindings: {click: input_button_erase_click}
+    - type: TextBox
+      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+        border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: null,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_fee
+      layout_properties: {column: LMHMKP}
+    - type: Label
+      properties: {}
+      name: input_pnl
+      layout_properties: {column: LDRBZM}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_sub1_input.RowTemplate1,

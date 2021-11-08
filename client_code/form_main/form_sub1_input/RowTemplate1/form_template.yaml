@@ -60,10 +60,6 @@ components:
     properties: {}
     name: input_row_cost
     layout_properties: {column: WXPMEY}
-  - type: TextBox
-    properties: {}
-    name: input_row_pnl
-    layout_properties: {column: LDRBZM}
   - type: Label
     properties: {}
     name: input_row_sell_price
@@ -87,5 +83,16 @@ components:
       icon: ''}
     name: input_row_iid
     layout_properties: {column: JNEVXO}
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: null,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: input_row_fee
+    layout_properties: {column: LMHMKP}
+  - type: Label
+    properties: {}
+    name: input_row_pnl
+    layout_properties: {column: LDRBZM}
   data_bindings: []
 is_package: true
