@@ -178,6 +178,7 @@ components:
     name: input_repeating_panel
     layout_properties: {}
     data_bindings: []
+  event_bindings: {}
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}

@@ -12,6 +12,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
+    self.input_repeating_panel.add_event_handler('x-refresh-color', self.refresh_color)
     
     # Initiate repeating panel items to an empty list otherwise will throw NoneType error
     self.input_repeating_panel.items = []
@@ -37,6 +38,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "iid": int(last_iid)+1}
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
+    self.input_repeating_panel.raise_event('x-refresh-color')
     
   def input_dropdown_templ_change(self, **event_args):
     """This method is called when an item is selected"""
@@ -44,6 +46,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                                                    self.input_dropdown_templ.selected_value)
     self.input_repeating_panel.items = anvil.server.call('get_input_templ_items', 
                                                          self.input_dropdown_templ.selected_value)
+    self.input_repeating_panel.raise_event('x-refresh-color')
 
   def input_dropdown_templ_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
@@ -141,3 +144,9 @@ class form_sub1_input(form_sub1_inputTemplate):
       
       n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
       n.show()
+      
+  def refresh_color(self, **event_args):
+    for i in self.input_repeating_panel.items:
+      if i['pnl'] >= 0:
+        i.foreground = 'theme:Primary 500'
+  
