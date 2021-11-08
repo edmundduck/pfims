@@ -62,20 +62,33 @@ class form_sub1_input(form_sub1_inputTemplate):
     
   def button_save_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
-    # TODO - DEBUG
+    
+    """ 
+    *** ESSENTIAL ***
+    Update child items from repeating panel to parent form items
+    Refer to the following reference links for detail
+    https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
+    https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
+    https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
+    """
+    child_items = []
     for c in self.input_repeating_panel.get_components():
-      print(c.input_data_panel_readonly.item)
+      child_items += [c.input_data_panel_readonly.item]
+    self.input_repeating_panel.items = child_items
     
     templ_id = anvil.server.call('generate_new_templ_id', 
                                  self.input_dropdown_templ.selected_value)
     
-    anvil.server.call('upsert_temp_template',
+    anvil.server.call('upsert_templates',
                       template_id=templ_id,
                       template_name=self.input_templ_name.text)
     
+    """ Delete all existing inputs before adding/updating """
+    anvil.server.call('delete_temp_input', 
+                      template_id=templ_id)
+    
+    """ Add/Update """
     for row in self.input_repeating_panel.items:
-      # TODO - DEBUG
-      print("symbol after clicking save=", row['symbol'])
       anvil.server.call('upsert_temp_input', 
                         iid=row['iid'], 
                         template_id=templ_id, 
@@ -89,6 +102,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                         sell_price=row['sell_price'], 
                         buy_price=row['buy_price'])
 
+    """ Reflect the change in template dropdown """
     self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
     self.input_dropdown_templ.selected_value = anvil.server.call('merge_templ_id_name', 
                                                                  templ_id, 
@@ -105,3 +119,19 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_pnl.text = ""
     self.input_sell_price.text = ""
     self.input_buy_price.text = ""
+
+  def button_delete_templ_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    templ_id = anvil.server.call('generate_new_templ_id', 
+                                 self.input_dropdown_templ.selected_value)
+    
+    anvil.server.call('delete_temp_input', 
+                      template_id=templ_id)
+    anvil.server.call('delete_templates', 
+                      template_id=templ_id)
+
+    """ Reflect the change in template dropdown """
+    self.input_dropdown_templ_show()
+    #self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
+    #self.input_templ_name.text = ""
+    self.input_repeating_panel.items = []

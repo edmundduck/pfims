@@ -47,8 +47,8 @@ db_schema:
     - name: buy_price
       admin_ui: {width: 200}
       type: number
-  temp_template:
-    title: temp_template
+  templates:
+    title: templates
     client: none
     server: full
     columns:

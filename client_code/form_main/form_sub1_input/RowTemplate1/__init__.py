@@ -11,14 +11,9 @@ class RowTemplate1(RowTemplate1Template):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
-    # TODO - DEBUG
-    print("self.item =", self.item['symbol'])
 
   def input_button_edit_click(self, **event_args):
     """This method is called when the button is clicked"""
-    # TODO - DEBUG
-    print("symbol when clicking edit=", self.item['symbol'])
-    
     self.input_row_selldate.date = self.item['sell_date']
     self.input_row_buydate.date = self.item['buy_date']
     self.input_row_symbol.text = self.item['symbol']
@@ -62,15 +57,10 @@ class RowTemplate1(RowTemplate1Template):
                  "buy_price": self.input_row_buy_price.text,
                  "iid": self.input_row_iid.text}
     
-    # TODO - DEBUG
-    self.refresh_data_bindings()
-    print("symbol when clicking edit save=", self.item['symbol'])
-
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
     
   def input_button_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.item.delete()
-    self.input_data_panel_readonly.remove_from_parent()
+    self.remove_from_parent()
 
