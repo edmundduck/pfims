@@ -6,8 +6,8 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from .form_sub1_dashb import form_sub1_dashb
 from .form_sub1_input import form_sub1_input
-from .form_sub1_reports import form_sub1_reports
 from .form_sub1_settings import form_sub1_settings
+from .form_sub2_tranx_reports import form_sub2_tranx_reports
 
 class form_main(form_mainTemplate):
   def __init__(self, **properties):
@@ -15,6 +15,7 @@ class form_main(form_mainTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
+    self.report_column_panel.visible = False
 
   def column_panel_link_dashb_click(self, **event_args):
     """This method is called when the link is clicked"""
@@ -28,13 +29,21 @@ class form_main(form_mainTemplate):
 
   def column_panel_link_reports_click(self, **event_args):
     """This method is called when the link is clicked"""
-    self.content_panel.clear()
-    self.content_panel.add_component(form_sub1_reports())
+    if self.report_column_panel.visible is True:
+      self.report_column_panel.visible = False
+    else:
+      self.report_column_panel.visible = True
 
   def column_panel_link_settings_click(self, **event_args):
     """This method is called when the link is clicked"""
     self.content_panel.clear()
     self.content_panel.add_component(form_sub1_settings())
+
+  def column_panel_2_link_tranx_list_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    self.content_panel.clear()
+    self.content_panel.add_component(form_sub2_tranx_reports())
+
 
 
 

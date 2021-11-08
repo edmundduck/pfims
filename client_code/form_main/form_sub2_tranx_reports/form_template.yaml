@@ -1,0 +1,51 @@
+container:
+  type: ColumnPanel
+  properties: {col_widths: '{}'}
+components:
+- type: FlowPanel
+  properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
+    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
+  name: flow_panel_1
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY'}
+  components:
+  - type: Label
+    properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Transaction List Report, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+      underline: false, icon: ''}
+    name: label_1
+    layout_properties: {}
+- type: FlowPanel
+  properties: {role: null, spacing: medium, align: left, tooltip: '', border: groove,
+    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+  name: flow_panel_2
+  layout_properties: {grid_position: 'TNVLSM,VTRLRG'}
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Time Interval, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_2
+    layout_properties: {}
+  - type: DropDown
+    properties: {}
+    name: drop_down_1
+    layout_properties: {}
+    event_bindings: {change: drop_down_1_change}
+  - type: DatePicker
+    properties: {}
+    name: date_picker_1
+    layout_properties: {}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: to, font_size: null, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
+    name: label_3
+    layout_properties: {}
+  - type: DatePicker
+    properties: {}
+    name: date_picker_2
+    layout_properties: {}
+is_package: true
