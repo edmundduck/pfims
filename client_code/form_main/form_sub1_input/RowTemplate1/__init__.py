@@ -11,6 +11,10 @@ class RowTemplate1(RowTemplate1Template):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
+    if self.item['pnl'] < 0:
+      self.foreground = 'Red'
+    else:
+      self.foreground = 'Green'
 
   def input_button_edit_click(self, **event_args):
     """This method is called when the button is clicked"""
