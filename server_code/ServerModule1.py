@@ -127,3 +127,8 @@ def get_input_templ_items(templ_choice_str):
   if not (templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT):
     listitems = list(app_tables.temp_input.search(template_id=split_templ_id(templ_choice_str)))
   return listitems
+
+@anvil.server.callable
+# Set precision
+def get_amt_with_stockprecision(amt):
+  return round(amt, 2)

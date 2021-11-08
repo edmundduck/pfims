@@ -31,8 +31,9 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "sales": self.input_sales.text,
                     "cost": self.input_cost.text,
                     "fee": self.input_fee.text,
-                    "sell_price": float(self.input_sales.text) / float(self.input_qty.text),
-                    "buy_price": float(self.input_cost.text) / float(self.input_qty.text),
+                    "sell_price": anvil.server.call('get_amt_with_stockprecision', float(self.input_sales.text) / float(self.input_qty.text)),
+                    "buy_price": anvil.server.call('get_amt_with_stockprecision', float(self.input_cost.text) / float(self.input_qty.text)),
+                    "pnl": anvil.server.call('get_amt_with_stockprecision', float(self.input_cost.text) - float(self.input_fee.text)),
                     "iid": int(last_iid)+1}
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
@@ -109,6 +110,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_fee.text = 0
     self.input_sell_price.text = ""
     self.input_buy_price.text = ""
+    self.input_pnl.text = ""
 
   def button_delete_templ_click(self, **event_args):
     """This method is called when the button is clicked"""

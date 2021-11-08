@@ -39,14 +39,14 @@ components:
     properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
       placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: null,
       font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
-      min_date: '', background: '', bold: false, underline: false, format: '%d/%m/%Y'}
+      min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
     name: input_row_selldate
     layout_properties: {column: DNGCRO}
   - type: DatePicker
     properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
       placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: null,
       font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
-      min_date: '', background: '', bold: false, underline: false, format: '%d/%m/%Y'}
+      min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
     name: input_row_buydate
     layout_properties: {column: MOWHRG}
   - type: TextBox
@@ -111,5 +111,9 @@ components:
       background: '', bold: false, underline: false}
     name: input_row_fee
     layout_properties: {column: LMHMKP}
+  - type: Label
+    properties: {}
+    name: input_row_pnl
+    layout_properties: {column: NMAPTI}
   data_bindings: []
 is_package: true

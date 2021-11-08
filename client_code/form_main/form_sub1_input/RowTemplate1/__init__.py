@@ -23,6 +23,7 @@ class RowTemplate1(RowTemplate1Template):
     self.input_row_fee.text = self.item['fee']
     self.input_row_sell_price.text = self.item['sell_price']
     self.input_row_buy_price.text = self.item['buy_price']
+    self.input_row_pnl.text = anvil.server.call('get_amt_with_stockprecision', float(self.item['sales']) - float(self.item['cost']))
     self.input_row_iid.text = self.item['iid']
     
     self.input_data_panel_readonly.visible = False
@@ -30,8 +31,10 @@ class RowTemplate1(RowTemplate1Template):
 
   def input_button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.input_row_sell_price.text = float(self.input_row_sales.text) / float(self.input_row_qty.text)
-    self.input_row_buy_price.text = float(self.input_row_cost.text) / float(self.input_row_qty.text)
+    self.input_row_sell_price.text = anvil.server.call('get_amt_with_stockprecision', float(self.input_row_sales.text) / float(self.input_row_qty.text))
+    self.input_row_buy_price.text = anvil.server.call('get_amt_with_stockprecision', float(self.input_row_cost.text) / float(self.input_row_qty.text))
+    self.input_row_pnl.text = anvil.server.call('get_amt_with_stockprecision', float(self.input_row_sales.text) - float(self.input_row_cost.text))
+    #round(float(self.input_row_sales.text) - float(self.input_row_cost.text), 2)
     
     # Lesson learnt ... THIS LINE DOESN'T WORK!!
     # new_data = {"sell_date": self.input_row_selldate.date,
@@ -54,6 +57,7 @@ class RowTemplate1(RowTemplate1Template):
                  "fee": self.input_row_fee.text,
                  "sell_price": self.input_row_sell_price.text,
                  "buy_price": self.input_row_buy_price.text,
+                 "pnl": self.input_row_pnl.text,
                  "iid": self.input_row_iid.text}
     
     self.input_data_panel_readonly.visible = True
