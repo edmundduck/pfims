@@ -35,13 +35,10 @@ db_schema:
     - name: sales
       admin_ui: {width: 200}
       type: number
-    - name: fee
-      admin_ui: {width: 200}
-      type: number
     - name: cost
       admin_ui: {width: 200}
       type: number
-    - name: pnl
+    - name: fee
       admin_ui: {width: 200}
       type: number
     - name: sell_price

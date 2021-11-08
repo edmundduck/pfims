@@ -36,11 +36,17 @@ components:
   layout_properties: {column: null}
   components:
   - type: DatePicker
-    properties: {}
+    properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
+      placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: null,
+      font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
+      min_date: '', background: '', bold: false, underline: false, format: '%d/%m/%Y'}
     name: input_row_selldate
     layout_properties: {column: DNGCRO}
   - type: DatePicker
-    properties: {}
+    properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
+      placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: null,
+      font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
+      min_date: '', background: '', bold: false, underline: false, format: '%d/%m/%Y'}
     name: input_row_buydate
     layout_properties: {column: MOWHRG}
   - type: TextBox
@@ -49,23 +55,38 @@ components:
     layout_properties: {column: RMITXR}
     data_bindings: []
   - type: TextBox
-    properties: {}
+    properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
     name: input_row_qty
     layout_properties: {column: DMKCOL}
   - type: TextBox
-    properties: {}
+    properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
     name: input_row_sales
     layout_properties: {column: JRLRWP}
   - type: TextBox
-    properties: {}
+    properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
     name: input_row_cost
     layout_properties: {column: WXPMEY}
   - type: Label
-    properties: {}
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+      visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
     name: input_row_sell_price
     layout_properties: {column: DGKRSZ}
   - type: Label
-    properties: {}
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+      visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
     name: input_row_buy_price
     layout_properties: {column: IFVNQY}
   - type: Button
@@ -84,15 +105,11 @@ components:
     name: input_row_iid
     layout_properties: {column: JNEVXO}
   - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+    properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: null,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
     name: input_row_fee
     layout_properties: {column: LMHMKP}
-  - type: Label
-    properties: {}
-    name: input_row_pnl
-    layout_properties: {column: LDRBZM}
   data_bindings: []
 is_package: true

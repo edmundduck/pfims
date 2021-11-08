@@ -4,6 +4,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from datetime import date
 
 class form_sub1_input(form_sub1_inputTemplate):
   def __init__(self, **properties):
@@ -14,15 +15,7 @@ class form_sub1_input(form_sub1_inputTemplate):
     
     # Initiate repeating panel items to an empty list otherwise will throw NoneType error
     self.input_repeating_panel.items = []
-
-    # TODO - Debug - populate test data - START
-    self.input_selldate.date = "2021-05-10"
-    self.input_buydate.date = "2021-04-19"
-    self.input_symbol.text = "AMD"
-    self.input_qty.text = 1000
-    self.input_sales.text = 10000
-    self.input_cost.text = 8000
-    # TODO - Debug - populate test data - END
+    self.input_selldate.date = date.today()
     
   def input_button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -38,7 +31,6 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "sales": self.input_sales.text,
                     "cost": self.input_cost.text,
                     "fee": self.input_fee.text,
-                    "pnl": float(self.input_sales.text) - float(self.input_cost.text),
                     "sell_price": float(self.input_sales.text) / float(self.input_qty.text),
                     "buy_price": float(self.input_cost.text) / float(self.input_qty.text),
                     "iid": int(last_iid)+1}
@@ -97,7 +89,6 @@ class form_sub1_input(form_sub1_inputTemplate):
                         sales=row['sales'], 
                         cost=row['cost'], 
                         fee=row['fee'], 
-                        pnl=row['pnl'], 
                         sell_price=row['sell_price'], 
                         buy_price=row['buy_price'])
 
@@ -116,22 +107,34 @@ class form_sub1_input(form_sub1_inputTemplate):
     self.input_sales.text = ""
     self.input_cost.text = ""
     self.input_fee.text = 0
-    self.input_pnl.text = ""
     self.input_sell_price.text = ""
     self.input_buy_price.text = ""
 
   def button_delete_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
-    templ_id = anvil.server.call('generate_new_templ_id', 
-                                 self.input_dropdown_templ.selected_value)
+    to_be_del_templ_name = self.input_dropdown_templ.selected_value
+    msg = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
+    userconf = alert(content=msg, 
+                     title=f"Alert - Template Deletion",
+                     buttons=[
+                       ("DELETE", "Y"),
+                       ("CANCEL", "N")
+                     ])
     
-    anvil.server.call('delete_temp_input', 
-                      template_id=templ_id)
-    anvil.server.call('delete_templates', 
-                      template_id=templ_id)
-
-    """ Reflect the change in template dropdown """
-    self.input_dropdown_templ_show()
-    #self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
-    #self.input_templ_name.text = ""
-    self.input_repeating_panel.items = []
+    if userconf == "Y":
+      templ_id = anvil.server.call('generate_new_templ_id', 
+                                  to_be_del_templ_name)
+      
+      anvil.server.call('delete_temp_input', 
+                        template_id=templ_id)
+      anvil.server.call('delete_templates', 
+                        template_id=templ_id)
+  
+      """ Reflect the change in template dropdown """
+      self.input_dropdown_templ_show()
+      #self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
+      #self.input_templ_name.text = ""
+      self.input_repeating_panel.items = []
+      
+      n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
+      n.show()

@@ -21,7 +21,6 @@ class RowTemplate1(RowTemplate1Template):
     self.input_row_sales.text = self.item['sales']
     self.input_row_cost.text = self.item['cost']
     self.input_row_fee.text = self.item['fee']
-    self.input_row_pnl.text = self.item['pnl']
     self.input_row_sell_price.text = self.item['sell_price']
     self.input_row_buy_price.text = self.item['buy_price']
     self.input_row_iid.text = self.item['iid']
@@ -31,7 +30,6 @@ class RowTemplate1(RowTemplate1Template):
 
   def input_button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.input_row_pnl.text = float(self.input_row_sales.text) - float(self.input_row_cost.text)
     self.input_row_sell_price.text = float(self.input_row_sales.text) / float(self.input_row_qty.text)
     self.input_row_buy_price.text = float(self.input_row_cost.text) / float(self.input_row_qty.text)
     
@@ -42,7 +40,6 @@ class RowTemplate1(RowTemplate1Template):
     #                "qty": self.input_row_qty.text,
     #                "sales": self.input_row_sales.text,
     #                "cost": self.input_row_cost.text,
-    #                "pnl": self.input_row_pnl.text,
     #                "sell_price": self.input_row_sell_price.text,
     #                "buy_price": self.input_row_buy_price.text,
     #                "iid": self.input_row_iid.text}
@@ -55,7 +52,6 @@ class RowTemplate1(RowTemplate1Template):
                  "sales": self.input_row_sales.text,
                  "cost": self.input_row_cost.text,
                  "fee": self.input_row_fee.text,
-                 "pnl": self.input_row_pnl.text,
                  "sell_price": self.input_row_sell_price.text,
                  "buy_price": self.input_row_buy_price.text,
                  "iid": self.input_row_iid.text}
