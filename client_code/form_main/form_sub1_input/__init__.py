@@ -31,9 +31,9 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "sales": self.input_sales.text,
                     "cost": self.input_cost.text,
                     "fee": self.input_fee.text,
-                    "sell_price": anvil.server.call('get_amt_with_stockprecision', float(self.input_sales.text) / float(self.input_qty.text)),
-                    "buy_price": anvil.server.call('get_amt_with_stockprecision', float(self.input_cost.text) / float(self.input_qty.text)),
-                    "pnl": anvil.server.call('get_amt_with_stockprecision', float(self.input_cost.text) - float(self.input_fee.text)),
+                    "sell_price": anvil.server.call('cal_price', self.input_sales.text, self.input_qty.text),
+                    "buy_price": anvil.server.call('cal_price', self.input_cost.text, self.input_qty.text),
+                    "pnl": anvil.server.call('cal_profit', self.input_cost.text, self.input_fee.text),
                     "iid": int(last_iid)+1}
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
@@ -91,7 +91,8 @@ class form_sub1_input(form_sub1_inputTemplate):
                         cost=row['cost'], 
                         fee=row['fee'], 
                         sell_price=row['sell_price'], 
-                        buy_price=row['buy_price'])
+                        buy_price=row['buy_price'],
+                        pnl=row['pnl'])
 
     """ Reflect the change in template dropdown """
     self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')

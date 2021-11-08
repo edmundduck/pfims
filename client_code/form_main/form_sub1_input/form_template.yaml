@@ -64,9 +64,9 @@ components:
     - {id: JRLRWP, title: Sales Amt, data_key: sales}
     - {id: WXPMEY, title: Cost Amt, data_key: cost}
     - {id: LMHMKP, title: Fee, data_key: fee}
-    - {id: DGKRSZ, title: Sell Price, data_key: sell_price}
-    - {id: IFVNQY, title: Buy Price, data_key: buy_price}
-    - {id: NMAPTI, title: P&L, data_key: pnl}
+    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: true}
+    - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: true}
+    - {id: NMAPTI, title: P&L, data_key: pnl, expand: true}
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '40'}
     - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '40'}
     - {id: JNEVXO, title: '', data_key: iid, width: '0'}

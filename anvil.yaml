@@ -47,6 +47,9 @@ db_schema:
     - name: buy_price
       admin_ui: {width: 200}
       type: number
+    - name: pnl
+      admin_ui: {width: 200}
+      type: number
   templates:
     title: templates
     client: none

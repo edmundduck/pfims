@@ -38,7 +38,7 @@ def merge_templ_id_name(templ_id, templ_name):
 
 @anvil.server.callable
 # DB table "temp_input" update/insert method
-def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price):
+def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl):
   rows = app_tables.temp_input.search(template_id=template_id, iid=iid)
   if len(list(rows)) != 0:
     for r in rows:
@@ -52,7 +52,8 @@ def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales,
                cost=float(cost), 
                fee=float(fee), 
                sell_price=float(sell_price), 
-               buy_price=float(buy_price))
+               buy_price=float(buy_price), 
+               pnl=float(pnl))
   else:
     app_tables.temp_input.add_row(iid=iid, 
                                   template_id=template_id, 
@@ -64,7 +65,8 @@ def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales,
                                   cost=float(cost),
                                   fee=float(fee),
                                   sell_price=float(sell_price),
-                                  buy_price=float(buy_price))
+                                  buy_price=float(buy_price), 
+                                  pnl=float(pnl))
 
 @anvil.server.callable
 # DB table "temp_input" delete method
@@ -130,5 +132,10 @@ def get_input_templ_items(templ_choice_str):
 
 @anvil.server.callable
 # Set precision
-def get_amt_with_stockprecision(amt):
-  return round(amt, 2)
+def cal_profit(sell, buy):
+  return round(float(sell) - float(buy), 2)
+
+@anvil.server.callable
+# Calculate stock sell/buy price
+def cal_price(amt, qty):
+  return round(float(amt) / float(qty), 2)
