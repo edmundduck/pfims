@@ -40,7 +40,7 @@ def get_L6M_start_date(end_date):
 
 # Internal function - Return start date of last 1 year
 def get_L1Y_start_date(end_date):
-  print(date(en) - timedelta(days=365))
+  print(date(end_date) - timedelta(days=365))
 
 # Internal function - Return the 1st date of the current year
 def get_YTD_start_date(end_date):
