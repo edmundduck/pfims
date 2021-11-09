@@ -1,4 +1,4 @@
-from ._anvil_designer import form_sub2_tranx_reportsTemplate
+from ._anvil_designer import form_sub2_tranx_reportTemplate
 from anvil import *
 import anvil.server
 import anvil.tables as tables
@@ -6,7 +6,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 
-class form_sub2_tranx_reports(form_sub2_tranx_reportsTemplate):
+class form_sub2_tranx_report(form_sub2_tranx_reportTemplate):
   interval_list = [("[Interval]", ""), 
                   ("Last 1 Month", "L1M"), 
                   ("Last 3 Month", "L3M"),
