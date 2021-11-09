@@ -61,4 +61,16 @@ class form_sub2_tranx_reports(form_sub2_tranx_reportsTemplate):
                                                               self.tranx_rpt_time_to_date.date, 
                                                               self.tranx_rpt_time_from_date.date)
 
+  def tranx_rpt_button_plus_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    b = Button(text=self.tranx_rpt_symbol_dropdown.selected_value,
+               icon='fa:minus',
+               foreground="White",
+               background="Blue")
+    b.add_event_handler('click', self.remove_symbol_button)
+    self.flow_panel_3.add_component(b)
+
+  def remove_symbol_button(self, **event_args):
+    self.flow_panel_3.
+
 
