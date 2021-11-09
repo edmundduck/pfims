@@ -40,7 +40,6 @@ def get_L3M_start_date(end_date):
 
 # Internal function - Return start date of last 6 months
 def get_L6M_start_date(end_date):
-  end_date = date(end_date.year, end_date.month-8, end_date.day)
   if end_date.month-6 < 1:
     return date(end_date.year-1, end_date.month+12-6, end_date.day)
   else:
@@ -62,7 +61,7 @@ def interval_default(end_date):
 # Get all symbols which were transacted between start and end date into the dropdown
 def get_symbol_dropdown_items(end_date, start_date):
   if end_date is not None and start_date is not None:
-    return list(sorted(set(row['symbol'] for row in app_tables.temp_input.search(sell_date=q.less_than(end_date), buy_date=q.greater_than(start_date)))))
+    return list(sorted(set(row['symbol'] for row in app_tables.templ_journals.search(sell_date=q.less_than(end_date), buy_date=q.greater_than(start_date)))))
   else:
     return []
 
@@ -78,3 +77,15 @@ def get_start_date(end_date, interval):
   }
   
   return switcher.get(interval, interval_default)(end_date)
+
+@anvil.server.callable
+# DB table "templ_journals" select method
+def select_templ_journals(end_date, start_date, symbols):
+  if len(symbols) > 0:
+    return app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
+                                            buy_date=q.greater_than_or_equal_to(start_date),
+                                            symbol=q.any_of(*symbols))
+  else:
+    return app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
+                                            buy_date=q.greater_than_or_equal_to(start_date))
+    

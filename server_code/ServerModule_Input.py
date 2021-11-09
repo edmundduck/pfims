@@ -37,9 +37,9 @@ def merge_templ_id_name(templ_id, templ_name):
   return templ_id + " - " + templ_name
 
 @anvil.server.callable
-# DB table "temp_input" update/insert method
-def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl):
-  rows = app_tables.temp_input.search(template_id=template_id, iid=iid)
+# DB table "templ_journals" update/insert method
+def upsert_templ_journals(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl):
+  rows = app_tables.templ_journals.search(template_id=template_id, iid=iid)
   if len(list(rows)) != 0:
     for r in rows:
       r.update(iid=iid, 
@@ -55,7 +55,7 @@ def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales,
                buy_price=float(buy_price), 
                pnl=float(pnl))
   else:
-    app_tables.temp_input.add_row(iid=iid, 
+    app_tables.templ_journals.add_row(iid=iid, 
                                   template_id=template_id, 
                                   sell_date=sell_date,
                                   buy_date=buy_date,
@@ -69,9 +69,9 @@ def upsert_temp_input(iid, template_id, sell_date, buy_date, symbol, qty, sales,
                                   pnl=float(pnl))
 
 @anvil.server.callable
-# DB table "temp_input" delete method
-def delete_temp_input(template_id):
-  rows = app_tables.temp_input.search(template_id=template_id)
+# DB table "templ_journals" delete method
+def delete_templ_journals(template_id):
+  rows = app_tables.templ_journals.search(template_id=template_id)
   if len(list(rows)) != 0:
     for r in rows:
       r.delete()
@@ -127,7 +127,7 @@ def get_input_templ_list():
 def get_input_templ_items(templ_choice_str):
   listitems = []
   if not (templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT):
-    listitems = list(app_tables.temp_input.search(template_id=split_templ_id(templ_choice_str)))
+    listitems = list(app_tables.templ_journals.search(template_id=split_templ_id(templ_choice_str)))
   return listitems
 
 @anvil.server.callable

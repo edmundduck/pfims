@@ -173,7 +173,7 @@ components:
       layout_properties: {column: NMAPTI}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_sub1_input.RowTemplate1,
+      visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_sub1_input.input_template,
       background: ''}
     name: input_repeating_panel
     layout_properties: {}

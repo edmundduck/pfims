@@ -75,12 +75,12 @@ class form_sub1_input(form_sub1_inputTemplate):
                       template_name=self.input_templ_name.text)
     
     """ Delete all existing inputs before adding/updating """
-    anvil.server.call('delete_temp_input', 
+    anvil.server.call('delete_templ_journals', 
                       template_id=templ_id)
     
     """ Add/Update """
     for row in self.input_repeating_panel.items:
-      anvil.server.call('upsert_temp_input', 
+      anvil.server.call('upsert_templ_journals', 
                         iid=row['iid'], 
                         template_id=templ_id, 
                         sell_date=row['sell_date'], 
@@ -128,7 +128,7 @@ class form_sub1_input(form_sub1_inputTemplate):
       templ_id = anvil.server.call('generate_new_templ_id', 
                                   to_be_del_templ_name)
       
-      anvil.server.call('delete_temp_input', 
+      anvil.server.call('delete_templ_journals', 
                         template_id=templ_id)
       anvil.server.call('delete_templates', 
                         template_id=templ_id)

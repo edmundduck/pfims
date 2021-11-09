@@ -31,8 +31,10 @@ class form_main(form_mainTemplate):
     """This method is called when the link is clicked"""
     if self.report_column_panel.visible is True:
       self.report_column_panel.visible = False
+      self.column_panel_link_reports.icon = 'fa:caret-right'
     else:
       self.report_column_panel.visible = True
+      self.column_panel_link_reports.icon = 'fa:caret-down'
 
   def column_panel_link_settings_click(self, **event_args):
     """This method is called when the link is clicked"""

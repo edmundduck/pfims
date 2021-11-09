@@ -1,0 +1,11 @@
+components:
+- type: Label
+  properties: {}
+  name: hidden_use_only
+  layout_properties: {column: JNEVXO}
+container:
+  type: DataRowPanel
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
+    visible: true, font_size: null, font: '', spacing_above: none, spacing_below: none,
+    italic: false, background: '', bold: false, underline: false}
+  data_bindings: []
