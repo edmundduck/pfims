@@ -30,22 +30,22 @@ components:
     layout_properties: {}
   - type: DropDown
     properties: {}
-    name: drop_down_1
+    name: tranx_rpt_time_dropdown
     layout_properties: {}
-    event_bindings: {}
+    event_bindings: {change: tranx_rpt_time_dropdown_change}
   - type: DatePicker
     properties: {}
-    name: date_picker_1
+    name: tranx_rpt_time_from_date
     layout_properties: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: to, font_size: null, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
-    name: label_3
+    name: tranx_rpt_time_to_label
     layout_properties: {}
   - type: DatePicker
     properties: {}
-    name: date_picker_2
+    name: tranx_rpt_time_to_date
     layout_properties: {}
 is_package: true
