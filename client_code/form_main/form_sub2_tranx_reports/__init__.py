@@ -68,9 +68,9 @@ class form_sub2_tranx_reports(form_sub2_tranx_reportsTemplate):
                foreground="White",
                background="Blue")
     b.add_event_handler('click', self.remove_symbol_button)
-    self.flow_panel_3.add_component(b)
+    self.flow_panel_3.add_component(b, name=self.tranx_rpt_symbol_dropdown.selected_value)
 
   def remove_symbol_button(self, **event_args):
-    self.remove_from_parent()
-
-
+    #self.remove_from_parent()
+    print(self)
+  
