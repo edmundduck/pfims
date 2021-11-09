@@ -32,10 +32,15 @@ class form_sub2_tranx_reports(form_sub2_tranx_reportsTemplate):
       self.tranx_rpt_time_from_date.enabled = False
       self.tranx_rpt_time_to_date.enabled = False
       self.tranx_rpt_time_to_label.enabled = False
-      anvil.server.call('get_start_date', date.today(), self.tranx_rpt_time_dropdown.selected_value)
+      self.tranx_rpt_symbol_dropdown.items = self.tranx_rpt_symbol_dropdown.items + anvil.server.call('get_symbol_dropdown_items', 
+                                                               date.today(), 
+                                                               anvil.server.call('get_start_date', 
+                                                                                 date.today(), 
+                                                                                 self.tranx_rpt_time_dropdown.selected_value))
     else:
       self.tranx_rpt_time_from_date.enabled = True
       self.tranx_rpt_time_to_date.enabled = True
       self.tranx_rpt_time_to_label.enabled = True
-    
-    #anvil.server.call('get_symbol_dropdown_items')
+      self.tranx_rpt_symbol_dropdown.items = self.tranx_rpt_symbol_dropdown.items + anvil.server.call('get_symbol_dropdown_items', 
+                                                               self.tranx_rpt_time_to_date.date, 
+                                                               self.tranx_rpt_time_from_date.date)
