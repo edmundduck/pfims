@@ -15,21 +15,27 @@ components:
       underline: false, icon: ''}
     name: label_1
     layout_properties: {}
-- type: FlowPanel
-  properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
-    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
-  name: flow_panel_2
-  layout_properties: {grid_position: 'TNVLSM,VTRLRG'}
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_1
+  layout_properties: {grid_position: 'TNVLSM,YBUOQF'}
   components:
+  - type: Label
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Interval ', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_2
+    layout_properties: {grid_position: 'SVNURG,LMOPUE'}
   - type: DropDown
     properties: {}
     name: tranx_rpt_time_dropdown
-    layout_properties: {}
+    layout_properties: {grid_position: 'SVNURG,CGSFIB'}
     event_bindings: {change: tranx_rpt_time_dropdown_change}
   - type: DatePicker
     properties: {}
     name: tranx_rpt_time_from_date
-    layout_properties: {}
+    layout_properties: {grid_position: 'SVNURG,FOCPNB'}
     event_bindings: {change: tranx_rpt_time_from_date_change}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -37,21 +43,28 @@ components:
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: tranx_rpt_time_to_label
-    layout_properties: {}
+    layout_properties: {grid_position: 'SVNURG,FHFBEI'}
   - type: DatePicker
     properties: {}
     name: tranx_rpt_time_to_date
-    layout_properties: {}
+    layout_properties: {grid_position: 'SVNURG,SPAIGB'}
     event_bindings: {change: tranx_rpt_time_to_date_change}
+  - type: Label
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+      visible: true, text: Symbol, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_3
+    layout_properties: {grid_position: 'FLAWCB,BQECIK'}
   - type: DropDown
     properties: {}
     name: tranx_rpt_symbol_dropdown
-    layout_properties: {}
+    layout_properties: {grid_position: 'FLAWCB,NVJSHO'}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: 'fa:plus'}
     name: tranx_rpt_button_plus
-    layout_properties: {}
+    layout_properties: {grid_position: 'FLAWCB,WXPDRR'}
 is_package: true
