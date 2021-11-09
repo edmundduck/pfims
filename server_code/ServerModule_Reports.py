@@ -61,9 +61,7 @@ def interval_default(end_date):
 @anvil.server.callable
 # Get all symbols which were transacted between start and end date into the dropdown
 def get_symbol_dropdown_items(end_date, start_date):
-  # TODO DEBUG
-  print(end_date, start_date)
-  if start_date is not None:
+  if end_date is not None and start_date is not None:
     return list(sorted(set(row['symbol'] for row in app_tables.temp_input.search(sell_date=q.less_than(end_date), buy_date=q.greater_than(start_date)))))
   else:
     return []
