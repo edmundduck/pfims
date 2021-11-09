@@ -71,6 +71,6 @@ class form_sub2_tranx_reports(form_sub2_tranx_reportsTemplate):
     self.flow_panel_3.add_component(b)
 
   def remove_symbol_button(self, **event_args):
-    self.flow_panel_3.
+    self.parent.
 
 
