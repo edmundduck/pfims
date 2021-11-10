@@ -37,7 +37,7 @@ class input_template(input_templateTemplate):
     """This method is called when the button is clicked"""
     self.input_row_sell_price.text = anvil.server.call('cal_price' ,self.input_row_sales.text, self.input_row_qty.text)
     self.input_row_buy_price.text = anvil.server.call('cal_price', self.input_row_cost.text, self.input_row_qty.text)
-    self.input_row_pnl.text = anvil.server.call('cal_profit', self.input_row_sales.text, self.input_row_cost.text)
+    self.input_row_pnl.text = anvil.server.call('cal_profit', self.input_row_sales.text, self.input_row_cost.text, self.input_row_fee.text)
     
     # Lesson learnt ... THIS LINE DOESN'T WORK!!
     # new_data = {"sell_date": self.input_row_selldate.date,

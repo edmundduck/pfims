@@ -33,7 +33,7 @@ class form_sub1_input(form_sub1_inputTemplate):
                     "fee": self.input_fee.text,
                     "sell_price": anvil.server.call('cal_price', self.input_sales.text, self.input_qty.text),
                     "buy_price": anvil.server.call('cal_price', self.input_cost.text, self.input_qty.text),
-                    "pnl": anvil.server.call('cal_profit', self.input_cost.text, self.input_fee.text),
+                    "pnl": anvil.server.call('cal_profit', self.input_sales.text, self.input_cost.text, self.input_fee.text),
                     "iid": int(last_iid)+1}
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]

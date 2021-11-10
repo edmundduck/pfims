@@ -132,8 +132,8 @@ def get_input_templ_items(templ_choice_str):
 
 @anvil.server.callable
 # Set precision
-def cal_profit(sell, buy):
-  return round(float(sell) - float(buy), 2)
+def cal_profit(sell, buy, fee):
+  return round(float(sell) - float(buy) - float(fee), 2)
 
 @anvil.server.callable
 # Calculate stock sell/buy price
