@@ -46,9 +46,3 @@ class form_main(form_mainTemplate):
     self.content_panel.clear()
     self.content_panel.add_component(form_sub2_tranx_report())
 
-
-
-
-
-
-
