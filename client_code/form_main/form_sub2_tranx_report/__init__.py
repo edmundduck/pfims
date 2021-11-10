@@ -24,6 +24,7 @@ class form_sub2_tranx_report(form_sub2_tranx_reportTemplate):
     # Any code you write here will run when the form opens.
     self.tranx_rpt_time_dropdown.items = self.interval_list
     self.tranx_rpt_symbol_dropdown.items = self.symbol_list
+    self.data_grid.rows_per_page = self.tranx_rpt_displayrow_dropdown.selected_value
     # Prevent from adding default value "[Symbol]" by registering to the dictionary
     self.tag = {'added_symbols': {self.symbol_list[0][1]: 1}}
 
@@ -127,3 +128,7 @@ class form_sub2_tranx_report(form_sub2_tranx_reportTemplate):
     self.tranx_rpt_symbol_dropdown.items = self.symbol_list
     self.removeall_selected_symbols()
     self.tranx_rpt_repeating_panel.items = []
+
+  def tranx_rpt_displayrow_dropdown_change(self, **event_args):
+    """This method is called when an item is selected"""
+    self.data_grid.rows_per_page = self.tranx_rpt_displayrow_dropdown.selected_value

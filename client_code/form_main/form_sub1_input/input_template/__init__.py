@@ -18,50 +18,50 @@ class input_template(input_templateTemplate):
 
   def input_button_edit_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.input_row_selldate.date = self.item['sell_date']
-    self.input_row_buydate.date = self.item['buy_date']
-    self.input_row_symbol.text = self.item['symbol']
-    self.input_row_qty.text = self.item['qty']
-    self.input_row_sales.text = self.item['sales']
-    self.input_row_cost.text = self.item['cost']
-    self.input_row_fee.text = self.item['fee']
-    self.input_row_sell_price.text = self.item['sell_price']
-    self.input_row_buy_price.text = self.item['buy_price']
-    self.input_row_pnl.text = self.item['pnl']
-    self.input_row_iid.text = self.item['iid']
+    self.row_selldate.date = self.item['sell_date']
+    self.row_buydate.date = self.item['buy_date']
+    self.row_symbol.text = self.item['symbol']
+    self.row_qty.text = self.item['qty']
+    self.row_sales.text = self.item['sales']
+    self.row_cost.text = self.item['cost']
+    self.row_fee.text = self.item['fee']
+    self.row_sell_price.text = self.item['sell_price']
+    self.row_buy_price.text = self.item['buy_price']
+    self.row_pnl.text = self.item['pnl']
+    self.row_iid.text = self.item['iid']
     
     self.input_data_panel_readonly.visible = False
     self.input_data_panel_editable.visible = True
 
   def input_button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.input_row_sell_price.text = anvil.server.call('cal_price' ,self.input_row_sales.text, self.input_row_qty.text)
-    self.input_row_buy_price.text = anvil.server.call('cal_price', self.input_row_cost.text, self.input_row_qty.text)
-    self.input_row_pnl.text = anvil.server.call('cal_profit', self.input_row_sales.text, self.input_row_cost.text, self.input_row_fee.text)
+    self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
+    self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
+    self.row_pnl.text = anvil.server.call('cal_profit', self.row_sales.text, self.row_cost.text, self.row_fee.text)
     
     # Lesson learnt ... THIS LINE DOESN'T WORK!!
-    # new_data = {"sell_date": self.input_row_selldate.date,
-    #                "buy_date": self.input_row_buydate.date,
-    #                "symbol": self.input_row_symbol.text,
-    #                "qty": self.input_row_qty.text,
-    #                "sales": self.input_row_sales.text,
-    #                "cost": self.input_row_cost.text,
-    #                "sell_price": self.input_row_sell_price.text,
-    #                "buy_price": self.input_row_buy_price.text,
-    #                "iid": self.input_row_iid.text}
-    # self.item = self.input_row_symbol.text
+    # new_data = {"sell_date": self.row_selldate.date,
+    #                "buy_date": self.row_buydate.date,
+    #                "symbol": self.row_symbol.text,
+    #                "qty": self.row_qty.text,
+    #                "sales": self.row_sales.text,
+    #                "cost": self.row_cost.text,
+    #                "sell_price": self.row_sell_price.text,
+    #                "buy_price": self.row_buy_price.text,
+    #                "iid": self.row_iid.text}
+    # self.item = self.row_symbol.text
     # self.item = new_data
-    self.item = {"sell_date": self.input_row_selldate.date,
-                 "buy_date": self.input_row_buydate.date,
-                 "symbol": self.input_row_symbol.text,
-                 "qty": self.input_row_qty.text,
-                 "sales": self.input_row_sales.text,
-                 "cost": self.input_row_cost.text,
-                 "fee": self.input_row_fee.text,
-                 "sell_price": self.input_row_sell_price.text,
-                 "buy_price": self.input_row_buy_price.text,
-                 "pnl": self.input_row_pnl.text,
-                 "iid": self.input_row_iid.text}
+    self.item = {"sell_date": self.row_selldate.date,
+                 "buy_date": self.row_buydate.date,
+                 "symbol": self.row_symbol.text,
+                 "qty": self.row_qty.text,
+                 "sales": self.row_sales.text,
+                 "cost": self.row_cost.text,
+                 "fee": self.row_fee.text,
+                 "sell_price": self.row_sell_price.text,
+                 "buy_price": self.row_buy_price.text,
+                 "pnl": self.row_pnl.text,
+                 "iid": self.row_iid.text}
     
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False

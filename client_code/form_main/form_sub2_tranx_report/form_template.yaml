@@ -157,7 +157,7 @@ components:
     spacing_above: small
     spacing_below: small
     background: ''
-  name: data_grid_1
+  name: data_grid
   layout_properties:
     col_widths: {}
     grid_position: ZLVMXC,LTILAR
@@ -202,7 +202,8 @@ components:
         bold: false
         underline: false
         include_placeholder: false
-      name: drop_down_1
+      name: tranx_rpt_displayrow_dropdown
       layout_properties: {}
+      event_bindings: {change: tranx_rpt_displayrow_dropdown_change}
   data_bindings: []
 is_package: true

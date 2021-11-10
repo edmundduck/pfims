@@ -26,6 +26,42 @@ components:
     name: input_button_delete
     layout_properties: {column: TOZXSD}
     event_bindings: {click: input_button_delete_click}
+  - type: Label
+    properties: {}
+    name: row_label_sales
+    layout_properties: {column: JRLRWP}
+    data_bindings:
+    - {property: text, code: '"{0:.2f}".format(self.item[''sales''])'}
+  - type: Label
+    properties: {}
+    name: row_label_cost
+    layout_properties: {column: WXPMEY}
+    data_bindings:
+    - {property: text, code: '"{0:.2f}".format(self.item[''cost''])'}
+  - type: Label
+    properties: {}
+    name: row_label_fee
+    layout_properties: {column: LMHMKP}
+    data_bindings:
+    - {property: text, code: '"{0:.2f}".format(self.item[''fee''])'}
+  - type: Label
+    properties: {}
+    name: row_label_sell_price
+    layout_properties: {column: DGKRSZ}
+    data_bindings:
+    - {property: text, code: '"{0:.2f}".format(self.item[''sell_price''])'}
+  - type: Label
+    properties: {}
+    name: row_label_buy_price
+    layout_properties: {column: IFVNQY}
+    data_bindings:
+    - {property: text, code: '"{0:.2f}".format(self.item[''buy_price''])'}
+  - type: Label
+    properties: {}
+    name: row_label_pnl
+    layout_properties: {column: NMAPTI}
+    data_bindings:
+    - {property: text, code: '"{0:.2f}".format(self.item[''pnl''])'}
   data_bindings:
   - {property: item, code: self.item}
 - type: DataRowPanel
@@ -40,18 +76,18 @@ components:
       placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: null,
       font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
       min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-    name: input_row_selldate
+    name: row_selldate
     layout_properties: {column: DNGCRO}
   - type: DatePicker
     properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
       placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: null,
       font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
       min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-    name: input_row_buydate
+    name: row_buydate
     layout_properties: {column: MOWHRG}
   - type: TextBox
     properties: {}
-    name: input_row_symbol
+    name: row_symbol
     layout_properties: {column: RMITXR}
     data_bindings: []
   - type: TextBox
@@ -59,42 +95,42 @@ components:
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
-    name: input_row_qty
+    name: row_qty
     layout_properties: {column: DMKCOL}
   - type: TextBox
     properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
-    name: input_row_sales
+    name: row_sales
     layout_properties: {column: JRLRWP}
   - type: TextBox
     properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
-    name: input_row_cost
+    name: row_cost
     layout_properties: {column: WXPMEY}
   - type: Label
     properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
       visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
-    name: input_row_sell_price
+    name: row_sell_price
     layout_properties: {column: DGKRSZ}
   - type: Label
     properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
       visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
-    name: input_row_buy_price
+    name: row_buy_price
     layout_properties: {column: IFVNQY}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: button_3, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: 'fa:floppy-o'}
-    name: input_button_save
+    name: button_save
     layout_properties: {column: YAYOIZ}
     event_bindings: {click: input_button_save_click}
   - type: Label
@@ -109,11 +145,11 @@ components:
       border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: null,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
-    name: input_row_fee
+    name: row_fee
     layout_properties: {column: LMHMKP}
   - type: Label
     properties: {}
-    name: input_row_pnl
+    name: row_pnl
     layout_properties: {column: NMAPTI}
   data_bindings: []
 is_package: true
