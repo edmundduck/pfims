@@ -7,6 +7,7 @@ from anvil.tables import app_tables
 from datetime import date
 from ... import global_var
 from ..form_lv2_tranx_list import form_lv2_tranx_list
+from ..form_lv2_pnl_report import form_lv2_pnl_report
 
 class form_lv2_search_panel(form_lv2_search_panelTemplate):
   interval_list = [("[Interval]", ""), 
@@ -32,9 +33,17 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     if subform == global_var.form_lv2_tranx_list():
       self.subform = form_lv2_tranx_list()
       self.colpanel_list.add_component(self.subform)
+      self.panel_tranx_list.visible = True
+      self.panel_pnl_report.visible = False
     elif subform == global_var.form_lv2_pnl_report():
-      #self.subform = open_form()
-      pass
+      self.subform = form_lv2_pnl_report()
+      self.colpanel_list.add_component(self.subform)
+      self.panel_tranx_list.visible = False
+      self.panel_pnl_report.visible = True
+    else:
+      # If error, show no buttons
+      self.panel_tranx_list.visible = False
+      self.panel_pnl_report.visible = False
    
     # Prevent from adding default value "[Symbol]" by registering to the dictionary
     self.tag = {'added_symbols': {self.symbol_list[0][1]: 1}}
@@ -120,7 +129,7 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
 
     b.remove_from_parent()
 
-  def tranx_rpt_button_search_click(self, **event_args):
+  def button_tranx_search_click(self, **event_args):
     """This method is called when the button is clicked"""
     symbol_list = self.get_selected_symbols()
     if self.dropdown_interval.selected_value != "SDR":
@@ -136,7 +145,7 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
                                                self.time_datefrom.date, 
                                                symbol_list)
 
-  def tranx_rpt_button_reset_click(self, **event_args):
+  def button_tranx_reset_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.time_datefrom.date = ""
     self.time_dateto.date = ""

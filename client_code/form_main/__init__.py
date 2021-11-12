@@ -9,8 +9,8 @@ from .form_lv1_dashb import form_lv1_dashb
 from .form_lv1_input import form_lv1_input
 from .form_lv1_settings import form_lv1_settings
 from .form_lv2_search_panel import form_lv2_search_panel
+from .form_lv2_pnl_report import form_lv2_pnl_report
 from .form_sub2_tranx_report import form_sub2_tranx_report
-from .form_sub2_pnl_mth_rpt import form_sub2_pnl_mth_rpt
 from .form_testa import form_testa
 
 class form_main(form_mainTemplate):
@@ -74,7 +74,7 @@ class form_main(form_mainTemplate):
     """This method is called when the link is clicked"""
     self.reset_link_status()
     self.content_panel.clear()
-    self.content_panel.add_component(form_sub2_pnl_mth_rpt())
+    self.content_panel.add_component(form_lv2_search_panel(global_var.form_lv2_pnl_report()))
     self.colpanel_link_reports.role = 'selected'
     self.colpanel_lv2link_pnl_report.role = 'selected'
 
