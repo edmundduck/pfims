@@ -20,16 +20,28 @@ class form_main(form_mainTemplate):
     # Any code you write here will run when the form opens.
     self.report_column_panel_1.visible = False
     self.report_column_panel_2.visible = False
+  
+  def reset_link_status(self, **event_args):
+    self.column_panel_link_dashb.role = ''
+    self.column_panel_link_input.role = ''
+    self.column_panel_link_reports.role = ''
+    self.column_panel_link_settings.role = ''
+    self.column_panel_2_link_tranx_list.role = ''
+    self.column_panel_2_link_pnl_mth_rpt.role = ''
 
   def column_panel_link_dashb_click(self, **event_args):
     """This method is called when the link is clicked"""
+    self.reset_link_status()
     self.content_panel.clear()
     self.content_panel.add_component(form_sub1_dashb())
+    self.column_panel_link_dashb.role = 'selected'
 
   def column_panel_link_input_click(self, **event_args):
     """This method is called when the link is clicked"""
+    self.reset_link_status()
     self.content_panel.clear()
     self.content_panel.add_component(form_sub1_input())
+    self.column_panel_link_input.role = 'selected'
 
   def column_panel_link_reports_click(self, **event_args):
     """This method is called when the link is clicked"""
@@ -44,22 +56,28 @@ class form_main(form_mainTemplate):
 
   def column_panel_link_settings_click(self, **event_args):
     """This method is called when the link is clicked"""
+    self.reset_link_status()
     self.content_panel.clear()
     self.content_panel.add_component(form_sub1_settings())
+    self.column_panel_link_settings.role = 'selected'
 
   def column_panel_2_link_tranx_list_click(self, **event_args):
     """This method is called when the link is clicked"""
+    self.reset_link_status()
     self.content_panel.clear()
     self.content_panel.add_component(form_sub2_tranx_report())
+    self.column_panel_link_reports.role = 'selected'
+    self.column_panel_2_link_tranx_list.role = 'selected'
 
   def column_panel_2_link_pnl_mth_rpt_click(self, **event_args):
     """This method is called when the link is clicked"""
+    self.reset_link_status()
     self.content_panel.clear()
     self.content_panel.add_component(form_sub2_pnl_mth_rpt())
-    self.content_panel.add_component(form_sub2_tranx_report())
+    self.column_panel_link_reports.role = 'selected'
+    self.column_panel_2_link_pnl_mth_rpt.role = 'selected'
 
-  def test_link_click(self, **event_args):
+  def poc_link_click(self, **event_args):
     """This method is called when the link is clicked"""
     self.content_panel.clear()
-    self.content_panel.add_component(form_testa())
-    self.content_panel.add_component(form_testb())
+    self.content_panel.add_component(form_testa('form_b'))
