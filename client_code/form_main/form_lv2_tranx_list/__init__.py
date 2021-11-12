@@ -6,7 +6,6 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 
 class form_lv2_tranx_list(form_lv2_tranx_listTemplate):
-  
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)

@@ -5,6 +5,8 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
+from ... import global_var
+from ..form_lv2_tranx_list import form_lv2_tranx_list
 
 class form_lv2_search_panel(form_lv2_search_panelTemplate):
   interval_list = [("[Interval]", ""), 
@@ -16,14 +18,23 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
                   ("Self Defined Range", "SDR")]
   
   symbol_list = [("[Symbol]", "")]
+  
+  subform = None
 
-  def __init__(self, **properties):
+  def __init__(self, subform, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
     self.dropdown_interval.items = self.interval_list
     self.dropdown_symbol.items = self.symbol_list
+    
+    if subform == global_var.form_lv2_tranx_list():
+      self.subform = form_lv2_tranx_list()
+      self.colpanel_list.add_component(self.subform)
+    elif subform == global_var.form_lv2_pnl_report():
+      #self.subform = open_form()
+      pass
    
     # Prevent from adding default value "[Symbol]" by registering to the dictionary
     self.tag = {'added_symbols': {self.symbol_list[0][1]: 1}}
@@ -113,17 +124,17 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     """This method is called when the button is clicked"""
     symbol_list = self.get_selected_symbols()
     if self.dropdown_interval.selected_value != "SDR":
-      self.tranx_rpt_repeating_panel.items = anvil.server.call('select_templ_journals', 
-                                                               date.today(), 
-                                                               anvil.server.call('get_start_date', 
-                                                                                 date.today(), 
-                                                                                 self.dropdown_interval.selected_value), 
-                                                               symbol_list)
+      self.rpt_panel.items = anvil.server.call('select_templ_journals', 
+                                               date.today(), 
+                                               anvil.server.call('get_start_date', 
+                                                                 date.today(), 
+                                                                 self.dropdown_interval.selected_value), 
+                                               symbol_list)
     else:
-      self.tranx_rpt_repeating_panel.items = anvil.server.call('select_templ_journals', 
-                                                               self.time_dateto.date, 
-                                                               self.time_datefrom.date, 
-                                                               symbol_list)
+      self.rpt_panel.items = anvil.server.call('select_templ_journals', 
+                                               self.time_dateto.date, 
+                                               self.time_datefrom.date, 
+                                               symbol_list)
 
   def tranx_rpt_button_reset_click(self, **event_args):
     """This method is called when the button is clicked"""

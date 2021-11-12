@@ -4,6 +4,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from .. import global_var
 from .form_sub1_dashb import form_sub1_dashb
 from .form_sub1_input import form_sub1_input
 from .form_sub1_settings import form_sub1_settings
@@ -66,7 +67,7 @@ class form_main(form_mainTemplate):
     """This method is called when the link is clicked"""
     self.reset_link_status()
     self.content_panel.clear()
-    self.content_panel.add_component(form_lv2_search_panel())
+    self.content_panel.add_component(form_lv2_search_panel(global_var.form_lv2_tranx_list()))
     self.colpanel_link_reports.role = 'selected'
     self.colpanel_lv2link_search_panel.role = 'selected'
 
@@ -89,5 +90,4 @@ class form_main(form_mainTemplate):
   def poc_link_click(self, **event_args):
     """This method is called when the link is clicked"""
     self.content_panel.clear()
-    self.content_panel.add_component(form_testa('form_b'))
-
+    self.content_panel.add_component(form_testa(global_var.form_lv2_tranx_list()))
