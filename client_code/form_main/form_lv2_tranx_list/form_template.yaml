@@ -1,0 +1,99 @@
+components:
+- type: FlowPanel
+  properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
+    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
+  name: flow_panel_1
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY'}
+  components:
+  - type: Label
+    properties: {}
+    name: spacer4
+    layout_properties: {}
+  - type: Label
+    properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Transaction List Report, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+      underline: false, icon: ''}
+    name: label_1
+    layout_properties: {}
+- type: DataGrid
+  properties:
+    role: null
+    columns:
+    - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '130'}
+    - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '130'}
+    - {id: RMITXR, title: Symbol, data_key: symbol}
+    - {id: DMKCOL, title: Qty, data_key: qty}
+    - {id: JRLRWP, title: Sales Amt, data_key: sales}
+    - {id: WXPMEY, title: Cost Amt, data_key: cost}
+    - {id: LMHMKP, title: Fee, data_key: fee}
+    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: true}
+    - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: true}
+    - {id: NMAPTI, title: P&L, data_key: pnl, expand: true}
+    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 20
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  name: data_grid
+  layout_properties:
+    col_widths: {}
+    grid_position: ZLVMXC,LTILAR
+  components:
+  - type: RepeatingPanel
+    properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
+      visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_sub2_tranx_report.tranx_rpt_template,
+      background: ''}
+    name: tranx_rpt_repeating_panel
+    layout_properties: {}
+    data_bindings: []
+  - type: FlowPanel
+    properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
+      foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+    name: flow_panel_4
+    layout_properties: {slot: footer}
+    components:
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: Rows per Page, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: ''}
+      name: label_4
+      layout_properties: {}
+    - type: DropDown
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: ''
+        border: ''
+        enabled: true
+        foreground: ''
+        items: ['20', '50', '100']
+        visible: true
+        font_size: null
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: false
+      name: dropdown_displayrow
+      layout_properties: {}
+      event_bindings: {change: tranx_rpt_displayrow_dropdown_change}
+  data_bindings: []
+container:
+  type: ColumnPanel
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+    spacing_below: small, background: ''}
+is_package: true
