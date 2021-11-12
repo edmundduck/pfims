@@ -1,4 +1,4 @@
-from ._anvil_designer import form_sub1_inputTemplate
+from ._anvil_designer import form_lv1_inputTemplate
 from anvil import *
 import anvil.server
 import anvil.tables as tables
@@ -6,7 +6,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 
-class form_sub1_input(form_sub1_inputTemplate):
+class form_lv1_input(form_lv1_inputTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)

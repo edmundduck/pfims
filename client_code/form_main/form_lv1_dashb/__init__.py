@@ -1,11 +1,11 @@
-from ._anvil_designer import form_sub1_settingsTemplate
+from ._anvil_designer import form_lv1_dashbTemplate
 from anvil import *
 import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 
-class form_sub1_settings(form_sub1_settingsTemplate):
+class form_lv1_dashb(form_lv1_dashbTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
