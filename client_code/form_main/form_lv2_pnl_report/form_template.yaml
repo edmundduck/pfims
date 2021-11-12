@@ -11,7 +11,7 @@ components:
     layout_properties: {}
   - type: Label
     properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: P&L by Month Report, font_size: null, font: '', spacing_above: small,
+      visible: true, text: P&L Breakdown Report, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: ''}
     name: label_1
@@ -20,7 +20,9 @@ components:
   properties:
     role: null
     columns:
-    - {id: QLINZB, title: '', data_key: obsolete_key_1, width: '40'}
+    - {id: QLINZB, title: '', data_key: obsolete_key1, width: '20'}
+    - {id: LMUIKW, title: '', data_key: obsolete_key2, width: '20'}
+    - {id: VDCBTP, title: '', data_key: obsolete_key3, width: '20'}
     - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '100'}
     - {id: MOWHRG, title: '# Trade', data_key: num_trade, width: ''}
     - {id: BXGUSK, title: '# Day Trade', data_key: num_daytrade}

@@ -15,8 +15,8 @@ components:
     name: spacer4
     layout_properties: {}
   - type: Label
-    properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: OLD Transaction List Report, font_size: null, font: '',
+    properties: {role: text, align: left, tooltip: '', border: '', foreground: 'theme:Gray
+        600', visible: true, text: OLD Transaction List Report, font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: true, underline: false, icon: ''}
     name: label_1

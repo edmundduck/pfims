@@ -4,7 +4,6 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from datetime import date
 
 class form_lv2_pnl_report(form_lv2_pnl_reportTemplate):
   def __init__(self, **properties):

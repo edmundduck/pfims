@@ -1,4 +1,4 @@
-from ._anvil_designer import form_testaTemplate
+from ._anvil_designer import form_poc_debugTemplate
 from anvil import *
 import anvil.server
 import anvil.tables as tables
@@ -9,7 +9,7 @@ from ..form_testc import form_testc
 from ..form_lv2_tranx_list import form_lv2_tranx_list
 from ... import global_var
 
-class form_testa(form_testaTemplate):
+class form_poc_debug(form_poc_debugTemplate):
   subform = None
   
   def __init__(self, form_name, **properties):
