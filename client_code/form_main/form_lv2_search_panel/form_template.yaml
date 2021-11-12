@@ -145,6 +145,7 @@ components:
         underline: false, icon: ''}
       name: button_pnl_search
       layout_properties: {}
+      event_bindings: {click: button_pnl_search_click}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Reset, font_size: null, font: '', spacing_above: small,

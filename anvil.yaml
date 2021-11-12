@@ -2,9 +2,9 @@ services:
 - source: /runtime/services/tables.yml
   client_config: {}
   server_config: {auto_create_missing_columns: false}
-package_name: STEA__Stock_Transaction_and_Evaluation_App_
+package_name: SPES__Stock_Performance_Evaluation_System_
 allow_embedding: false
-name: STEA (Stock Transaction and Evaluation App)
+name: SPES (Stock Performance Evaluation System)
 runtime_options: {version: 2, client_version: '3', server_version: python3-sandbox}
 metadata: {}
 startup_form: form_main

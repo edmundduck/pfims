@@ -48,7 +48,7 @@ components:
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_lv2_pnl_report.pnl_report_template,
       background: ''}
-    name: tranx_rpt_repeating_panel
+    name: rpt_panel
     layout_properties: {}
     data_bindings: []
   - type: FlowPanel
@@ -84,9 +84,9 @@ components:
         bold: false
         underline: false
         include_placeholder: false
-      name: tranx_rpt_displayrow_dropdown
+      name: dropdown_displayrow
       layout_properties: {}
-      event_bindings: {change: tranx_rpt_displayrow_dropdown_change}
+      event_bindings: {change: dropdown_displayrow_change}
   data_bindings: []
 container:
   type: ColumnPanel
