@@ -1,0 +1,38 @@
+components:
+- type: Label
+  properties: {}
+  name: row_label_sales
+  layout_properties: {column: JRLRWP}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''sales''])'}
+- type: Label
+  properties: {}
+  name: row_label_cost
+  layout_properties: {column: WXPMEY}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''cost''])'}
+- type: Label
+  properties: {}
+  name: row_label_fee
+  layout_properties: {column: LMHMKP}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''fee''])'}
+- type: Label
+  properties: {}
+  name: row_label_pnl
+  layout_properties: {column: NMAPTI}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''pnl''])'}
+- type: Button
+  properties: {role: null, align: left, tooltip: '', border: '', enabled: true, foreground: '',
+    visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: 'fa:caret-square-o-right'}
+  name: button_expand
+  layout_properties: {column: QLINZB}
+container:
+  type: DataRowPanel
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
+    visible: true, font_size: null, font: '', spacing_above: none, spacing_below: none,
+    italic: false, background: '', bold: false, underline: false}
+  data_bindings: []
