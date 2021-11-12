@@ -95,8 +95,10 @@ def select_pnl_data(end_date, start_date, symbols):
   if len(symbols) > 0:
     pass
   else:
-    rows = app_tables.templ_journals.search(tables.order_by(sell_date, ascending=False), 
-                                            sell_date=q.between(start_date, end_date, max_inclusive=True))
+    rows = app_tables.templ_journals.search(sell_date=q.between(start_date, end_date, max_inclusive=True))
+    #tables.order_by(sell_date, ascending=False), 
     result = {}
     for i in rows:
-      result
+      print(i['sell_date'])
+      result.update({i['sell_date']: [1, 1, i['sales'], i['cost'], i['fee'], i['pnl']]})
+    print(result)
