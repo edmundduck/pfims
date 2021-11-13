@@ -159,14 +159,14 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     """This method is called when the button is clicked"""
     symbol_list = self.get_selected_symbols()
     if self.dropdown_interval.selected_value != "SDR":
-      self.subform.rpt_panel.items = anvil.server.call('format_pnl_data', 
+      self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', 
                                                date.today(), 
                                                anvil.server.call('get_start_date', 
                                                                  date.today(), 
                                                                  self.dropdown_interval.selected_value), 
                                                symbol_list)
     else:
-      self.subform.rpt_panel.items = anvil.server.call('format_pnl_data', 
+      self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', 
                                                self.time_dateto.date, 
                                                self.time_datefrom.date, 
                                                symbol_list)

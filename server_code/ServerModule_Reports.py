@@ -138,7 +138,7 @@ def select_pnl_data(end_date, start_date, symbols):
 # Internal function - Build P&L dictionary in day, month and year aspects
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
 def format_pnl_dict(rowitem, dictupdate, key, mode):
-  numtrade, numdaytrade, sales, cost, fee, pnl = dictupdate.get(key, [0, 0, 0, 0, 0, 0])
+  numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
   if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
     numdaytrade += 1
   else:
@@ -149,6 +149,8 @@ def format_pnl_dict(rowitem, dictupdate, key, mode):
   pnl += rowitem['pnl']
   mod = mode
   dictupdate.update({key: [numtrade, numdaytrade, sales, cost, fee, pnl, mode]})
+  # TODO debug
+  print("dictupdate={}".format(dictupdate))
   return dictupdate
 
 @anvil.server.callable
@@ -171,7 +173,7 @@ def format_pnl_data(end_date, start_date, symbols):
     sell_mth_str = i['sell_date'].strftime("%Y-%m")
     sell_yr_str = i['sell_date'].strftime("%Y")
     # Debug
-    #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
+    print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
     
     # Handling of Day
     dictstruct_day = format_pnl_dict(i, dictstruct_day, sell_date_str, 'd')
@@ -187,6 +189,27 @@ def format_pnl_data(end_date, start_date, symbols):
   print("dictstruct_mth = {}".format(dictstruct_mth))
   print("dictstruct_yr = {}".format(dictstruct_yr))
   return dictstruct_day, dictstruct_mth, dictstruct_yr
+
+@anvil.server.callable
+#
+def generate_init_pnl_list(end_date, start_date, symbols):
+  rowstruct = []
+  dictstruct_day, dictstruct_mth, dictstruct_yr = format_pnl_data(end_date, start_date, symbols)
+  
+  for j in dictstruct_yr.keys():
+    numtrade, numdaytrade, sales, cost, fee, pnl = dict_pnl.get(j)
+    dictitem = {
+      'sell_date': j,
+      'num_trade': numtrade,
+      'num_daytrade': numdaytrade,
+      'sales': sales,
+      'cost': cost,
+      'fee': fee,
+      'pnl': pnl
+    }
+    rowstruct += [dictitem]
+    
+  return rowstruct
 
 @anvil.server.callable
 def format_pnl_list(pnl_list, date_value, mode, action):
