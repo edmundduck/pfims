@@ -19,4 +19,5 @@ class test_template(test_templateTemplate):
   def button_vis_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.visible = False
+    self.parent.raise_event_on_children('x-vis')
 

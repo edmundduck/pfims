@@ -17,3 +17,10 @@ class form_poc2(form_poc2Template):
                                                date.today(), 
                                                date(2000,1,1), 
                                                symbol_list)
+
+    self.rpt_panel.add_event_handler('x-vis', self.setvisibility)
+    self.rpt_panel.get_event_handlers('x-vis')
+    
+  def setvisibility(self, **properties):
+    print("setvisibility")
+    self.data_grid.visible = False
