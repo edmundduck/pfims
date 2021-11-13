@@ -11,7 +11,7 @@ from .form_lv1_settings import form_lv1_settings
 from .form_lv2_search_panel import form_lv2_search_panel
 from .form_lv2_pnl_report import form_lv2_pnl_report
 from .form_sub2_tranx_report import form_sub2_tranx_report
-from .form_poc_debug import form_poc_debug
+from .form_poc_main import form_poc_main
 
 class form_main(form_mainTemplate):
   def __init__(self, **properties):
@@ -87,4 +87,4 @@ class form_main(form_mainTemplate):
   def poc_link_click(self, **event_args):
     """This method is called when the link is clicked"""
     self.content_panel.clear()
-    self.content_panel.add_component(form_poc_debug(global_var.form_lv2_tranx_list()))
+    self.content_panel.add_component(form_poc_main())

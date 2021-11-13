@@ -186,7 +186,7 @@ def format_pnl_data(end_date, start_date, symbols):
   print("dictstruct_day = {}".format(dictstruct_day))
   print("dictstruct_mth = {}".format(dictstruct_mth))
   print("dictstruct_yr = {}".format(dictstruct_yr))
-return dictstruct_day, dictstruct_mth, dictstruct_yr
+  return dictstruct_day, dictstruct_mth, dictstruct_yr
 
 @anvil.server.callable
 def format_pnl_list(pnl_list, date_value, mode, action):

@@ -1,0 +1,44 @@
+container:
+  type: ColumnPanel
+  properties: {col_widths: '{}'}
+components:
+- type: DataGrid
+  properties:
+    role: null
+    columns:
+    - {id: JKIJSW, title: '', data_key: obsolete, width: '30'}
+    - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '130'}
+    - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '130'}
+    - {id: RMITXR, title: Symbol, data_key: symbol}
+    - {id: DMKCOL, title: Qty, data_key: qty}
+    - {id: JRLRWP, title: Sales Amt, data_key: sales}
+    - {id: WXPMEY, title: Cost Amt, data_key: cost}
+    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: true}
+    - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: true}
+    - {id: NMAPTI, title: P&L, data_key: pnl, expand: true}
+    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 20
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  name: data_grid
+  layout_properties:
+    col_widths: {}
+    grid_position: LOSTMQ,LXBVEO
+  components:
+  - type: RepeatingPanel
+    properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
+      visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_poc2.test_template,
+      background: ''}
+    name: rpt_panel
+    layout_properties: {}
+    data_bindings: []
+  data_bindings: []
+is_package: true

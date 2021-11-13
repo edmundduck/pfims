@@ -1,0 +1,49 @@
+components:
+- type: Label
+  properties: {}
+  name: hidden_use_only
+  layout_properties: {column: JNEVXO}
+- type: Label
+  properties: {}
+  name: row_label_sales
+  layout_properties: {column: JRLRWP}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''sales''])'}
+- type: Label
+  properties: {}
+  name: row_label_cost
+  layout_properties: {column: WXPMEY}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''cost''])'}
+- type: Label
+  properties: {}
+  name: row_label_sell_price
+  layout_properties: {column: DGKRSZ}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''sell_price''])'}
+- type: Label
+  properties: {}
+  name: row_label_buy_price
+  layout_properties: {column: IFVNQY}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''buy_price''])'}
+- type: Label
+  properties: {}
+  name: row_label_pnl
+  layout_properties: {column: NMAPTI}
+  data_bindings:
+  - {property: text, code: '"{0:.2f}".format(self.item[''pnl''])'}
+- type: Button
+  properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+    foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+    icon_align: left_edge, spacing_below: small, italic: false, background: '', bold: false,
+    underline: false, icon: 'fa:plus-square'}
+  name: button_vis
+  layout_properties: {column: JKIJSW}
+  event_bindings: {click: button_vis_click}
+container:
+  type: DataRowPanel
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
+    visible: true, font_size: null, font: '', spacing_above: none, spacing_below: none,
+    italic: false, background: '', bold: false, underline: false}
+  data_bindings: []
