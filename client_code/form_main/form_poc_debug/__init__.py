@@ -28,4 +28,7 @@ class form_poc_debug(form_poc_debugTemplate):
 
   def test_button_click(self, **event_args):
     """This method is called when the button is clicked"""
-    self.subform.label_1.text = 'Changed'
+    #dict_test = {'a': 1, 'b': 2}
+    dict_test = {}
+    a, b = dict_test.get('a', [0, 0])
+    print("a={}, b={}".format(a, b))

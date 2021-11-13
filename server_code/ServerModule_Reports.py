@@ -107,23 +107,87 @@ def select_pnl_data(end_date, start_date, symbols):
     sell_date_str = i['sell_date'].strftime("%Y-%m-%d")
     # Debug
     #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
-    if dictstruct.get(sell_date_str, None) is None:
-      if (i['sell_date'] - i['buy_date']).days == 0:
-        dictstruct.update({sell_date_str: [0, 1, i['sales'], i['cost'], i['fee'], i['pnl']]})
-      else:
-        dictstruct.update({sell_date_str: [1, 0, i['sales'], i['cost'], i['fee'], i['pnl']]})
+
+    numtrade, numdaytrade, sales, cost, fee, pnl = dictstruct.get(sell_date_str, [0, 0, 0, 0, 0, 0])
+    if (i['sell_date'] - i['buy_date']).days == 0:
+      numdaytrade += 1
     else:
-      numtrade, numdaytrade, sales, cost, fee, pnl = dictstruct.get(sell_date_str)
-      if (i['sell_date'] - i['buy_date']).days == 0:
-        numdaytrade += 1
-      else:
-        numtrade += 1
-      sales += i['sales']
-      cost += i['cost']
-      fee += i['fee']
-      pnl += i['pnl']
-      dictstruct.update({sell_date_str: [numtrade, numdaytrade, sales, cost, fee, pnl]})
-  
+      numtrade += 1
+    sales += i['sales']
+    cost += i['cost']
+    fee += i['fee']
+    pnl += i['pnl']
+    dictstruct.update({sell_date_str: [numtrade, numdaytrade, sales, cost, fee, pnl]})
+
+  # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
+  rowstruct = []
+  for j in dictstruct.keys():
+    numtrade, numdaytrade, sales, cost, fee, pnl = dictstruct.get(j)
+    dictitem = {
+      'sell_date': j,
+      'num_trade': numtrade,
+      'num_daytrade': numdaytrade,
+      'sales': sales,
+      'cost': cost,
+      'fee': fee,
+      'pnl': pnl
+    }
+    rowstruct += [dictitem]
+  return rowstruct
+
+# Internal function - Build P&L dictionary in day, month and year aspects
+# rowitem = Items in rows returned from DB table 'templ_journals' search result
+def format_pnl_dict(rowitem, dictupdate, key, parentkey, mode):
+  numtrade, numdaytrade, sales, cost, fee, pnl, parent = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
+  if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
+    numdaytrade += 1
+  else:
+    numtrade += 1
+  sales += rowitem['sales']
+  cost += rowitem['cost']
+  fee += rowitem['fee']
+  pnl += rowitem['pnl']
+  parent = parentkey
+  mod = mode
+  dictupdate.update({key: [numtrade, numdaytrade, sales, cost, fee, pnl, parentkey, mode]})
+  return dictupdate
+
+@anvil.server.callable
+def format_pnl_data(end_date, start_date, symbols):
+  rows = None
+  if len(symbols) > 0:
+    rows = app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
+                                            buy_date=q.greater_than_or_equal_to(start_date),
+                                            symbol=q.any_of(*symbols))
+  else:
+    rows = app_tables.templ_journals.search(sell_date=q.between(start_date, end_date, max_inclusive=True))
+
+  # Prepare the data in dictionary structure
+  dictstruct_day = {}
+  dictstruct_mth = {}
+  dictstruct_yr = {}
+  for i in rows:
+    # Key has to be in string instead of datetime obj
+    sell_date_str = i['sell_date'].strftime("%Y-%m-%d")
+    sell_mth_str = i['sell_date'].strftime("%Y-%m")
+    sell_yr_str = i['sell_date'].strftime("%Y")
+    # Debug
+    #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
+    
+    # Handling of Day
+    dictstruct_day = format_pnl_dict(i, dictstruct_day, sell_date_str, sell_mth_str, 'd')
+    
+    # Handling of Month
+    dictstruct_mth = format_pnl_dict(i, dictstruct_mth, sell_mth_str, sell_yr_str, 'm')
+
+    # Handling of Year
+    dictstruct_yr = format_pnl_dict(i, dictstruct_yr, sell_yr_str, '', 'y')
+
+  # TODO DEBUG
+  print("dictstruct_day = {}".format(dictstruct_day))
+  print("dictstruct_mth = {}".format(dictstruct_mth))
+  print("dictstruct_yr = {}".format(dictstruct_yr))
+
   # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
   rowstruct = []
   for j in dictstruct.keys():
