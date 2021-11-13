@@ -3,6 +3,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 from datetime import date, datetime, timedelta
+from . import global_var
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -135,7 +136,7 @@ def select_pnl_data(end_date, start_date, symbols):
     rowstruct += [dictitem]
   return rowstruct
 
-# Internal function - Build P&L dictionary in day, month and year aspects
+# Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
 def format_pnl_dict(rowitem, dictupdate, key, child, mode):
   numtrade, numdaytrade, sales, cost, fee, pnl, mod, childlist = dictupdate.get(key, [0, 0, 0, 0, 0, 0, '', {"": None}])
@@ -153,8 +154,8 @@ def format_pnl_dict(rowitem, dictupdate, key, child, mode):
 
   return dictupdate
 
-@anvil.server.callable
-def format_pnl_data(end_date, start_date, symbols):
+# Internal function - Load DB table 'templ_journals' to build 3 P&L data dictionaries - day, month, year
+def build_pnl_data(end_date, start_date, symbols):
   rows = None
   if len(symbols) > 0:
     rows = app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
@@ -176,25 +177,25 @@ def format_pnl_data(end_date, start_date, symbols):
     #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
     
     # Handling of Day
-    dictstruct_day = format_pnl_dict(i, dictstruct_day, sell_date_str, None, 'd')
+    dictstruct_day = format_pnl_dict(i, dictstruct_day, sell_date_str, None, global_var.pnl_list_day_mode())
     
     # Handling of Month
-    dictstruct_mth = format_pnl_dict(i, dictstruct_mth, sell_mth_str, sell_date_str, 'm')
+    dictstruct_mth = format_pnl_dict(i, dictstruct_mth, sell_mth_str, sell_date_str, global_var.pnl_list_mth_mode())
 
     # Handling of Year
-    dictstruct_yr = format_pnl_dict(i, dictstruct_yr, sell_yr_str, sell_mth_str, 'y')
+    dictstruct_yr = format_pnl_dict(i, dictstruct_yr, sell_yr_str, sell_mth_str, global_var.pnl_list_yr_mode())
 
   # Debug
   #print("dictstruct_day = {}".format(dictstruct_day))
   #print("dictstruct_mth = {}".format(dictstruct_mth))
-  print("dictstruct_yr = {}".format(dictstruct_yr))
+  #print("dictstruct_yr = {}".format(dictstruct_yr))
   return dictstruct_day, dictstruct_mth, dictstruct_yr
 
 @anvil.server.callable
 #
 def generate_init_pnl_list(end_date, start_date, symbols):
   rowstruct = []
-  dictstruct_day, dictstruct_mth, dictstruct_yr = format_pnl_data(end_date, start_date, symbols)
+  dictstruct_day, dictstruct_mth, dictstruct_yr = build_pnl_data(end_date, start_date, symbols)
   
   for j in dictstruct_yr.keys():
     numtrade, numdaytrade, sales, cost, fee, pnl, mode, childlist = dictstruct_yr.get(j)

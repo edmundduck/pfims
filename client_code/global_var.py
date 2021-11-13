@@ -18,3 +18,12 @@ def form_lv2_pnl_report():
 
 def form_poc1():
   return 'form_poc1'
+
+def pnl_list_day_mode():
+  return 'd'
+
+def pnl_list_mth_mode():
+  return 'm'
+
+def pnl_list_yr_mode():
+  return 'y'
