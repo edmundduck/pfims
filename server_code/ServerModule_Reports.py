@@ -185,6 +185,7 @@ def build_pnl_data(end_date, start_date, symbols):
     # Handling of Year
     dictstruct_yr = format_pnl_dict(i, dictstruct_yr, sell_yr_str, sell_mth_str, global_var.pnl_list_yr_mode())
 
+  global_var.set_pnl_dictcache(dictstruct_day, dictstruct_mth, dictstruct_yr)
   # Debug
   #print("dictstruct_day = {}".format(dictstruct_day))
   #print("dictstruct_mth = {}".format(dictstruct_mth))
@@ -195,6 +196,8 @@ def build_pnl_data(end_date, start_date, symbols):
 #
 def generate_init_pnl_list(end_date, start_date, symbols):
   rowstruct = []
+  
+  global_var.init_pnl_dictcache()
   dictstruct_day, dictstruct_mth, dictstruct_yr = build_pnl_data(end_date, start_date, symbols)
   
   for j in dictstruct_yr.keys():
@@ -218,10 +221,23 @@ def update_pnl_list(pnl_list, date_value, mode, action):
   # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
   # TODOTODOTODOTODO
   rowstruct = []
+  dictstruct_day, dictstruct_mth, dictstruct_yr = global_var.get_pnl_dictcache()
+  
   if action == global_var.pnl_list_expand_icon():
+    dictstruct = None
+    childstruct = None
     
-    for j in dict_pnl.keys():
-      numtrade, numdaytrade, sales, cost, fee, pnl = dict_pnl.get(j)
+    if mode == global_var.pnl_list_yr_mode():
+      dictstruct = dictstruct_yr
+      childstruct = dictstruct_mth
+    elif mode == global_var.pnl_list_mth_mode():
+      dictstruct = dictstruct_mth
+      childstruct = dictstruct_day
+      
+    for j in dictstruct.keys():
+      numtrade, numdaytrade, sales, cost, fee, pnl, mode, childlist = dictstruct.get(j)
+      
+      for k in childlist.keys():
       dictitem = {
         'sell_date': j,
         'num_trade': numtrade,
@@ -229,10 +245,11 @@ def update_pnl_list(pnl_list, date_value, mode, action):
         'sales': sales,
         'cost': cost,
         'fee': fee,
-        'pnl': pnl
+        'pnl': pnl,
+        'mode': mode,
       }
       rowstruct += [dictitem]
-  elif action == global_var.pnl_list_shrink_icon():
+elif action == global_var.pnl_list_shrink_icon():
     pass
   else:
     pass
