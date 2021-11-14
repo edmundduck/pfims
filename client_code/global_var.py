@@ -27,3 +27,9 @@ def pnl_list_mth_mode():
 
 def pnl_list_yr_mode():
   return 'y'
+
+def pnl_list_expand_icon():
+  return 'fa:plus-square'
+
+def pnl_list_shrink_icon():
+  return 'fa:minus-square'

@@ -218,7 +218,8 @@ def update_pnl_list(pnl_list, date_value, mode, action):
   # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
   # TODOTODOTODOTODO
   rowstruct = []
-  if action == 'init':
+  if action == global_var.pnl_list_expand_icon():
+    
     for j in dict_pnl.keys():
       numtrade, numdaytrade, sales, cost, fee, pnl = dict_pnl.get(j)
       dictitem = {
@@ -231,9 +232,7 @@ def update_pnl_list(pnl_list, date_value, mode, action):
         'pnl': pnl
       }
       rowstruct += [dictitem]
-  elif action == 'expand':
-    pass
-  elif action == 'collapse':
+  elif action == global_var.pnl_list_shrink_icon():
     pass
   else:
     pass

@@ -26,5 +26,9 @@ class pnl_report_template(pnl_report_templateTemplate):
 
   def button_exp_click(self, **event_args):
     """This method is called when the button is clicked"""
-    anvil.server.call('update_pnl_list', )
-
+    self.parent.raise_event('x-update', date=self.item['sell_date'], mode=self.item['mode'], action=self.button_exp.icon)
+    if self.button_exp.icon == global_var.pnl_list_shrink_icon():
+      self.button_exp.icon = global_var.pnl_list_expand_icon()
+    elif self.button_exp.icon == global_var.pnl_list_expand_icon():
+      self.button_exp.icon = global_var.pnl_list_shrink_icon()
+    
