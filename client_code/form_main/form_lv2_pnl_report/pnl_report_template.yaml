@@ -31,13 +31,6 @@ components:
   name: button_exp
   layout_properties: {column: QLINZB}
   event_bindings: {click: button_exp_click}
-- type: Button
-  properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-    foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
-    icon_align: left_edge, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: 'fa:plus-square'}
-  name: button_mth_exp
-  layout_properties: {column: LMUIKW}
 - type: Label
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
     text: '', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small,

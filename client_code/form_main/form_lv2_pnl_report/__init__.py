@@ -21,6 +21,9 @@ class form_lv2_pnl_report(form_lv2_pnl_reportTemplate):
   def update_pnl_list(self, date, mode, action, **event_args):
     self.rpt_panel.items = \
     anvil.server.call('update_pnl_list', 
+                      self.hidden_time_dateto.date, 
+                      self.hidden_time_datefrom.date, 
+                      list(self.hidden_symbol.text), 
                       self.rpt_panel.items, 
                       date, 
                       mode, 

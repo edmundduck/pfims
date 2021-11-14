@@ -132,18 +132,22 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
   def button_tranx_search_click(self, **event_args):
     """This method is called when the button is clicked"""
     symbol_list = self.get_selected_symbols()
+    enddate = None
+    startdate = None
+    
     if self.dropdown_interval.selected_value != "SDR":
-      self.subform.rpt_panel.items = anvil.server.call('select_templ_journals', 
-                                               date.today(), 
-                                               anvil.server.call('get_start_date', 
-                                                                 date.today(), 
-                                                                 self.dropdown_interval.selected_value), 
-                                               symbol_list)
+      enddate = date.today()
+      startdate = anvil.server.call('get_start_date', 
+                                    date.today(), 
+                                    self.dropdown_interval.selected_value)      
     else:
-      self.subform.rpt_panel.items = anvil.server.call('select_templ_journals', 
-                                               self.time_dateto.date, 
-                                               self.time_datefrom.date, 
-                                               symbol_list)
+      enddate = self.time_dateto.date
+      startdate = self.time_datefrom.date 
+                                    
+    self.subform.rpt_panel.items = anvil.server.call('select_templ_journals', 
+                                              enddate, 
+                                              startdate, 
+                                              symbol_list)
 
   def button_tranx_reset_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -158,16 +162,22 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
   def button_pnl_search_click(self, **event_args):
     """This method is called when the button is clicked"""
     symbol_list = self.get_selected_symbols()
-    if self.dropdown_interval.selected_value != "SDR":
-      self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', 
-                                               date.today(), 
-                                               anvil.server.call('get_start_date', 
-                                                                 date.today(), 
-                                                                 self.dropdown_interval.selected_value), 
-                                               symbol_list)
-    else:
-      self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', 
-                                               self.time_dateto.date, 
-                                               self.time_datefrom.date, 
-                                               symbol_list)
+    enddate = None
+    startdate = None
 
+    if self.dropdown_interval.selected_value != "SDR":
+      enddate = date.today()
+      startdate = anvil.server.call('get_start_date', 
+                                    date.today(), 
+                                    self.dropdown_interval.selected_value)      
+    else:
+      enddate = self.time_dateto.date
+      startdate = self.time_datefrom.date 
+
+    self.subform.hidden_time_dateto.date = enddate
+    self.subform.hidden_time_datefrom.date = startdate
+    self.subform.hidden_symbol.text = symbol_list
+    self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', 
+                                                     enddate, 
+                                                     startdate, 
+                                                     symbol_list)

@@ -193,21 +193,19 @@ def build_pnl_data(end_date, start_date, symbols):
     format_pnl_child(dictstruct_child, sell_mth_str, sell_date_str)
     format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
 
-  global_var.set_pnl_dictcache(dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child)
   # Debug
-  print("dictstruct_day = {}".format(dictstruct_day))
-  print("dictstruct_mth = {}".format(dictstruct_mth))
-  print("dictstruct_yr = {}".format(dictstruct_yr))
-  print("dictstruct_child = {}".format(dictstruct_child))
-  return dictstruct_day, dictstruct_mth, dictstruct_yr
+  #print("dictstruct_day = {}".format(dictstruct_day))
+  #print("dictstruct_mth = {}".format(dictstruct_mth))
+  #print("dictstruct_yr = {}".format(dictstruct_yr))
+  #print("dictstruct_child = {}".format(dictstruct_child))
+  return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child
 
 @anvil.server.callable
 #
 def generate_init_pnl_list(end_date, start_date, symbols):
   rowstruct = []
   
-  global_var.init_pnl_dictcache()
-  dictstruct_day, dictstruct_mth, dictstruct_yr = build_pnl_data(end_date, start_date, symbols)
+  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child = build_pnl_data(end_date, start_date, symbols)
   
   for j in dictstruct_yr.keys():
     numtrade, numdaytrade, sales, cost, fee, pnl, mode = dictstruct_yr.get(j)
@@ -219,27 +217,28 @@ def generate_init_pnl_list(end_date, start_date, symbols):
       'cost': cost,
       'fee': fee,
       'pnl': pnl,
-      'mode': mode
+      'mode': mode, 
+      'action': global_var.pnl_list_expand_icon()
     }
     rowstruct += [dictitem]
     
   return rowstruct
 
 @anvil.server.callable
-def update_pnl_list(pnl_list, date_value, mode, action):
+def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, action):
   # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
   # Debug
-  print("param list={} / {} / {} / {}".format(pnl_list, date_value, mode, action))
+  print("param list={} / {} / {} / {} / {} / {} / {}".format(end_date, start_date, symbols, pnl_list, date_value, mode, action))
   
   rowstruct = []
-  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child = global_var.get_pnl_dictcache()
+  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child = build_pnl_data(end_date, start_date, symbols)
   # Debug
-  print("dictstruct_day = {}".format(dictstruct_day))
-  print("dictstruct_mth = {}".format(dictstruct_mth))
-  print("dictstruct_yr = {}".format(dictstruct_yr))
-  print("dictstruct_child = {}".format(dictstruct_child))
+  #print("dictstruct_day = {}".format(dictstruct_day))
+  #print("dictstruct_mth = {}".format(dictstruct_mth))
+  #print("dictstruct_yr = {}".format(dictstruct_yr))
+  #print("dictstruct_child = {}".format(dictstruct_child))
 
-  print(global_var.pnl_list_expand_icon())
+  print(global_var.pnl_list_shrink_icon())
   if action == global_var.pnl_list_expand_icon():
     dictstruct = None
     
@@ -249,21 +248,26 @@ def update_pnl_list(pnl_list, date_value, mode, action):
       dictstruct = dictstruct_day
       
     for j in dictstruct_child.get(date_value):
+      numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictstruct.get(j)
       dictitem = {
         'sell_date': j,
-        'num_trade': dictstruct.get(j)['num_trade'],
-        'num_daytrade': dictstruct.get(j)['num_daytrade'],
-        'sales': dictstruct.get(j)['sales'],
-        'cost': dictstruct.get(j)['cost'],
-        'fee': dictstruct.get(j)['fee'],
-        'pnl': dictstruct.get(j)['pnl'],
-        'mode': dictstruct.get(j)['mode'],
-      }
+        'num_trade': numtrade,
+        'num_daytrade': numdaytrade,
+        'sales': sales,
+        'cost': cost,
+        'fee': fee,
+        'pnl': pnl,
+        'mode': mod,
+        'action': action
+        }
       rowstruct += [dictitem]
       
     rowstruct = rowstruct + pnl_list
   elif action == global_var.pnl_list_shrink_icon():
-    pass
+    rowstruct = pnl_list
+    for j in dictstruct_child.get(date_value):
+      if j in rowstruct:
+        rowstruct.pop(j)
   else:
     pass
   
