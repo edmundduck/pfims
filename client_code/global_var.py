@@ -13,6 +13,7 @@ from anvil.tables import app_tables
 cache_dict_day = None
 cache_dict_mth = None
 cache_dict_yr = None
+cache_dict_child = None
 
 def form_lv2_tranx_list():
   return 'form_lv2_tranx_list'
@@ -39,12 +40,16 @@ def pnl_list_shrink_icon():
   return 'fa:minus-square'
 
 def get_pnl_dictcache():
-  return cache_dict_day, cache_dict_mth, cache_dict_yr
+  return cache_dict_day, cache_dict_mth, cache_dict_yr, cache_dict_child
 
-def set_pnl_dictcache(daycache, mthcache, yrcache):
+def set_pnl_dictcache(daycache, mthcache, yrcache, childcache):
   cache_dict_day = daycache
   cache_dict_mth = mthcache
   cache_dict_yr = yrcache
+  cache_dict_child = childcache
 
 def init_pnl_dictcache():
-  cache_dict_day, cache_dict_mth, cache_dict_yr = None
+  cache_dict_day = None
+  cache_dict_mth = None
+  cache_dict_yr = None
+  cache_dict_child = None

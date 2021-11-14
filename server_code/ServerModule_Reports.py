@@ -138,8 +138,8 @@ def select_pnl_data(end_date, start_date, symbols):
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
-def format_pnl_dict(rowitem, dictupdate, key, child, mode):
-  numtrade, numdaytrade, sales, cost, fee, pnl, mod, childlist = dictupdate.get(key, [0, 0, 0, 0, 0, 0, '', {"": None}])
+def format_pnl_dict(rowitem, dictupdate, key, mode):
+  numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
   if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
     numdaytrade += 1
   else:
@@ -149,11 +149,14 @@ def format_pnl_dict(rowitem, dictupdate, key, child, mode):
   fee += rowitem['fee']
   pnl += rowitem['pnl']
   mod = mode
-  childlist.update({child: None})
-  dictupdate.update({key: [numtrade, numdaytrade, sales, cost, fee, pnl, mode, childlist]})
+  dictupdate.update({key: [numtrade, numdaytrade, sales, cost, fee, pnl, mode]})
 
-  return dictupdate
-
+# Internal function - Format a parent: child mapping into dictionary
+def format_pnl_child(dictupdate, parent, child):
+  childset = dictupdate.get(parent, set())
+  childset.add(child)
+  dictupdate.update({parent: childset})
+  
 # Internal function - Load DB table 'templ_journals' to build 3 P&L data dictionaries - day, month, year
 def build_pnl_data(end_date, start_date, symbols):
   rows = None
@@ -168,6 +171,7 @@ def build_pnl_data(end_date, start_date, symbols):
   dictstruct_day = {}
   dictstruct_mth = {}
   dictstruct_yr = {}
+  dictstruct_child = {}
   for i in rows:
     # Key has to be in string instead of datetime obj
     sell_date_str = i['sell_date'].strftime("%Y-%m-%d")
@@ -177,19 +181,24 @@ def build_pnl_data(end_date, start_date, symbols):
     #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
     
     # Handling of Day
-    dictstruct_day = format_pnl_dict(i, dictstruct_day, sell_date_str, None, global_var.pnl_list_day_mode())
+    format_pnl_dict(i, dictstruct_day, sell_date_str, global_var.pnl_list_day_mode())
     
     # Handling of Month
-    dictstruct_mth = format_pnl_dict(i, dictstruct_mth, sell_mth_str, sell_date_str, global_var.pnl_list_mth_mode())
+    format_pnl_dict(i, dictstruct_mth, sell_mth_str, global_var.pnl_list_mth_mode())
 
     # Handling of Year
-    dictstruct_yr = format_pnl_dict(i, dictstruct_yr, sell_yr_str, sell_mth_str, global_var.pnl_list_yr_mode())
+    format_pnl_dict(i, dictstruct_yr, sell_yr_str, global_var.pnl_list_yr_mode())
+    
+    # Handling parent:child relationship dict
+    format_pnl_child(dictstruct_child, sell_mth_str, sell_date_str)
+    format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
 
-  global_var.set_pnl_dictcache(dictstruct_day, dictstruct_mth, dictstruct_yr)
+  global_var.set_pnl_dictcache(dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child)
   # Debug
-  #print("dictstruct_day = {}".format(dictstruct_day))
-  #print("dictstruct_mth = {}".format(dictstruct_mth))
-  #print("dictstruct_yr = {}".format(dictstruct_yr))
+  print("dictstruct_day = {}".format(dictstruct_day))
+  print("dictstruct_mth = {}".format(dictstruct_mth))
+  print("dictstruct_yr = {}".format(dictstruct_yr))
+  print("dictstruct_child = {}".format(dictstruct_child))
   return dictstruct_day, dictstruct_mth, dictstruct_yr
 
 @anvil.server.callable
@@ -201,7 +210,7 @@ def generate_init_pnl_list(end_date, start_date, symbols):
   dictstruct_day, dictstruct_mth, dictstruct_yr = build_pnl_data(end_date, start_date, symbols)
   
   for j in dictstruct_yr.keys():
-    numtrade, numdaytrade, sales, cost, fee, pnl, mode, childlist = dictstruct_yr.get(j)
+    numtrade, numdaytrade, sales, cost, fee, pnl, mode = dictstruct_yr.get(j)
     dictitem = {
       'sell_date': j,
       'num_trade': numtrade,
@@ -219,39 +228,46 @@ def generate_init_pnl_list(end_date, start_date, symbols):
 @anvil.server.callable
 def update_pnl_list(pnl_list, date_value, mode, action):
   # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
-  # TODOTODOTODOTODO
-  rowstruct = []
-  dictstruct_day, dictstruct_mth, dictstruct_yr = global_var.get_pnl_dictcache()
+  # Debug
+  print("param list={} / {} / {} / {}".format(pnl_list, date_value, mode, action))
   
+  rowstruct = []
+  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child = global_var.get_pnl_dictcache()
+  # Debug
+  print("dictstruct_day = {}".format(dictstruct_day))
+  print("dictstruct_mth = {}".format(dictstruct_mth))
+  print("dictstruct_yr = {}".format(dictstruct_yr))
+  print("dictstruct_child = {}".format(dictstruct_child))
+
+  print(global_var.pnl_list_expand_icon())
   if action == global_var.pnl_list_expand_icon():
     dictstruct = None
-    childstruct = None
     
     if mode == global_var.pnl_list_yr_mode():
-      dictstruct = dictstruct_yr
-      childstruct = dictstruct_mth
-    elif mode == global_var.pnl_list_mth_mode():
       dictstruct = dictstruct_mth
-      childstruct = dictstruct_day
+    elif mode == global_var.pnl_list_mth_mode():
+      dictstruct = dictstruct_day
       
-    for j in dictstruct.keys():
-      numtrade, numdaytrade, sales, cost, fee, pnl, mode, childlist = dictstruct.get(j)
-      
-      for k in childlist.keys():
+    for j in dictstruct_child.get(date_value):
       dictitem = {
         'sell_date': j,
-        'num_trade': numtrade,
-        'num_daytrade': numdaytrade,
-        'sales': sales,
-        'cost': cost,
-        'fee': fee,
-        'pnl': pnl,
-        'mode': mode,
+        'num_trade': dictstruct.get(j)['num_trade'],
+        'num_daytrade': dictstruct.get(j)['num_daytrade'],
+        'sales': dictstruct.get(j)['sales'],
+        'cost': dictstruct.get(j)['cost'],
+        'fee': dictstruct.get(j)['fee'],
+        'pnl': dictstruct.get(j)['pnl'],
+        'mode': dictstruct.get(j)['mode'],
       }
       rowstruct += [dictitem]
-elif action == global_var.pnl_list_shrink_icon():
+      
+    rowstruct = rowstruct + pnl_list
+  elif action == global_var.pnl_list_shrink_icon():
     pass
   else:
     pass
+  
+  # Debug
+  print("rowstruct={}".format(rowstruct))
   return rowstruct
   
