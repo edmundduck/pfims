@@ -244,7 +244,7 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
     
     if mode == global_var.pnl_list_yr_mode():
       dictstruct = dictstruct_mth
-      childaction = global_ver.
+      childaction = global_ver.pnl_list_expand_icon()
     elif mode == global_var.pnl_list_mth_mode():
       dictstruct = dictstruct_day
       
@@ -259,11 +259,11 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
         'fee': fee,
         'pnl': pnl,
         'mode': mod,
-        'action': action
+        'action': childaction
         }
       rowstruct += [dictitem]
       
-    rowstruct = rowstruct + pnl_list
+    #rowstruct = rowstruct + pnl_list
   elif action == global_var.pnl_list_shrink_icon():
     rowstruct = pnl_list
     for j in dictstruct_child.get(date_value):
