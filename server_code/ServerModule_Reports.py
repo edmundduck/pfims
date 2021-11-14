@@ -238,7 +238,6 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
   #print("dictstruct_yr = {}".format(dictstruct_yr))
   #print("dictstruct_child = {}".format(dictstruct_child))
 
-  print(global_var.pnl_list_shrink_icon())
   if action == global_var.pnl_list_expand_icon():
     dictstruct = None
     
