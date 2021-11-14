@@ -240,9 +240,11 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
 
   if action == global_var.pnl_list_expand_icon():
     dictstruct = None
+    childaction = ''
     
     if mode == global_var.pnl_list_yr_mode():
       dictstruct = dictstruct_mth
+      childaction = global
     elif mode == global_var.pnl_list_mth_mode():
       dictstruct = dictstruct_day
       
