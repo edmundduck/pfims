@@ -168,7 +168,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_sub2_tranx_report.tranx_rpt_template,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Obsolete.form_sub2_tranx_report.tranx_rpt_template,
       background: ''}
     name: tranx_rpt_repeating_panel
     layout_properties: {}

@@ -35,7 +35,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: form_main.form_poc2.test_template,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Debug.form_poc2.test_template,
       background: ''}
     name: rpt_panel
     layout_properties: {}

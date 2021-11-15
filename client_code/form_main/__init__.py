@@ -8,10 +8,11 @@ from .. import global_var
 from .form_lv1_dashb import form_lv1_dashb
 from .form_lv1_input import form_lv1_input
 from .form_lv1_settings import form_lv1_settings
-from .form_lv2_search_panel import form_lv2_search_panel
-from .form_lv2_pnl_report import form_lv2_pnl_report
-from .form_sub2_tranx_report import form_sub2_tranx_report
-from .form_poc_main import form_poc_main
+from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
+from ..Report.form_lv2_search_panel import form_lv2_search_panel
+from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
+from ..Obsolete.form_sub2_tranx_report import form_sub2_tranx_report
+from ..Debug.form_poc_main import form_poc_main
 
 class form_main(form_mainTemplate):
   def __init__(self, **properties):
