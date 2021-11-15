@@ -241,6 +241,7 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
   if action == global_var.pnl_list_expand_icon():
     dictstruct = None
     childaction = ''
+    rowstruct = pnl_list
     
     if mode == global_var.pnl_list_yr_mode():
       dictstruct = dictstruct_mth
