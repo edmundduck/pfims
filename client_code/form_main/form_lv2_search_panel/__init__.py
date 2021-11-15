@@ -181,3 +181,14 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
                                                      enddate, 
                                                      startdate, 
                                                      symbol_list)
+
+  def button_pnl_reset_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    self.time_datefrom.date = ""
+    self.time_dateto.date = ""
+    self.dropdown_interval.items = []
+    self.dropdown_interval.items = self.interval_list
+    self.dropdown_symbol.items = self.symbol_list
+    self.removeall_selected_symbols()
+    self.subform.rpt_panel.items = []
+    

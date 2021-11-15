@@ -91,52 +91,6 @@ def select_templ_journals(end_date, start_date, symbols):
     return app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
                                             buy_date=q.greater_than_or_equal_to(start_date))
 
-@anvil.server.callable
-# Return rows of P&L by selecting and compiling DB table "templ_journals" data
-def select_pnl_data(end_date, start_date, symbols):
-  rows = None
-  if len(symbols) > 0:
-    rows = app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
-                                            buy_date=q.greater_than_or_equal_to(start_date),
-                                            symbol=q.any_of(*symbols))
-  else:
-    rows = app_tables.templ_journals.search(sell_date=q.between(start_date, end_date, max_inclusive=True))
-
-  # Prepare the data in dictionary structure
-  dictstruct = {}
-  for i in rows:
-    # Key has to be in string instead of datetime obj
-    sell_date_str = i['sell_date'].strftime("%Y-%m-%d")
-    # Debug
-    #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
-
-    numtrade, numdaytrade, sales, cost, fee, pnl = dictstruct.get(sell_date_str, [0, 0, 0, 0, 0, 0])
-    if (i['sell_date'] - i['buy_date']).days == 0:
-      numdaytrade += 1
-    else:
-      numtrade += 1
-    sales += i['sales']
-    cost += i['cost']
-    fee += i['fee']
-    pnl += i['pnl']
-    dictstruct.update({sell_date_str: [numtrade, numdaytrade, sales, cost, fee, pnl]})
-
-  # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
-  rowstruct = []
-  for j in dictstruct.keys():
-    numtrade, numdaytrade, sales, cost, fee, pnl = dictstruct.get(j)
-    dictitem = {
-      'sell_date': j,
-      'num_trade': numtrade,
-      'num_daytrade': numdaytrade,
-      'sales': sales,
-      'cost': cost,
-      'fee': fee,
-      'pnl': pnl
-    }
-    rowstruct += [dictitem]
-  return rowstruct
-
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
 def format_pnl_dict(rowitem, dictupdate, key, mode):
@@ -202,7 +156,7 @@ def build_pnl_data(end_date, start_date, symbols):
   return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child
 
 @anvil.server.callable
-#
+# Generate initial P&L list (year only)
 def generate_init_pnl_list(end_date, start_date, symbols):
   rowstruct = []
   
@@ -226,8 +180,8 @@ def generate_init_pnl_list(end_date, start_date, symbols):
   return rowstruct
 
 @anvil.server.callable
+# Update P&L data according to expand/shrink action and reformat into repeatingpanel compatible data (dict in list)
 def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, action):
-  # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
   # Debug
   #print("param list={} / {} / {} / {} / {} / {} / {}".format(end_date, start_date, symbols, pnl_list, date_value, mode, action))
   
@@ -250,14 +204,12 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
     elif mode == global_var.pnl_list_mth_mode():
       dictstruct = dictstruct_day
       
-    # TODO Debug
-    mod_debug.print_data_debug('rowstruct before changed', rowstruct)
+    # Update action from plus to minus
     for rowitem in rowstruct:
       if rowitem['sell_date'] == date_value:
         rowstruct.remove(rowitem)
         rowitem['action'] = global_var.pnl_list_shrink_icon()
         rowstruct = rowstruct + [rowitem]
-    mod_debug.print_data_debug('rowstruct action changed', rowstruct)
       
     for j in dictstruct_child.get(date_value):
       numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictstruct.get(j)
@@ -280,18 +232,17 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
     rowstruct = list(pnl_list)
     childlist = dictstruct_child.get(date_value)
     
-    mod_debug.print_data_debug('minus-rowstruct-childlist-value', childlist)
-    mod_debug.print_data_debug('minus-rowstruct-dictstruct_child', dictstruct_child)
-    mod_debug.print_data_debug('minus-rowstruct-before-change', rowstruct)
     for rowitem in pnl_list:
-      mod_debug.print_data_debug('minus-rowstruct-row-item-value', rowitem)
+      # Remove child items from shrinked parent
       if rowitem['sell_date'] in childlist:
         rowstruct.remove(rowitem)
-    mod_debug.print_data_debug('minus-rowstruct-after-change', rowstruct)
+      # Update action from minus to plus
+      if rowitem['sell_date'] == date_value:
+        rowstruct.remove(rowitem)
+        rowitem['action'] = global_var.pnl_list_expand_icon()
+        rowstruct = rowstruct + [rowitem]
   else:
     pass
   
-  # Debug
-  mod_debug.print_data_debug('function end rowstruct', rowstruct)
-  return rowstruct
+  return sorted(rowstruct, key=lambda x: x.get('sell_date'))
   

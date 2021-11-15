@@ -153,6 +153,7 @@ components:
         underline: false, icon: ''}
       name: button_pnl_reset
       layout_properties: {}
+      event_bindings: {click: button_pnl_reset_click}
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
         visible: false, text: '', font_size: null, font: '', spacing_above: small,
