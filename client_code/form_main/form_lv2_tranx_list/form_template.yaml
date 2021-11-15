@@ -20,16 +20,16 @@ components:
   properties:
     role: null
     columns:
-    - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '130'}
-    - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '130'}
-    - {id: RMITXR, title: Symbol, data_key: symbol}
-    - {id: DMKCOL, title: Qty, data_key: qty}
-    - {id: JRLRWP, title: Sales Amt, data_key: sales}
-    - {id: WXPMEY, title: Cost Amt, data_key: cost}
-    - {id: LMHMKP, title: Fee, data_key: fee}
-    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: true}
-    - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: true}
-    - {id: NMAPTI, title: P&L, data_key: pnl, expand: true}
+    - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '90'}
+    - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '90'}
+    - {id: RMITXR, title: Symbol, data_key: symbol, width: '80'}
+    - {id: DMKCOL, title: Qty, data_key: qty, width: '80'}
+    - {id: JRLRWP, title: Sales Amt, data_key: sales, width: '120'}
+    - {id: WXPMEY, title: Cost Amt, data_key: cost, width: '120'}
+    - {id: LMHMKP, title: Fee, data_key: fee, width: '70'}
+    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: false, width: '80'}
+    - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: false, width: '80'}
+    - {id: NMAPTI, title: P&L, data_key: pnl, expand: false, width: '120'}
     - {id: JNEVXO, title: '', data_key: iid, width: '0'}
     auto_header: true
     tooltip: ''

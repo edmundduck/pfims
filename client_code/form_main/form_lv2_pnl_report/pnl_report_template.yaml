@@ -4,25 +4,25 @@ components:
   name: row_label_sales
   layout_properties: {column: JRLRWP}
   data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''sales''])'}
+  - {property: text, code: '"${0:.2f}".format(self.item[''sales''])'}
 - type: Label
   properties: {}
   name: row_label_cost
   layout_properties: {column: WXPMEY}
   data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''cost''])'}
+  - {property: text, code: '"${0:.2f}".format(self.item[''cost''])'}
 - type: Label
   properties: {}
   name: row_label_fee
   layout_properties: {column: LMHMKP}
   data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''fee''])'}
+  - {property: text, code: '"${0:.2f}".format(self.item[''fee''])'}
 - type: Label
   properties: {}
   name: row_label_pnl
   layout_properties: {column: NMAPTI}
   data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''pnl''])'}
+  - {property: text, code: '"${0:.2f}".format(self.item[''pnl''])'}
 - type: Button
   properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
     foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,

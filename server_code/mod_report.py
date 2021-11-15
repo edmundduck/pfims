@@ -97,8 +97,7 @@ def format_pnl_dict(rowitem, dictupdate, key, mode):
   numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
   if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
     numdaytrade += 1
-  else:
-    numtrade += 1
+  numtrade += 1
   sales += rowitem['sales']
   cost += rowitem['cost']
   fee += rowitem['fee']
@@ -177,7 +176,7 @@ def generate_init_pnl_list(end_date, start_date, symbols):
     }
     rowstruct += [dictitem]
     
-  return rowstruct
+  return sorted(rowstruct, key=lambda x: x.get('sell_date'))
 
 @anvil.server.callable
 # Update P&L data according to expand/shrink action and reformat into repeatingpanel compatible data (dict in list)
