@@ -4,6 +4,7 @@ from anvil.tables import app_tables
 import anvil.server
 from datetime import date, datetime, timedelta
 from . import global_var
+from . import mod_debug
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -194,10 +195,10 @@ def build_pnl_data(end_date, start_date, symbols):
     format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
 
   # Debug
-  #print("dictstruct_day = {}".format(dictstruct_day))
-  #print("dictstruct_mth = {}".format(dictstruct_mth))
-  #print("dictstruct_yr = {}".format(dictstruct_yr))
-  #print("dictstruct_child = {}".format(dictstruct_child))
+  #mod_debug.print_data_debug('dictstruct_day', dictstruct_day)
+  #mod_debug.print_data_debug('dictstruct_mth', dictstruct_mth)
+  #mod_debug.print_data_debug('dictstruct_yr', dictstruct_yr)
+  #mod_debug.print_data_debug('dictstruct_child', dictstruct_child)
   return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child
 
 @anvil.server.callable
@@ -228,15 +229,15 @@ def generate_init_pnl_list(end_date, start_date, symbols):
 def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, action):
   # Reformat dictionary structure data into repeatingpanel compatible data (dict in list)
   # Debug
-  print("param list={} / {} / {} / {} / {} / {} / {}".format(end_date, start_date, symbols, pnl_list, date_value, mode, action))
+  #print("param list={} / {} / {} / {} / {} / {} / {}".format(end_date, start_date, symbols, pnl_list, date_value, mode, action))
   
   rowstruct = []
   dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child = build_pnl_data(end_date, start_date, symbols)
   # Debug
-  #print("dictstruct_day = {}".format(dictstruct_day))
-  #print("dictstruct_mth = {}".format(dictstruct_mth))
-  #print("dictstruct_yr = {}".format(dictstruct_yr))
-  #print("dictstruct_child = {}".format(dictstruct_child))
+  #mod_debug.print_data_debug('dictstruct_day', dictstruct_day)
+  #mod_debug.print_data_debug('dictstruct_mth', dictstruct_mth)
+  #mod_debug.print_data_debug('dictstruct_yr', dictstruct_yr)
+  #mod_debug.print_data_debug('dictstruct_child', dictstruct_child)
 
   if action == global_var.pnl_list_expand_icon():
     dictstruct = None
@@ -245,9 +246,18 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
     
     if mode == global_var.pnl_list_yr_mode():
       dictstruct = dictstruct_mth
-      childaction = global_ver.pnl_list_expand_icon()
+      childaction = global_var.pnl_list_expand_icon()
     elif mode == global_var.pnl_list_mth_mode():
       dictstruct = dictstruct_day
+      
+    # TODO Debug
+    mod_debug.print_data_debug('rowstruct before changed', rowstruct)
+    for rowitem in rowstruct:
+      if rowitem['sell_date'] == date_value:
+        rowstruct.remove(rowitem)
+        rowitem['action'] = global_var.pnl_list_shrink_icon()
+        rowstruct = rowstruct + [rowitem]
+    mod_debug.print_data_debug('rowstruct action changed', rowstruct)
       
     for j in dictstruct_child.get(date_value):
       numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictstruct.get(j)
@@ -266,14 +276,22 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
       
     #rowstruct = rowstruct + pnl_list
   elif action == global_var.pnl_list_shrink_icon():
-    rowstruct = pnl_list
-    for j in dictstruct_child.get(date_value):
-      if j in rowstruct:
-        rowstruct.pop(j)
+    # Make a copy of P&L list into rowstruct
+    rowstruct = list(pnl_list)
+    childlist = dictstruct_child.get(date_value)
+    
+    mod_debug.print_data_debug('minus-rowstruct-childlist-value', childlist)
+    mod_debug.print_data_debug('minus-rowstruct-dictstruct_child', dictstruct_child)
+    mod_debug.print_data_debug('minus-rowstruct-before-change', rowstruct)
+    for rowitem in pnl_list:
+      mod_debug.print_data_debug('minus-rowstruct-row-item-value', rowitem)
+      if rowitem['sell_date'] in childlist:
+        rowstruct.remove(rowitem)
+    mod_debug.print_data_debug('minus-rowstruct-after-change', rowstruct)
   else:
     pass
   
   # Debug
-  print("rowstruct={}".format(rowstruct))
+  mod_debug.print_data_debug('function end rowstruct', rowstruct)
   return rowstruct
   
