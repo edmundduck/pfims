@@ -67,4 +67,21 @@ db_schema:
     - name: pnl
       admin_ui: {width: 200}
       type: number
+  settings:
+    title: settings
+    client: none
+    server: full
+    columns:
+    - name: default_ccy
+      admin_ui: {width: 200}
+      type: string
+    - name: default_interval
+      admin_ui: {width: 200}
+      type: string
+    - name: default_datefrom
+      admin_ui: {width: 200}
+      type: date
+    - name: default_dateto
+      admin_ui: {width: 200}
+      type: date
 renamed: true

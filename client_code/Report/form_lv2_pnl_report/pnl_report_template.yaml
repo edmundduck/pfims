@@ -1,24 +1,36 @@
 components:
 - type: Label
-  properties: {}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+    visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
   name: row_label_sales
   layout_properties: {column: JRLRWP}
   data_bindings:
   - {property: text, code: '"${0:.2f}".format(self.item[''sales''])'}
 - type: Label
-  properties: {}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+    visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
   name: row_label_cost
   layout_properties: {column: WXPMEY}
   data_bindings:
   - {property: text, code: '"${0:.2f}".format(self.item[''cost''])'}
 - type: Label
-  properties: {}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+    visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
   name: row_label_fee
   layout_properties: {column: LMHMKP}
   data_bindings:
   - {property: text, code: '"${0:.2f}".format(self.item[''fee''])'}
 - type: Label
-  properties: {}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+    visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
   name: row_label_pnl
   layout_properties: {column: NMAPTI}
   data_bindings:

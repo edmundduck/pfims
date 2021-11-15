@@ -10,16 +10,6 @@ from ..form_lv2_tranx_list import form_lv2_tranx_list
 from ..form_lv2_pnl_report import form_lv2_pnl_report
 
 class form_lv2_search_panel(form_lv2_search_panelTemplate):
-  interval_list = [("[Interval]", ""), 
-                  ("Last 1 Month", "L1M"), 
-                  ("Last 3 Month", "L3M"),
-                  ("Last 6 Month", "L6M"),
-                  ("Last 1 Year", "L1Y"),
-                  ("Year to Date", "YTD"),
-                  ("Self Defined Range", "SDR")]
-  
-  symbol_list = [("[Symbol]", "")]
-  
   subform = None
 
   def __init__(self, subform, **properties):
@@ -27,8 +17,13 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
-    self.dropdown_interval.items = self.interval_list
-    self.dropdown_symbol.items = self.symbol_list
+    self.dropdown_interval.items = global_var.search_interval_dropdown()
+    self.dropdown_symbol.items = global_var.search_symbol_dropdown()
+
+    settings = anvil.server.call('select_settings')
+    self.dropdown_interval.selected_value = settings.get('default_interval')
+    self.time_datefrom.date = settings.get('default_datefrom')
+    self.time_dateto.date = settings.get('default_dateto')
     
     if subform == global_var.form_lv2_tranx_list():
       self.subform = form_lv2_tranx_list()
@@ -46,15 +41,32 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
       self.panel_pnl_report.visible = False
    
     # Prevent from adding default value "[Symbol]" by registering to the dictionary
-    self.tag = {'added_symbols': {self.symbol_list[0][1]: 1}}
+    self.tag = {'added_symbols': {global_var.search_symbol_dropdown()[0][1]: 1}}
 
-    self.button_tranx_search.enabled = False
-    self.button_pnl_search.enabled = False
     if self.dropdown_interval.selected_value != "SDR":
+      if self.dropdown_interval.selected_value == '' or self.dropdown_interval.selected_value is None:
+        self.button_tranx_search.enabled = False
+        self.button_pnl_search.enabled = False
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
       self.label_timetotime.enabled = False
 
+      self.dropdown_symbol.items = global_var.search_symbol_dropdown() + \
+        anvil.server.call('get_symbol_dropdown_items', 
+                          date.today(), 
+                          anvil.server.call('get_start_date', 
+                                            date.today(), 
+                                            self.dropdown_interval.selected_value))
+    else:
+      self.time_datefrom.enabled = True
+      self.time_dateto.enabled = True
+      self.label_timetotime.enabled = True
+      self.dropdown_symbol.items = global_var.search_symbol_dropdown() + \
+        anvil.server.call('get_symbol_dropdown_items', 
+                          self.time_dateto.date, 
+                          self.time_datefrom.date)
+
+      
   # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
   # Return selected symbols which appear in blue buttons 
   def get_selected_symbols(self):
@@ -89,7 +101,7 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
       self.label_timetotime.enabled = False
-      self.dropdown_symbol.items = self.symbol_list + \
+      self.dropdown_symbol.items = global_var.search_symbol_dropdown() + \
         anvil.server.call('get_symbol_dropdown_items', 
                           date.today(), 
                           anvil.server.call('get_start_date', 
@@ -101,21 +113,21 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
       self.time_datefrom.enabled = True
       self.time_dateto.enabled = True
       self.label_timetotime.enabled = True
-      self.dropdown_symbol.items = self.symbol_list + \
+      self.dropdown_symbol.items = global_var.search_symbol_dropdown() + \
         anvil.server.call('get_symbol_dropdown_items', 
                           self.time_dateto.date, 
                           self.time_datefrom.date)
 
   def time_datefrom_change(self, **event_args):
     """This method is called when the selected date changes"""
-    self.dropdown_symbol.items = self.symbol_list + \
+    self.dropdown_symbol.items = global_var.search_symbol_dropdown() + \
       anvil.server.call('get_symbol_dropdown_items', 
                         self.time_dateto.date, 
                         self.time_datefrom.date)
 
   def time_dateto_change(self, **event_args):
     """This method is called when the selected date changes"""
-    self.dropdown_symbol.items = self.symbol_list + \
+    self.dropdown_symbol.items = global_var.search_symbol_dropdown() + \
       anvil.server.call('get_symbol_dropdown_items', 
                         self.time_dateto.date, 
                         self.time_datefrom.date)
@@ -165,8 +177,8 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     self.time_datefrom.date = ""
     self.time_dateto.date = ""
     self.dropdown_interval.items = []
-    self.dropdown_interval.items = self.interval_list
-    self.dropdown_symbol.items = self.symbol_list
+    self.dropdown_interval.items = global_var.search_interval_dropdown()
+    self.dropdown_symbol.items = global_var.search_symbol_dropdown()
     self.removeall_selected_symbols()
     self.subform.rpt_panel.items = []
     self.button_tranx_search.enabled = False
@@ -199,8 +211,8 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     self.time_datefrom.date = ""
     self.time_dateto.date = ""
     self.dropdown_interval.items = []
-    self.dropdown_interval.items = self.interval_list
-    self.dropdown_symbol.items = self.symbol_list
+    self.dropdown_interval.items = global_var.search_interval_dropdown()
+    self.dropdown_symbol.items = global_var.search_symbol_dropdown()
     self.removeall_selected_symbols()
     self.subform.rpt_panel.items = []
     self.button_pnl_search.enabled = False

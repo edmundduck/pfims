@@ -7,7 +7,7 @@ from anvil.tables import app_tables
 from .. import global_var
 from .form_lv1_dashb import form_lv1_dashb
 from .form_lv1_input import form_lv1_input
-from .form_lv1_settings import form_lv1_settings
+from ..Admin.form_lv1_settings import form_lv1_settings
 from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
 from ..Report.form_lv2_search_panel import form_lv2_search_panel
 from ..Report.form_lv2_pnl_report import form_lv2_pnl_report

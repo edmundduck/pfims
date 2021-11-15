@@ -10,6 +10,26 @@ from anvil.tables import app_tables
 #    Module1.say_hello()
 #
 
+def setting_ccy_dropdown():
+  ccy_list = [("$ USD", "USD"), 
+              ("£ GBP", "GBP"), 
+              ("$ HKD", "HKD")]
+  return ccy_list
+
+def search_interval_dropdown():
+  interval_list = [("[Interval]", ""), 
+                ("Last 1 Month", "L1M"), 
+                ("Last 3 Month", "L3M"),
+                ("Last 6 Month", "L6M"),
+                ("Last 1 Year", "L1Y"),
+                ("Year to Date", "YTD"),
+                ("Self Defined Range", "SDR")]
+  return interval_list
+
+def search_symbol_dropdown():
+  symbol_list = [("[Symbol]", "")]
+  return symbol_list
+
 def form_lv2_tranx_list():
   return 'form_lv2_tranx_list'
 
