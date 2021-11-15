@@ -57,6 +57,7 @@ components:
   properties:
     role: null
     columns:
+    - {id: JNEVXO, title: '', data_key: iid, width: '20'}
     - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '120'}
     - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '120'}
     - {id: RMITXR, title: Symbol, data_key: symbol, width: '70'}
@@ -69,7 +70,6 @@ components:
     - {id: NMAPTI, title: P&L, data_key: pnl, expand: false, width: '100'}
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '30'}
     - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '30'}
-    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
     auto_header: true
     tooltip: ''
     border: ''

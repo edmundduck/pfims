@@ -136,7 +136,7 @@ components:
         visible: false, text: PANEL FOR PNL REPORT, font_size: null, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
-      name: label_1_copy
+      name: label_4
       layout_properties: {}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,

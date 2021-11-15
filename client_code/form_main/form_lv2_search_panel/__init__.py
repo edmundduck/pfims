@@ -48,6 +48,8 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     # Prevent from adding default value "[Symbol]" by registering to the dictionary
     self.tag = {'added_symbols': {self.symbol_list[0][1]: 1}}
 
+    self.button_tranx_search.enabled = False
+    self.button_pnl_search.enabled = False
     if self.dropdown_interval.selected_value != "SDR":
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
@@ -77,6 +79,13 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     self.removeall_selected_symbols()
     
     if self.dropdown_interval.selected_value != "SDR":
+      if self.dropdown_interval.selected_value == "":
+        self.button_tranx_search.enabled = False
+        self.button_pnl_search.enabled = False
+      else:
+        self.button_tranx_search.enabled = True
+        self.button_pnl_search.enabled = True
+        
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
       self.label_timetotime.enabled = False
@@ -87,6 +96,8 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
                                             date.today(), 
                                             self.dropdown_interval.selected_value))
     else:
+      self.button_tranx_search.enabled = True
+      self.button_pnl_search.enabled = True
       self.time_datefrom.enabled = True
       self.time_dateto.enabled = True
       self.label_timetotime.enabled = True
@@ -158,6 +169,7 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     self.dropdown_symbol.items = self.symbol_list
     self.removeall_selected_symbols()
     self.subform.rpt_panel.items = []
+    self.button_tranx_search.enabled = False
 
   def button_pnl_search_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -191,4 +203,5 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     self.dropdown_symbol.items = self.symbol_list
     self.removeall_selected_symbols()
     self.subform.rpt_panel.items = []
-    
+    self.button_pnl_search.enabled = False
+

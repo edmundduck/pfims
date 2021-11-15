@@ -67,36 +67,4 @@ db_schema:
     - name: pnl
       admin_ui: {width: 200}
       type: number
-  consolidated_pnl:
-    title: consolidated_pnl
-    client: none
-    server: full
-    columns:
-    - name: conso_id
-      admin_ui: {width: 200}
-      type: string
-    - name: parent_id
-      admin_ui: {width: 200}
-      type: string
-    - name: sell_date
-      admin_ui: {width: 200}
-      type: date
-    - name: num_trade
-      admin_ui: {width: 200}
-      type: number
-    - name: num_daytrade
-      admin_ui: {width: 200}
-      type: number
-    - name: sales
-      admin_ui: {width: 200}
-      type: number
-    - name: cost
-      admin_ui: {width: 200}
-      type: number
-    - name: fee
-      admin_ui: {width: 200}
-      type: number
-    - name: pnl
-      admin_ui: {width: 200}
-      type: number
 renamed: true
