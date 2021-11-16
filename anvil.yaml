@@ -84,4 +84,18 @@ db_schema:
     - name: default_dateto
       admin_ui: {width: 200}
       type: date
+  brokers:
+    title: brokers
+    client: none
+    server: full
+    columns:
+    - name: id
+      admin_ui: {width: 200}
+      type: number
+    - name: name
+      admin_ui: {width: 200}
+      type: string
+    - name: ccy
+      admin_ui: {width: 200}
+      type: string
 renamed: true

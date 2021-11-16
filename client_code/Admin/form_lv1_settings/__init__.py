@@ -49,11 +49,11 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                       self.time_datefrom.date, 
                       self.time_dateto.date)
 
-  def button_pfm_create_click(self, **event_args):
+  def button_broker_create_click(self, **event_args):
     """This method is called when the button is clicked"""
     pass
 
-  def text_pfm_name_lost_focus(self, **event_args):
+  def text_broker_name_lost_focus(self, **event_args):
     """This method is called when the TextBox loses focus"""
     if self.text_pfm_name.text == '':
       self.button_pfm_create.enabled = False

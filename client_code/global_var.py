@@ -17,6 +17,9 @@ def setting_ccy_dropdown():
               ('€ EUR', 'EUR')]
   return ccy_list
 
+def setting_broker_id_prefix():
+  return "BR"
+
 def search_interval_dropdown():
   interval_list = [('[Interval]', ''), 
                 ('Last 1 Month', 'L1M'), 

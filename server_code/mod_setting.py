@@ -29,6 +29,7 @@ def upsert_settings(def_ccy, def_interval, def_datefrom, def_dateto):
                               default_dateto=def_dateto)
 
 @anvil.server.callable
+#
 def select_settings():
   row = app_tables.settings.search()
   settings = {}
@@ -40,3 +41,24 @@ def select_settings():
       'default_dateto': i['default_dateto']
     }
   return settings
+
+@anvil.server.callable
+#
+def upsert_brokers(b_id, name, ccy):
+  if b_id is None or b_id == '':
+    # Generate new broker ID
+    id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
+    newest_id = id_list[:1]
+    b_id = newest_id + 1
+    app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
+  else:
+    rows = app_tables.brokers.search(id=b_id)
+    for r in rows:
+      r.update(name=name, ccy=ccy)
+      
+@anvil.server.callable
+#
+def delete_brokers(b_id):
+  rows = app_tables.brokers.search(id=b_id)
+  for r in rows:
+    r.delete()
