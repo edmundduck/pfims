@@ -24,8 +24,10 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     if self.dropdown_interval.selected_value != "SDR":
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
-      self.label_timetotime.enabled = False
-
+    
+    if self.text_pfm_name.text == '':
+      self.button_pfm_create.enabled = False
+      
   def dropdown_interval_change(self, **event_args):
     """This method is called when an item is selected"""
     if self.dropdown_interval.selected_value != "SDR":
@@ -35,11 +37,9 @@ class form_lv1_settings(form_lv1_settingsTemplate):
         
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
-      self.label_timetotime.enabled = False
     else:
       self.time_datefrom.enabled = True
       self.time_dateto.enabled = True
-      self.label_timetotime.enabled = True
 
   def button_submit_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -48,3 +48,16 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                       self.dropdown_interval.selected_value, 
                       self.time_datefrom.date, 
                       self.time_dateto.date)
+
+  def button_pfm_create_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    pass
+
+  def text_pfm_name_lost_focus(self, **event_args):
+    """This method is called when the TextBox loses focus"""
+    if self.text_pfm_name.text == '':
+      self.button_pfm_create.enabled = False
+    else:
+      self.button_pfm_create.enabled = True
+
+
