@@ -12,15 +12,16 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
-    self.dropdown_ccy.items = global_var.setting_ccy_dropdown()
+    self.dropdown_default_broker.items = [''] + anvil.server.call('select_brokers')
     self.dropdown_interval.items = global_var.search_interval_dropdown()
 
     settings = anvil.server.call('select_settings')
-    self.dropdown_ccy.selected_value = settings.get('default_ccy')
-    self.dropdown_interval.selected_value = settings.get('default_interval')
-    self.time_datefrom.date = settings.get('default_datefrom')
-    self.time_dateto.date = settings.get('default_dateto')
-    
+    if len(settings) > 0:
+      self.dropdown_default_broker.selected_value = settings.get('default_broker')
+      self.dropdown_interval.selected_value = settings.get('default_interval')
+      self.time_datefrom.date = settings.get('default_datefrom')
+      self.time_dateto.date = settings.get('default_dateto')
+      
     if self.dropdown_interval.selected_value != "SDR":
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
@@ -28,7 +29,9 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     if self.text_broker_name.text == '':
       self.button_broker_create.enabled = False
       
-    self.dropdown_broker_list.items = anvil.server.call('select_brokers')
+    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+                                      anvil.server.call('select_brokers')
+    self.dropdown_ccy.items = global_var.setting_ccy_dropdown()
     self.button_broker_update.enabled = False
     self.button_broker_delete.enabled = False
     
@@ -48,7 +51,7 @@ class form_lv1_settings(form_lv1_settingsTemplate):
   def button_submit_click(self, **event_args):
     """This method is called when the button is clicked"""
     anvil.server.call('upsert_settings', 
-                      self.dropdown_ccy.selected_value, 
+                      self.dropdown_default_broker.selected_value, 
                       self.dropdown_interval.selected_value, 
                       self.time_datefrom.date, 
                       self.time_dateto.date)
@@ -60,7 +63,8 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                       '', 
                       self.text_broker_name.text, 
                       self.dropdown_ccy.selected_value)
-    self.dropdown_broker_list.items = anvil.server.call('select_brokers')
+    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+                                      anvil.server.call('select_brokers')
     self.dropdown_broker_list.selected_value = b_id
     self.dropdown_broker_list.raise_event('change')
 
@@ -78,11 +82,14 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                       self.hidden_b_id.text, 
                       self.text_broker_name.text, 
                       self.dropdown_ccy.selected_value)
+    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+                                      anvil.server.call('select_brokers')
 
   def button_broker_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
     anvil.server.call('delete_brokers', self.hidden_b_id.text)
-    self.dropdown_broker_list.items = anvil.server.call('select_brokers')
+    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+                                      anvil.server.call('select_brokers')
     self.dropdown_broker_list.raise_event('change')
 
   def dropdown_broker_list_change(self, **event_args):
@@ -91,9 +98,12 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     if self.dropdown_broker_list.selected_value == '':
       self.button_broker_update.enabled = False
       self.button_broker_delete.enabled = False
+      self.button_broker_create.enabled = False
+      self.text_broker_name.text = ''
     else:
       self.button_broker_update.enabled = True
       self.button_broker_delete.enabled = True
+      self.button_broker_create.enabled = True
       self.text_broker_name.text = \
       anvil.server.call('get_broker_name', 
                         self.dropdown_broker_list.selected_value)

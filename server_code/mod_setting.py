@@ -19,12 +19,12 @@ from . import global_var
 #
 @anvil.server.callable
 # DB table "settings" update/insert method
-def upsert_settings(def_ccy, def_interval, def_datefrom, def_dateto):
+def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   rows = app_tables.settings.search()
   if len(list(rows)) != 0:
     for r in rows:
       r.delete()
-  app_tables.settings.add_row(default_ccy=def_ccy, 
+  app_tables.settings.add_row(default_broker=def_broker, 
                               default_interval=def_interval, 
                               default_datefrom=def_datefrom,
                               default_dateto=def_dateto)
@@ -36,7 +36,7 @@ def select_settings():
   settings = {}
   for i in row:
     settings = {
-      'default_ccy': i['default_ccy'],
+      'default_broker': i['default_broker'],
       'default_interval': i['default_interval'],
       'default_datefrom': i['default_datefrom'],
       'default_dateto': i['default_dateto']
@@ -46,9 +46,10 @@ def select_settings():
 @anvil.server.callable
 # DB table "brokers" select method
 def select_brokers():
-  broker_list = global_var.setting_broker_dropdown() + \
-                list((''.join([r['name'], ' (', r['ccy'], ')']), r['id']) for r in app_tables.brokers.search())
-  return broker_list
+  #broker_list = global_var.setting_broker_dropdown() + \
+  #              list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
+  #return broker_list
+  return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
 
 @anvil.server.callable
 # DB table "brokers" update/insert method
@@ -59,7 +60,6 @@ def upsert_brokers(b_id, name, ccy):
     if len(id_list) == 0:
       b_id = global_var.setting_broker_id_prefix() +  '1'.zfill(global_var.setting_broker_suffix_len())
     else:
-      mod_debug.print_data_debug('id_list[:1]', id_list[:1])
       b_id = global_var.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(global_var.setting_broker_suffix_len())
     app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
   else:
