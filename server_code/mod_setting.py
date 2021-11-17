@@ -66,7 +66,6 @@ def upsert_brokers(b_id, name, ccy):
     rows = app_tables.brokers.search(id=b_id)
     for r in rows:
       r.update(name=name, ccy=ccy)
-  mod_debug.print_data_debug('b_id', b_id)
   return b_id
       
 @anvil.server.callable

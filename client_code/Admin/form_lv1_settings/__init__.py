@@ -83,17 +83,17 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     """This method is called when the button is clicked"""
     anvil.server.call('delete_brokers', self.hidden_b_id.text)
     self.dropdown_broker_list.items = anvil.server.call('select_brokers')
-    self.hidden_b_id.text = self.dropdown_broker_list.selected_value
+    self.dropdown_broker_list.raise_event('change')
 
   def dropdown_broker_list_change(self, **event_args):
     """This method is called when an item is selected"""
+    self.hidden_b_id.text = self.dropdown_broker_list.selected_value
     if self.dropdown_broker_list.selected_value == '':
       self.button_broker_update.enabled = False
       self.button_broker_delete.enabled = False
     else:
       self.button_broker_update.enabled = True
       self.button_broker_delete.enabled = True
-      self.hidden_b_id.text = self.dropdown_broker_list.selected_value
       self.text_broker_name.text = \
       anvil.server.call('get_broker_name', 
                         self.dropdown_broker_list.selected_value)
@@ -103,5 +103,4 @@ class form_lv1_settings(form_lv1_settingsTemplate):
   
   def dropdown_broker_list_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
-    self.hidden_b_id.text = self.dropdown_broker_list.selected_value
-
+    self.dropdown_broker_list.raise_event('change')
