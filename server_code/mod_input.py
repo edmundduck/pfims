@@ -123,7 +123,7 @@ def get_input_templ_list():
   return content
 
 @anvil.server.callable
-#
+# Return template items for repeating panel to display based on template selection dropdown
 def get_input_templ_items(templ_choice_str):
   listitems = []
   if not (templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT):

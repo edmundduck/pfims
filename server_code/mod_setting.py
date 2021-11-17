@@ -46,7 +46,9 @@ def select_settings():
 @anvil.server.callable
 # DB table "brokers" select method
 def select_brokers():
-  return list((''.join([r['name'], ' (', r['ccy'], ')']), r['id']) for r in app_tables.brokers.search())
+  broker_list = global_var.setting_broker_dropdown() + \
+                list((''.join([r['name'], ' (', r['ccy'], ')']), r['id']) for r in app_tables.brokers.search())
+  return broker_list
 
 @anvil.server.callable
 # DB table "brokers" update/insert method
@@ -73,3 +75,15 @@ def delete_brokers(b_id):
   rows = app_tables.brokers.search(id=b_id)
   for r in rows:
     r.delete()
+    
+@anvil.server.callable
+# Return selected broker name 
+def get_broker_name(choice):
+  result = app_tables.brokers.get(id=choice)
+  return result['name'] if result is not None else ''
+                   
+@anvil.server.callable
+# Return selected broker CCY 
+def get_broker_ccy(choice):
+  result = app_tables.brokers.get(id=choice)
+  return result['ccy'] if result is not None else ''

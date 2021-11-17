@@ -23,6 +23,10 @@ def setting_broker_id_prefix():
 def setting_broker_suffix_len():
   return 5
 
+def setting_broker_dropdown():
+  broker_list = [('[Select to update or delete]', '')]
+  return broker_list
+
 def search_interval_dropdown():
   interval_list = [('[Interval]', ''), 
                 ('Last 1 Month', 'L1M'), 

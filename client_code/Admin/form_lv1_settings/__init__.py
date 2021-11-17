@@ -29,7 +29,9 @@ class form_lv1_settings(form_lv1_settingsTemplate):
       self.button_broker_create.enabled = False
       
     self.dropdown_broker_list.items = anvil.server.call('select_brokers')
-      
+    self.button_broker_update.enabled = False
+    self.button_broker_delete.enabled = False
+    
   def dropdown_interval_change(self, **event_args):
     """This method is called when an item is selected"""
     if self.dropdown_interval.selected_value != "SDR":
@@ -60,7 +62,7 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                       self.dropdown_ccy.selected_value)
     self.dropdown_broker_list.items = anvil.server.call('select_brokers')
     self.dropdown_broker_list.selected_value = b_id
-    self.hidden_b_id.text = b_id
+    self.dropdown_broker_list.raise_event('change')
 
   def text_broker_name_lost_focus(self, **event_args):
     """This method is called when the TextBox loses focus"""
@@ -85,10 +87,20 @@ class form_lv1_settings(form_lv1_settingsTemplate):
 
   def dropdown_broker_list_change(self, **event_args):
     """This method is called when an item is selected"""
-    self.hidden_b_id.text = self.dropdown_broker_list.selected_value
-    self.text_broker_name.text = self.dropdown_broker_list.selected_value
-    #self.dropdown_ccy.selected_value = 
-
+    if self.dropdown_broker_list.selected_value == '':
+      self.button_broker_update.enabled = False
+      self.button_broker_delete.enabled = False
+    else:
+      self.button_broker_update.enabled = True
+      self.button_broker_delete.enabled = True
+      self.hidden_b_id.text = self.dropdown_broker_list.selected_value
+      self.text_broker_name.text = \
+      anvil.server.call('get_broker_name', 
+                        self.dropdown_broker_list.selected_value)
+      self.dropdown_ccy.selected_value = \
+      anvil.server.call('get_broker_ccy', 
+                        self.dropdown_broker_list.selected_value)
+  
   def dropdown_broker_list_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
     self.hidden_b_id.text = self.dropdown_broker_list.selected_value
