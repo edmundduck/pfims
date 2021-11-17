@@ -25,8 +25,10 @@ class form_lv1_settings(form_lv1_settingsTemplate):
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
     
-    if self.text_pfm_name.text == '':
-      self.button_pfm_create.enabled = False
+    if self.text_broker_name.text == '':
+      self.button_broker_create.enabled = False
+      
+    self.dropdown_broker_list.items = anvil.server.call('select_brokers')
       
   def dropdown_interval_change(self, **event_args):
     """This method is called when an item is selected"""
@@ -51,13 +53,43 @@ class form_lv1_settings(form_lv1_settingsTemplate):
 
   def button_broker_create_click(self, **event_args):
     """This method is called when the button is clicked"""
-    pass
+    b_id = \
+    anvil.server.call('upsert_brokers', 
+                      '', 
+                      self.text_broker_name.text, 
+                      self.dropdown_ccy.selected_value)
+    self.dropdown_broker_list.items = anvil.server.call('select_brokers')
+    self.dropdown_broker_list.selected_value = b_id
+    self.hidden_b_id.text = b_id
 
   def text_broker_name_lost_focus(self, **event_args):
     """This method is called when the TextBox loses focus"""
-    if self.text_pfm_name.text == '':
-      self.button_pfm_create.enabled = False
+    if self.text_broker_name.text == '':
+      self.button_broker_create.enabled = False
     else:
-      self.button_pfm_create.enabled = True
+      self.button_broker_create.enabled = True
 
+  def button_broker_update_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    b_id = \
+    anvil.server.call('upsert_brokers', 
+                      self.hidden_b_id.text, 
+                      self.text_broker_name.text, 
+                      self.dropdown_ccy.selected_value)
+
+  def button_broker_delete_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    anvil.server.call('delete_brokers', self.hidden_b_id.text)
+    self.dropdown_broker_list.items = anvil.server.call('select_brokers')
+    self.hidden_b_id.text = self.dropdown_broker_list.selected_value
+
+  def dropdown_broker_list_change(self, **event_args):
+    """This method is called when an item is selected"""
+    self.hidden_b_id.text = self.dropdown_broker_list.selected_value
+    self.text_broker_name.text = self.dropdown_broker_list.selected_value
+    #self.dropdown_ccy.selected_value = 
+
+  def dropdown_broker_list_show(self, **event_args):
+    """This method is called when the DropDown is shown on the screen"""
+    self.hidden_b_id.text = self.dropdown_broker_list.selected_value
 

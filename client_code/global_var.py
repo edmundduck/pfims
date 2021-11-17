@@ -20,6 +20,9 @@ def setting_ccy_dropdown():
 def setting_broker_id_prefix():
   return "BR"
 
+def setting_broker_suffix_len():
+  return 5
+
 def search_interval_dropdown():
   interval_list = [('[Interval]', ''), 
                 ('Last 1 Month', 'L1M'), 

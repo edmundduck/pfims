@@ -2,9 +2,9 @@ services:
 - source: /runtime/services/tables.yml
   client_config: {}
   server_config: {auto_create_missing_columns: false}
-package_name: SPES__Stock_Performance_Evaluation_System_
+package_name: IPES__Investment_Performance_Evaluation_System_
 allow_embedding: false
-name: SPES (Stock Performance Evaluation System)
+name: IPES (Investment Performance Evaluation System)
 runtime_options: {version: 2, client_version: '3', server_version: python3-sandbox}
 metadata: {}
 startup_form: form_main
@@ -91,7 +91,7 @@ db_schema:
     columns:
     - name: id
       admin_ui: {width: 200}
-      type: number
+      type: string
     - name: name
       admin_ui: {width: 200}
       type: string

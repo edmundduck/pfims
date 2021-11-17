@@ -3,6 +3,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 from . import mod_debug
+from . import global_var
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -43,21 +44,31 @@ def select_settings():
   return settings
 
 @anvil.server.callable
-#
+# DB table "brokers" select method
+def select_brokers():
+  return list((''.join([r['name'], ' (', r['ccy'], ')']), r['id']) for r in app_tables.brokers.search())
+
+@anvil.server.callable
+# DB table "brokers" update/insert method
 def upsert_brokers(b_id, name, ccy):
   if b_id is None or b_id == '':
     # Generate new broker ID
     id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
-    newest_id = id_list[:1]
-    b_id = newest_id + 1
+    if len(id_list) == 0:
+      b_id = global_var.setting_broker_id_prefix() +  '1'.zfill(global_var.setting_broker_suffix_len())
+    else:
+      mod_debug.print_data_debug('id_list[:1]', id_list[:1])
+      b_id = global_var.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(global_var.setting_broker_suffix_len())
     app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
   else:
     rows = app_tables.brokers.search(id=b_id)
     for r in rows:
       r.update(name=name, ccy=ccy)
+  mod_debug.print_data_debug('b_id', b_id)
+  return b_id
       
 @anvil.server.callable
-#
+# DB table "brokers" delete method
 def delete_brokers(b_id):
   rows = app_tables.brokers.search(id=b_id)
   for r in rows:
