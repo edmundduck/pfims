@@ -126,6 +126,7 @@ def build_pnl_data(end_date, start_date, symbols):
   dictstruct_mth = {}
   dictstruct_yr = {}
   dictstruct_child = {}
+  dictstruct_gchild = {}
   for i in rows:
     # Key has to be in string instead of datetime obj
     sell_date_str = i['sell_date'].strftime("%Y-%m-%d")
@@ -146,20 +147,22 @@ def build_pnl_data(end_date, start_date, symbols):
     # Handling parent:child relationship dict
     format_pnl_child(dictstruct_child, sell_mth_str, sell_date_str)
     format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
+    format_pnl_child(dictstruct_gchild, sell_yr_str, sell_date_str)
 
   # Debug
   #mod_debug.print_data_debug('dictstruct_day', dictstruct_day)
   #mod_debug.print_data_debug('dictstruct_mth', dictstruct_mth)
   #mod_debug.print_data_debug('dictstruct_yr', dictstruct_yr)
   #mod_debug.print_data_debug('dictstruct_child', dictstruct_child)
-  return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child
+  #mod_debug.print_data_debug('dictstruct_gchild', dictstruct_gchild)
+  return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild
 
 @anvil.server.callable
 # Generate initial P&L list (year only)
 def generate_init_pnl_list(end_date, start_date, symbols):
   rowstruct = []
   
-  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child = build_pnl_data(end_date, start_date, symbols)
+  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(end_date, start_date, symbols)
   
   for j in dictstruct_yr.keys():
     numtrade, numdaytrade, sales, cost, fee, pnl, mode = dictstruct_yr.get(j)
@@ -185,12 +188,13 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
   #print("param list={} / {} / {} / {} / {} / {} / {}".format(end_date, start_date, symbols, pnl_list, date_value, mode, action))
   
   rowstruct = []
-  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child = build_pnl_data(end_date, start_date, symbols)
+  dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(end_date, start_date, symbols)
   # Debug
   #mod_debug.print_data_debug('dictstruct_day', dictstruct_day)
   #mod_debug.print_data_debug('dictstruct_mth', dictstruct_mth)
   #mod_debug.print_data_debug('dictstruct_yr', dictstruct_yr)
   #mod_debug.print_data_debug('dictstruct_child', dictstruct_child)
+  #mod_debug.print_data_debug('dictstruct_gchild', dictstruct_gchild)
 
   if action == global_var.pnl_list_expand_icon():
     dictstruct = None
@@ -229,11 +233,14 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
   elif action == global_var.pnl_list_shrink_icon():
     # Make a copy of P&L list into rowstruct
     rowstruct = list(pnl_list)
-    childlist = dictstruct_child.get(date_value)
+    childlist = dictstruct_child.get(date_value, {})
+    gchildlist = dictstruct_gchild.get(date_value, {})
     
     for rowitem in pnl_list:
       # Remove child items from shrinked parent
       if rowitem['sell_date'] in childlist:
+        rowstruct.remove(rowitem)
+      if rowitem['sell_date'] in gchildlist:
         rowstruct.remove(rowitem)
       # Update action from minus to plus
       if rowitem['sell_date'] == date_value:

@@ -16,7 +16,7 @@ class input_template(input_templateTemplate):
     else:
       self.foreground = 'Green'
 
-  def input_button_edit_click(self, **event_args):
+  def button_edit_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.row_selldate.date = self.item['sell_date']
     self.row_buydate.date = self.item['buy_date']
@@ -33,7 +33,7 @@ class input_template(input_templateTemplate):
     self.input_data_panel_readonly.visible = False
     self.input_data_panel_editable.visible = True
 
-  def input_button_save_click(self, **event_args):
+  def button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
     self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
@@ -66,7 +66,7 @@ class input_template(input_templateTemplate):
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
     
-  def input_button_delete_click(self, **event_args):
+  def button_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.remove_from_parent()
 

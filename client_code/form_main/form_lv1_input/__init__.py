@@ -17,7 +17,7 @@ class form_lv1_input(form_lv1_inputTemplate):
     self.input_repeating_panel.items = []
     self.input_selldate.date = date.today()
     
-  def input_button_plus_click(self, **event_args):
+  def button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
 
     last_iid = 0
@@ -38,19 +38,27 @@ class form_lv1_input(form_lv1_inputTemplate):
     
     self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
     
-  def input_dropdown_templ_change(self, **event_args):
+  def dropdown_templ_change(self, **event_args):
     """This method is called when an item is selected"""
-    self.input_templ_name.text = anvil.server.call('get_input_templ_name', 
-                                                   self.input_dropdown_templ.selected_value)
+    self.templ_name.text = anvil.server.call('get_input_templ_name', 
+                                             self.dropdown_templ.selected_value)
     self.input_repeating_panel.items = anvil.server.call('get_input_templ_items', 
-                                                         self.input_dropdown_templ.selected_value)
+                                                         self.dropdown_templ.selected_value)
+    self.dropdown_broker.selected_value = anvil.server.call('get_input_templ_broker', 
+                                                            self.dropdown_templ.selected_value)
 
-  def input_dropdown_templ_show(self, **event_args):
+  def dropdown_templ_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
-    self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
-    self.input_templ_name.text = anvil.server.call('get_input_templ_name', 
-                                                   self.input_dropdown_templ.selected_value)
+    self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
+    self.templ_name.text = anvil.server.call('get_input_templ_name', 
+                                             self.dropdown_templ.selected_value)
     
+  def dropdown_broker_show(self, **event_args):
+    """This method is called when the DropDown is shown on the screen"""
+    self.dropdown_broker.items = [''] + anvil.server.call('select_brokers')
+    self.dropdown_broker.selected_value = anvil.server.call('get_input_templ_broker', 
+                                                            self.dropdown_templ.selected_value)
+
   def button_save_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
     
@@ -68,11 +76,12 @@ class form_lv1_input(form_lv1_inputTemplate):
     self.input_repeating_panel.items = child_items
     
     templ_id = anvil.server.call('generate_new_templ_id', 
-                                 self.input_dropdown_templ.selected_value)
+                                 self.dropdown_templ.selected_value)
     
     anvil.server.call('upsert_templates',
                       template_id=templ_id,
-                      template_name=self.input_templ_name.text)
+                      template_name=self.templ_name.text, 
+                      broker_id=self.dropdown_broker.selected_value)
     
     """ Delete all existing inputs before adding/updating """
     anvil.server.call('delete_templ_journals', 
@@ -95,12 +104,12 @@ class form_lv1_input(form_lv1_inputTemplate):
                         pnl=row['pnl'])
 
     """ Reflect the change in template dropdown """
-    self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
-    self.input_dropdown_templ.selected_value = anvil.server.call('merge_templ_id_name', 
+    self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
+    self.dropdown_templ.selected_value = anvil.server.call('merge_templ_id_name', 
                                                                  templ_id, 
-                                                                 self.input_templ_name.text)
+                                                                 self.templ_name.text)
 
-  def input_button_erase_click(self, **event_args):
+  def button_erase_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.input_selldate.date = ""
     self.input_buydate.date = ""
@@ -115,7 +124,7 @@ class form_lv1_input(form_lv1_inputTemplate):
 
   def button_delete_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
-    to_be_del_templ_name = self.input_dropdown_templ.selected_value
+    to_be_del_templ_name = self.dropdown_templ.selected_value
     msg = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
     userconf = alert(content=msg, 
                      title=f"Alert - Template Deletion",
@@ -134,9 +143,9 @@ class form_lv1_input(form_lv1_inputTemplate):
                         template_id=templ_id)
   
       """ Reflect the change in template dropdown """
-      self.input_dropdown_templ_show()
-      #self.input_dropdown_templ.items = anvil.server.call('get_input_templ_list')
-      #self.input_templ_name.text = ""
+      self.dropdown_templ_show()
+      #self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
+      #self.templ_name.text = ""
       self.input_repeating_panel.items = []
       
       n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))

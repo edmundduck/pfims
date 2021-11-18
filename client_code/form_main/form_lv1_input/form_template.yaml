@@ -12,24 +12,37 @@ components:
   layout_properties: {grid_position: 'KGRZCX,NUTRAE'}
 - type: TextBox
   properties: {}
-  name: input_templ_name
+  name: templ_name
   layout_properties: {grid_position: 'KGRZCX,ODRKXB'}
-- type: Spacer
-  properties: {height: 32}
-  name: spacer_1
-  layout_properties: {grid_position: 'KGRZCX,EMCJDO'}
-- type: Label
-  properties: {role: subheading, align: right, tooltip: '', border: '', foreground: '',
-    visible: true, text: 'Template:', font_size: null, font: '', spacing_above: small,
-    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: ''}
-  name: label_2
-  layout_properties: {grid_position: 'KGRZCX,LEENHP'}
-- type: FlowPanel
-  properties: {}
-  name: flow_panel_1
-  layout_properties: {grid_position: 'KGRZCX,OUORFY'}
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_1
+  layout_properties: {grid_position: 'KGRZCX,IEWBUN'}
   components:
+  - type: Label
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Broker:', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_3
+    layout_properties: {grid_position: 'QZCZKX,ANNNFE'}
+  - type: DropDown
+    properties: {}
+    name: dropdown_broker
+    layout_properties: {grid_position: 'QZCZKX,QKDMOJ'}
+    event_bindings: {show: dropdown_broker_show}
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_2
+  layout_properties: {grid_position: 'KGRZCX,MYOLIN'}
+  components:
+  - type: Label
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Template:', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_2
+    layout_properties: {grid_position: 'IUMTEJ,SIIRIQ'}
   - type: DropDown
     properties:
       role: null
@@ -50,9 +63,9 @@ components:
       bold: false
       underline: false
       include_placeholder: false
-    name: input_dropdown_templ
-    layout_properties: {}
-    event_bindings: {change: input_dropdown_templ_change, show: input_dropdown_templ_show}
+    name: dropdown_templ
+    layout_properties: {grid_position: 'IUMTEJ,FPTCAC'}
+    event_bindings: {change: dropdown_templ_change, show: dropdown_templ_show}
 - type: DataGrid
   properties:
     role: null
@@ -149,17 +162,17 @@ components:
         foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: 'fa:plus'}
-      name: input_button_plus
+      name: button_plus
       layout_properties: {column: YAYOIZ}
-      event_bindings: {click: input_button_plus_click}
+      event_bindings: {click: button_plus_click}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: 'fa:eraser'}
-      name: input_button_erase
+      name: button_erase
       layout_properties: {column: TOZXSD}
-      event_bindings: {click: input_button_erase_click}
+      event_bindings: {click: button_erase_click}
     - type: TextBox
       properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
         border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: null,

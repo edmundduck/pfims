@@ -78,9 +78,10 @@ def delete_templ_journals(template_id):
 
 @anvil.server.callable
 # DB table "templates" update/insert method with time handling logic
-def upsert_templates(template_id, template_name):
+def upsert_templates(template_id, template_name, broker_id):
   row = app_tables.templates.get(template_id=template_id) or app_tables.templates.add_row(template_id=template_id)
   row['template_name'] = template_name
+  row['broker_id'] = broker_id
   currenttime = datetime.now()
   row['template_create'] = currenttime if row['template_create'] is None else row['template_create']
   row['template_lastsave'] = currenttime
@@ -114,6 +115,15 @@ def get_input_templ_name(templ_choice_str):
   else:
     row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
     return row['template_name'] if row is not None else DEFAULT_NEW_TEMPL_NAME
+  
+@anvil.server.callable
+# Return broker name based on template dropdown selection
+def get_input_templ_broker(templ_choice_str):
+  if templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
+    return ''
+  else:
+    row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
+    return row['broker_id'] if row is not None else ''
     
 @anvil.server.callable
 # Generate template selection dropdown items

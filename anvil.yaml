@@ -20,6 +20,9 @@ db_schema:
     - name: template_name
       admin_ui: {width: 200}
       type: string
+    - name: broker_id
+      admin_ui: {width: 200}
+      type: string
     - name: template_create
       admin_ui: {width: 200}
       type: datetime
