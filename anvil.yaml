@@ -23,10 +23,16 @@ db_schema:
     - name: broker_id
       admin_ui: {width: 200}
       type: string
+    - name: submitted
+      admin_ui: {width: 200}
+      type: bool
     - name: template_create
       admin_ui: {width: 200}
       type: datetime
     - name: template_lastsave
+      admin_ui: {width: 200}
+      type: datetime
+    - name: template_submitted
       admin_ui: {width: 200}
       type: datetime
   templ_journals:
