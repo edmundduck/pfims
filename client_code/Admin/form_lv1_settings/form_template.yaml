@@ -51,6 +51,7 @@ components:
         include_placeholder: false
       name: dropdown_default_broker
       layout_properties: {grid_position: 'QMERAZ,QUPYXS'}
+      event_bindings: {show: dropdown_default_broker_show}
   - type: ColumnPanel
     properties: {}
     name: column_panel_3
@@ -91,7 +92,7 @@ components:
       layout_properties:
         col_widths: {}
         grid_position: ELYEKG,ANANJV
-      event_bindings: {change: dropdown_interval_change}
+      event_bindings: {change: dropdown_interval_change, show: dropdown_interval_show}
   - type: ColumnPanel
     properties: {col_widths: '{}'}
     name: column_panel_4
@@ -219,6 +220,7 @@ components:
       properties: {}
       name: dropdown_ccy
       layout_properties: {grid_position: 'NLSSIJ,VSMJOG'}
+      event_bindings: {show: dropdown_ccy_show}
     - type: ColumnPanel
       properties: {col_widths: '{}'}
       name: column_panel_7
@@ -309,4 +311,70 @@ components:
     col_widths: {}
     grid_position: GVDQJR,NNKOOE
     full_width_row: false
+- type: ColumnPanel
+  properties: {role: null, tooltip: '', border: solid, foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+    spacing_below: small, background: ''}
+  name: column_panel_8_copy
+  layout_properties:
+    col_widths: {}
+    grid_position: THJPMM,XDHTXP
+  components:
+  - type: ColumnPanel
+    properties: {col_widths: '{}'}
+    name: column_panel_10_copy
+    layout_properties: {grid_position: 'KULKXZ,IAMAPO'}
+    components:
+    - type: Label
+      properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+        visible: true, text: Submitted Templates, font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: ''}
+      name: label_9
+      layout_properties: {grid_position: 'UKIWCD,YRHJJT', full_width_row: false}
+    - type: DropDown
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: ''
+        border: ''
+        enabled: true
+        foreground: ''
+        items: []
+        visible: true
+        font_size: null
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: false
+      name: dropdown_sub_templ_list
+      layout_properties: {grid_position: 'UKIWCD,CCPUFI', full_width_row: false}
+      event_bindings: {show: dropdown_sub_templ_list_show, change: dropdown_sub_templ_list_change}
+  - type: ColumnPanel
+    properties: {col_widths: '{}'}
+    name: column_panel_11_copy
+    layout_properties: {grid_position: 'KULKXZ,CYNLHE', full_width_row: false}
+    components:
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: false, text: '', font_size: null, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: ''}
+      name: spacer5
+      layout_properties:
+        col_widths: {}
+        grid_position: SZCLAG,KCNKTJ
+    - type: Button
+      properties: {role: secondary-color, align: center, tooltip: '', border: '',
+        enabled: true, foreground: '', visible: true, text: Enable Edit, font_size: null,
+        font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false, icon: ''}
+      name: button_templ_edit
+      layout_properties: {grid_position: 'SZCLAG,EIUKSJ'}
+      event_bindings: {click: button_templ_edit_click}
 is_package: true

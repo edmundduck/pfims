@@ -75,7 +75,7 @@ class form_lv1_input(form_lv1_inputTemplate):
       child_items += [c.input_data_panel_readonly.item]
     self.input_repeating_panel.items = child_items
     
-    templ_id = anvil.server.call('generate_new_templ_id', 
+    templ_id = anvil.server.call('get_templ_id', 
                                  self.dropdown_templ.selected_value)
     
     anvil.server.call('upsert_templates',
@@ -134,7 +134,7 @@ class form_lv1_input(form_lv1_inputTemplate):
                      ])
     
     if userconf == "Y":
-      templ_id = anvil.server.call('generate_new_templ_id', 
+      templ_id = anvil.server.call('get_templ_id', 
                                   to_be_del_templ_name)
       
       anvil.server.call('delete_templ_journals', 
@@ -151,3 +151,19 @@ class form_lv1_input(form_lv1_inputTemplate):
       n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
       n.show()
       
+
+  def button_submit_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    to_be_submitted_templ_name = self.dropdown_templ.selected_value
+    templ_id = anvil.server.call('get_templ_id', 
+                                 to_be_submitted_templ_name)
+    anvil.server.call('update_templates_submit_flag', 
+                      templ_id, 
+                      True)
+    """ Reflect the change in template dropdown """
+    self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
+    self.dropdown_templ.raise_event('change')
+
+    n = Notification("Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only.".format(templ_name=to_be_submitted_templ_name))
+    n.show()
+

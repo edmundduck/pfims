@@ -207,6 +207,7 @@ components:
       icon: ''}
     name: button_submit
     layout_properties: {}
+    event_bindings: {click: button_submit_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: 'theme:Black', visible: true, text: Save Template, font_size: null,

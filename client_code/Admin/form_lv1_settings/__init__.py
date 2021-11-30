@@ -12,9 +12,6 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
-    self.dropdown_default_broker.items = [''] + anvil.server.call('select_brokers')
-    self.dropdown_interval.items = global_var.search_interval_dropdown()
-
     settings = anvil.server.call('select_settings')
     if len(settings) > 0:
       self.dropdown_default_broker.selected_value = settings.get('default_broker')
@@ -26,15 +23,22 @@ class form_lv1_settings(form_lv1_settingsTemplate):
       self.time_datefrom.enabled = False
       self.time_dateto.enabled = False
     
-    if self.text_broker_name.text == '':
-      self.button_broker_create.enabled = False
-      
-    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
-                                      anvil.server.call('select_brokers')
-    self.dropdown_ccy.items = global_var.setting_ccy_dropdown()
+    self.button_broker_create.enabled = False
     self.button_broker_update.enabled = False
     self.button_broker_delete.enabled = False
     
+  def dropdown_default_broker_show(self, **event_args):
+    """This method is called when the DropDown is shown on the screen"""
+    self.dropdown_default_broker.items = [''] + anvil.server.call('select_brokers')
+
+  def dropdown_interval_show(self, **event_args):
+    """This method is called when the DropDown is shown on the screen"""
+    self.dropdown_interval.items = global_var.search_interval_dropdown()
+
+  def dropdown_ccy_show(self, **event_args):
+    """This method is called when the DropDown is shown on the screen"""
+    self.dropdown_ccy.items = global_var.setting_ccy_dropdown()
+
   def dropdown_interval_change(self, **event_args):
     """This method is called when an item is selected"""
     if self.dropdown_interval.selected_value != "SDR":
@@ -113,4 +117,30 @@ class form_lv1_settings(form_lv1_settingsTemplate):
   
   def dropdown_broker_list_show(self, **event_args):
     """This method is called when the DropDown is shown on the screen"""
+    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+                                      anvil.server.call('select_brokers')
     self.dropdown_broker_list.raise_event('change')
+
+  def dropdown_sub_templ_list_change(self, **event_args):
+    """This method is called when an item is selected"""
+    self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+
+  def dropdown_sub_templ_list_show(self, **event_args):
+    """This method is called when the DropDown is shown on the screen"""
+    self.dropdown_sub_templ_list.raise_event('change')
+
+  def button_templ_edit_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    to_be_enabled_templ_name = self.dropdown_sub_templ_list.selected_value
+    templ_id = anvil.server.call('get_templ_id', 
+                                 to_be_enabled_templ_name)
+    anvil.server.call('update_templates_submit_flag', 
+                      templ_id, 
+                      False)
+    """ Reflect the change in template dropdown """
+    self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+
+    n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
+    n.show()
+
+

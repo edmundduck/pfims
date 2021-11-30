@@ -56,17 +56,17 @@ def upsert_templ_journals(iid, template_id, sell_date, buy_date, symbol, qty, sa
                pnl=float(pnl))
   else:
     app_tables.templ_journals.add_row(iid=iid, 
-                                  template_id=template_id, 
-                                  sell_date=sell_date,
-                                  buy_date=buy_date,
-                                  symbol=symbol,
-                                  qty=int(qty),
-                                  sales=float(sales),
-                                  cost=float(cost),
-                                  fee=float(fee),
-                                  sell_price=float(sell_price),
-                                  buy_price=float(buy_price), 
-                                  pnl=float(pnl))
+                                      template_id=template_id, 
+                                      sell_date=sell_date,
+                                      buy_date=buy_date,
+                                      symbol=symbol,
+                                      qty=int(qty),
+                                      sales=float(sales),
+                                      cost=float(cost),
+                                      fee=float(fee),
+                                      sell_price=float(sell_price),
+                                      buy_price=float(buy_price), 
+                                      pnl=float(pnl))
 
 @anvil.server.callable
 # DB table "templ_journals" delete method
@@ -87,6 +87,16 @@ def upsert_templates(template_id, template_name, broker_id):
   row['template_lastsave'] = currenttime
 
 @anvil.server.callable
+# DB table "templates" update/insert method for submit/unsubmit
+def update_templates_submit_flag(template_id, submitted):
+  row = app_tables.templates.get(template_id=template_id)
+  if row is not None:
+    row['submitted'] = submitted
+    currenttime = datetime.now()
+    if submitted is True:
+      row['template_submitted'] = currenttime
+  
+@anvil.server.callable
 # DB table "templates" delete method
 def delete_templates(template_id):
   rows = app_tables.templates.search(template_id=template_id)
@@ -97,7 +107,7 @@ def delete_templates(template_id):
 @anvil.server.callable
 # Random generate new template ID with 4 alphabets + 1 digit = 26^4 * 9 combinations if it is a new template
 # Otherwise return the selected template ID
-def generate_new_templ_id(templ_choice_str):
+def get_templ_id(templ_choice_str):
   new_id = split_templ_id(templ_choice_str)
   if (new_id == DEFAULT_NEW_TEMPL_TEXT):
     new_id = ''.join(random.choice(string.ascii_uppercase) for x in range(RANDOM_ID_ALPHA_LEN)) + str(random.randint(0,9))
@@ -126,11 +136,19 @@ def get_input_templ_broker(templ_choice_str):
     return row['broker_id'] if row is not None else ''
     
 @anvil.server.callable
-# Generate template selection dropdown items
+# Generate DRAFTING template selection dropdown items
 def get_input_templ_list():
   #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
   content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=False))
   content.insert(0, DEFAULT_NEW_TEMPL_TEXT)
+  return content
+
+@anvil.server.callable
+# Generate SUBMITTED template selection dropdown items
+def get_submitted_templ_list():
+  #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
+  content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=True))
+  content.insert(0, '')
   return content
 
 @anvil.server.callable
