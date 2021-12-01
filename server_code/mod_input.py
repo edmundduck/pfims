@@ -82,6 +82,7 @@ def upsert_templates(template_id, template_name, broker_id):
   row = app_tables.templates.get(template_id=template_id) or app_tables.templates.add_row(template_id=template_id)
   row['template_name'] = template_name
   row['broker_id'] = broker_id
+  row['submitted'] = False if row['submitted'] is None else row['submitted']
   currenttime = datetime.now()
   row['template_create'] = currenttime if row['template_create'] is None else row['template_create']
   row['template_lastsave'] = currenttime
