@@ -6,6 +6,9 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ... import global_var
 
+# About amount formatting in design page's data binding field
+# Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
+
 class pnl_report_template(pnl_report_templateTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.

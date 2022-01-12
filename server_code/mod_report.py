@@ -84,12 +84,20 @@ def get_start_date(end_date, interval):
 # DB table "templ_journals" select method
 def select_templ_journals(end_date, start_date, symbols):
   if len(symbols) > 0:
-    return app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
-                                            buy_date=q.greater_than_or_equal_to(start_date),
-                                            symbol=q.any_of(*symbols))
+    return app_tables.templ_journals.search(
+                                            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                                                     buy_date=q.greater_than_or_equal_to(start_date),
+                                                     symbol=q.any_of(*symbols)),
+                                            tables.order_by("sell_date", ascending=False),
+                                            tables.order_by("symbol", ascending=True),
+                                           )
   else:
-    return app_tables.templ_journals.search(sell_date=q.less_than_or_equal_to(end_date), 
-                                            buy_date=q.greater_than_or_equal_to(start_date))
+    return app_tables.templ_journals.search(
+                                            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                                                     buy_date=q.greater_than_or_equal_to(start_date)),
+                                            tables.order_by("sell_date", ascending=False),
+                                            tables.order_by("symbol", ascending=True),
+                                           )
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result

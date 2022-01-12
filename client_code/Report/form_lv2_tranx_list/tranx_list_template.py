@@ -5,6 +5,9 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 
+# About amount formatting in design page's data binding field
+# Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
+
 class tranx_list_template(tranx_list_templateTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
