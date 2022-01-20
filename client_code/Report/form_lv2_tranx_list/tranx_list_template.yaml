@@ -57,6 +57,13 @@ components:
   layout_properties: {column: NMAPTI}
   data_bindings:
   - {property: text, code: '"${0:.2f}".format(self.item[''pnl''])'}
+- type: Link
+  properties: {}
+  name: row_link_symbol
+  layout_properties: {column: RMITXR}
+  data_bindings:
+  - {property: text, code: 'self.item[''symbol'']'}
+  event_bindings: {click: row_link_symbol_click}
 container:
   type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
