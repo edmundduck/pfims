@@ -1,8 +1,10 @@
 components:
 - type: Label
   properties: {}
-  name: hidden_use_only
+  name: row_hidden_iid
   layout_properties: {column: JNEVXO}
+  data_bindings:
+  - {property: text, code: 'self.item[''iid'']'}
 - type: Label
   properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
     visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,

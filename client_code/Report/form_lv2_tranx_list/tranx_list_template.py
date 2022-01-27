@@ -21,6 +21,6 @@ class tranx_list_template(tranx_list_templateTemplate):
 
   def row_link_symbol_click(self, **event_args):
     """This method is called when the link is clicked"""
-    n = Notification("{symname} (id={symid}) is selected.".format(symname=self.row_link_symbol.text, symid=self.))
+    n = Notification("{symname} (id={symid}) is selected.".format(symname=self.row_link_symbol.text, symid=self.row_hidden_iid.text))
     n.show()
 

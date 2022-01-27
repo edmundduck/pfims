@@ -20,6 +20,7 @@ components:
   properties:
     role: null
     columns:
+    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
     - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '90'}
     - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '90'}
     - {id: RMITXR, title: Symbol, data_key: symbol, width: '80'}
@@ -30,8 +31,6 @@ components:
     - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: false, width: '80'}
     - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: false, width: '80'}
     - {id: NMAPTI, title: P&L, data_key: pnl, expand: false, width: '120'}
-    - {id: UQUURI, title: Column 1, data_key: column_1}
-    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
     auto_header: true
     tooltip: ''
     border: ''
