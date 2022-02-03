@@ -131,7 +131,8 @@ def get_input_templ_name(templ_choice_str):
 # Return broker name based on template dropdown selection
 def get_input_templ_broker(templ_choice_str):
   if templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
-    return ''
+    row = select_settings()
+    return row['default_broker']
   else:
     row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
     return row['broker_id'] if row is not None else ''
