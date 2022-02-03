@@ -20,7 +20,7 @@ components:
   properties:
     role: null
     columns:
-    - {id: WKXYPE, title: '', data_key: templ_id, width: '0'}
+    - {id: WKXYPE, title: '', data_key: template_id, width: '0'}
     - {id: JNEVXO, title: '', data_key: iid, width: '0'}
     - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '90'}
     - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '90'}
