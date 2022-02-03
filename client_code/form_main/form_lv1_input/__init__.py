@@ -5,6 +5,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
+from ... import validation
 
 class form_lv1_input(form_lv1_inputTemplate):
   def __init__(self, **properties):
@@ -32,6 +33,8 @@ class form_lv1_input(form_lv1_inputTemplate):
     
   def button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
+    v = validation.Validator()
+    v.require_text_field(self.input_sales, "Error")
 
     last_iid = 0
     if len(self.input_repeating_panel.items) > 0:
