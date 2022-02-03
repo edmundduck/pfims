@@ -5,6 +5,8 @@ import anvil.server
 import random
 import string
 from datetime import date, datetime
+from . import mod_debug
+from . import mod_setting
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -121,7 +123,7 @@ def get_templ_id(templ_choice_str):
 @anvil.server.callable
 # Update template name based on template dropdown selection
 def get_input_templ_name(templ_choice_str):
-  if templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
+  if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
     return DEFAULT_NEW_TEMPL_NAME
   else:
     row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
@@ -130,9 +132,9 @@ def get_input_templ_name(templ_choice_str):
 @anvil.server.callable
 # Return broker name based on template dropdown selection
 def get_input_templ_broker(templ_choice_str):
-  if templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
-    row = select_settings()
-    return row['default_broker']
+  if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
+    row = mod_setting.select_settings()
+    return row['default_broker'] if row is not None else ''
   else:
     row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
     return row['broker_id'] if row is not None else ''

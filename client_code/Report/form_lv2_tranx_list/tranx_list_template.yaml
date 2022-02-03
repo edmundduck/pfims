@@ -1,6 +1,8 @@
 components:
 - type: Label
-  properties: {}
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
+    text: '', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+    italic: false, background: '', bold: false, underline: false, icon: ''}
   name: row_hidden_iid
   layout_properties: {column: JNEVXO}
   data_bindings:
@@ -66,6 +68,12 @@ components:
   data_bindings:
   - {property: text, code: 'self.item[''symbol'']'}
   event_bindings: {click: row_link_symbol_click}
+- type: Label
+  properties: {}
+  name: row_hidden_templ_id
+  layout_properties: {column: WKXYPE}
+  data_bindings:
+  - {property: text, code: 'self.item[''template_id'']'}
 container:
   type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,

@@ -146,6 +146,7 @@ class form_lv1_input(form_lv1_inputTemplate):
       self.dropdown_templ_show()
       #self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
       #self.templ_name.text = ""
+      self.dropdown_broker_show()
       self.input_repeating_panel.items = []
       
       n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
