@@ -34,7 +34,7 @@ class form_lv1_input(form_lv1_inputTemplate):
   def button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
     v = validation.Validator()
-    v.require_text_field(self.input_sales, "Error")
+    v.require_text_field(self.input_sales, self.error_1, True)
 
     last_iid = 0
     if len(self.input_repeating_panel.items) > 0:
