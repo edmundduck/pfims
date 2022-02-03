@@ -12,10 +12,25 @@ class form_lv1_input(form_lv1_inputTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
+    self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
     
     # Initiate repeating panel items to an empty list otherwise will throw NoneType error
     self.input_repeating_panel.items = []
     self.input_selldate.date = date.today()
+  
+  def save_row_change(self, iid, **event_args):
+    """ 
+    *** ESSENTIAL ***
+    Update child items from repeating panel to parent form items
+    Refer to the following reference links for detail
+    https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
+    https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
+    https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
+    """
+    child_items = []
+    for c in self.input_repeating_panel.get_components():
+      child_items += [c.input_data_panel_readonly.item]
+    self.input_repeating_panel.items = child_items
     
   def button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
@@ -61,21 +76,6 @@ class form_lv1_input(form_lv1_inputTemplate):
 
   def button_save_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
-    
-    """ 
-    *** ESSENTIAL ***
-    Update child items from repeating panel to parent form items
-    Refer to the following reference links for detail
-    https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
-    https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
-    https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
-    """
-    """ TODO - REVIEW the code """
-    child_items = []
-    for c in self.input_repeating_panel.get_components():
-      child_items += [c.input_data_panel_readonly.item]
-    self.input_repeating_panel.items = child_items
-    
     templ_id = anvil.server.call('get_templ_id', 
                                  self.dropdown_templ.selected_value)
     

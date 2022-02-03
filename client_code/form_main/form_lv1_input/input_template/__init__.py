@@ -66,6 +66,8 @@ class input_template(input_templateTemplate):
     self.input_data_panel_readonly.visible = True
     self.input_data_panel_editable.visible = False
     
+    self.parent.raise_event('x-save-change', iid=self.row_iid.text)
+    
   def button_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.remove_from_parent()
