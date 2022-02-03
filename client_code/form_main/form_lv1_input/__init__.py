@@ -27,10 +27,8 @@ class form_lv1_input(form_lv1_inputTemplate):
     https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
     https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
     """
-    child_items = []
-    for c in self.input_repeating_panel.get_components():
-      child_items += [c.input_data_panel_readonly.item]
-    self.input_repeating_panel.items = child_items
+    self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
+                                        for c in self.input_repeating_panel.get_components()]
     
   def button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
