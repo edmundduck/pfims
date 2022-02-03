@@ -34,26 +34,34 @@ class form_lv1_input(form_lv1_inputTemplate):
   def button_plus_click(self, **event_args):
     """This method is called when the button is clicked"""
     v = validation.Validator()
-    v.require_text_field(self.input_sales, self.error_1, True)
+    v.display_when_invalid(self.valerror_title)
+    v.require_date_field(self.input_selldate, self.valerror_1, True)
+    v.require_date_field(self.input_buydate, self.valerror_2, True)
+    v.require_text_field(self.input_symbol, self.valerror_3, True)
+    v.require_text_field(self.input_qty, self.valerror_4, True)
+    v.require_text_field(self.input_sales, self.valerror_5, True)
+    v.require_text_field(self.input_cost, self.valerror_6, True)
+    v.require_text_field(self.input_fee, self.valerror_7, True)
 
-    last_iid = 0
-    if len(self.input_repeating_panel.items) > 0:
-      last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
-    
-    new_data = {"sell_date": self.input_selldate.date,
-                    "buy_date": self.input_buydate.date,
-                    "symbol": self.input_symbol.text,
-                    "qty": self.input_qty.text,
-                    "sales": self.input_sales.text,
-                    "cost": self.input_cost.text,
-                    "fee": self.input_fee.text,
-                    "sell_price": anvil.server.call('cal_price', self.input_sales.text, self.input_qty.text),
-                    "buy_price": anvil.server.call('cal_price', self.input_cost.text, self.input_qty.text),
-                    "pnl": anvil.server.call('cal_profit', self.input_sales.text, self.input_cost.text, self.input_fee.text),
-                    "iid": int(last_iid)+1}
-    
-    self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
-    
+    if v.is_valid():
+      last_iid = 0
+      if len(self.input_repeating_panel.items) > 0:
+        last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
+      
+      new_data = {"sell_date": self.input_selldate.date,
+                      "buy_date": self.input_buydate.date,
+                      "symbol": self.input_symbol.text,
+                      "qty": self.input_qty.text,
+                      "sales": self.input_sales.text,
+                      "cost": self.input_cost.text,
+                      "fee": self.input_fee.text,
+                      "sell_price": anvil.server.call('cal_price', self.input_sales.text, self.input_qty.text),
+                      "buy_price": anvil.server.call('cal_price', self.input_cost.text, self.input_qty.text),
+                      "pnl": anvil.server.call('cal_profit', self.input_sales.text, self.input_cost.text, self.input_fee.text),
+                      "iid": int(last_iid)+1}
+      
+      self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
+      
   def dropdown_templ_change(self, **event_args):
     """This method is called when an item is selected"""
     self.templ_name.text = anvil.server.call('get_input_templ_name', 

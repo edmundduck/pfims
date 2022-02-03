@@ -33,8 +33,9 @@ to check the status of the form.
   def require(self, component, event_list, predicate, error_lbl=None, show_errors_immediately=False):
     def check_this_component(**e):
       result = predicate(component)
-      print(component.text)
-      print(predicate(component))
+      # DEBUG
+      #print(component.text)
+      #print(predicate(component))
       self._validity[component] = result
       if error_lbl is not None:
         error_lbl.visible = not result
@@ -59,6 +60,11 @@ to check the status of the form.
                  lambda tb: tb.text not in ('', None),
                  error_lbl, show_errors_immediately)
         
+  def require_date_field(self, date_field, error_lbl=None, show_errors_immediately=False):
+    self.require(date_field, ['change'],
+                 lambda df: df.date not in ('', None),
+                 error_lbl, show_errors_immediately)
+        
   def require_checked(self, check_box, error_lbl=None, show_errors_immediately=False):
     self.require(check_box, ['change'],
                  lambda cb: cb.checked,
@@ -67,6 +73,13 @@ to check the status of the form.
   def enable_when_valid(self, component):
     def on_change(is_valid):
       component.enabled = is_valid
+    self._actions.append(on_change)
+    self._check()
+
+  """For displaying an 'Error Summary' whenever the form is invalid with one or more errors"""
+  def display_when_invalid(self, component):
+    def on_change(is_valid):
+      component.visible = not is_valid
     self._actions.append(on_change)
     self._check()
 
