@@ -51,7 +51,7 @@ components:
   layout_properties: {column: VDCBTP}
 container:
   type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
-    visible: true, font_size: null, font: '', spacing_above: none, spacing_below: none,
-    italic: false, background: '', bold: false, underline: false}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
+    auto_display_data: true, visible: true, font_size: null, font: '', spacing_above: none,
+    spacing_below: none, italic: false, background: '', bold: false, underline: false}
   data_bindings: []
