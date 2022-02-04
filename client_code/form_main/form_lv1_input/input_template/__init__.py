@@ -37,7 +37,7 @@ class input_template(input_templateTemplate):
   def button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
     v = validation.Validator()
-    print(i for i in self.parent.get_components())
+    print(i.text for i in self.parent.get_components())
     v.display_when_invalid(self.parent.get_components().valerror_title)
     v.require_date_field(self.row_selldate, self.valerror_1, True)
     v.require_date_field(self.row_buydate, self.valerror_2, True)
