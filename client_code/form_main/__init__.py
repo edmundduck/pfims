@@ -97,5 +97,8 @@ class form_main(form_mainTemplate):
 
   def colpanel_logout_click(self, **event_args):
     """This method is called when the link is clicked"""
+    # TODO - Improve the logic later
     anvil.users.logout()
-    self.init_components()
+    self.content_panel.clear()
+    self.column_panel.clear()
+    open_form('form_main')
