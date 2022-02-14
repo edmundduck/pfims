@@ -70,6 +70,7 @@ components:
   layout_properties: {column: RMITXR}
   data_bindings:
   - {property: text, code: 'self.item[''symbol'']'}
+  - {property: url, code: 'symid=self.item[''symbol'']'}
   event_bindings: {click: row_link_symbol_click}
 - type: Label
   properties: {}
