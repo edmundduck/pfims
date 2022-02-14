@@ -4,8 +4,6 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...Admin.form_lv1_settings import form_lv1_settings
-from anvil.js import window
 
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
@@ -23,10 +21,9 @@ class tranx_list_template(tranx_list_templateTemplate):
 
   def row_link_symbol_click(self, **event_args):
     """This method is called when the link is clicked"""
-    newform = form_lv1_settings(symname=self.row_link_symbol.text, 
-                        symid=self.row_hidden_iid.text, 
-                        symtemplid=self.row_hidden_templ_id.text)
-    #self.content_panel.add_component(
-    open_form(newform)
-
-
+    # TODO - To be implemented with hash routing in the future
+    #newform = form_lv1_settings(symname=self.row_link_symbol.text, 
+    #                    symid=self.row_hidden_iid.text, 
+    #                    symtemplid=self.row_hidden_templ_id.text)
+    #open_form(newform)
+    pass

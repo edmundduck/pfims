@@ -58,9 +58,9 @@ components:
     - {id: QLINZB, title: '', data_key: obsolete_key1, width: '20'}
     - {id: VDCBTP, title: '', data_key: obsolete_key2, width: '20'}
     - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '90'}
-    - {id: MOWHRG, title: '# Trade', data_key: num_trade, width: '100'}
+    - {id: MOWHRG, title: '# Trade', data_key: num_trade, width: '100', expand: false}
     - {id: BXGUSK, title: '# Day Trade', data_key: num_daytrade, width: '100'}
-    - {id: JRLRWP, title: Sales Amt, data_key: sales}
+    - {id: JRLRWP, title: Sales Amt, data_key: sales, expand: false}
     - {id: WXPMEY, title: Cost Amt, data_key: cost}
     - {id: LMHMKP, title: Fee, data_key: fee}
     - {id: NMAPTI, title: P&L, data_key: pnl, expand: true}

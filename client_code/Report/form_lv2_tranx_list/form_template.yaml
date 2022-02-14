@@ -26,12 +26,12 @@ components:
     - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '90'}
     - {id: RMITXR, title: Symbol, data_key: symbol, width: '80'}
     - {id: DMKCOL, title: Qty, data_key: qty, width: '80'}
-    - {id: JRLRWP, title: Sales Amt, data_key: sales, width: '120'}
-    - {id: WXPMEY, title: Cost Amt, data_key: cost, width: '120'}
+    - {id: JRLRWP, title: Sales Amt, data_key: sales, width: '100'}
+    - {id: WXPMEY, title: Cost Amt, data_key: cost, width: '100'}
     - {id: LMHMKP, title: Fee, data_key: fee, width: '70'}
     - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: false, width: '80'}
     - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: false, width: '80'}
-    - {id: NMAPTI, title: P&L, data_key: pnl, expand: false, width: '120'}
+    - {id: NMAPTI, title: P&L, data_key: pnl, expand: false, width: '100'}
     auto_header: true
     tooltip: ''
     border: ''
