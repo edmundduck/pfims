@@ -23,10 +23,10 @@ class tranx_list_template(tranx_list_templateTemplate):
 
   def row_link_symbol_click(self, **event_args):
     """This method is called when the link is clicked"""
-    self.content_panel.clear()
-    self.content_panel.add_component(
-      form_lv1_settings(symname=self.row_link_symbol.text, 
+    newform = form_lv1_settings(symname=self.row_link_symbol.text, 
                         symid=self.row_hidden_iid.text, 
-                        symtemplid=self.row_hidden_templ_id.text))
+                        symtemplid=self.row_hidden_templ_id.text)
+    #self.content_panel.add_component(
+    open_form(newform)
 
 
