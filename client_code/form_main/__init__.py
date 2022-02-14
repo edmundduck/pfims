@@ -19,8 +19,6 @@ class form_main(form_mainTemplate):
   def __init__(self, **properties):
     # TODO - Move the logon logic to a new logon page
     anvil.users.login_with_form()
-    n = Notification("username={username}".format(username=anvil.users.get_user()))
-    n.show()
     
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
@@ -28,6 +26,7 @@ class form_main(form_mainTemplate):
     # Any code you write here will run when the form opens.
     self.colpanel_rpt1.visible = False
     self.colpanel_rpt2.visible = False
+    self.colpanel_welcome_msg.text = "Welcome {username}".format(username=anvil.users.get_user().get_id())
   
   def reset_link_status(self, **event_args):
     self.colpanel_link_dashb.role = ''
@@ -95,3 +94,8 @@ class form_main(form_mainTemplate):
     """This method is called when the link is clicked"""
     self.content_panel.clear()
     self.content_panel.add_component(form_poc_main())
+
+  def colpanel_logout_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    anvil.users.logout()
+    self.init_components()
