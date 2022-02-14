@@ -1,5 +1,6 @@
 from ._anvil_designer import form_mainTemplate
 from anvil import *
+import anvil.users
 import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
@@ -16,6 +17,11 @@ from ..Debug.form_poc_main import form_poc_main
 
 class form_main(form_mainTemplate):
   def __init__(self, **properties):
+    # TODO - Move the logon logic to a new logon page
+    anvil.users.login_with_form()
+    n = Notification("username={username}".format(username=anvil.users.get_user()))
+    n.show()
+    
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
 

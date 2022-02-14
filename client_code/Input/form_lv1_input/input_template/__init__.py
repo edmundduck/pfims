@@ -1,5 +1,6 @@
 from ._anvil_designer import input_templateTemplate
 from anvil import *
+import anvil.users
 import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q

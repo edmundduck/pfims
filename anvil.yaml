@@ -2,6 +2,10 @@ services:
 - source: /runtime/services/tables.yml
   client_config: {}
   server_config: {auto_create_missing_columns: false}
+- source: /runtime/services/anvil/users.yml
+  client_config: {allow_signup: false, enable_automatically: true, use_email: true,
+    confirm_email: true, allow_remember_me: true, remember_me_days: 0.3333, require_secure_passwords: true}
+  server_config: {user_table: users}
 package_name: IPES__Investment_Performance_Evaluation_System_
 allow_embedding: false
 name: IPES (Investment Performance Evaluation System)
@@ -107,4 +111,21 @@ db_schema:
     - name: ccy
       admin_ui: {width: 200}
       type: string
+  users:
+    title: Users
+    client: none
+    server: full
+    columns:
+    - name: email
+      admin_ui: {width: 200}
+      type: string
+    - name: enabled
+      admin_ui: {width: 100}
+      type: bool
+    - name: password_hash
+      admin_ui: {width: 200}
+      type: string
+    - name: confirmed_email
+      admin_ui: {width: 200}
+      type: bool
 renamed: true
