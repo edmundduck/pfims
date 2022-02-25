@@ -10,6 +10,7 @@ from anvil.tables import app_tables
 #
 #    Module1.say_hello()
 #
+row_del = False
 
 def setting_ccy_dropdown():
   ccy_list = [('$ USD', 'USD'), 
@@ -50,6 +51,17 @@ def form_lv2_pnl_report():
 
 def form_poc1():
   return 'form_poc1'
+
+def input_row_del_trigger():
+  global row_del
+  row_del = True
+  
+def input_row_del_reset():
+  global row_del
+  row_del = False
+  
+def is_input_row_deleted():
+  return row_del
 
 def pnl_list_day_mode():
   return 'd'

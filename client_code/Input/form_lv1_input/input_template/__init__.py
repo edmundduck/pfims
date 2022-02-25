@@ -5,6 +5,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from .... import global_var
 from .... import validation
 
 class input_template(input_templateTemplate):
@@ -38,6 +39,7 @@ class input_template(input_templateTemplate):
   def button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
     v = validation.Validator()
+    # TODO - Frontend validation is not completed yet
     #print(i.text for i in self.parent.get_components())
     #v.display_when_invalid(self.parent.get_components().valerror_title)
     #v.require_date_field(self.row_selldate, self.valerror_1, True)
@@ -81,11 +83,10 @@ class input_template(input_templateTemplate):
       self.input_data_panel_readonly.visible = True
       self.input_data_panel_editable.visible = False
       
-      self.parent.raise_event('x-save-change', iid=self.row_iid.text)
+      #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
+      self.parent.raise_event('x-save-change')
       
   def button_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
-    # TODO - Delete doesn't work if save template right after row deletion
-    # Delete currently works only if save another row change first after row deletion
     self.remove_from_parent()
-
+    global_var.input_row_del_trigger()

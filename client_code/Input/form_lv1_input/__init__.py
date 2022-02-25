@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
+from ... import global_var
 from ... import validation
 
 class form_lv1_input(form_lv1_inputTemplate):
@@ -20,7 +21,7 @@ class form_lv1_input(form_lv1_inputTemplate):
     self.input_repeating_panel.items = []
     self.input_selldate.date = date.today()
   
-  def save_row_change(self, iid, **event_args):
+  def save_row_change(self, **event_args):
     """ 
     *** ESSENTIAL ***
     Update child items from repeating panel to parent form items
@@ -99,6 +100,11 @@ class form_lv1_input(form_lv1_inputTemplate):
     anvil.server.call('delete_templ_journals', 
                       template_id=templ_id)
     
+    """ Trigger save_row_change if delete has been triggered at least once """
+    if global_var.is_input_row_deleted():
+      self.save_row_change()
+      global_var.input_row_del_reset()
+    
     """ Add/Update """
     for row in self.input_repeating_panel.items:
       anvil.server.call('upsert_templ_journals', 
@@ -133,7 +139,10 @@ class form_lv1_input(form_lv1_inputTemplate):
     self.input_sell_price.text = ""
     self.input_buy_price.text = ""
     self.input_pnl.text = ""
+    """ Reset row delete flag """
+    global_var.input_row_del_reset()
 
+    
   def button_delete_templ_click(self, **event_args):
     """This method is called when the button is clicked"""
     to_be_del_templ_name = self.dropdown_templ.selected_value
@@ -153,6 +162,8 @@ class form_lv1_input(form_lv1_inputTemplate):
                         template_id=templ_id)
       anvil.server.call('delete_templates', 
                         template_id=templ_id)
+      """ Reset row delete flag """
+      global_var.input_row_del_reset()
   
       """ Reflect the change in template dropdown """
       self.dropdown_templ_show()
