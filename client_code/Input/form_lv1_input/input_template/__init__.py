@@ -38,17 +38,18 @@ class input_template(input_templateTemplate):
   def button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
     v = validation.Validator()
-    print(i.text for i in self.parent.get_components())
-    v.display_when_invalid(self.parent.get_components().valerror_title)
-    v.require_date_field(self.row_selldate, self.valerror_1, True)
-    v.require_date_field(self.row_buydate, self.valerror_2, True)
-    v.require_text_field(self.row_symbol, self.valerror_3, True)
-    v.require_text_field(self.row_qty, self.valerror_4, True)
-    v.require_text_field(self.row_sales, self.valerror_5, True)
-    v.require_text_field(self.row_cost, self.valerror_6, True)
-    v.require_text_field(self.row_fee, self.valerror_7, True)
+    #print(i.text for i in self.parent.get_components())
+    #v.display_when_invalid(self.parent.get_components().valerror_title)
+    #v.require_date_field(self.row_selldate, self.valerror_1, True)
+    #v.require_date_field(self.row_buydate, self.valerror_2, True)
+    #v.require_text_field(self.row_symbol, self.valerror_3, True)
+    #v.require_text_field(self.row_qty, self.valerror_4, True)
+    #v.require_text_field(self.row_sales, self.valerror_5, True)
+    #v.require_text_field(self.row_cost, self.valerror_6, True)
+    #v.require_text_field(self.row_fee, self.valerror_7, True)
 
-    if v.is_valid():
+    #if v.is_valid():
+    if True:
       self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
       self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
       self.row_pnl.text = anvil.server.call('cal_profit', self.row_sales.text, self.row_cost.text, self.row_fee.text)
@@ -84,5 +85,7 @@ class input_template(input_templateTemplate):
       
   def button_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
+    # TODO - Delete doesn't work if save template right after row deletion
+    # Delete currently works only if save another row change first after row deletion
     self.remove_from_parent()
 
