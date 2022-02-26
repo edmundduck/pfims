@@ -39,19 +39,22 @@ class input_template(input_templateTemplate):
   def button_save_click(self, **event_args):
     """This method is called when the button is clicked"""
     v = validation.Validator()
-    # TODO - Frontend validation is not completed yet
-    #print(i.text for i in self.parent.get_components())
-    #v.display_when_invalid(self.parent.get_components().valerror_title)
-    #v.require_date_field(self.row_selldate, self.valerror_1, True)
-    #v.require_date_field(self.row_buydate, self.valerror_2, True)
-    #v.require_text_field(self.row_symbol, self.valerror_3, True)
-    #v.require_text_field(self.row_qty, self.valerror_4, True)
-    #v.require_text_field(self.row_sales, self.valerror_5, True)
-    #v.require_text_field(self.row_cost, self.valerror_6, True)
-    #v.require_text_field(self.row_fee, self.valerror_7, True)
 
-    #if v.is_valid():
-    if True:
+    # To access the parent form, needs to access 3 parent levels ...
+    # self.parent = Repeating Panel
+    # self.parent.parent = Data Grid
+    # self.parent.parent.parent = Parent Form
+    #print(self.parent.parent.parent.valerror_1.text)
+    v.display_when_invalid(self.parent.parent.parent.valerror_title)
+    v.require_date_field(self.row_selldate, self.parent.parent.parent.valerror_1, True)
+    v.require_date_field(self.row_buydate, self.parent.parent.parent.valerror_2, True)
+    v.require_text_field(self.row_symbol, self.parent.parent.parent.valerror_3, True)
+    v.require_text_field(self.row_qty, self.parent.parent.parent.valerror_4, True)
+    v.require_text_field(self.row_sales, self.parent.parent.parent.valerror_5, True)
+    v.require_text_field(self.row_cost, self.parent.parent.parent.valerror_6, True)
+    v.require_text_field(self.row_fee, self.parent.parent.parent.valerror_7, True)
+
+    if v.is_valid():
       self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
       self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
       self.row_pnl.text = anvil.server.call('cal_profit', self.row_sales.text, self.row_cost.text, self.row_fee.text)
