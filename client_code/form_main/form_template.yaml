@@ -30,7 +30,7 @@ components:
     event_bindings: {click: colpanel_logout_click}
   - type: Link
     properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: DASHBOARD, font_size: 16, wrap_on: mobile, font: '', col_spacing: medium,
+      visible: true, text: DASHBOARD, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,
       spacing_above: small, icon_align: left, col_widths: '{}', spacing_below: small,
       italic: false, background: '', bold: false, underline: false, icon: 'fa:picture-o'}
     name: colpanel_link_dashb
@@ -39,7 +39,7 @@ components:
     components: []
   - type: Link
     properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: INPUT, font_size: 16, wrap_on: mobile, font: '', col_spacing: medium,
+      visible: true, text: INPUT, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,
       spacing_above: small, icon_align: left, col_widths: '', spacing_below: small,
       italic: false, background: '', bold: false, underline: false, icon: 'fa:pencil'}
     name: colpanel_link_input
@@ -47,7 +47,7 @@ components:
     event_bindings: {click: colpanel_link_input_click}
   - type: Link
     properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: REPORTS, font_size: 16, wrap_on: mobile, font: '', col_spacing: medium,
+      visible: true, text: REPORTS, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,
       spacing_above: small, icon_align: left, col_widths: '{}', spacing_below: small,
       italic: false, background: '', bold: false, underline: false, icon: 'fa:caret-right'}
     name: colpanel_link_reports
@@ -61,8 +61,8 @@ components:
     components:
     - type: Link
       properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Transaction List, font_size: 14, wrap_on: mobile, font: '',
-        col_spacing: medium, spacing_above: small, icon_align: left, col_widths: '{}',
+        visible: true, text: '   Transaction List', font_size: 12, wrap_on: mobile,
+        font: '', col_spacing: medium, spacing_above: small, icon_align: left, col_widths: '{}',
         spacing_below: small, italic: false, background: '', bold: false, underline: false,
         icon: 'fa:file-excel-o'}
       name: colpanel_lv2link_tranx_list
@@ -78,7 +78,7 @@ components:
     components:
     - type: Link
       properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: P&L Breakdown by Month, font_size: 14, wrap_on: mobile,
+        visible: true, text: '   P&L Breakdown by Month', font_size: 12, wrap_on: mobile,
         font: '', col_spacing: medium, spacing_above: small, icon_align: left, col_widths: '',
         spacing_below: small, italic: false, background: '', bold: false, underline: false,
         icon: 'fa:sellsy'}
@@ -87,7 +87,7 @@ components:
       event_bindings: {click: colpanel_lv2link_pnl_report_click}
   - type: Link
     properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: SETTINGS, font_size: 16, wrap_on: mobile, font: '', col_spacing: medium,
+      visible: true, text: SETTINGS, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,
       spacing_above: small, icon_align: left, col_widths: '{}', spacing_below: small,
       italic: false, background: '', bold: false, underline: false, icon: 'fa:wrench'}
     name: colpanel_link_settings
