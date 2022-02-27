@@ -4,28 +4,29 @@ container:
   event_bindings: {}
 components:
 - type: ColumnPanel
-  properties: {}
+  properties: {col_widths: '{"HRMOYO":25,"IJDLKK":35}'}
   name: column_panel_4
   layout_properties: {grid_position: 'KGRZCX,ZJJBBJ'}
-- type: Label
-  properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
-    visible: true, text: Template Name, font_size: null, font: '', spacing_above: small,
-    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: ''}
-  name: label_1
-  layout_properties: {grid_position: 'KGRZCX,UVZCUF'}
-- type: TextBox
-  properties: {}
-  name: templ_name
-  layout_properties: {grid_position: 'KGRZCX,ODRKXB'}
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Template Name, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_1
+    layout_properties: {grid_position: 'LEHWLY,HRMOYO'}
+  - type: TextBox
+    properties: {}
+    name: templ_name
+    layout_properties: {grid_position: 'LEHWLY,IJDLKK'}
 - type: ColumnPanel
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{"ANNNFE":15,"QKDMOJ":45}'}
   name: column_panel_1
   layout_properties: {grid_position: 'KGRZCX,IEWBUN'}
   components:
   - type: Label
-    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Broker:', font_size: null, font: '', spacing_above: small,
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Broker, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_3
@@ -36,13 +37,13 @@ components:
     layout_properties: {grid_position: 'QZCZKX,QKDMOJ'}
     event_bindings: {show: dropdown_broker_show}
 - type: ColumnPanel
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{"SIIRIQ":20,"FPTCAC":40}'}
   name: column_panel_2
   layout_properties: {grid_position: 'KGRZCX,MYOLIN'}
   components:
   - type: Label
-    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Template:', font_size: null, font: '', spacing_above: small,
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Template, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_2
