@@ -13,32 +13,6 @@ runtime_options: {version: 2, client_version: '3', server_version: python3-sandb
 metadata: {}
 startup_form: form_main
 db_schema:
-  templates:
-    title: templates
-    client: none
-    server: full
-    columns:
-    - name: template_id
-      admin_ui: {width: 200}
-      type: string
-    - name: template_name
-      admin_ui: {width: 200}
-      type: string
-    - name: broker_id
-      admin_ui: {width: 200}
-      type: string
-    - name: submitted
-      admin_ui: {width: 200}
-      type: bool
-    - name: template_create
-      admin_ui: {width: 200}
-      type: datetime
-    - name: template_lastsave
-      admin_ui: {width: 200}
-      type: datetime
-    - name: template_submitted
-      admin_ui: {width: 200}
-      type: datetime
   templ_journals:
     title: templ_journals
     client: none
@@ -80,6 +54,32 @@ db_schema:
     - name: pnl
       admin_ui: {width: 200}
       type: number
+  templates:
+    title: templates
+    client: none
+    server: full
+    columns:
+    - name: template_id
+      admin_ui: {width: 200}
+      type: string
+    - name: template_name
+      admin_ui: {width: 200}
+      type: string
+    - name: broker_id
+      admin_ui: {width: 200}
+      type: string
+    - name: submitted
+      admin_ui: {width: 200}
+      type: bool
+    - name: template_create
+      admin_ui: {width: 200}
+      type: datetime
+    - name: template_lastsave
+      admin_ui: {width: 200}
+      type: datetime
+    - name: template_submitted
+      admin_ui: {width: 200}
+      type: datetime
   settings:
     title: settings
     client: none
