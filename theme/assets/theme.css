@@ -427,6 +427,7 @@ a:hover, a:active {
 /* Don't put spacing on the top-level container (eg FlowPanel) */
 .app-bar-nav > .anvil-container {
   margin: 0;
+  margin-right: 100px;
   padding: 0;
   min-height: 56px;
 }
