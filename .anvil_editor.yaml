@@ -6,16 +6,17 @@ unique_ids:
     Report.form_lv2_tranx_list: RIRZNO5HLZG3BBXUQPIAHECUW4RKHDWF
     Debug.form_poc2: GYQQVHBPYST36H775CH4WEQ5PNDAIYWI
     form_main: TNMWRJE7DZEPVMK6Y7CTQHGKSVRCWLHW
+    Input.form_input_stock.input_template: RATFOYIZP6VUKZC3UPCLVGOSPW6MLNYC
     Report.form_lv1_dashb: YCOTFVKCETZYRXPD2PMBQDI4VRTGFGTX
     Debug.form_poc_main: I4UQL5D742KHJ2RDJH22CP7RC7QSJ56P
     Report.form_lv2_pnl_report.pnl_report_template: OUTTZAPFSS7IJQ6B6S7IQ5RBBM6UKNAW
+    Input.form_input_exp: SRFHXWORWERSKLPNHEKXYQDNXXI6KVAD
+    Input.form_input_stock: 7MYSTEFMWLERSXWHMZVPLOZHKNV2AAJO
     Obsolete.form_sub2_tranx_report: MRI3WC7LWBPT5DWPJICJAYXMAI4K7DR2
     Report.form_lv2_tranx_list.tranx_list_template: 6K6GMJTMVMSL52CSQJ3CUTCSGCAZNEFP
-    Input.form_lv1_input: 7MYSTEFMWLERSXWHMZVPLOZHKNV2AAJO
     Obsolete.form_sub2_tranx_report.tranx_rpt_template: 7SERJS6BWF3NCCVG4Z5QDB7QCAK6VTMS
     Report.form_lv2_pnl_report: RXSUKLOJQBDAVUQEX2WJTJ7ASDCEMEHA
     Review.form_lv2_review: WWHVQCGKTW67MKBTLMMZZ4NG54XSGW54
-    Input.form_lv1_input.input_template: RATFOYIZP6VUKZC3UPCLVGOSPW6MLNYC
     Admin.form_lv1_settings: 5G7DFUL2LGGTGEOA7RETQ2OGQAZDZ7A7
     Debug.form_poc2.test_template: I7VGCOHGIK32TFWPVUUSRN2KTIJVLDLX
   modules:

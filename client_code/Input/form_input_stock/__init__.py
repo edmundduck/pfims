@@ -1,4 +1,4 @@
-from ._anvil_designer import form_lv1_inputTemplate
+from ._anvil_designer import form_input_stockTemplate
 from anvil import *
 import anvil.users
 import anvil.server
@@ -9,7 +9,7 @@ from datetime import date
 from ... import global_var
 from ... import validation
 
-class form_lv1_input(form_lv1_inputTemplate):
+class form_input_stock(form_input_stockTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)

@@ -47,11 +47,42 @@ components:
   - type: Link
     properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: INPUT, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,
-      spacing_above: small, icon_align: right, col_widths: '', spacing_below: small,
-      italic: false, background: '', bold: false, underline: false, icon: 'fa:pencil'}
+      spacing_above: small, icon_align: right, col_widths: '{}', spacing_below: small,
+      italic: false, background: '', bold: false, underline: false, icon: 'fa:caret-right'}
     name: colpanel_link_input
     layout_properties: {grid_position: 'EUEJJL,UUOPUM'}
     event_bindings: {click: colpanel_link_input_click}
+    components: []
+  - type: ColumnPanel
+    properties: {col_widths: '{}'}
+    name: colpanel_input1
+    layout_properties: {grid_position: 'CMRQOA,BYRWNF'}
+    components:
+    - type: Link
+      properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: '    Stock Buy/Sell', font_size: 12, wrap_on: mobile,
+        font: '', col_spacing: medium, spacing_above: small, icon_align: right, col_widths: '{}',
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: 'fa:pencil'}
+      name: colpanel_lv2link_input_stock
+      layout_properties: {grid_position: 'CUIUYK,BDVBJN'}
+      event_bindings: {click: colpanel_lv2link_input_stock_click}
+      components: []
+  - type: ColumnPanel
+    properties: {col_widths: '{}'}
+    name: colpanel_input2
+    layout_properties: {grid_position: 'BFKCPA,XYGTZB'}
+    components:
+    - type: Link
+      properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: '    Expense', font_size: 12, wrap_on: mobile, font: '',
+        col_spacing: medium, spacing_above: small, icon_align: right, col_widths: '{}',
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: 'fa:pencil'}
+      name: colpanel_lv2link_input_exp
+      layout_properties: {grid_position: 'CFVQCR,WWVDCV'}
+      event_bindings: {click: colpanel_lv2link_input_exp_click}
+      components: []
   - type: Link
     properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: REPORTS, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,
