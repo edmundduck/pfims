@@ -188,11 +188,8 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
       enddate = self.time_dateto.date
       startdate = self.time_datefrom.date 
     
-    # Alternative - Get data from table directly
-    #csv_file = self.subform.rpt_panel.items.to_csv()
-    
     # Get data from db
-    csv_file = anvil.server.call('gencsv_templ_journals', 
+    csv_file = anvil.server.call('generate_csv', 
                                 enddate, 
                                 startdate, 
                                 symbol_list)
