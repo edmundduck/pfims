@@ -173,6 +173,31 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
                                               startdate, 
                                               symbol_list)
 
+  def button_tranx_gen_csv_click(self, **event_args):
+    """This method is called when the button is clicked"""
+    symbol_list = self.get_selected_symbols()
+    enddate = None
+    startdate = None
+    
+    if self.dropdown_interval.selected_value != "SDR":
+      enddate = date.today()
+      startdate = anvil.server.call('get_start_date', 
+                                    date.today(), 
+                                    self.dropdown_interval.selected_value)      
+    else:
+      enddate = self.time_dateto.date
+      startdate = self.time_datefrom.date 
+    
+    # Alternative - Get data from table directly
+    #csv_file = self.subform.rpt_panel.items.to_csv()
+    
+    # Get data from db
+    csv_file = anvil.server.call('gencsv_templ_journals', 
+                                enddate, 
+                                startdate, 
+                                symbol_list)
+    anvil.media.download(csv_file)
+
   def button_tranx_reset_click(self, **event_args):
     """This method is called when the button is clicked"""
     self.time_datefrom.date = ""

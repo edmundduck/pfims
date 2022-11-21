@@ -165,6 +165,44 @@ def get_input_templ_items(templ_choice_str):
   return listitems
 
 @anvil.server.callable
+# DB table "templ_journals" select method
+def select_templ_journals(end_date, start_date, symbols):
+  if len(symbols) > 0:
+    return app_tables.templ_journals.search(
+                                            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                                                     buy_date=q.greater_than_or_equal_to(start_date),
+                                                     symbol=q.any_of(*symbols)),
+                                            tables.order_by("sell_date", ascending=False),
+                                            tables.order_by("symbol", ascending=True),
+                                           )
+  else:
+    return app_tables.templ_journals.search(
+                                            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                                                     buy_date=q.greater_than_or_equal_to(start_date)),
+                                            tables.order_by("sell_date", ascending=False),
+                                            tables.order_by("symbol", ascending=True),
+                                           )
+
+@anvil.server.callable
+# Return template items for csv generation
+def gencsv_templ_journals(end_date, start_date, symbols):
+  if len(symbols) > 0:
+    return app_tables.templ_journals.search(
+                                            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                                                     buy_date=q.greater_than_or_equal_to(start_date),
+                                                     symbol=q.any_of(*symbols)),
+                                            tables.order_by("sell_date", ascending=False),
+                                            tables.order_by("symbol", ascending=True),
+                                           ).to_csv()
+  else:
+    return app_tables.templ_journals.search(
+                                            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                                                     buy_date=q.greater_than_or_equal_to(start_date)),
+                                            tables.order_by("sell_date", ascending=False),
+                                            tables.order_by("symbol", ascending=True),
+                                           ).to_csv()
+
+@anvil.server.callable
 # Set precision
 def cal_profit(sell, buy, fee):
   return round(float(sell) - float(buy) - float(fee), 2)

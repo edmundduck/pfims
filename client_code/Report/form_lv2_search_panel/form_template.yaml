@@ -104,6 +104,16 @@ components:
       layout_properties: {}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
+        foreground: '', visible: true, text: Generate CSV (ALL), font_size: null,
+        font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false, icon: ''}
+      name: button_tranx_gen_csv
+      layout_properties:
+        col_widths: {}
+        grid_position: RRJTEU,FTYYVN
+      event_bindings: {click: button_tranx_gen_csv_click}
+    - type: Button
+      properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Search, font_size: null, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
