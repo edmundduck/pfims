@@ -58,6 +58,7 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     # Prevent from adding default value "[Symbol]" by registering to the dictionary
     self.tag = {'added_symbols': {global_var.search_symbol_dropdown()[0][1]: 1}}
 
+    """
     if self.dropdown_interval.selected_value != "SDR":
       if self.dropdown_interval.selected_value == '' or self.dropdown_interval.selected_value is None:
         self.button_tranx_search.enabled = False
@@ -80,7 +81,7 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
         anvil.server.call('get_symbol_dropdown_items', 
                           self.time_dateto.date, 
                           self.time_datefrom.date)
-
+    """
       
   # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
   # Return selected symbols which appear in blue buttons 
@@ -106,7 +107,8 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     self.removeall_selected_symbols()
     
     if self.dropdown_interval.selected_value != "SDR":
-      if self.dropdown_interval.selected_value == "":
+      #if self.dropdown_interval.selected_value == "":
+      if self.dropdown_interval.selected_value == '' or self.dropdown_interval.selected_value is None:
         self.button_tranx_search.enabled = False
         self.button_pnl_search.enabled = False
       else:
