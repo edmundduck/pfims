@@ -106,7 +106,7 @@ class form_main(form_mainTemplate):
     self.colpanel_link_reports.role = 'selected'
     self.colpanel_lv2link_exp_list.role = 'selected'
     self.content_panel.clear()
-    self.content_panel.add_component(form_lv2_exp_list())
+    self.content_panel.add_component(form_lv2_search_panel(global_var.form_lv2_exp_list()))
 
   def colpanel_lv2link_input_stock_click(self, **event_args):
     """This method is called when the link is clicked"""

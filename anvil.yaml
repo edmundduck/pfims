@@ -136,4 +136,33 @@ db_schema:
     - name: remembered_logins
       admin_ui: {width: 200}
       type: simpleObject
+  expense:
+    title: expense
+    client: none
+    server: full
+    columns:
+    - name: iid
+      admin_ui: {width: 200}
+      type: string
+    - name: tran_date
+      admin_ui: {width: 200}
+      type: date
+    - name: category
+      admin_ui: {width: 200}
+      type: string
+    - name: src
+      admin_ui: {width: 200}
+      type: string
+    - name: amt
+      admin_ui: {width: 200}
+      type: number
+    - name: debt
+      admin_ui: {width: 200}
+      type: number
+    - name: debt_pym
+      admin_ui: {width: 200}
+      type: number
+    - name: remarks
+      admin_ui: {width: 200}
+      type: string
 renamed: true

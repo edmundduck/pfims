@@ -9,6 +9,7 @@ from datetime import date
 from ... import global_var
 from ..form_lv2_tranx_list import form_lv2_tranx_list
 from ..form_lv2_pnl_report import form_lv2_pnl_report
+from ..form_lv2_exp_list import form_lv2_exp_list
 
 class form_lv2_search_panel(form_lv2_search_panelTemplate):
   subform = None
@@ -29,17 +30,30 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     if subform == global_var.form_lv2_tranx_list():
       self.subform = form_lv2_tranx_list()
       self.colpanel_list.add_component(self.subform)
+      self.panel_symbol.visible = True
       self.panel_tranx_list.visible = True
       self.panel_pnl_report.visible = False
+      self.panel_exp_list.visible = False
     elif subform == global_var.form_lv2_pnl_report():
       self.subform = form_lv2_pnl_report()
       self.colpanel_list.add_component(self.subform)
+      self.panel_symbol.visible = True
       self.panel_tranx_list.visible = False
       self.panel_pnl_report.visible = True
-    else:
-      # If error, show no buttons
+      self.panel_exp_list.visible = False
+    elif subform == global_var.form_lv2_exp_list():
+      self.subform = form_lv2_exp_list()
+      self.colpanel_list.add_component(self.subform)
+      self.panel_symbol.visible = False
       self.panel_tranx_list.visible = False
       self.panel_pnl_report.visible = False
+      self.panel_exp_list.visible = True
+    else:
+      # If error, show no buttons
+      self.panel_symbol.visible = False
+      self.panel_tranx_list.visible = False
+      self.panel_pnl_report.visible = False
+      self.panel_exp_list.visible = False
    
     # Prevent from adding default value "[Symbol]" by registering to the dictionary
     self.tag = {'added_symbols': {global_var.search_symbol_dropdown()[0][1]: 1}}
