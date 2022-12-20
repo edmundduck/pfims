@@ -13,6 +13,7 @@ from ..Report.form_lv1_dashb import form_lv1_dashb
 from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
 from ..Report.form_lv2_search_panel import form_lv2_search_panel
 from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
+from ..Report.form_lv2_exp_list import form_lv2_exp_list
 from ..Obsolete.form_sub2_tranx_report import form_sub2_tranx_report
 from ..Debug.form_poc_main import form_poc_main
 
@@ -31,6 +32,7 @@ class form_main(form_mainTemplate):
     self.colpanel_input2.visible = False
     self.colpanel_rpt1.visible = False
     self.colpanel_rpt2.visible = False
+    self.colpanel_rpt3.visible = False
     self.app_welcome_msg.text = "Welcome {username}".format(username=username)
   
   def reset_link_status(self, **event_args):
@@ -42,6 +44,7 @@ class form_main(form_mainTemplate):
     self.colpanel_lv2link_input_exp.role = ''
     self.colpanel_lv2link_tranx_list.role = ''
     self.colpanel_lv2link_pnl_report.role = ''
+    self.colpanel_lv2link_exp_list.role = ''
 
   def colpanel_link_dashb_click(self, **event_args):
     """This method is called when the link is clicked"""
@@ -66,10 +69,12 @@ class form_main(form_mainTemplate):
     if self.colpanel_link_reports.icon == 'fa:caret-right':
       self.colpanel_rpt1.visible = True
       self.colpanel_rpt2.visible = True
+      self.colpanel_rpt3.visible = True
       self.colpanel_link_reports.icon = 'fa:caret-down'
     elif self.colpanel_link_reports.icon == 'fa:caret-down':
       self.colpanel_rpt1.visible = False
       self.colpanel_rpt2.visible = False
+      self.colpanel_rpt3.visible = False
       self.colpanel_link_reports.icon = 'fa:caret-right'
 
   def colpanel_link_settings_click(self, **event_args):
@@ -94,6 +99,14 @@ class form_main(form_mainTemplate):
     self.colpanel_lv2link_pnl_report.role = 'selected'
     self.content_panel.clear()
     self.content_panel.add_component(form_lv2_search_panel(global_var.form_lv2_pnl_report()))
+
+  def colpanel_lv2link_exp_list_click(self, **event_args):
+    """This method is called when the link is clicked"""
+    self.reset_link_status()
+    self.colpanel_link_reports.role = 'selected'
+    self.colpanel_lv2link_exp_list.role = 'selected'
+    self.content_panel.clear()
+    self.content_panel.add_component(form_lv2_exp_list())
 
   def colpanel_lv2link_input_stock_click(self, **event_args):
     """This method is called when the link is clicked"""
@@ -130,3 +143,4 @@ class form_main(form_mainTemplate):
     self.content_panel.clear()
     self.column_panel.clear()
     open_form('form_main')
+
