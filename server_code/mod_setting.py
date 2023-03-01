@@ -5,6 +5,9 @@ from anvil.tables import app_tables
 import anvil.server
 from . import mod_debug
 from . import global_var
+# PostgreSQL impl
+import psycopg2
+import psycopg2.extras
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -18,6 +21,15 @@ from . import global_var
 #   print("Hello, " + name + "!")
 #   return 42
 #
+
+# PostgreSQL impl
+def connect():
+  connection = psycopg2.connect(dbname='mydatabase',
+                                host='db.example.com',
+                                user='postgres',
+                                password=anvil.secrets.get_secret('db_password'))
+  return connection
+
 @anvil.server.callable
 # DB table "settings" update/insert method
 def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):

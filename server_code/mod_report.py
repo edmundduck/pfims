@@ -6,6 +6,9 @@ import anvil.server
 from datetime import date, datetime, timedelta
 from . import global_var
 from . import mod_debug
+# PostgreSQL impl
+import psycopg2
+import psycopg2.extras
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -26,6 +29,14 @@ INTERVAL_LAST_3_MTH = "L3M"
 INTERVAL_LAST_6_MTH = "L6M"
 INTERVAL_LAST_1_YR = "L1Y"
 INTERVAL_YEAR_TO_DATE = "YTD"
+
+# PostgreSQL impl
+def connect():
+  connection = psycopg2.connect(dbname='mydatabase',
+                                host='db.example.com',
+                                user='postgres',
+                                password=anvil.secrets.get_secret('db_password'))
+  return connection
 
 # Internal function - Return start date of last 1 month
 def get_L1M_start_date(end_date):
