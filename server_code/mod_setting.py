@@ -24,8 +24,8 @@ import psycopg2.extras
 
 # PostgreSQL impl
 def connect():
-  connection = psycopg2.connect(dbname='mydatabase',
-                                host='db.example.com',
+  connection = psycopg2.connect(dbname='yugabyte',
+                                host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io:5433',
                                 user='postgres',
                                 password=anvil.secrets.get_secret('db_password'))
   return connection
