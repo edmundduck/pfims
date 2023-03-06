@@ -26,8 +26,8 @@ import psycopg2.extras
 def connect():
   connection = psycopg2.connect(dbname='yugabyte',
                                 host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io:5433',
-                                user='postgres',
-                                password=anvil.secrets.get_secret('db_password'))
+                                user='pfims_app',
+                                password=anvil.secrets.get_secret('VLS9YDjP6z8Om988piMKfIc9'))
   return connection
 
 @anvil.server.callable
