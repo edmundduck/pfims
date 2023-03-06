@@ -45,16 +45,20 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 @anvil.server.callable
 #
 def select_settings():
-  row = app_tables.settings.search()
-  settings = {}
-  for i in row:
-    settings = {
-      'default_broker': i['default_broker'],
-      'default_interval': i['default_interval'],
-      'default_datefrom': i['default_datefrom'],
-      'default_dateto': i['default_dateto']
-    }
-  return settings
+  #row = app_tables.settings.search()
+  #settings = {}
+  #for i in row:
+  #  settings = {
+  #    'default_broker': i['default_broker'],
+  #    'default_interval': i['default_interval'],
+  #    'default_datefrom': i['default_datefrom'],
+  #    'default_dateto': i['default_dateto']
+  #  }
+  #return settings
+  conn = connect()
+  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    cur.execute("SELECT default_broker , default_interval, default_datefrom. default_dateto FROM pfims.settings")
+    return cur.fetchall()
 
 @anvil.server.callable
 # DB table "brokers" select method
