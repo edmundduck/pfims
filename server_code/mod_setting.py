@@ -1,3 +1,4 @@
+import anvil.secrets
 import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
@@ -25,9 +26,10 @@ import psycopg2.extras
 # PostgreSQL impl
 def connect():
   connection = psycopg2.connect(dbname='yugabyte',
-                                host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io:5433',
-                                user='pfims_app',
-                                password=anvil.secrets.get_secret('VLS9YDjP6z8Om988piMKfIc9'))
+                                host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
+                                port='5433',
+                                user=anvil.secrets.get_secret('yugadb_app_usr'),
+                                password=anvil.secrets.get_secret('yugadb_app_pw'))
   return connection
 
 @anvil.server.callable

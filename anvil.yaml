@@ -6,12 +6,14 @@ services:
   client_config: {allow_signup: false, enable_automatically: true, use_email: true,
     confirm_email: true, allow_remember_me: false, remember_me_days: 0.3333, require_secure_passwords: true}
   server_config: {user_table: users}
+- source: /runtime/services/anvil/secrets.yml
+  client_config: {}
+  server_config: {}
 package_name: IPES__Investment_Performance_Evaluation_System_
 allow_embedding: false
 name: IPES (Investment Performance Evaluation System)
-runtime_options: {version: 2, client_version: '3', server_version: python3-sandbox,
-  server_spec: null}
-metadata: {}
+runtime_options: {version: 2, client_version: '3', server_version: python3-full, server_spec: null}
+metadata: {title: IPES}
 startup_form: form_main
 native_deps: {head_html: ''}
 db_schema:
@@ -165,4 +167,11 @@ db_schema:
     - name: remarks
       admin_ui: {width: 200}
       type: string
+secrets:
+  yugadb_app_pw:
+    value: {? '' : lAFyIGItVqKuLMguFqtAkkqzSJysV6Kj5vdoOElYE/RqJF+9ndJrdO1VBFQ9x5b786C0UW3azwbRQl6WqRcOU1VzDpN8/+OehGMFxrj8Wjhnngma1Dm0DZPCn2t97/YJd9D79oeSD/RXZCxrdV+JuH5W8bwe60s=}
+    type: secret
+  yugadb_app_usr:
+    value: {? '' : 06OkM5JtvSNrZffpWvhR2lqOTl4jH5W/Qib3e7tSZpNI5ONHC4xQtsNsc2c0Ug1OVY3syV8k6YLPaMCmnERbk8OBTnfp1WbvKIb20F0g86jnu7yTH3MyFh8lv5u1ed+kqRb+/9oDVBk=}
+    type: secret
 renamed: true
