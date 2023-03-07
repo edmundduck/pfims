@@ -93,16 +93,16 @@ def psgldb_get_broker_name(choice):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
     cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE id='" + choice + "'")
-    result = cur.fetchall()
-  return result[0]['name'] if result is not None else ''
+    result = cur.fetchone()
+  return result['name'] if result is not None else ''
 
 # Return selected broker CCY by querying DB table "brokers" from PostgreSQL DB
 def psgldb_get_broker_ccy(choice):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
     cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE id='" + choice + "'")
-    result = cur.fetchall()
-  return result if result is not None else ''
+    result = cur.fetchone()
+  return result['ccy'] if result is not None else ''
 
   # PostgreSQL impl END
 
