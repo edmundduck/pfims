@@ -44,6 +44,17 @@ def anvildb_select_brokers():
   #return broker_list
   return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
 
+# DB table "settings" update/insert method into Anvil DB
+def anvildb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
+  rows = app_tables.settings.search()
+  if len(list(rows)) != 0:
+    for r in rows:
+      r.delete()
+  app_tables.settings.add_row(default_broker=def_broker, 
+                              default_interval=def_interval, 
+                              default_datefrom=def_datefrom,
+                              default_dateto=def_dateto)
+
 # Return selected broker name from Anvil DB
 def anvildb_get_broker_name(choice):
   result = app_tables.brokers.get(id=choice)
@@ -88,6 +99,17 @@ def psgldb_select_brokers():
     cur.close()
   return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in broker_list)
 
+# DB table "settings" update/insert method into PostgreSQL DB
+def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
+  rows = app_tables.settings.search()
+  if len(list(rows)) != 0:
+    for r in rows:
+      r.delete()
+  app_tables.settings.add_row(default_broker=def_broker, 
+                              default_interval=def_interval, 
+                              default_datefrom=def_datefrom,
+                              default_dateto=def_dateto)
+
 # Return selected broker name by querying DB table "brokers" from PostgreSQL DB
 def psgldb_get_broker_name(choice):
   conn = psqldb_connect()
@@ -107,7 +129,17 @@ def psgldb_get_broker_ccy(choice):
   # PostgreSQL impl END
 
 @anvil.server.callable
-# DB table "settings" update/insert method
+# DB table "settings" select method callable by client modules
+def select_settings():
+  return psqldb_select_settings()
+
+@anvil.server.callable
+# DB table "brokers" select method callable by client modules
+def select_brokers():
+  return psgldb_select_brokers()
+
+@anvil.server.callable
+# DB table "settings" update/insert method callable by client modules
 def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   rows = app_tables.settings.search()
   if len(list(rows)) != 0:
@@ -117,16 +149,6 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
                               default_interval=def_interval, 
                               default_datefrom=def_datefrom,
                               default_dateto=def_dateto)
-
-@anvil.server.callable
-# DB table "settings" select method callable by client modules
-def select_settings():
-  return psqldb_select_settings()
-
-@anvil.server.callable
-# DB table "brokers" select method callable by client modules
-def select_brokers():
-  return psgldb_select_brokers()
 
 @anvil.server.callable
 # DB table "brokers" update/insert method
