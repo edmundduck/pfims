@@ -37,6 +37,23 @@ def anvildb_select_settings():
     }
   return settings
 
+# DB table "brokers" select method from Anvil DB
+def anvildb_select_brokers():
+  #broker_list = global_var.setting_broker_dropdown() + \
+  #              list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
+  #return broker_list
+  return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
+
+# Return selected broker name from Anvil DB
+def anvildb_get_broker_name(choice):
+  result = app_tables.brokers.get(id=choice)
+  return result['name'] if result is not None else ''
+
+# Return selected broker CCY from Anvil DB
+def anvildb_get_broker_ccy(choice):
+  result = app_tables.brokers.get(id=choice)
+  return result['ccy'] if result is not None else ''
+
 # PostgreSQL impl START
 # Establish PostgreSQL DB connection (Yugabyte DB)
 def psqldb_connect():
@@ -59,7 +76,17 @@ def psqldb_select_settings():
         'default_datefrom': i['default_datefrom'],
         'default_dateto': i['default_dateto']
       }
-    return settings
+    cur.close()
+  return settings
+
+# DB table "brokers" select method from PostgreSQL DB
+def psgldb_select_brokers():
+  conn = psqldb_connect()
+  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    cur.execute("SELECT id, name, ccy FROM pfims.brokers ORDER BY id ASC")
+    broker_list = cur.fetchall()
+    cur.close()
+  return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in broker_list)
 # PostgreSQL impl END
 
 @anvil.server.callable
@@ -80,12 +107,9 @@ def select_settings():
   return psqldb_select_settings()
 
 @anvil.server.callable
-# DB table "brokers" select method
+# DB table "brokers" select method callable by client modules
 def select_brokers():
-  #broker_list = global_var.setting_broker_dropdown() + \
-  #              list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
-  #return broker_list
-  return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
+  return psgldb_select_brokers()
 
 @anvil.server.callable
 # DB table "brokers" update/insert method

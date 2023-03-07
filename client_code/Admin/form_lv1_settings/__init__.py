@@ -109,6 +109,7 @@ class form_lv1_settings(form_lv1_settingsTemplate):
       self.button_broker_update.enabled = True
       self.button_broker_delete.enabled = True
       self.button_broker_create.enabled = True
+      # TODO -- how to get broker name and CCY without querying DB
       self.text_broker_name.text = \
       anvil.server.call('get_broker_name', 
                         self.dropdown_broker_list.selected_value)
