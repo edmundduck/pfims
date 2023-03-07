@@ -6,9 +6,10 @@ from anvil.tables import app_tables
 import anvil.server
 from . import mod_debug
 from . import global_var
-# PostgreSQL impl
+# PostgreSQL impl START
 import psycopg2
 import psycopg2.extras
+# PostgreSQL impl END
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -23,14 +24,43 @@ import psycopg2.extras
 #   return 42
 #
 
-# PostgreSQL impl
-def connect():
+# DB table "settings" select method from Anvil DB
+def anvildb_select_settings():
+  row = app_tables.settings.search()
+  settings = {}
+  for i in row:
+    settings = {
+      'default_broker': i['default_broker'],
+      'default_interval': i['default_interval'],
+      'default_datefrom': i['default_datefrom'],
+      'default_dateto': i['default_dateto']
+    }
+  return settings
+
+# PostgreSQL impl START
+# Establish PostgreSQL DB connection (Yugabyte DB)
+def psqldb_connect():
   connection = psycopg2.connect(dbname='yugabyte',
                                 host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
                                 port='5433',
                                 user=anvil.secrets.get_secret('yugadb_app_usr'),
                                 password=anvil.secrets.get_secret('yugadb_app_pw'))
   return connection
+
+# DB table "settings" select method from PostgreSQL DB
+def psqldb_select_settings():
+  conn = psqldb_connect()
+  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM pfims.settings")
+    for i in cur.fetchall():
+      settings = {
+        'default_broker': i['default_broker'],
+        'default_interval': i['default_interval'],
+        'default_datefrom': i['default_datefrom'],
+        'default_dateto': i['default_dateto']
+      }
+    return settings
+# PostgreSQL impl END
 
 @anvil.server.callable
 # DB table "settings" update/insert method
@@ -45,22 +75,9 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
                               default_dateto=def_dateto)
 
 @anvil.server.callable
-#
+# DB table "settings" select method callable by client modules
 def select_settings():
-  #row = app_tables.settings.search()
-  #settings = {}
-  #for i in row:
-  #  settings = {
-  #    'default_broker': i['default_broker'],
-  #    'default_interval': i['default_interval'],
-  #    'default_datefrom': i['default_datefrom'],
-  #    'default_dateto': i['default_dateto']
-  #  }
-  #return settings
-  conn = connect()
-  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT default_broker , default_interval, default_datefrom. default_dateto FROM pfims.settings")
-    return cur.fetchall()
+  return psqldb_select_settings()
 
 @anvil.server.callable
 # DB table "brokers" select method
@@ -99,7 +116,7 @@ def delete_brokers(b_id):
 def get_broker_name(choice):
   result = app_tables.brokers.get(id=choice)
   return result['name'] if result is not None else ''
-                   
+
 @anvil.server.callable
 # Return selected broker CCY 
 def get_broker_ccy(choice):
