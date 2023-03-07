@@ -68,7 +68,7 @@ def psqldb_connect():
 def psqldb_select_settings():
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM pfims.settings")
+    cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM  " + global_var.db_schema_name() + ".settings")
     for i in cur.fetchall():
       settings = {
         'default_broker': i['default_broker'],
@@ -83,11 +83,28 @@ def psqldb_select_settings():
 def psgldb_select_brokers():
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT id, name, ccy FROM pfims.brokers ORDER BY id ASC")
+    cur.execute("SELECT id, name, ccy FROM  " + global_var.db_schema_name() + ".brokers ORDER BY id ASC")
     broker_list = cur.fetchall()
     cur.close()
   return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in broker_list)
-# PostgreSQL impl END
+
+# Return selected broker name by querying DB table "brokers" from PostgreSQL DB
+def psgldb_get_broker_name(choice):
+  conn = psqldb_connect()
+  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE id='" + choice + "'")
+    result = cur.fetchall()
+  return result[0]['name'] if result is not None else ''
+
+# Return selected broker CCY by querying DB table "brokers" from PostgreSQL DB
+def psgldb_get_broker_ccy(choice):
+  conn = psqldb_connect()
+  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE id='" + choice + "'")
+    result = cur.fetchall()
+  return result if result is not None else ''
+
+  # PostgreSQL impl END
 
 @anvil.server.callable
 # DB table "settings" update/insert method
@@ -136,13 +153,11 @@ def delete_brokers(b_id):
     r.delete()
     
 @anvil.server.callable
-# Return selected broker name 
+# Return selected broker name callable by client modules
 def get_broker_name(choice):
-  result = app_tables.brokers.get(id=choice)
-  return result['name'] if result is not None else ''
+  return psgldb_get_broker_name(choice)
 
 @anvil.server.callable
-# Return selected broker CCY 
+# Return selected broker CCY callable by client modules
 def get_broker_ccy(choice):
-  result = app_tables.brokers.get(id=choice)
-  return result['ccy'] if result is not None else ''
+  return psgldb_get_broker_ccy(choice)

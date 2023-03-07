@@ -12,6 +12,9 @@ from anvil.tables import app_tables
 #
 row_del = False
 
+def db_schema_name():
+  return "pfims"
+
 def setting_ccy_dropdown():
   ccy_list = [('$ USD', 'USD'), 
               ('£ GBP', 'GBP'), 
