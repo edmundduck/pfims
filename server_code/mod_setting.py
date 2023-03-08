@@ -106,8 +106,9 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     cur.execute("INSERT INTO " + global_var.db_schema_name() + ".settings \
     (app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
     VALUES('" + anvil.users.get_user()['app_uid'] + "','" + def_broker + "','" + def_interval + "','" + str(def_datefrom) + "','" + str(def_dateto) + "') \
-    ON CONFLICT (app_uid) DO \
-    UPDATE SET default_interval='" + def_interval + "', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
+    ON CONFLICT (app_uid) DO UPDATE SET \
+    default_broker='" + def_broker + "', default_interval='" + def_interval + \
+    "', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
     count = cur.rowcount
     cur.close()
   return count
