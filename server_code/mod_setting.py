@@ -104,8 +104,8 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
     cur.execute("INSERT INTO " + global_var.db_schema_name() + ".settings \
-    (default_broker, default_interval, default_datefrom, default_dateto, app_uid) \
-    VALUES('" + def_broker + "','" + def_interval + "','" + str(def_datefrom) + "','" + str(def_dateto) + "','" + anvil.users.get_user()['app_uid'] + "' \
+    (app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
+    VALUES('" + def_broker + "','" + def_interval + "','" + str(def_datefrom) + "','" + str(def_dateto) + "' \
     ON CONFLICT (app_uid) DO \
     UPDATE SET default_interval='" + def_interval + "', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
     count = cur.rowcount
