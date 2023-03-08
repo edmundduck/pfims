@@ -22,7 +22,6 @@ class form_main(form_mainTemplate):
     # TODO - Move the logon logic to a new logon page
     anvil.users.login_with_form()
     userid = anvil.users.get_user().get_id()
-    alert(userid)
     username = anvil.server.call('get_username', userid)
     
     # Set Form properties and Data Bindings.
