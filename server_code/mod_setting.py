@@ -78,6 +78,7 @@ def psqldb_connect():
 # DB table "settings" select method from PostgreSQL DB
 def psqldb_select_settings():
   conn = psqldb_connect()
+  settings = {}
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
     cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM  " + global_var.db_schema_name() + ".settings")
     for i in cur.fetchall():
@@ -111,7 +112,6 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     default_broker='" + def_broker + "', default_interval='" + def_interval + \
     "', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
     count = cur.rowcount
-    cur.close()
   return count
 
 # Return selected broker name by querying DB table "brokers" from PostgreSQL DB
