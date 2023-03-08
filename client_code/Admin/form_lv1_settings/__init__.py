@@ -55,11 +55,16 @@ class form_lv1_settings(form_lv1_settingsTemplate):
 
   def button_submit_click(self, **event_args):
     """This method is called when the button is clicked"""
-    anvil.server.call('upsert_settings', 
-                      self.dropdown_default_broker.selected_value, 
-                      self.dropdown_interval.selected_value, 
-                      self.time_datefrom.date, 
-                      self.time_dateto.date)
+    count = anvil.server.call('upsert_settings', 
+                              self.dropdown_default_broker.selected_value, 
+                              self.dropdown_interval.selected_value, 
+                              self.time_datefrom.date, 
+                              self.time_dateto.date)
+    if (count > 0):
+      n = Notification("{count} row updated successfully.".format(count=count))
+    else:
+      n = Notification("ERROR: Fail to insert or update.")
+    n.show()
 
   def button_broker_create_click(self, **event_args):
     """This method is called when the button is clicked"""

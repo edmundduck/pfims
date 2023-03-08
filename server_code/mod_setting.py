@@ -101,14 +101,18 @@ def psgldb_select_brokers():
 
 # DB table "settings" update/insert method into PostgreSQL DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-  rows = app_tables.settings.search()
-  if len(list(rows)) != 0:
-    for r in rows:
-      r.delete()
-  app_tables.settings.add_row(default_broker=def_broker, 
-                              default_interval=def_interval, 
-                              default_datefrom=def_datefrom,
-                              default_dateto=def_dateto)
+  mod_debug.print_data_debug('def_datefrom=', def_datefrom)
+  mod_debug.print_data_debug('def_dateto=', def_dateto)
+  conn = psqldb_connect()
+  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    cur.execute("INSERT INTO " + global_var.db_schema_name() + ".settings \
+    (default_broker, default_interval, default_datefrom, default_dateto) \
+    VALUES('" + def_broker + "','" + def_interval + "','" + str(def_datefrom) + "','" + str(def_dateto) + "') \
+    ON CONFLICT (default_broker, default_interval, default_datefrom, default_dateto) DO \
+    UPDATE SET default_interval='" + def_interval + "', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
+    count = cur.rowcount
+    cur.close()
+  return count
 
 # Return selected broker name by querying DB table "brokers" from PostgreSQL DB
 def psgldb_get_broker_name(choice):
@@ -141,14 +145,7 @@ def select_brokers():
 @anvil.server.callable
 # DB table "settings" update/insert method callable by client modules
 def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-  rows = app_tables.settings.search()
-  if len(list(rows)) != 0:
-    for r in rows:
-      r.delete()
-  app_tables.settings.add_row(default_broker=def_broker, 
-                              default_interval=def_interval, 
-                              default_datefrom=def_datefrom,
-                              default_dateto=def_dateto)
+  return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto)
 
 @anvil.server.callable
 # DB table "brokers" update/insert method
