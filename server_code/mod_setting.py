@@ -101,6 +101,7 @@ def psgldb_select_brokers():
 
 # DB table "settings" update/insert method into PostgreSQL DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
+  mod_debug.print_data_debug("def_interval:", def_interval)
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
     cur.execute("INSERT INTO " + global_var.db_schema_name() + ".settings \
