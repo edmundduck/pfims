@@ -102,15 +102,16 @@ def psgldb_select_brokers():
 
 # DB table "settings" update/insert method into PostgreSQL DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-  mod_debug.print_data_debug("def_interval:", def_interval)
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("INSERT INTO " + global_var.db_schema_name() + ".settings \
-    (app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
-    VALUES('" + anvil.users.get_user()['app_uid'] + "','" + def_broker + "','" + def_interval + "','" + str(def_datefrom) + "','" + str(def_dateto) + "') \
-    ON CONFLICT (app_uid) DO UPDATE SET \
-    default_broker='" + def_broker + "', default_interval='" + def_interval + \
-    "', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
+    cur.execute("INSERT INTO pfims.settings (app_uid, default_broker, default_interval, default_datefrom, default_dateto) VALUES('A','B','C','2021-01-01','2022-01-01')")
+    mod_debug.print_data_debug("cur", cur.query)
+    #cur.execute("INSERT INTO " + global_var.db_schema_name() + ".settings \
+    #(app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
+    #VALUES('" + anvil.users.get_user()['app_uid'] + "','" + def_broker + "','" + def_interval + "','" + str(def_datefrom) + "','" + str(def_dateto) + "') \
+    #ON CONFLICT (app_uid) DO UPDATE SET \
+    #default_broker='" + def_broker + "', default_interval='" + def_interval + \
+    #"', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
     count = cur.rowcount
   return count
 
