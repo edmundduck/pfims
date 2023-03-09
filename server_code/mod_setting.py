@@ -56,6 +56,22 @@ def anvildb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
                               default_datefrom=def_datefrom,
                               default_dateto=def_dateto)
 
+# DB table "brokers" update/insert method into Anvil DB
+def anvildb_upsert_brokers(b_id, name, ccy):
+  if b_id is None or b_id == '':
+    # Generate new broker ID
+    id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
+    if len(id_list) == 0:
+      b_id = global_var.setting_broker_id_prefix() +  '1'.zfill(global_var.setting_broker_suffix_len())
+    else:
+      b_id = global_var.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(global_var.setting_broker_suffix_len())
+    app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
+  else:
+    rows = app_tables.brokers.search(id=b_id)
+    for r in rows:
+      r.update(name=name, ccy=ccy)
+  return b_id
+      
 # Return selected broker name from Anvil DB
 def anvildb_get_broker_name(choice):
   result = app_tables.brokers.get(id=choice)
@@ -140,6 +156,58 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     cur.close()
   return count
 
+# DB table "brokers" update/insert method into PostgreSQL DB
+def psgldb_upsert_brokers(b_id, name, ccy):
+  conn = psqldb_connect()
+  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    sql = "INSERT INTO {schema}.brokers (id, name, ccy) \
+    VALUES ('{p1}','{p2}','{p3}') \
+    ON CONFLICT (id) DO UPDATE SET name='{p4}',ccy='{p5}'"
+
+    if def_datefrom is not None:
+      datefrom1 = ",'" + str(def_datefrom) + "'"
+      datefrom2 = ",default_datefrom='" + str(def_datefrom) + "'"
+    else:
+      datefrom1 = ",NULL"
+      datefrom2 = ",default_datefrom=NULL"
+
+    if def_dateto is not None:
+      dateto1 = ",'" + str(def_dateto) + "'"
+      dateto2 = ",default_dateto='" + str(def_dateto) + "'"
+    else:
+      dateto1 = ",NULL"
+      dateto2 = ",default_dateto=NULL"
+
+    stmt = sql.format(schema=global_var.db_schema_name(), \
+                      p1=anvil.users.get_user()['app_uid'], \
+                      p2=def_broker, \
+                      p3=def_interval, \
+                      p4=datefrom1, \
+                      p5=dateto1, \
+                      p6=def_broker, \
+                      p7=def_interval, \
+                      p8=datefrom2, \
+                      p9=dateto2)
+
+    cur.execute(stmt)
+    conn.commit()
+    count = cur.rowcount
+    cur.close()
+  return count
+  if b_id is None or b_id == '':
+    # Generate new broker ID
+    id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
+    if len(id_list) == 0:
+      b_id = global_var.setting_broker_id_prefix() +  '1'.zfill(global_var.setting_broker_suffix_len())
+    else:
+      b_id = global_var.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(global_var.setting_broker_suffix_len())
+    app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
+  else:
+    rows = app_tables.brokers.search(id=b_id)
+    for r in rows:
+      r.update(name=name, ccy=ccy)
+  return b_id
+      
 # Return selected broker name by querying DB table "brokers" from PostgreSQL DB
 def psgldb_get_broker_name(choice):
   conn = psqldb_connect()
