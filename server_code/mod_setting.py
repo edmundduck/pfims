@@ -50,7 +50,8 @@ def anvildb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   if len(list(rows)) != 0:
     for r in rows:
       r.delete()
-  app_tables.settings.add_row(default_broker=def_broker, 
+  app_tables.settings.add_row(app_uid=anvil.users.get_user()['app_uid'],
+                              default_broker=def_broker, 
                               default_interval=def_interval, 
                               default_datefrom=def_datefrom,
                               default_dateto=def_dateto)
@@ -104,46 +105,39 @@ def psgldb_select_brokers():
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    sql = "INSERT INTO {schema}.settings (app_uid, default_broker, default_interval{datefrom1}{dateto1}) VALUES ('{p1}','{p2}','{p3}'{p4}{p5}) \
+    sql = "INSERT INTO {schema}.settings (app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
+    VALUES ('{p1}','{p2}','{p3}'{p4}{p5}) \
     ON CONFLICT (app_uid) DO UPDATE SET default_broker='{p6}',default_interval='{p7}'{p8}{p9}"
 
-    mod_debug.print_data_debug("def_datefrom", def_datefrom)
-    mod_debug.print_data_debug("def_dateto", def_dateto)
-    
     if (def_datefrom != None):
-      datefrom1 = ", default_datefrom"
-      datefrom2 = ",'" + str(def_datefrom) + "'"
-      datefrom3 = ",default_datefrom='" + str(def_datefrom) + "'"
+      datefrom1 = ",'" + str(def_datefrom) + "'"
+      datefrom2 = ",default_datefrom='" + str(def_datefrom) + "'"
     else:
-      datefrom1 = ""
-      datefrom2 = ""
-      datefrom3 = ""
+      datefrom1 = ",NULL"
+      datefrom2 = ",default_datefrom=NULL"
 
     if (def_dateto != None):
-      dateto1 = ", default_dateto"
-      dateto2 = ",'" + str(def_dateto) + "'"
-      dateto3 = ",default_dateto='" + str(def_dateto) + "'"
+      dateto1 = ",'" + str(def_dateto) + "'"
+      dateto2 = ",default_dateto='" + str(def_dateto) + "'"
     else:
-      dateto1 = ""
-      dateto2 = ""
-      dateto3 = ""
+      dateto1 = ",NULL"
+      dateto2 = ",default_dateto=NULL"
 
     stmt = sql.format(schema=global_var.db_schema_name(), \
-                      datefrom1=datefrom1, \
-                      dateto1=dateto1, \
                       p1=anvil.users.get_user()['app_uid'], \
                       p2=def_broker, \
                       p3=def_interval, \
-                      p4=datefrom2, \
-                      p5=dateto2, \
+                      p4=datefrom1, \
+                      p5=dateto1, \
                       p6=def_broker, \
                       p7=def_interval, \
-                      p8=datefrom3, \
-                      p9=dateto3)
+                      p8=datefrom2, \
+                      p9=dateto2)
 
     cur.execute(stmt)
     conn.commit()
     count = cur.rowcount
+    cur.close()
   return count
 
 # Return selected broker name by querying DB table "brokers" from PostgreSQL DB
@@ -161,7 +155,6 @@ def psgldb_get_broker_ccy(choice):
     cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE id='" + choice + "'")
     result = cur.fetchone()
   return result['ccy'] if result is not None else ''
-
 # PostgreSQL impl END
 
 @anvil.server.callable
