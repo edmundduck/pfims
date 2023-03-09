@@ -109,14 +109,14 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     VALUES ('{p1}','{p2}','{p3}'{p4}{p5}) \
     ON CONFLICT (app_uid) DO UPDATE SET default_broker='{p6}',default_interval='{p7}'{p8}{p9}"
 
-    if (def_datefrom != None):
+    if def_datefrom is not None:
       datefrom1 = ",'" + str(def_datefrom) + "'"
       datefrom2 = ",default_datefrom='" + str(def_datefrom) + "'"
     else:
       datefrom1 = ",NULL"
       datefrom2 = ",default_datefrom=NULL"
 
-    if (def_dateto != None):
+    if def_dateto is not None:
       dateto1 = ",'" + str(def_dateto) + "'"
       dateto2 = ",default_dateto='" + str(def_dateto) + "'"
     else:
