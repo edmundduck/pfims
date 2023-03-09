@@ -104,14 +104,45 @@ def psgldb_select_brokers():
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("INSERT INTO pfims.settings (app_uid, default_broker, default_interval, default_datefrom, default_dateto) VALUES('A','B','C','2021-01-01','2022-01-01')")
-    mod_debug.print_data_debug("cur", cur.query)
-    #cur.execute("INSERT INTO " + global_var.db_schema_name() + ".settings \
-    #(app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
-    #VALUES('" + anvil.users.get_user()['app_uid'] + "','" + def_broker + "','" + def_interval + "','" + str(def_datefrom) + "','" + str(def_dateto) + "') \
-    #ON CONFLICT (app_uid) DO UPDATE SET \
-    #default_broker='" + def_broker + "', default_interval='" + def_interval + \
-    #"', default_datefrom='" + str(def_datefrom) + "', default_dateto='" + str(def_dateto) + "'")
+    sql = "INSERT INTO {schema}.settings (app_uid, default_broker, default_interval{datefrom1}{dateto1}) VALUES ('{p1}','{p2}','{p3}'{p4}{p5}) \
+    ON CONFLICT (app_uid) DO UPDATE SET default_broker='{p6}',default_interval='{p7}'{p8}{p9}"
+
+    mod_debug.print_data_debug("def_datefrom", def_datefrom)
+    mod_debug.print_data_debug("def_dateto", def_dateto)
+    
+    if (def_datefrom != None):
+      datefrom1 = ", default_datefrom"
+      datefrom2 = ",'" + str(def_datefrom) + "'"
+      datefrom3 = ",default_datefrom='" + str(def_datefrom) + "'"
+    else:
+      datefrom1 = ""
+      datefrom2 = ""
+      datefrom3 = ""
+
+    if (def_dateto != None):
+      dateto1 = ", default_dateto"
+      dateto2 = ",'" + str(def_dateto) + "'"
+      dateto3 = ",default_dateto='" + str(def_dateto) + "'"
+    else:
+      dateto1 = ""
+      dateto2 = ""
+      dateto3 = ""
+
+    stmt = sql.format(schema=global_var.db_schema_name(), \
+                      datefrom1=datefrom1, \
+                      dateto1=dateto1, \
+                      p1=anvil.users.get_user()['app_uid'], \
+                      p2=def_broker, \
+                      p3=def_interval, \
+                      p4=datefrom2, \
+                      p5=dateto2, \
+                      p6=def_broker, \
+                      p7=def_interval, \
+                      p8=datefrom3, \
+                      p9=dateto3)
+
+    cur.execute(stmt)
+    conn.commit()
     count = cur.rowcount
   return count
 
