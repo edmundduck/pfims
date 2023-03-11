@@ -57,6 +57,7 @@ def anvildb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
                               default_dateto=def_dateto)
 
 # DB table "brokers" update/insert method into Anvil DB
+# NOTE: As the DB table structure is changed, this method is no longer valid
 def anvildb_upsert_brokers(b_id, name, ccy):
   if b_id is None or b_id == '':
     # Generate new broker ID
@@ -160,9 +161,9 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 def psgldb_upsert_brokers(b_id, name, ccy):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    sql = "INSERT INTO {schema}.brokers (id, name, ccy) \
+    sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) \
     VALUES ('{p1}','{p2}','{p3}') \
-    ON CONFLICT (id) DO UPDATE SET name='{p4}',ccy='{p5}'"
+    ON CONFLICT (id) DO UPDATE SET prefix='{p4}',name='{p5}',ccy='{p6}'"
 
     if def_datefrom is not None:
       datefrom1 = ",'" + str(def_datefrom) + "'"
