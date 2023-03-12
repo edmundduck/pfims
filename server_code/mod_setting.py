@@ -113,10 +113,10 @@ def psqldb_select_settings():
 def psgldb_select_brokers():
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT id, name, ccy FROM  " + global_var.db_schema_name() + ".brokers ORDER BY id ASC")
+    cur.execute("SELECT broker_id, name, ccy FROM  " + global_var.db_schema_name() + ".brokers ORDER BY broker_id ASC")
     broker_list = cur.fetchall()
     cur.close()
-  return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in broker_list)
+  return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
 # DB table "settings" update/insert method into PostgreSQL DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
@@ -158,62 +158,38 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   return count
 
 # DB table "brokers" update/insert method into PostgreSQL DB
-def psgldb_upsert_brokers(b_id, name, ccy):
+def psgldb_upsert_brokers(b_id, prefix, name, ccy):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) \
-    VALUES ('{p1}','{p2}','{p3}') \
-    ON CONFLICT (id) DO UPDATE SET prefix='{p4}',name='{p5}',ccy='{p6}'"
+    cur.execute("SELECT COUNT(*) FROM  " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + b_id + "'")
+    brokercount = cur.fetchone()
+    sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) VALUES ('{p1}','{p2}','{p3}')"
+    sql1 = "UPDATE {schema}.brokers SET prefix='{p1}', name='{p2}', ccy='{p3}' WHERE broker_id='{p4}'"
 
-    if def_datefrom is not None:
-      datefrom1 = ",'" + str(def_datefrom) + "'"
-      datefrom2 = ",default_datefrom='" + str(def_datefrom) + "'"
+    if brokercount == 0:
+      stmt = sql.format(schema=global_var.db_schema_name(), \
+                        p1=prefix, \
+                        p2=name, \
+                        p3=ccy)
     else:
-      datefrom1 = ",NULL"
-      datefrom2 = ",default_datefrom=NULL"
-
-    if def_dateto is not None:
-      dateto1 = ",'" + str(def_dateto) + "'"
-      dateto2 = ",default_dateto='" + str(def_dateto) + "'"
-    else:
-      dateto1 = ",NULL"
-      dateto2 = ",default_dateto=NULL"
-
-    stmt = sql.format(schema=global_var.db_schema_name(), \
-                      p1=anvil.users.get_user()['app_uid'], \
-                      p2=def_broker, \
-                      p3=def_interval, \
-                      p4=datefrom1, \
-                      p5=dateto1, \
-                      p6=def_broker, \
-                      p7=def_interval, \
-                      p8=datefrom2, \
-                      p9=dateto2)
+      stmt = sql1.format(schema=global_var.db_schema_name(), \
+                        p1=prefix, \
+                        p2=name, \
+                        p3=ccy, \
+                        p4=b_id)
 
     cur.execute(stmt)
     conn.commit()
     count = cur.rowcount
     cur.close()
   return count
-  if b_id is None or b_id == '':
-    # Generate new broker ID
-    id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
-    if len(id_list) == 0:
-      b_id = global_var.setting_broker_id_prefix() +  '1'.zfill(global_var.setting_broker_suffix_len())
-    else:
-      b_id = global_var.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(global_var.setting_broker_suffix_len())
-    app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
-  else:
-    rows = app_tables.brokers.search(id=b_id)
-    for r in rows:
-      r.update(name=name, ccy=ccy)
-  return b_id
       
 # Return selected broker name by querying DB table "brokers" from PostgreSQL DB
 def psgldb_get_broker_name(choice):
   conn = psqldb_connect()
+  mod_debug.print_data_debug('choice:', choice)
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE id='" + choice + "'")
+    cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice + "'")
     result = cur.fetchone()
   return result['name'] if result is not None else ''
 
@@ -221,7 +197,7 @@ def psgldb_get_broker_name(choice):
 def psgldb_get_broker_ccy(choice):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE id='" + choice + "'")
+    cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice + "'")
     result = cur.fetchone()
   return result['ccy'] if result is not None else ''
 # PostgreSQL impl END
@@ -242,21 +218,9 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto)
 
 @anvil.server.callable
-# DB table "brokers" update/insert method
+# DB table "brokers" update/insert method callable by client modules
 def upsert_brokers(b_id, name, ccy):
-  if b_id is None or b_id == '':
-    # Generate new broker ID
-    id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
-    if len(id_list) == 0:
-      b_id = global_var.setting_broker_id_prefix() +  '1'.zfill(global_var.setting_broker_suffix_len())
-    else:
-      b_id = global_var.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(global_var.setting_broker_suffix_len())
-    app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
-  else:
-    rows = app_tables.brokers.search(id=b_id)
-    for r in rows:
-      r.update(name=name, ccy=ccy)
-  return b_id
+  return psgldb_upsert_brokers(b_id, global_var.setting_broker_id_prefix(), name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method
