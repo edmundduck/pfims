@@ -160,6 +160,8 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 # DB table "brokers" update/insert method into PostgreSQL DB
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
   conn = psqldb_connect()
+
+  if b_id is 
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
     cur.execute("SELECT COUNT(*) FROM  " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + b_id + "'")
     brokercount = cur.fetchone()
