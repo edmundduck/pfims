@@ -21,5 +21,5 @@ import anvil.server
 @anvil.server.callable
 # Get user logon name
 def get_username(userid):
-  row = app_tables.users.get_by_id(userid)
-  return row['email'] if row is not None else "" 
+    row = app_tables.users.get_by_id(userid)
+    return row['email'] if row is not None else "" 

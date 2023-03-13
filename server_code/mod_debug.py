@@ -21,4 +21,4 @@ import anvil.server
 @anvil.server.callable
 # For debug print
 def print_data_debug(message, debug_data):
-  print('***[DEBUG]*** {}: {}'.format(message, debug_data))
+    print('***[DEBUG]*** {}: {}'.format(message, debug_data))
