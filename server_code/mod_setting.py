@@ -159,31 +159,36 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 
 # DB table "brokers" update/insert method into PostgreSQL DB
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
-  conn = psqldb_connect()
-
-  with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    if b_id is None or b_id == '':
-      sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) VALUES ('{p1}','{p2}','{p3}') RETURNING id, broker_id"
-      stmt = sql.format(schema=global_var.db_schema_name(), \
-                        p1=prefix, \
-                        p2=name, \
-                        p3=ccy)
-      cur.execute(stmt)
-      conn.commit()
-      b_id = cur.fetchone()[1]
-    else:
-      sql1 = "UPDATE {schema}.brokers SET prefix='{p1}', name='{p2}', ccy='{p3}' WHERE broker_id='{p4}'"
-      stmt = sql1.format(schema=global_var.db_schema_name(), \
-                        p1=prefix, \
-                        p2=name, \
-                        p3=ccy, \
-                        p4=b_id)
-      cur.execute(stmt)
-      conn.commit()
-      count = cur.rowcount
-
+  try:
+    conn = psqldb_connect()
+  
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+      if b_id is None or b_id == '':
+        sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) VALUES ('{p1}','{p2}','{p3}') RETURNING id, broker_id"
+        stmt = sql.format(schema=global_var.db_schema_name(), \
+                          p1=prefix, \
+                          p2=name, \
+                          p3=ccy)
+        cur.execute(stmt)
+        conn.commit()
+        b_id = cur.fetchone()[0]
+      else:
+        sql1 = "UPDATE {schema}.brokers SET prefix='{p1}', name='{p2}', ccy='{p3}' WHERE broker_id='{p4}'"
+        stmt = sql1.format(schema=global_var.db_schema_name(), \
+                          p1=prefix, \
+                          p2=name, \
+                          p3=ccy, \
+                          p4=b_id)
+        cur.execute(stmt)
+        conn.commit()
+        count = cur.rowcount
+  
+      cur.close()
+      return count
+  except psycopg2.OperationalError as err:
+    conn.rollback()
     cur.close()
-  return count
+    return None
       
 # Return selected broker name by querying DB table "brokers" from PostgreSQL DB
 def psgldb_get_broker_name(choice):
