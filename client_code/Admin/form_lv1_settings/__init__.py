@@ -73,10 +73,11 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                       '', 
                       self.text_broker_name.text, 
                       self.dropdown_ccy.selected_value)
-    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
-                                      anvil.server.call('select_brokers')
+    #self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+    #                                  anvil.server.call('select_brokers')
+    #self.dropdown_broker_list.raise_event('change')
+    self.dropdown_broker_list_show()
     self.dropdown_broker_list.selected_value = b_id
-    self.dropdown_broker_list.raise_event('change')
 
   def text_broker_name_lost_focus(self, **event_args):
     """This method is called when the TextBox loses focus"""
@@ -92,15 +93,22 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                       self.hidden_b_id.text, 
                       self.text_broker_name.text, 
                       self.dropdown_ccy.selected_value)
-    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
-                                      anvil.server.call('select_brokers')
+    #self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+    #                                  anvil.server.call('select_brokers')
+    self.dropdown_broker_list_show()
+    self.dropdown_broker_list.selected_value = b_id
 
   def button_broker_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
-    anvil.server.call('delete_brokers', self.hidden_b_id.text)
-    self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
-                                      anvil.server.call('select_brokers')
-    self.dropdown_broker_list.raise_event('change')
+    count = anvil.server.call('delete_brokers', self.hidden_b_id.text)
+    if (count > 0):
+      n = Notification("Broker ID ({b_id}) deleted successfully.".format(b_id=self.hidden_b_id.text))
+    else:
+      n = Notification("ERROR: Fail to delete broker ID ({b_id}).".format(b_id=self.hidden_b_id.text))
+    n.show()
+
+    self.dropdown_broker_list_show()
+    self.dropdown_default_broker_show()
 
   def dropdown_broker_list_change(self, **event_args):
     """This method is called when an item is selected"""
@@ -149,5 +157,3 @@ class form_lv1_settings(form_lv1_settingsTemplate):
 
     n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
     n.show()
-
-

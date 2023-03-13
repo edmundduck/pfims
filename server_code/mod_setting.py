@@ -6,10 +6,10 @@ from anvil.tables import app_tables
 import anvil.server
 from . import mod_debug
 from . import global_var
-# PostgreSQL impl START
+# Postgres impl START
 import psycopg2
 import psycopg2.extras
-# PostgreSQL impl END
+# Postgres impl END
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -83,8 +83,14 @@ def anvildb_get_broker_ccy(choice):
   result = app_tables.brokers.get(id=choice)
   return result['ccy'] if result is not None else ''
 
-# PostgreSQL impl START
-# Establish PostgreSQL DB connection (Yugabyte DB)
+# DB table "brokers" delete method in Anvil DB
+def anvildb_delete_brokers(b_id):
+  rows = app_tables.brokers.search(id=b_id)
+  for r in rows:
+    r.delete()    
+
+# Postgres impl START
+# Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
   connection = psycopg2.connect(dbname='yugabyte',
                                 host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
@@ -93,7 +99,7 @@ def psqldb_connect():
                                 password=anvil.secrets.get_secret('yugadb_app_pw'))
   return connection
 
-# DB table "settings" select method from PostgreSQL DB
+# DB table "settings" select method from Postgres DB
 def psqldb_select_settings():
   conn = psqldb_connect()
   settings = {}
@@ -109,7 +115,7 @@ def psqldb_select_settings():
     cur.close()
   return settings
 
-# DB table "brokers" select method from PostgreSQL DB
+# DB table "brokers" select method from Postgres DB
 def psgldb_select_brokers():
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -118,7 +124,7 @@ def psgldb_select_brokers():
     cur.close()
   return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
-# DB table "settings" update/insert method into PostgreSQL DB
+# DB table "settings" update/insert method into Postgres DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -157,21 +163,24 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     cur.close()
   return count
 
-# DB table "brokers" update/insert method into PostgreSQL DB
+# DB table "brokers" update/insert method into Postgres DB
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
   try:
     conn = psqldb_connect()
   
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
       if b_id is None or b_id == '':
-        sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) VALUES ('{p1}','{p2}','{p3}') RETURNING id, broker_id"
+        sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) VALUES ('{p1}','{p2}','{p3}') RETURNING id"
         stmt = sql.format(schema=global_var.db_schema_name(), \
                           p1=prefix, \
                           p2=name, \
                           p3=ccy)
         cur.execute(stmt)
+        # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
+        id = cur.fetchone()['id']
         conn.commit()
-        b_id = cur.fetchone()[0]
+        cur.execute("SELECT broker_id FROM  " + global_var.db_schema_name() + ".brokers WHERE id=" + str(id))
+        b_id = cur.fetchone()
       else:
         sql1 = "UPDATE {schema}.brokers SET prefix='{p1}', name='{p2}', ccy='{p3}' WHERE broker_id='{p4}'"
         stmt = sql1.format(schema=global_var.db_schema_name(), \
@@ -182,31 +191,53 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
         cur.execute(stmt)
         conn.commit()
         count = cur.rowcount
+        if count <= 0:
+          raise psycopg2.OperationalError("Update fail.")
   
       cur.close()
-      return count
+      return b_id
   except psycopg2.OperationalError as err:
+    mod_debug.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
     conn.rollback()
     cur.close()
     return None
       
-# Return selected broker name by querying DB table "brokers" from PostgreSQL DB
+# Return selected broker name by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_name(choice):
   conn = psqldb_connect()
-  mod_debug.print_data_debug('choice:', choice)
+  mod_debug.print_data_debug("choice", choice)
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice + "'")
+    cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice['broker_id'] + "'")
     result = cur.fetchone()
   return result['name'] if result is not None else ''
 
-# Return selected broker CCY by querying DB table "brokers" from PostgreSQL DB
+# Return selected broker CCY by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_ccy(choice):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice + "'")
+    cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice['broker_id'] + "'")
     result = cur.fetchone()
   return result['ccy'] if result is not None else ''
-# PostgreSQL impl END
+
+# DB table "brokers" delete method in Postgres DB
+def psgldb_delete_brokers(b_id):
+  try:
+    conn = psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+      cur.execute("DELETE FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id = '" + b_id + "'")
+      conn.commit()
+      count = cur.rowcount
+      if count <= 0:
+          raise psycopg2.OperationalError("Delete fail.")
+
+      cur.close()
+    return count
+  except psycopg2.OperationalError as err:
+    mod_debug.print_data_debug("OperationalError in " + psgldb_delete_brokers.__name__, err)
+    conn.rollback()
+    cur.close()
+    return None
+# Postgres impl END
 
 @anvil.server.callable
 # DB table "settings" select method callable by client modules
@@ -229,11 +260,9 @@ def upsert_brokers(b_id, name, ccy):
   return psgldb_upsert_brokers(b_id, global_var.setting_broker_id_prefix(), name, ccy)
       
 @anvil.server.callable
-# DB table "brokers" delete method
+# DB table "brokers" delete method callable by client modules
 def delete_brokers(b_id):
-  rows = app_tables.brokers.search(id=b_id)
-  for r in rows:
-    r.delete()
+  return psgldb_delete_brokers(b_id)
     
 @anvil.server.callable
 # Return selected broker name callable by client modules

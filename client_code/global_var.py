@@ -23,10 +23,10 @@ def setting_ccy_dropdown():
   return ccy_list
 
 def setting_broker_id_prefix():
-  return "BR"
+  return "BR0"
 
 def setting_broker_suffix_len():
-  return 5
+  return 4
 
 def setting_broker_dropdown():
   broker_list = [('[Select to update or delete]', '')]
