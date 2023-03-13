@@ -180,7 +180,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
         id = cur.fetchone()['id']
         conn.commit()
         cur.execute("SELECT broker_id FROM  " + global_var.db_schema_name() + ".brokers WHERE id=" + str(id))
-        b_id = cur.fetchone()
+        b_id = cur.fetchone()['broker_id']
       else:
         sql1 = "UPDATE {schema}.brokers SET prefix='{p1}', name='{p2}', ccy='{p3}' WHERE broker_id='{p4}'"
         stmt = sql1.format(schema=global_var.db_schema_name(), \
@@ -195,6 +195,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
           raise psycopg2.OperationalError("Update fail.")
   
       cur.close()
+      mod_debug.print_data_debug("b_id", b_id)
       return b_id
   except psycopg2.OperationalError as err:
     mod_debug.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
@@ -207,7 +208,7 @@ def psgldb_get_broker_name(choice):
   conn = psqldb_connect()
   mod_debug.print_data_debug("choice", choice)
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice['broker_id'] + "'")
+    cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice + "'")
     result = cur.fetchone()
   return result['name'] if result is not None else ''
 
@@ -215,7 +216,7 @@ def psgldb_get_broker_name(choice):
 def psgldb_get_broker_ccy(choice):
   conn = psqldb_connect()
   with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-    cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice['broker_id'] + "'")
+    cur.execute("SELECT ccy FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice + "'")
     result = cur.fetchone()
   return result['ccy'] if result is not None else ''
 

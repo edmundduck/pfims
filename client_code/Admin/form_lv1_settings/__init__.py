@@ -78,6 +78,8 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     #self.dropdown_broker_list.raise_event('change')
     self.dropdown_broker_list_show()
     self.dropdown_broker_list.selected_value = b_id
+    self.dropdown_default_broker_show()
+    self.dropdown_default_broker.selected_value = anvil.server.call('select_settings').get('default_broker')
 
   def text_broker_name_lost_focus(self, **event_args):
     """This method is called when the TextBox loses focus"""
@@ -97,6 +99,8 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     #                                  anvil.server.call('select_brokers')
     self.dropdown_broker_list_show()
     self.dropdown_broker_list.selected_value = b_id
+    self.dropdown_default_broker_show()
+    self.dropdown_default_broker.selected_value = anvil.server.call('select_settings').get('default_broker')
 
   def button_broker_delete_click(self, **event_args):
     """This method is called when the button is clicked"""
