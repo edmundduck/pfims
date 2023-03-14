@@ -131,6 +131,7 @@ def psgldb_select_brokers():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT broker_id, name, ccy FROM  " + global_var.db_schema_name() + ".brokers ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
+        mod_debug.print_data_debug("broker_list", broker_list)
         cur.close()
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
