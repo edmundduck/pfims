@@ -90,6 +90,14 @@ def anvildb_delete_brokers(b_id):
     for r in rows:
         r.delete()    
 
+@anvil.server.callable
+# Generate SUBMITTED template selection dropdown items from Anvil DB
+def anvildb_get_submitted_templ_list():
+    #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
+    content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=True))
+    content.insert(0, '')
+    return content
+
 # Postgres impl START
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
@@ -243,6 +251,20 @@ def psgldb_delete_brokers(b_id):
         conn.rollback()
         cur.close()
         return None
+
+@anvil.server.callable
+# Generate SUBMITTED template selection dropdown items from Postgres DB
+def psgldb_get_submitted_templ_list():
+    conn = psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute("SELECT template_id || '-' || template_name FROM " + global_var.db_schema_name() + ".templates WHERE submitted=true")
+        result = cur.fetchall()
+        mod_debug.print_data_debug("result", result)
+        cur.close()
+    content = list(result)
+    content.insert(0, '')
+    return content
+        
 # Postgres impl END
 
 @anvil.server.callable
@@ -279,3 +301,8 @@ def get_broker_name(choice):
 # Return selected broker CCY callable by client modules
 def get_broker_ccy(choice):
     return psgldb_get_broker_ccy(choice)
+
+@anvil.server.callable
+# Generate SUBMITTED template selection dropdown items
+def get_submitted_templ_list():
+    return psgldb_get_submitted_templ_list()

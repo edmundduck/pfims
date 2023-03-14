@@ -152,14 +152,6 @@ def get_input_templ_list():
     return content
 
 @anvil.server.callable
-# Generate SUBMITTED template selection dropdown items
-def get_submitted_templ_list():
-    #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
-    content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=True))
-    content.insert(0, '')
-    return content
-
-@anvil.server.callable
 # Return template items for repeating panel to display based on template selection dropdown
 def get_input_templ_items(templ_choice_str):
     listitems = []
