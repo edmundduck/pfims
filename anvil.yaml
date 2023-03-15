@@ -12,7 +12,11 @@ services:
 package_name: IPES__Investment_Performance_Evaluation_System_
 allow_embedding: false
 name: IPES (Investment Performance Evaluation System)
-runtime_options: {version: 2, client_version: '3', server_version: python3-full, server_spec: null}
+runtime_options:
+  version: 2
+  client_version: '3'
+  server_version: python3-full
+  server_spec: {base: python310-standard}
 metadata: {title: IPES}
 startup_form: form_main
 native_deps: {head_html: ''}
