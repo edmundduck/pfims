@@ -5,7 +5,9 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 from . import mod_debug
+from . import mod_input
 from . import global_var
+from . import dbconn_factory
 # Postgres impl START
 import psycopg2
 import psycopg2.extras
@@ -131,7 +133,6 @@ def psgldb_select_brokers():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT broker_id, name, ccy FROM  " + global_var.db_schema_name() + ".brokers ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
-        mod_debug.print_data_debug("broker_list", broker_list)
         cur.close()
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
@@ -209,7 +210,6 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
                     raise psycopg2.OperationalError("Update fail.")
   
             cur.close()
-            mod_debug.print_data_debug("b_id", b_id)
             return b_id
     except psycopg2.OperationalError as err:
         mod_debug.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
@@ -220,7 +220,6 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
 # Return selected broker name by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_name(choice):
     conn = psqldb_connect()
-    mod_debug.print_data_debug("choice", choice)
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT name FROM " + global_var.db_schema_name() + ".brokers WHERE broker_id='" + choice + "'")
         result = cur.fetchone()
@@ -258,13 +257,11 @@ def psgldb_delete_brokers(b_id):
 def psgldb_get_submitted_templ_list():
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT template_id || '-' || template_name FROM " + global_var.db_schema_name() + ".templates WHERE submitted=true")
-        result = cur.fetchall()
-        mod_debug.print_data_debug("result", result)
+        cur.execute("SELECT template_id, template_name FROM " + global_var.db_schema_name() + ".templates WHERE submitted=true")
+        result = list(mod_input.merge_templ_id_name(str(row['template_id']), row['template_name']) for row in cur.fetchall())
         cur.close()
-    content = list(result)
-    content.insert(0, '')
-    return content
+    result.insert(0, '')
+    return result
         
 # Postgres impl END
 
