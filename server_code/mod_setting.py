@@ -11,6 +11,9 @@ from . import dbconn_factory
 # Postgres impl START
 import psycopg2
 import psycopg2.extras
+from sqlalchemy import create_engine
+engine = create_engine("sqlite+pysqlite:///:memory:", echo=True)
+mod_debug.print_data_debug("engine", engine)
 # Postgres impl END
 
 # This is a server module. It runs on the Anvil server,
