@@ -9,6 +9,10 @@ import string
 from datetime import date, datetime
 from . import mod_debug
 from . import mod_setting
+# Postgres impl START
+import psycopg2
+import psycopg2.extras
+# Postgres impl END
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -34,6 +38,17 @@ def split_templ_id(templ_id):
         return templ_id
     else:
         return templ_id[:templ_id.find("-")].strip()
+
+# Postgres impl START
+# Establish Postgres DB connection (Yugabyte DB)
+def psqldb_connect():
+    connection = psycopg2.connect(
+        dbname='yugabyte',
+        host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
+        port='5433',
+        user=anvil.secrets.get_secret('yugadb_app_usr'),
+        password=anvil.secrets.get_secret('yugadb_app_pw'))
+    return connection
 
 @anvil.server.callable
 # Generate template dropdown text for display
