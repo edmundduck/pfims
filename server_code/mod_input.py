@@ -39,6 +39,24 @@ def split_templ_id(templ_id):
     else:
         return templ_id[:templ_id.find("-")].strip()
 
+@anvil.server.callable
+# DB table "templ_journals" select method  callable by client modules
+def select_templ_journals(end_date, start_date, symbols):
+    return psgldb_select_templ_journals(end_date, start_date, symbols)
+
+@anvil.server.callable
+# DB table "templ_journals" update/insert method  callable by client modules
+def upsert_templ_journals(j):
+    psgldb_upsert_templ_journals(j)
+    
+@anvil.server.callable
+# DB table "templ_journals" delete method  callable by client modules
+def anvildb_delete_templ_journals(template_id):
+    rows = app_tables.templ_journals.search(template_id=template_id)
+    if len(list(rows)) != 0:
+        for r in rows:
+            r.delete()
+
 # Postgres impl START
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
@@ -50,52 +68,66 @@ def psqldb_connect():
         password=anvil.secrets.get_secret('yugadb_app_pw'))
     return connection
 
+# DB table "templ_journals" select method from Postgres DB
+def psgldb_select_templ_journals(end_date, start_date, symbols):
+    conn = psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute()
+    if len(symbols) > 0:
+        return app_tables.templ_journals.search(
+            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                     buy_date=q.greater_than_or_equal_to(start_date),
+                     symbol=q.any_of(*symbols)),
+            tables.order_by("sell_date", ascending=False),
+            tables.order_by("symbol", ascending=True),
+            )
+    else:
+        return app_tables.templ_journals.search(
+            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
+                     buy_date=q.greater_than_or_equal_to(start_date)),
+            tables.order_by("sell_date", ascending=False),
+            tables.order_by("symbol", ascending=True),
+            )
+
+# DB table "templ_journals" update/insert method into Postgres DB
+def psgldb_upsert_templ_journals(journal):
+    conn = psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
+        VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
+        ON CONFLICT (iid) DO UPDATE SET \
+        template_id='{p1}', \
+        sell_date='{p2}', \
+        buy_date='{p3}', \
+        symbol='{p4}', \
+        qty='{p5}', \
+        sales='{p6}', \
+        cost='{p7}', \
+        fee='{p8}', \
+        sell_price='{p9}', \
+        buy_price='{p10}', \
+        pnl='{p11}'"
+
+        stmt = sql.format(
+            schema=global_var.db_schema_name(),
+            p1=journal.template_id,
+            p2=journal.sell_date,
+            p3=journal.buy_date,
+            p4=journal.symbol,
+            p5=journal.qty,
+            p6=journal.sales,
+            p7=journal.cost,
+            p8=journal.fee,
+            p9=journal.sell_price,
+            p10=journal.buy_price,
+            p11=journal.pnl
+        )
+        cur.close()
+
 @anvil.server.callable
 # Generate template dropdown text for display
 def merge_templ_id_name(templ_id, templ_name):
     return templ_id + " - " + templ_name
-
-@anvil.server.callable
-# DB table "templ_journals" update/insert method
-def upsert_templ_journals(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl):
-    rows = app_tables.templ_journals.search(template_id=template_id, iid=iid)
-    if len(list(rows)) != 0:
-        for r in rows:
-            r.update(
-                iid=iid, 
-                template_id=template_id, 
-                sell_date=sell_date, 
-                buy_date=buy_date, 
-                symbol=symbol, 
-                qty=int(qty), 
-                sales=float(sales), 
-                cost=float(cost), 
-                fee=float(fee), 
-                sell_price=float(sell_price), 
-                buy_price=float(buy_price), 
-                pnl=float(pnl))
-    else:
-        app_tables.templ_journals.add_row(
-            iid=iid, 
-            template_id=template_id, 
-            sell_date=sell_date,
-            buy_date=buy_date,
-            symbol=symbol,
-            qty=int(qty),
-            sales=float(sales),
-            cost=float(cost),
-            fee=float(fee),
-            sell_price=float(sell_price),
-            buy_price=float(buy_price), 
-            pnl=float(pnl))
-    
-@anvil.server.callable
-# DB table "templ_journals" delete method
-def delete_templ_journals(template_id):
-    rows = app_tables.templ_journals.search(template_id=template_id)
-    if len(list(rows)) != 0:
-        for r in rows:
-            r.delete()
 
 @anvil.server.callable
 # DB table "templates" update/insert method with time handling logic
@@ -207,3 +239,50 @@ def cal_profit(sell, buy, fee):
 # Calculate stock sell/buy price
 def cal_price(amt, qty):
     return round(float(amt) / float(qty), 2)
+
+###################################################################
+# AnvilDB access methods - Archival START
+
+# DB table "templ_journals" update/insert method into Anvil DB
+def anvildb_upsert_templ_journals(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl):
+    rows = app_tables.templ_journals.search(template_id=template_id, iid=iid)
+    if len(list(rows)) != 0:
+        for r in rows:
+            r.update(
+                iid=iid, 
+                template_id=template_id, 
+                sell_date=sell_date, 
+                buy_date=buy_date, 
+                symbol=symbol, 
+                qty=int(qty), 
+                sales=float(sales), 
+                cost=float(cost), 
+                fee=float(fee), 
+                sell_price=float(sell_price), 
+                buy_price=float(buy_price), 
+                pnl=float(pnl))
+    else:
+        app_tables.templ_journals.add_row(
+            iid=iid, 
+            template_id=template_id, 
+            sell_date=sell_date,
+            buy_date=buy_date,
+            symbol=symbol,
+            qty=int(qty),
+            sales=float(sales),
+            cost=float(cost),
+            fee=float(fee),
+            sell_price=float(sell_price),
+            buy_price=float(buy_price), 
+            pnl=float(pnl))
+    
+@anvil.server.callable
+# DB table "templ_journals" delete method in Anvil DB
+def anvildb_delete_templ_journals(template_id):
+    rows = app_tables.templ_journals.search(template_id=template_id)
+    if len(list(rows)) != 0:
+        for r in rows:
+            r.delete()
+
+# Archival END
+###################################################################
