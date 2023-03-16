@@ -9,10 +9,6 @@ import string
 from datetime import date, datetime
 from . import mod_debug
 from . import mod_setting
-# Postgres impl START
-import psycopg2
-import psycopg2.extras
-# Postgres impl END
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -39,89 +35,52 @@ def split_templ_id(templ_id):
     else:
         return templ_id[:templ_id.find("-")].strip()
 
-# Establish Postgres DB connection (Yugabyte DB)
-def psqldb_connect():
-    connection = psycopg2.connect(
-        dbname='yugabyte',
-        host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
-        port='5433',
-        user=anvil.secrets.get_secret('yugadb_app_usr'),
-        password=anvil.secrets.get_secret('yugadb_app_pw'))
-    return connection
+@anvil.server.callable
+# Generate template dropdown text for display
+def merge_templ_id_name(templ_id, templ_name):
+    return templ_id + " - " + templ_name
 
 @anvil.server.callable
-# DB table "templ_journals" select method from external DB callable by client modules
-def select_templ_journals(end_date, start_date, symbols):
-    conn = psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.templ_journals WHERE \
-            sell_date='{p1}', \
-            buy_date='{p2}'{p3} \
-            ORDER BY sell_date DESC, symbols ASC"
-        if len(symbols) > 0:
-            stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p1=sell_date,
-                p2=buy_date,
-                p3=symbols
-            )
-        else:
-             stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p1=sell_date,
-                p2=buy_date
-            )
-
-        cur.close()
-
-@anvil.server.callable
-# DB table "templ_journals" update/insert method to external DB callable by client modules
-def upsert_templ_journals(journal):
-    conn = psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-        VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
-        ON CONFLICT (iid) DO UPDATE SET \
-        template_id='{p1}', \
-        sell_date='{p2}', \
-        buy_date='{p3}', \
-        symbol='{p4}', \
-        qty='{p5}', \
-        sales='{p6}', \
-        cost='{p7}', \
-        fee='{p8}', \
-        sell_price='{p9}', \
-        buy_price='{p10}', \
-        pnl='{p11}'"
-
-        stmt = sql.format(
-            schema=global_var.db_schema_name(),
-            p1=journal.template_id,
-            p2=journal.sell_date,
-            p3=journal.buy_date,
-            p4=journal.symbol,
-            p5=journal.qty,
-            p6=journal.sales,
-            p7=journal.cost,
-            p8=journal.fee,
-            p9=journal.sell_price,
-            p10=journal.buy_price,
-            p11=journal.pnl
-        )
-        cur.close()
+# DB table "templ_journals" update/insert method
+def upsert_templ_journals(iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl):
+    rows = app_tables.templ_journals.search(template_id=template_id, iid=iid)
+    if len(list(rows)) != 0:
+        for r in rows:
+            r.update(
+                iid=iid, 
+                template_id=template_id, 
+                sell_date=sell_date, 
+                buy_date=buy_date, 
+                symbol=symbol, 
+                qty=int(qty), 
+                sales=float(sales), 
+                cost=float(cost), 
+                fee=float(fee), 
+                sell_price=float(sell_price), 
+                buy_price=float(buy_price), 
+                pnl=float(pnl))
+    else:
+        app_tables.templ_journals.add_row(
+            iid=iid, 
+            template_id=template_id, 
+            sell_date=sell_date,
+            buy_date=buy_date,
+            symbol=symbol,
+            qty=int(qty),
+            sales=float(sales),
+            cost=float(cost),
+            fee=float(fee),
+            sell_price=float(sell_price),
+            buy_price=float(buy_price), 
+            pnl=float(pnl))
     
 @anvil.server.callable
-# DB table "templ_journals" delete method to external DB callable by client modules
+# DB table "templ_journals" delete method
 def delete_templ_journals(template_id):
     rows = app_tables.templ_journals.search(template_id=template_id)
     if len(list(rows)) != 0:
         for r in rows:
             r.delete()
-
-@anvil.server.callable
-# Generate template dropdown text for display
-def merge_templ_id_name(templ_id, templ_name):
-    return templ_id + " - " + templ_name
 
 @anvil.server.callable
 # DB table "templates" update/insert method with time handling logic
@@ -190,6 +149,14 @@ def get_input_templ_list():
     #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
     content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=False))
     content.insert(0, DEFAULT_NEW_TEMPL_TEXT)
+    return content
+
+@anvil.server.callable
+# Generate SUBMITTED template selection dropdown items
+def get_submitted_templ_list():
+    #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
+    content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=True))
+    content.insert(0, '')
     return content
 
 @anvil.server.callable
