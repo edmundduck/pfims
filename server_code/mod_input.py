@@ -29,7 +29,6 @@ import psycopg2.extras
 #
 
 # Static variables
-RANDOM_ID_ALPHA_LEN = 4
 DEFAULT_NEW_TEMPL_TEXT = "[NEW]"
 DEFAULT_NEW_TEMPL_NAME = "NewTemplate"
 
@@ -154,13 +153,48 @@ def merge_templ_id_name(templ_id, templ_name):
 @anvil.server.callable
 # DB table "templates" update/insert method with time handling logic
 def upsert_templates(template_id, template_name, broker_id):
+    currenttime = datetime.now()
     row = app_tables.templates.get(template_id=template_id) or app_tables.templates.add_row(template_id=template_id)
     row['template_name'] = template_name
     row['broker_id'] = broker_id
     row['submitted'] = False if row['submitted'] is None else row['submitted']
-    currenttime = datetime.now()
     row['template_create'] = currenttime if row['template_create'] is None else row['template_create']
     row['template_lastsave'] = currenttime
+
+    conn = psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        template_id=split_templ_id(templ_choice_str)
+        if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
+            sql = "INSERT INTO {schema}.templates (template_name, template_lastsave, template_submitted) \
+            VALUES ('{p1}','{p2}','{p3}'"
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=template_name,
+                p2=currenttime,
+                p3=currenttime
+            )
+        else:
+            sql = "INSERT INTO {schema}.templates (template_id, template_name, submitted, template_create, template_lastsave, template_submitted) \
+            VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}' \
+            ON CONFLICT (template_id) DO UPDATE SET \
+            template_name='{p2}', \
+            submitted='{p3}', \
+            template_create='{p4}', \
+            template_lastsave='{p5}', \
+            template_submitted='{p6}'"
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=template_id,
+                p2=template_name,
+                p3=false,
+                p4=currenttime,
+                p5=currenttime,
+                p6=currenttime
+            )
+    
+        cur.execute(stmt)
+        row = cur.fetchone()
+        cur.close()
 
 @anvil.server.callable
 # DB table "templates" update/insert method for submit/unsubmit
