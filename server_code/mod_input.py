@@ -35,7 +35,7 @@ DEFAULT_NEW_TEMPL_NAME = "NewTemplate"
 # Internal function - Retrieve template ID by splitting template dropdown value
 def split_templ_id(templ_id):
     if templ_id.find("-") < 0:
-        return templ_id
+        return None
     else:
         return templ_id[:templ_id.find("-")].strip()
 
@@ -63,7 +63,7 @@ def select_templ_journals(end_date, start_date, symbols):
                 schema=global_var.db_schema_name(),
                 p1=sell_date,
                 p2=buy_date,
-                p3=symbols
+                p3=", symbol='" + symbols + "'"
             )
         else:
              stmt = sql.format(
@@ -72,7 +72,10 @@ def select_templ_journals(end_date, start_date, symbols):
                 p2=buy_date
             )
 
+        cur.execute(stmt)
+        result = cur.fetchall()
         cur.close()
+    return result
 
 @anvil.server.callable
 # DB table "templ_journals" update/insert method to external DB callable by client modules
@@ -112,11 +115,23 @@ def upsert_templ_journals(journal):
     
 @anvil.server.callable
 # DB table "templ_journals" delete method to external DB callable by client modules
-def delete_templ_journals(template_id):
-    rows = app_tables.templ_journals.search(template_id=template_id)
-    if len(list(rows)) != 0:
-        for r in rows:
-            r.delete()
+def delete_templ_journals(template_id, iid):
+    try:
+        conn = psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("DELETE FROM " + global_var.db_schema_name() + ".templ_journals WHERE template_id = " + template_id + " AND iid = " + iid)
+            conn.commit()
+            count = cur.rowcount
+            if count <= 0:
+                raise psycopg2.OperationalError("Delete fail.")
+
+            cur.close()
+        return count
+    except psycopg2.OperationalError as err:
+        mod_debug.print_data_debug("OperationalError in " + delete_templ_journals.__name__, err)
+        conn.rollback()
+        cur.close()
+        return None
 
 @anvil.server.callable
 # Generate template dropdown text for display
@@ -156,14 +171,7 @@ def delete_templates(template_id):
 # Random generate new template ID with 4 alphabets + 1 digit = 26^4 * 9 combinations if it is a new template
 # Otherwise return the selected template ID
 def get_templ_id(templ_choice_str):
-    new_id = split_templ_id(templ_choice_str)
-    if (new_id == DEFAULT_NEW_TEMPL_TEXT):
-        new_id = ''.join(random.choice(string.ascii_uppercase) for x in range(RANDOM_ID_ALPHA_LEN)) + str(random.randint(0,9))
-        while app_tables.templates.get(template_id=new_id) is not None:
-            new_id = ''.join(random.choice(string.ascii_uppercase) for x in range(RANDOM_ID_ALPHA_LEN)) + str(random.randint(0,9))
-        return new_id
-    else:
-        return new_id
+    return split_templ_id(templ_choice_str)
   
 @anvil.server.callable
 # Update template name based on template dropdown selection
@@ -171,7 +179,19 @@ def get_input_templ_name(templ_choice_str):
     if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
         return DEFAULT_NEW_TEMPL_NAME
     else:
-        row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
+        conn = psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            template_id=split_templ_id(templ_choice_str)
+            sql = "SELECT * FROM {schema}.templ_journals WHERE \
+                template_id='{p1}'"
+    
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=template_id)
+            cur.execute(stmt)
+            row = cur.fetchone()
+            cur.close()
+
         return row['template_name'] if row is not None else DEFAULT_NEW_TEMPL_NAME
   
 @anvil.server.callable
@@ -187,7 +207,26 @@ def get_input_templ_broker(templ_choice_str):
 @anvil.server.callable
 # Generate DRAFTING template selection dropdown items
 def get_input_templ_list():
-    #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
+    conn = psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.templates WHERE submitted=false ORDER BY template_id ASC"
+        if len(symbols) > 0:
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=sell_date,
+                p2=buy_date,
+                p3=", symbol='" + symbols + "'"
+            )
+        else:
+             stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=sell_date,
+                p2=buy_date
+            )
+
+        
+        cur.close()
+
     content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=False))
     content.insert(0, DEFAULT_NEW_TEMPL_TEXT)
     return content
@@ -199,25 +238,6 @@ def get_input_templ_items(templ_choice_str):
     if not (templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT):
         listitems = list(app_tables.templ_journals.search(template_id=split_templ_id(templ_choice_str)))
     return listitems
-
-@anvil.server.callable
-# DB table "templ_journals" select method
-def select_templ_journals(end_date, start_date, symbols):
-    if len(symbols) > 0:
-        return app_tables.templ_journals.search(
-            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
-                     buy_date=q.greater_than_or_equal_to(start_date),
-                     symbol=q.any_of(*symbols)),
-            tables.order_by("sell_date", ascending=False),
-            tables.order_by("symbol", ascending=True),
-            )
-    else:
-        return app_tables.templ_journals.search(
-            q.all_of(sell_date=q.less_than_or_equal_to(end_date), 
-                     buy_date=q.greater_than_or_equal_to(start_date)),
-            tables.order_by("sell_date", ascending=False),
-            tables.order_by("symbol", ascending=True),
-            )
 
 @anvil.server.callable
 # Return template items for csv generation
