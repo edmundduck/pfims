@@ -9,6 +9,7 @@ import string
 from datetime import date, datetime
 from . import mod_debug
 from . import mod_setting
+from . import global_var
 # Postgres impl START
 import psycopg2
 import psycopg2.extras
@@ -73,45 +74,57 @@ def select_templ_journals(end_date, start_date, symbols):
             )
 
         cur.execute(stmt)
-        result = cur.fetchall()
+        rows = cur.fetchall()
         cur.close()
-    return result
+    return rows
 
 @anvil.server.callable
 # DB table "templ_journals" update/insert method to external DB callable by client modules
 def upsert_templ_journals(journal):
-    conn = psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-        VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
-        ON CONFLICT (iid) DO UPDATE SET \
-        template_id='{p1}', \
-        sell_date='{p2}', \
-        buy_date='{p3}', \
-        symbol='{p4}', \
-        qty='{p5}', \
-        sales='{p6}', \
-        cost='{p7}', \
-        fee='{p8}', \
-        sell_price='{p9}', \
-        buy_price='{p10}', \
-        pnl='{p11}'"
+    try:
+        conn = psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
+            VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
+            ON CONFLICT (iid) DO UPDATE SET \
+            template_id='{p1}', \
+            sell_date='{p2}', \
+            buy_date='{p3}', \
+            symbol='{p4}', \
+            qty='{p5}', \
+            sales='{p6}', \
+            cost='{p7}', \
+            fee='{p8}', \
+            sell_price='{p9}', \
+            buy_price='{p10}', \
+            pnl='{p11}'"
+    
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=journal.template_id,
+                p2=journal.sell_date,
+                p3=journal.buy_date,
+                p4=journal.symbol,
+                p5=journal.qty,
+                p6=journal.sales,
+                p7=journal.cost,
+                p8=journal.fee,
+                p9=journal.sell_price,
+                p10=journal.buy_price,
+                p11=journal.pnl
+            )
+            conn.commit()
+            count = cur.rowcount
+            if count <= 0:
+                raise psycopg2.OperationalError("Delete fail.")
 
-        stmt = sql.format(
-            schema=global_var.db_schema_name(),
-            p1=journal.template_id,
-            p2=journal.sell_date,
-            p3=journal.buy_date,
-            p4=journal.symbol,
-            p5=journal.qty,
-            p6=journal.sales,
-            p7=journal.cost,
-            p8=journal.fee,
-            p9=journal.sell_price,
-            p10=journal.buy_price,
-            p11=journal.pnl
-        )
+            cur.close()
+        return count
+    except psycopg2.OperationalError as err:
+        mod_debug.print_data_debug("OperationalError in " + delete_templ_journals.__name__, err)
+        conn.rollback()
         cur.close()
+        return None
     
 @anvil.server.callable
 # DB table "templ_journals" delete method to external DB callable by client modules
@@ -136,7 +149,7 @@ def delete_templ_journals(template_id, iid):
 @anvil.server.callable
 # Generate template dropdown text for display
 def merge_templ_id_name(templ_id, templ_name):
-    return templ_id + " - " + templ_name
+    return str(templ_id) + " - " + templ_name
 
 @anvil.server.callable
 # DB table "templates" update/insert method with time handling logic
@@ -182,7 +195,7 @@ def get_input_templ_name(templ_choice_str):
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             template_id=split_templ_id(templ_choice_str)
-            sql = "SELECT * FROM {schema}.templ_journals WHERE \
+            sql = "SELECT * FROM {schema}.templates WHERE \
                 template_id='{p1}'"
     
             stmt = sql.format(
@@ -201,7 +214,20 @@ def get_input_templ_broker(templ_choice_str):
         row = mod_setting.select_settings()
         return row['default_broker'] if row is not None else ''
     else:
-        row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
+        template_id=split_templ_id(templ_choice_str)
+        conn = psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            template_id=split_templ_id(templ_choice_str)
+            sql = "SELECT * FROM {schema}.templates WHERE \
+                template_id='{p1}'"
+    
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=template_id)
+            cur.execute(stmt)
+            row = cur.fetchone()
+            cur.close()
+
         return row['broker_id'] if row is not None else ''
     
 @anvil.server.callable
@@ -210,24 +236,14 @@ def get_input_templ_list():
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.templates WHERE submitted=false ORDER BY template_id ASC"
-        if len(symbols) > 0:
-            stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p1=sell_date,
-                p2=buy_date,
-                p3=", symbol='" + symbols + "'"
-            )
-        else:
-             stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p1=sell_date,
-                p2=buy_date
-            )
-
-        
+        stmt = sql.format(
+            schema=global_var.db_schema_name()
+        )
+        cur.execute(stmt)
+        rows = cur.fetchall()
         cur.close()
 
-    content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=False))
+    content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in rows)
     content.insert(0, DEFAULT_NEW_TEMPL_TEXT)
     return content
 
@@ -236,7 +252,20 @@ def get_input_templ_list():
 def get_input_templ_items(templ_choice_str):
     listitems = []
     if not (templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT):
-        listitems = list(app_tables.templ_journals.search(template_id=split_templ_id(templ_choice_str)))
+        template_id=split_templ_id(templ_choice_str)
+        conn = psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "SELECT * FROM {schema}.templ_journals WHERE template_id = {p1} \
+                ORDER BY sell_date DESC, buy_date DESC, symbol ASC"
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p1=template_id
+            )
+            cur.execute(stmt)
+            rows = cur.fetchall()
+            cur.close()
+
+        listitems = list(rows)
     return listitems
 
 @anvil.server.callable
