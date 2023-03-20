@@ -153,58 +153,81 @@ def merge_templ_id_name(templ_id, templ_name):
 @anvil.server.callable
 # DB table "templates" update/insert method with time handling logic
 def upsert_templates(template_id, template_name, broker_id):
-    currenttime = datetime.now()
-    row = app_tables.templates.get(template_id=template_id) or app_tables.templates.add_row(template_id=template_id)
-    row['template_name'] = template_name
-    row['broker_id'] = broker_id
-    row['submitted'] = False if row['submitted'] is None else row['submitted']
-    row['template_create'] = currenttime if row['template_create'] is None else row['template_create']
-    row['template_lastsave'] = currenttime
-
-    conn = psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        template_id=split_templ_id(templ_choice_str)
-        if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
-            sql = "INSERT INTO {schema}.templates (template_name, template_lastsave, template_submitted) \
-            VALUES ('{p1}','{p2}','{p3}'"
-            stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p1=template_name,
-                p2=currenttime,
-                p3=currenttime
-            )
-        else:
-            sql = "INSERT INTO {schema}.templates (template_id, template_name, submitted, template_create, template_lastsave, template_submitted) \
-            VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}' \
-            ON CONFLICT (template_id) DO UPDATE SET \
-            template_name='{p2}', \
-            submitted='{p3}', \
-            template_create='{p4}', \
-            template_lastsave='{p5}', \
-            template_submitted='{p6}'"
-            stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p1=template_id,
-                p2=template_name,
-                p3=false,
-                p4=currenttime,
-                p5=currenttime,
-                p6=currenttime
-            )
-    
-        cur.execute(stmt)
-        row = cur.fetchone()
+    try:
+        currenttime = datetime.now()
+        conn = psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            template_id=split_templ_id(templ_choice_str)
+            if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
+                sql = "INSERT INTO {schema}.templates (template_name, template_create, template_lastsave) \
+                VALUES ('{p1}','{p2}','{p3}'"
+                stmt = sql.format(
+                    schema=global_var.db_schema_name(),
+                    p1=template_name,
+                    p2=currenttime,
+                    p3=currenttime
+                )
+            else:
+                sql = "INSERT INTO {schema}.templates (template_id, template_name, submitted, template_create, template_lastsave) \
+                VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}' \
+                ON CONFLICT (template_id) DO UPDATE SET \
+                template_name='{p2}', \
+                submitted='{p3}', \
+                template_create='{p4}', \
+                template_lastsave='{p5}' \
+                "
+                stmt = sql.format(
+                    schema=global_var.db_schema_name(),
+                    p1=template_id,
+                    p2=template_name,
+                    p3=false,
+                    p4=currenttime,
+                    p5=currenttime,
+                )
+        
+            cur.execute(stmt)
+            row = cur.fetchone()
+            cur.close()
+        return row
+    except psycopg2.OperationalError as err:
+        mod_debug.print_data_debug("OperationalError in " + upsert_templates.__name__, err)
+        conn.rollback()
         cur.close()
+        return None
 
 @anvil.server.callable
 # DB table "templates" update/insert method for submit/unsubmit
 def update_templates_submit_flag(template_id, submitted):
-    row = app_tables.templates.get(template_id=template_id)
-    if row is not None:
-        row['submitted'] = submitted
-        currenttime = datetime.now()
-        if submitted is True:
-            row['template_submitted'] = currenttime
+    currenttime = datetime.now()
+    try:
+        conn = psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "INSERT INTO {schema}.templates (template_id, submitted{p0}) \
+            VALUES ('{p1}','{p2}'{p3} \
+            ON CONFLICT (template_id) DO UPDATE SET \
+            submitted='{p2}'{p4} \
+            "
+    
+            stmt = sql.format(
+                schema=global_var.db_schema_name(),
+                p0=", template_submitted" if submitted is True else "",
+                p1=template_id,
+                p2=submitted,
+                p3=", '" + template_submitted + "'" if submitted is True else "",
+                p4=", template_submitted='" + template_submitted + "'" if submitted is True else ""
+            )
+            conn.commit()
+            count = cur.rowcount
+            if count <= 0:
+                raise psycopg2.OperationalError("Delete fail.")
+
+            cur.close()
+        return count
+    except psycopg2.OperationalError as err:
+        mod_debug.print_data_debug("OperationalError in " + update_templates_submit_flag.__name__, err)
+        conn.rollback()
+        cur.close()
+        return None
   
 @anvil.server.callable
 # DB table "templates" delete method
