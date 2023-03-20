@@ -181,9 +181,12 @@ def upsert_templates(template_id, template_name, broker_id):
                     p5=currenttime,
                 )
             cur.execute(stmt)
-            row = cur.fetchone()
+            conn.commit()
+            count = cur.rowcount
+            if count <= 0:
+                    raise psycopg2.OperationalError("Insert/Update fail.")                
             cur.close()
-        return row
+        return count
     except psycopg2.OperationalError as err:
         mod_debug.print_data_debug("OperationalError in " + upsert_templates.__name__, err)
         conn.rollback()

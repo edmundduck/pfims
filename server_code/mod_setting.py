@@ -136,8 +136,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
                 conn.commit()
                 count = cur.rowcount
                 if count <= 0:
-                    raise psycopg2.OperationalError("Update fail.")
-  
+                    raise psycopg2.OperationalError("Update fail.")  
             cur.close()
             return b_id
     except psycopg2.OperationalError as err:
