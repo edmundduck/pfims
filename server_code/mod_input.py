@@ -71,7 +71,6 @@ def select_templ_journals(end_date, start_date, symbols):
                 p1=sell_date,
                 p2=buy_date
             )
-
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
@@ -96,8 +95,8 @@ def upsert_templ_journals(journal):
             fee='{p8}', \
             sell_price='{p9}', \
             buy_price='{p10}', \
-            pnl='{p11}'"
-    
+            pnl='{p11}' \
+            "    
             stmt = sql.format(
                 schema=global_var.db_schema_name(),
                 p1=journal.template_id,
@@ -116,7 +115,6 @@ def upsert_templ_journals(journal):
             count = cur.rowcount
             if count <= 0:
                 raise psycopg2.OperationalError("Delete fail.")
-
             cur.close()
         return count
     except psycopg2.OperationalError as err:
@@ -136,7 +134,6 @@ def delete_templ_journals(template_id, iid):
             count = cur.rowcount
             if count <= 0:
                 raise psycopg2.OperationalError("Delete fail.")
-
             cur.close()
         return count
     except psycopg2.OperationalError as err:
@@ -157,10 +154,9 @@ def upsert_templates(template_id, template_name, broker_id):
         currenttime = datetime.now()
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            template_id=split_templ_id(templ_choice_str)
             if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
                 sql = "INSERT INTO {schema}.templates (template_name, template_create, template_lastsave) \
-                VALUES ('{p1}','{p2}','{p3}'"
+                VALUES ('{p1}','{p2}','{p3}')"
                 stmt = sql.format(
                     schema=global_var.db_schema_name(),
                     p1=template_name,
@@ -184,7 +180,6 @@ def upsert_templates(template_id, template_name, broker_id):
                     p4=currenttime,
                     p5=currenttime,
                 )
-        
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
@@ -202,25 +197,33 @@ def update_templates_submit_flag(template_id, submitted):
     try:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.templates (template_id, submitted{p0}) \
-            VALUES ('{p1}','{p2}'{p3} \
-            ON CONFLICT (template_id) DO UPDATE SET \
-            submitted='{p2}'{p4} \
-            "
-    
-            stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p0=", template_submitted" if submitted is True else "",
-                p1=template_id,
-                p2=submitted,
-                p3=", '" + template_submitted + "'" if submitted is True else "",
-                p4=", template_submitted='" + template_submitted + "'" if submitted is True else ""
-            )
+            if submitted is True:
+                sql = "INSERT INTO {schema}.templates (template_id, submitted, template_submitted) \
+                VALUES ('{p1}','{p2}','{p3}') \
+                ON CONFLICT (template_id) DO UPDATE SET \
+                submitted='{p2}', template_submitted='{p3}' \
+                "
+                stmt = sql.format(
+                    schema=global_var.db_schema_name(),
+                    p1=template_id,
+                    p2=submitted,
+                    p3=currenttime
+                )
+            else:
+                sql = "INSERT INTO {schema}.templates (template_id, submitted) \
+                VALUES ('{p1}','{p2}') \
+                ON CONFLICT (template_id) DO UPDATE SET \
+                submitted='{p2}' \
+                "
+                stmt = sql.format(
+                    schema=global_var.db_schema_name(),
+                    p1=template_id,
+                    p2=submitted
+                )
             conn.commit()
             count = cur.rowcount
             if count <= 0:
                 raise psycopg2.OperationalError("Delete fail.")
-
             cur.close()
         return count
     except psycopg2.OperationalError as err:
@@ -253,15 +256,13 @@ def get_input_templ_name(templ_choice_str):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             template_id=split_templ_id(templ_choice_str)
             sql = "SELECT * FROM {schema}.templates WHERE \
-                template_id='{p1}'"
-    
+                template_id='{p1}'"   
             stmt = sql.format(
                 schema=global_var.db_schema_name(),
                 p1=template_id)
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
-
         return row['template_name'] if row is not None else DEFAULT_NEW_TEMPL_NAME
   
 @anvil.server.callable
@@ -276,15 +277,13 @@ def get_input_templ_broker(templ_choice_str):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             template_id=split_templ_id(templ_choice_str)
             sql = "SELECT * FROM {schema}.templates WHERE \
-                template_id='{p1}'"
-    
+                template_id='{p1}'"   
             stmt = sql.format(
                 schema=global_var.db_schema_name(),
                 p1=template_id)
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
-
         return row['broker_id'] if row is not None else ''
     
 @anvil.server.callable
@@ -299,7 +298,6 @@ def get_input_templ_list():
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
-
     content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in rows)
     content.insert(0, DEFAULT_NEW_TEMPL_TEXT)
     return content
@@ -321,7 +319,6 @@ def get_input_templ_items(templ_choice_str):
             cur.execute(stmt)
             rows = cur.fetchall()
             cur.close()
-
         listitems = list(rows)
     return listitems
 
