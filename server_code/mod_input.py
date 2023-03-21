@@ -10,7 +10,7 @@ from datetime import date, datetime
 from . import mod_debug
 from . import mod_setting
 from . import global_var
-from . import TradeJournal as tj
+from . import FinObject as fobj
 # Postgres impl START
 import psycopg2
 import psycopg2.extras
@@ -80,15 +80,21 @@ def select_templ_journals(end_date, start_date, symbols):
 @anvil.server.callable
 # DB table "templ_journals" update/insert method to external DB callable by client modules
 # def upsert_templ_journals(journal):
-def upsert_templ_journals(rows):
+def upsert_templ_journals(tid, rows):
     try:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             mod_debug.print_data_debug("rows", rows)
-            a = tj.TradeJournal()
-            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", a.convertMapToTuple(row)) for row in rows)
+            tj = fobj.TradeJournal()
+            tj.template_id = tid
+            for row in rows:
+                tj.assignFromDict(row)
+                args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()))
             cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-                VALUES " + args)
+                VALUES {p1}".format(
+                    schema=global_var.schemafin(),
+                    p1=args
+                ))
             # sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
             # VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
             # ON CONFLICT (iid) DO UPDATE SET \

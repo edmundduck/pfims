@@ -106,7 +106,7 @@ class form_input_stock(form_input_stockTemplate):
             global_var.input_row_del_reset()
         
         """ Add/Update """
-        anvil.server.call('upsert_templ_journals', self.input_repeating_panel.items)
+        anvil.server.call('upsert_templ_journals', templ_id, self.input_repeating_panel.items)
         # for row in self.input_repeating_panel.items:
         #     anvil.server.call('upsert_templ_journals', 
         #                     iid=row['iid'], 
