@@ -35,3 +35,11 @@ class journal():
     def __str__(self):
         return f"Journal(iid:{self.iid}, templ_id:{template_id}): {self.sell_date}, {self.buy_date}, \
             {self.symbol}, {self.qty}, {self.sales}, {self.cost}, {self.fee}, {self.sell_price}, {self.buy_price}, {self.pnl}"
+
+    @anvil.server.callable
+    def convertMapToTuple(self, dict):
+        param_list = ['iid', 'template_id', 'sell_date', 'buy_date', 'symbol', 'qty', 'sales', 'cost', 'fee', 'sell_price', 'buy_price', 'pnl']
+        tuple_list = []
+        for item in param_list:
+            tuple_list.append(dict[item])
+        return tuple_list

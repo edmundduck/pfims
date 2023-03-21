@@ -10,6 +10,7 @@ from datetime import date, datetime
 from . import mod_debug
 from . import mod_setting
 from . import global_var
+from . import journal
 # Postgres impl START
 import psycopg2
 import psycopg2.extras
@@ -84,7 +85,7 @@ def upsert_templ_journals(rows):
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             mod_debug.print_data_debug("rows", rows)
-            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", row) for row in rows)
+            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", ???????row) for row in rows)
             cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
                 VALUES " + args)
             # sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
