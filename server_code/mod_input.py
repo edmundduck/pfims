@@ -78,39 +78,44 @@ def select_templ_journals(end_date, start_date, symbols):
 
 @anvil.server.callable
 # DB table "templ_journals" update/insert method to external DB callable by client modules
-def upsert_templ_journals(journal):
+# def upsert_templ_journals(journal):
+def upsert_templ_journals(rows):
     try:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-            VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
-            ON CONFLICT (iid) DO UPDATE SET \
-            template_id='{p1}', \
-            sell_date='{p2}', \
-            buy_date='{p3}', \
-            symbol='{p4}', \
-            qty='{p5}', \
-            sales='{p6}', \
-            cost='{p7}', \
-            fee='{p8}', \
-            sell_price='{p9}', \
-            buy_price='{p10}', \
-            pnl='{p11}' \
-            "    
-            stmt = sql.format(
-                schema=global_var.db_schema_name(),
-                p1=journal.template_id,
-                p2=journal.sell_date,
-                p3=journal.buy_date,
-                p4=journal.symbol,
-                p5=journal.qty,
-                p6=journal.sales,
-                p7=journal.cost,
-                p8=journal.fee,
-                p9=journal.sell_price,
-                p10=journal.buy_price,
-                p11=journal.pnl
-            )
+            mod_debug.print_data_debug("rows", rows)
+            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", row) for row in rows)
+            cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
+                VALUES " + args)
+            # sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
+            # VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
+            # ON CONFLICT (iid) DO UPDATE SET \
+            # template_id='{p1}', \
+            # sell_date='{p2}', \
+            # buy_date='{p3}', \
+            # symbol='{p4}', \
+            # qty='{p5}', \
+            # sales='{p6}', \
+            # cost='{p7}', \
+            # fee='{p8}', \
+            # sell_price='{p9}', \
+            # buy_price='{p10}', \
+            # pnl='{p11}' \
+            # "    
+            # stmt = sql.format(
+            #     schema=global_var.db_schema_name(),
+            #     p1=journal.template_id,
+            #     p2=journal.sell_date,
+            #     p3=journal.buy_date,
+            #     p4=journal.symbol,
+            #     p5=journal.qty,
+            #     p6=journal.sales,
+            #     p7=journal.cost,
+            #     p8=journal.fee,
+            #     p9=journal.sell_price,
+            #     p10=journal.buy_price,
+            #     p11=journal.pnl
+            # )
             conn.commit()
             count = cur.rowcount
             if count <= 0:

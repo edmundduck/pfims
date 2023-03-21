@@ -97,8 +97,8 @@ class form_input_stock(form_input_stockTemplate):
                         broker_id=self.dropdown_broker.selected_value)
         
         """ Delete all existing inputs before adding/updating """
-        anvil.server.call('delete_templ_journals', 
-                        template_id=templ_id)
+        # anvil.server.call('delete_templ_journals', 
+        #                 template_id=templ_id)
         
         """ Trigger save_row_change if delete has been triggered at least once """
         if global_var.is_input_row_deleted():
@@ -106,20 +106,21 @@ class form_input_stock(form_input_stockTemplate):
             global_var.input_row_del_reset()
         
         """ Add/Update """
-        for row in self.input_repeating_panel.items:
-            anvil.server.call('upsert_templ_journals', 
-                            iid=row['iid'], 
-                            template_id=templ_id, 
-                            sell_date=row['sell_date'], 
-                            buy_date=row['buy_date'], 
-                            symbol=row['symbol'], 
-                            qty=row['qty'], 
-                            sales=row['sales'], 
-                            cost=row['cost'], 
-                            fee=row['fee'], 
-                            sell_price=row['sell_price'], 
-                            buy_price=row['buy_price'],
-                            pnl=row['pnl'])
+        anvil.server.call('upsert_templ_journals', self.input_repeating_panel.items)
+        # for row in self.input_repeating_panel.items:
+        #     anvil.server.call('upsert_templ_journals', 
+        #                     iid=row['iid'], 
+        #                     template_id=templ_id, 
+        #                     sell_date=row['sell_date'], 
+        #                     buy_date=row['buy_date'], 
+        #                     symbol=row['symbol'], 
+        #                     qty=row['qty'], 
+        #                     sales=row['sales'], 
+        #                     cost=row['cost'], 
+        #                     fee=row['fee'], 
+        #                     sell_price=row['sell_price'], 
+        #                     buy_price=row['buy_price'],
+        #                     pnl=row['pnl'])
     
         """ Reflect the change in template dropdown """
         self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
@@ -154,25 +155,25 @@ class form_input_stock(form_input_stockTemplate):
                         ])
     
         if userconf == "Y":
-        templ_id = anvil.server.call('get_templ_id', 
-                                    to_be_del_templ_name)
+            templ_id = anvil.server.call('get_templ_id', 
+                                        to_be_del_templ_name)
+            
+            anvil.server.call('delete_templ_journals', 
+                                template_id=templ_id)
+            anvil.server.call('delete_templates', 
+                                template_id=templ_id)
+            """ Reset row delete flag """
+            global_var.input_row_del_reset()
         
-        anvil.server.call('delete_templ_journals', 
-                            template_id=templ_id)
-        anvil.server.call('delete_templates', 
-                            template_id=templ_id)
-        """ Reset row delete flag """
-        global_var.input_row_del_reset()
-    
-        """ Reflect the change in template dropdown """
-        self.dropdown_templ_show()
-        #self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
-        #self.templ_name.text = ""
-        self.dropdown_broker_show()
-        self.input_repeating_panel.items = []
-        
-        n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
-        n.show()      
+            """ Reflect the change in template dropdown """
+            self.dropdown_templ_show()
+            #self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
+            #self.templ_name.text = ""
+            self.dropdown_broker_show()
+            self.input_repeating_panel.items = []
+            
+            n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
+            n.show()      
 
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
