@@ -17,23 +17,24 @@ import anvil.server
 #   print("Hello, " + name + "!")
 #   return 42
 #
-class journal():
-    def __init__(self, tuple):
-        self.iid = tuple.iid
-        self.template_id = tuple.template_id
-        self.sell_date = tuple.sell_date
-        self.buy_date = tuple.buy_date
-        self.symbol = tuple.symbol
-        self.qty = int(tuple.qty)
-        self.sales = float(tuple.sales)
-        self.cost = float(tuple.cost)
-        self.fee = float(tuple.fee)
-        self.sell_price = float(tuple.sell_price)
-        self.buy_price = float(tuple.buy_price)
-        self.pnl = float(tuple.pnl)
+class TradeJournal:
+    def __init__(self, tuple=None):
+        if tuple is not None:
+            self.iid = tuple.iid
+            self.template_id = tuple.template_id
+            self.sell_date = tuple.sell_date
+            self.buy_date = tuple.buy_date
+            self.symbol = tuple.symbol
+            self.qty = int(tuple.qty)
+            self.sales = float(tuple.sales)
+            self.cost = float(tuple.cost)
+            self.fee = float(tuple.fee)
+            self.sell_price = float(tuple.sell_price)
+            self.buy_price = float(tuple.buy_price)
+            self.pnl = float(tuple.pnl)
 
     def __str__(self):
-        return f"Journal(iid:{self.iid}, templ_id:{template_id}): {self.sell_date}, {self.buy_date}, \
+        return f"TradeJournal(iid:{self.iid}, templ_id:{template_id}): {self.sell_date}, {self.buy_date}, \
             {self.symbol}, {self.qty}, {self.sales}, {self.cost}, {self.fee}, {self.sell_price}, {self.buy_price}, {self.pnl}"
 
     @anvil.server.callable

@@ -10,7 +10,7 @@ from datetime import date, datetime
 from . import mod_debug
 from . import mod_setting
 from . import global_var
-from . import journal
+from . import TradeJournal as tj
 # Postgres impl START
 import psycopg2
 import psycopg2.extras
@@ -43,7 +43,7 @@ def split_templ_id(templ_id):
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
     connection = psycopg2.connect(
-        dbname='yugabyte',
+        dbname='pfimsdb',
         host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
         port='5433',
         user=anvil.secrets.get_secret('yugadb_app_usr'),
@@ -61,14 +61,14 @@ def select_templ_journals(end_date, start_date, symbols):
             ORDER BY sell_date DESC, symbols ASC"
         if len(symbols) > 0:
             stmt = sql.format(
-                schema=global_var.db_schema_name(),
+                schema=global_var.schemafin(),
                 p1=sell_date,
                 p2=buy_date,
                 p3=", symbol='" + symbols + "'"
             )
         else:
              stmt = sql.format(
-                schema=global_var.db_schema_name(),
+                schema=global_var.schemafin(),
                 p1=sell_date,
                 p2=buy_date
             )
@@ -85,7 +85,8 @@ def upsert_templ_journals(rows):
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             mod_debug.print_data_debug("rows", rows)
-            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", ???????row) for row in rows)
+            a = tj.TradeJournal()
+            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", a.convertMapToTuple(row)) for row in rows)
             cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
                 VALUES " + args)
             # sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
@@ -104,7 +105,7 @@ def upsert_templ_journals(rows):
             # pnl='{p11}' \
             # "    
             # stmt = sql.format(
-            #     schema=global_var.db_schema_name(),
+            #     schema=global_var.schemafin(),
             #     p1=journal.template_id,
             #     p2=journal.sell_date,
             #     p3=journal.buy_date,
@@ -135,7 +136,7 @@ def delete_templ_journals(template_id, iid):
     try:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("DELETE FROM " + global_var.db_schema_name() + ".templ_journals WHERE template_id = " + template_id + " AND iid = " + iid)
+            cur.execute("DELETE FROM " + global_var.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid = " + iid)
             conn.commit()
             count = cur.rowcount
             if count <= 0:
@@ -164,7 +165,7 @@ def upsert_templates(template_id, template_name, broker_id):
                 sql = "INSERT INTO {schema}.templates (template_name, template_create, template_lastsave) \
                 VALUES ('{p1}','{p2}','{p3}')"
                 stmt = sql.format(
-                    schema=global_var.db_schema_name(),
+                    schema=global_var.schemafin(),
                     p1=template_name,
                     p2=currenttime,
                     p3=currenttime
@@ -179,7 +180,7 @@ def upsert_templates(template_id, template_name, broker_id):
                 template_lastsave='{p5}' \
                 "
                 stmt = sql.format(
-                    schema=global_var.db_schema_name(),
+                    schema=global_var.schemafin(),
                     p1=template_id,
                     p2=template_name,
                     p3=false,
@@ -213,7 +214,7 @@ def update_templates_submit_flag(template_id, submitted):
                 submitted='{p2}', template_submitted='{p3}' \
                 "
                 stmt = sql.format(
-                    schema=global_var.db_schema_name(),
+                    schema=global_var.schemafin(),
                     p1=template_id,
                     p2=submitted,
                     p3=currenttime
@@ -225,7 +226,7 @@ def update_templates_submit_flag(template_id, submitted):
                 submitted='{p2}' \
                 "
                 stmt = sql.format(
-                    schema=global_var.db_schema_name(),
+                    schema=global_var.schemafin(),
                     p1=template_id,
                     p2=submitted
                 )
@@ -267,7 +268,7 @@ def get_input_templ_name(templ_choice_str):
             sql = "SELECT * FROM {schema}.templates WHERE \
                 template_id='{p1}'"   
             stmt = sql.format(
-                schema=global_var.db_schema_name(),
+                schema=global_var.schemafin(),
                 p1=template_id)
             cur.execute(stmt)
             row = cur.fetchone()
@@ -288,7 +289,7 @@ def get_input_templ_broker(templ_choice_str):
             sql = "SELECT * FROM {schema}.templates WHERE \
                 template_id='{p1}'"   
             stmt = sql.format(
-                schema=global_var.db_schema_name(),
+                schema=global_var.schemafin(),
                 p1=template_id)
             cur.execute(stmt)
             row = cur.fetchone()
@@ -302,7 +303,7 @@ def get_input_templ_list():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.templates WHERE submitted=false ORDER BY template_id ASC"
         stmt = sql.format(
-            schema=global_var.db_schema_name()
+            schema=global_var.schemafin()
         )
         cur.execute(stmt)
         rows = cur.fetchall()
@@ -322,7 +323,7 @@ def get_input_templ_items(templ_choice_str):
             sql = "SELECT * FROM {schema}.templ_journals WHERE template_id = {p1} \
                 ORDER BY sell_date DESC, buy_date DESC, symbol ASC"
             stmt = sql.format(
-                schema=global_var.db_schema_name(),
+                schema=global_var.schemafin(),
                 p1=template_id
             )
             cur.execute(stmt)
