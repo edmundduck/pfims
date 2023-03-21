@@ -88,8 +88,8 @@ def upsert_templ_journals(tid, rows):
             tj.assignFromDict({'template_id': tid})
             for row in rows:
                 tj.assignFromDict(row)
-                mod_debug.print_data_debug("a", cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()))
-                args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()))
+                mod_debug.print_data_debug("a", str(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple())))
+                args = ",".join(str(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple())))
             cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
                 VALUES {p1}".format(
                     schema=global_var.schemafin(),
