@@ -87,9 +87,17 @@ def upsert_templ_journals(tid, rows):
             tj = fobj.TradeJournal()
             tj.assignFromDict({'template_id': tid})
             for row in rows:
-                tj.assignFromDict(row)
-                mod_debug.print_data_debug("a", str(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple())))
-                args = ",".join(str(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple())))
+                values = [(34545, 'samuel', 48000.0),
+                          (34546, 'rachel', 23232),
+                          (34547, 'Sean', 92000.0)]
+ 
+                # cursor.mogrify() to insert multiple values
+                args = ','.join(cur.mogrify("(%s,%s,%s)", i).decode('utf-8')
+                                for i in values)
+                mod_debug.print_data_debug("test1", args)
+                args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()))
+            mod_debug.print_data_debug("args", args)
+            #args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()) for row in rows)
             cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
                 VALUES {p1}".format(
                     schema=global_var.schemafin(),
