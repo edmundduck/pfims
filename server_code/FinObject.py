@@ -36,15 +36,28 @@ class TradeJournal:
             self.pnl = float(tuple.pnl)
 
     def __str__(self):
-        return f"TradeJournal(iid:{self.iid}, templ_id:{template_id}): {self.sell_date}, {self.buy_date}, \
-            {self.symbol}, {self.qty}, {self.sales}, {self.cost}, {self.fee}, {self.sell_price}, {self.buy_price}, {self.pnl}"
+        return "{0} (iid:{1}, tid:{2}) - {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}".format(
+            self.__class__,
+            self.attr.get('iid'), \
+            self.attr.get('template_id'), \
+            self.attr.get('sell_date'), \
+            self.attr.get('buy_date'), \
+            self.attr.get('symbol'), \
+            self.attr.get('qty'), \
+            self.attr.get('sales'), \
+            self.attr.get('cost'), \
+            self.attr.get('fee'), \
+            self.attr.get('sell_price'), \
+            self.attr.get('buy_price'), \
+            self.attr.get('pnl')
+        )
 
     def getTuple(self):
         param_list = ['template_id', 'sell_date', 'buy_date', 'symbol', 'qty', 'sales', 'cost', 'fee', 'sell_price', 'buy_price', 'pnl']
         tuple_list = []
         for item in param_list:
-            mod_debug.print_data_debug('param', item)
             tuple_list.append(str(self.attr.get(item)))
+        mod_debug.print_data_debug('tuple_list', tuple_list)
         return tuple_list
 
     def assignFromDict(self, dict):

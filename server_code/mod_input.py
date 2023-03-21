@@ -84,11 +84,11 @@ def upsert_templ_journals(tid, rows):
     try:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            mod_debug.print_data_debug("rows", rows)
             tj = fobj.TradeJournal()
-            tj.template_id = tid
+            tj.assignFromDict({'template_id': tid})
             for row in rows:
                 tj.assignFromDict(row)
+                mod_debug.print_data_debug("a", cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()))
                 args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()))
             cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
                 VALUES {p1}".format(
@@ -169,7 +169,7 @@ def upsert_templates(template_id, template_name, broker_id):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
                 sql = "INSERT INTO {schema}.templates (template_name, template_create, template_lastsave) \
-                VALUES ('{p1}','{p2}','{p3}')"
+                VALUES ('{p1}','{p2}','{p3}') RETURNING template_id"
                 stmt = sql.format(
                     schema=global_var.schemafin(),
                     p1=template_name,
@@ -184,7 +184,7 @@ def upsert_templates(template_id, template_name, broker_id):
                 submitted='{p3}', \
                 template_create='{p4}', \
                 template_lastsave='{p5}' \
-                "
+                RETURNING template_id"
                 stmt = sql.format(
                     schema=global_var.schemafin(),
                     p1=template_id,
@@ -195,11 +195,11 @@ def upsert_templates(template_id, template_name, broker_id):
                 )
             cur.execute(stmt)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
+            tid = cur.fetchone()
+            if tid['template_id'] < 0:
                     raise psycopg2.OperationalError("Insert/Update fail.")                
             cur.close()
-        return count
+        return tid['template_id']
     except psycopg2.OperationalError as err:
         mod_debug.print_data_debug("OperationalError in " + upsert_templates.__name__, err)
         conn.rollback()

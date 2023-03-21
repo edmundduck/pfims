@@ -91,7 +91,7 @@ class form_input_stock(form_input_stockTemplate):
         templ_id = anvil.server.call('get_templ_id', 
                                     self.dropdown_templ.selected_value)
         
-        anvil.server.call('upsert_templates',
+        templ_id = anvil.server.call('upsert_templates',
                         template_id=templ_id,
                         template_name=self.templ_name.text, 
                         broker_id=self.dropdown_broker.selected_value)
