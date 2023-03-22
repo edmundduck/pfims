@@ -86,44 +86,12 @@ def upsert_templ_journals(tid, rows):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             tj = fobj.TradeJournal()
             tj.assignFromDict({'template_id': tid})
-            for row in rows:
-                args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8'))
-            mod_debug.print_data_debug("args", args)
-            #args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()) for row in rows)
+            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
             cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
                 VALUES {p1}".format(
                     schema=global_var.schemafin(),
                     p1=args
                 ))
-            # sql = "INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-            # VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}','{p6}','{p7})','{p8}','{p9}','{p10}','{p11}' \
-            # ON CONFLICT (iid) DO UPDATE SET \
-            # template_id='{p1}', \
-            # sell_date='{p2}', \
-            # buy_date='{p3}', \
-            # symbol='{p4}', \
-            # qty='{p5}', \
-            # sales='{p6}', \
-            # cost='{p7}', \
-            # fee='{p8}', \
-            # sell_price='{p9}', \
-            # buy_price='{p10}', \
-            # pnl='{p11}' \
-            # "    
-            # stmt = sql.format(
-            #     schema=global_var.schemafin(),
-            #     p1=journal.template_id,
-            #     p2=journal.sell_date,
-            #     p3=journal.buy_date,
-            #     p4=journal.symbol,
-            #     p5=journal.qty,
-            #     p6=journal.sales,
-            #     p7=journal.cost,
-            #     p8=journal.fee,
-            #     p9=journal.sell_price,
-            #     p10=journal.buy_price,
-            #     p11=journal.pnl
-            # )
             conn.commit()
             count = cur.rowcount
             if count <= 0:
@@ -168,13 +136,14 @@ def upsert_templates(template_id, template_name, broker_id):
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
-                sql = "INSERT INTO {schema}.templates (template_name, template_create, template_lastsave) \
-                VALUES ('{p1}','{p2}','{p3}') RETURNING template_id"
+                sql = "INSERT INTO {schema}.templates (template_name, submitted, template_create, template_lastsave) \
+                VALUES ('{p1}','{p4}',{p2}','{p3}') RETURNING template_id"
                 stmt = sql.format(
                     schema=global_var.schemafin(),
                     p1=template_name,
                     p2=currenttime,
-                    p3=currenttime
+                    p3=currenttime,
+                    p4=false
                 )
             else:
                 sql = "INSERT INTO {schema}.templates (template_id, template_name, submitted, template_create, template_lastsave) \

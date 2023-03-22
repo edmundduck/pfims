@@ -107,20 +107,6 @@ class form_input_stock(form_input_stockTemplate):
         
         """ Add/Update """
         anvil.server.call('upsert_templ_journals', templ_id, self.input_repeating_panel.items)
-        # for row in self.input_repeating_panel.items:
-        #     anvil.server.call('upsert_templ_journals', 
-        #                     iid=row['iid'], 
-        #                     template_id=templ_id, 
-        #                     sell_date=row['sell_date'], 
-        #                     buy_date=row['buy_date'], 
-        #                     symbol=row['symbol'], 
-        #                     qty=row['qty'], 
-        #                     sales=row['sales'], 
-        #                     cost=row['cost'], 
-        #                     fee=row['fee'], 
-        #                     sell_price=row['sell_price'], 
-        #                     buy_price=row['buy_price'],
-        #                     pnl=row['pnl'])
     
         """ Reflect the change in template dropdown """
         self.dropdown_templ.items = anvil.server.call('get_input_templ_list')
