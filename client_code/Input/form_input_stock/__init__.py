@@ -144,8 +144,6 @@ class form_input_stock(form_input_stockTemplate):
             templ_id = anvil.server.call('get_templ_id', 
                                         to_be_del_templ_name)
             
-            anvil.server.call('delete_templ_journals', 
-                                template_id=templ_id)
             anvil.server.call('delete_templates', 
                                 template_id=templ_id)
             """ Reset row delete flag """

@@ -4,17 +4,14 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-import random
-import string
+#import string
+import psycopg2
+import psycopg2.extras
 from datetime import date, datetime
 from . import mod_debug
 from . import mod_setting
 from . import global_var
 from . import FinObject as fobj
-# Postgres impl START
-import psycopg2
-import psycopg2.extras
-# Postgres impl END
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -39,6 +36,11 @@ def split_templ_id(templ_id):
         return None
     else:
         return templ_id[:templ_id.find("-")].strip()
+
+@anvil.server.callable
+# Generate template dropdown text for display
+def merge_templ_id_name(templ_id, templ_name):
+    return str(templ_id) + " - " + templ_name
 
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
@@ -86,12 +88,15 @@ def upsert_templ_journals(tid, rows):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             tj = fobj.TradeJournal()
             tj.assignFromDict({'template_id': tid})
-            args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
-            cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-                VALUES {p1}".format(
-                    schema=global_var.schemafin(),
-                    p1=args
-                ))
+            if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
+                args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
+                cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
+                    VALUES {p1}".format(
+                        schema=global_var.schemafin(),
+                        p1=args
+                    ))
+            else:
+                pass
             conn.commit()
             count = cur.rowcount
             if count <= 0:
@@ -124,11 +129,6 @@ def delete_templ_journals(template_id, iid):
         return None
 
 @anvil.server.callable
-# Generate template dropdown text for display
-def merge_templ_id_name(templ_id, templ_name):
-    return str(templ_id) + " - " + templ_name
-
-@anvil.server.callable
 # DB table "templates" update/insert method with time handling logic
 def upsert_templates(template_id, template_name, broker_id):
     try:
@@ -136,31 +136,34 @@ def upsert_templates(template_id, template_name, broker_id):
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
-                sql = "INSERT INTO {schema}.templates (template_name, submitted, template_create, template_lastsave) \
-                VALUES ('{p1}',{p4},'{p2}','{p3}') RETURNING template_id"
+                sql = "INSERT INTO {schema}.templates (template_name, broker_id, submitted, template_create, template_lastsave) \
+                VALUES ('{p1}',{p2},'{p3}','{p4}','{p5}') RETURNING template_id"
                 stmt = sql.format(
                     schema=global_var.schemafin(),
                     p1=template_name,
-                    p2=currenttime,
-                    p3=currenttime,
-                    p4=False
+                    p2=broker_id,
+                    p3=False,
+                    p4=currenttime,
+                    p5=currenttime
                 )
             else:
-                sql = "INSERT INTO {schema}.templates (template_id, template_name, submitted, template_create, template_lastsave) \
-                VALUES ('{p1}','{p2}',{p3},'{p4}','{p5}' \
+                sql = "INSERT INTO {schema}.templates (template_id, template_name, broker_id, submitted, template_create, template_lastsave) \
+                VALUES ('{p1}','{p2}','{p3}',{p4},'{p5}','{p6}') \
                 ON CONFLICT (template_id) DO UPDATE SET \
                 template_name='{p2}', \
-                submitted={p3}, \
-                template_create='{p4}', \
-                template_lastsave='{p5}' \
+                broker_id='{p3}', \
+                submitted={p4}, \
+                template_create='{p5}', \
+                template_lastsave='{p6}' \
                 RETURNING template_id"
                 stmt = sql.format(
                     schema=global_var.schemafin(),
                     p1=template_id,
                     p2=template_name,
-                    p3=False,
-                    p4=currenttime,
+                    p3=broker_id, 
+                    p4=False,
                     p5=currenttime,
+                    p6=currenttime,
                 )
             cur.execute(stmt)
             conn.commit()
@@ -178,8 +181,8 @@ def upsert_templates(template_id, template_name, broker_id):
 @anvil.server.callable
 # DB table "templates" update/insert method for submit/unsubmit
 def update_templates_submit_flag(template_id, submitted):
-    currenttime = datetime.now()
     try:
+        currenttime = datetime.now()
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
@@ -239,12 +242,11 @@ def get_input_templ_name(templ_choice_str):
     else:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            template_id=split_templ_id(templ_choice_str)
             sql = "SELECT * FROM {schema}.templates WHERE \
                 template_id='{p1}'"   
             stmt = sql.format(
                 schema=global_var.schemafin(),
-                p1=template_id)
+                p1=split_templ_id(templ_choice_str))
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
@@ -257,15 +259,13 @@ def get_input_templ_broker(templ_choice_str):
         row = mod_setting.select_settings()
         return row['default_broker'] if row is not None else ''
     else:
-        template_id=split_templ_id(templ_choice_str)
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            template_id=split_templ_id(templ_choice_str)
             sql = "SELECT * FROM {schema}.templates WHERE \
                 template_id='{p1}'"   
             stmt = sql.format(
                 schema=global_var.schemafin(),
-                p1=template_id)
+                p1=split_templ_id(templ_choice_str))
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
@@ -290,22 +290,19 @@ def get_input_templ_list():
 @anvil.server.callable
 # Return template items for repeating panel to display based on template selection dropdown
 def get_input_templ_items(templ_choice_str):
-    listitems = []
     if not (templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT):
-        template_id=split_templ_id(templ_choice_str)
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.templ_journals WHERE template_id = {p1} \
                 ORDER BY sell_date DESC, buy_date DESC, symbol ASC"
             stmt = sql.format(
                 schema=global_var.schemafin(),
-                p1=template_id
+                p1=split_templ_id(templ_choice_str)
             )
             cur.execute(stmt)
             rows = cur.fetchall()
             cur.close()
-        listitems = list(rows)
-    return listitems
+    return list(rows)
 
 @anvil.server.callable
 # Return template items for csv generation

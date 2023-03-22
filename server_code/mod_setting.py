@@ -4,17 +4,11 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+import psycopg2
+import psycopg2.extras
 from . import mod_debug
 from . import mod_input
 from . import global_var
-# Postgres impl START
-import psycopg2
-import psycopg2.extras
-# Postgres impl END
-# SQLAlchemy impl START
-import sqlalchemy
-from sqlalchemy import create_engine
-# SQLAlchemy impl END
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
