@@ -40,7 +40,7 @@ class TradeJournal:
         )
 
     def getTuple(self):
-        param_list = ['template_id', 'sell_date', 'buy_date', 'symbol', 'qty', 'sales', 'cost', 'fee', 'sell_price', 'buy_price', 'pnl']
+        param_list = ['iid', 'template_id', 'sell_date', 'buy_date', 'symbol', 'qty', 'sales', 'cost', 'fee', 'sell_price', 'buy_price', 'pnl']
         tuple_list = []
         for item in param_list:
             tuple_list.append(str(self.attr.get(item)))
