@@ -137,20 +137,20 @@ def upsert_templates(template_id, template_name, broker_id):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
                 sql = "INSERT INTO {schema}.templates (template_name, submitted, template_create, template_lastsave) \
-                VALUES ('{p1}','{p4}',{p2}','{p3}') RETURNING template_id"
+                VALUES ('{p1}',{p4},'{p2}','{p3}') RETURNING template_id"
                 stmt = sql.format(
                     schema=global_var.schemafin(),
                     p1=template_name,
                     p2=currenttime,
                     p3=currenttime,
-                    p4=false
+                    p4=False
                 )
             else:
                 sql = "INSERT INTO {schema}.templates (template_id, template_name, submitted, template_create, template_lastsave) \
-                VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}' \
+                VALUES ('{p1}','{p2}',{p3},'{p4}','{p5}' \
                 ON CONFLICT (template_id) DO UPDATE SET \
                 template_name='{p2}', \
-                submitted='{p3}', \
+                submitted={p3}, \
                 template_create='{p4}', \
                 template_lastsave='{p5}' \
                 RETURNING template_id"
@@ -158,7 +158,7 @@ def upsert_templates(template_id, template_name, broker_id):
                     schema=global_var.schemafin(),
                     p1=template_id,
                     p2=template_name,
-                    p3=false,
+                    p3=False,
                     p4=currenttime,
                     p5=currenttime,
                 )
