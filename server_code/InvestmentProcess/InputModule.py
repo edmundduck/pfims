@@ -8,10 +8,10 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from . import mod_debug
-from . import mod_setting
-from . import global_var
-from . import FinObject as fobj
+from .. import mod_debug
+from .. import mod_setting
+from .. import global_var
+from ..DataObject import FinObject as fobj
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.

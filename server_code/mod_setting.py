@@ -7,7 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from . import mod_debug
-from . import mod_input
+from .InvestmentProcess import InputModule
 from . import global_var
 
 # This is a server module. It runs on the Anvil server,
@@ -180,7 +180,7 @@ def psgldb_get_submitted_templ_list():
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT template_id, template_name FROM " + global_var.schemafin() + ".templates WHERE submitted=true")
-        result = list(mod_input.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
+        result = list(InputModule.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
         cur.close()
     result.insert(0, '')
     return result
