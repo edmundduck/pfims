@@ -45,11 +45,13 @@ class form_input_stock(form_input_stockTemplate):
         v.require_text_field(self.input_sales, self.valerror_5, True)
         v.require_text_field(self.input_cost, self.valerror_6, True)
         v.require_text_field(self.input_fee, self.valerror_7, True)
-    
-        if v.is_valid():
-            last_iid = 0
-            if len(self.input_repeating_panel.items) > 0:
-                last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
+
+        # IID generation logic is moved to database function
+        # When a new row is created, IID is default to be None
+        # if v.is_valid():
+        #     last_iid = 0
+        #     if len(self.input_repeating_panel.items) > 0:
+        #         last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
       
         new_data = {"sell_date": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
@@ -61,7 +63,8 @@ class form_input_stock(form_input_stockTemplate):
                     "sell_price": anvil.server.call('cal_price', self.input_sales.text, self.input_qty.text),
                     "buy_price": anvil.server.call('cal_price', self.input_cost.text, self.input_qty.text),
                     "pnl": anvil.server.call('cal_profit', self.input_sales.text, self.input_cost.text, self.input_fee.text),
-                    "iid": int(last_iid)+1}
+                    #"iid": int(last_iid)+1}
+                    "iid": None}
       
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
       
