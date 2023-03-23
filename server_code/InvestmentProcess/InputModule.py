@@ -30,6 +30,10 @@ from ..DataObject import FinObject as fobj
 DEFAULT_NEW_TEMPL_TEXT = "[NEW]"
 DEFAULT_NEW_TEMPL_NAME = "NewTemplate"
 
+# Global variable
+global del_iid
+del_iid = []
+
 @anvil.server.callable
 # Retrieve template ID by splitting template dropdown value
 def get_template_id(selected_template):
