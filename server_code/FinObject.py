@@ -47,7 +47,6 @@ class TradeJournal:
         return tuple_list
 
     def assignFromDict(self, dict):
-        mod_debug.print_data_debug("self.attr.iid1", self.attr.get('iid'))
         self.attr['iid'] = dict.get('iid') if dict.get('iid') is not None else self.attr.get('iid')
         self.attr['template_id'] = dict.get('template_id') if dict.get('template_id') is not None else self.attr.get('template_id')
         self.attr['sell_date'] = dict.get('sell_date') if dict.get('sell_date') is not None else self.attr.get('sell_date')
@@ -60,5 +59,4 @@ class TradeJournal:
         self.attr['sell_price'] = dict.get('sell_price') if dict.get('sell_price') is not None else self.attr.get('sell_price')
         self.attr['buy_price'] = dict.get('buy_price') if dict.get('buy_price') is not None else self.attr.get('buy_price')
         self.attr['pnl'] = dict.get('pnl') if dict.get('pnl') is not None else self.attr.get('pnl')
-        mod_debug.print_data_debug("self.attr.iid", self.attr.get('iid'))
         return self

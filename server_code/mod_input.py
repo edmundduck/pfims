@@ -88,7 +88,6 @@ def upsert_templ_journals(tid, rows):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             tj = fobj.TradeJournal()
             tj.assignFromDict({'template_id': tid})
-            mod_debug.print_data_debug("rows", rows)
             
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
