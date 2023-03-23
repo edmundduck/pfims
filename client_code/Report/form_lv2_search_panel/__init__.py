@@ -178,7 +178,7 @@ class form_lv2_search_panel(form_lv2_search_panelTemplate):
     enddate = self._find_enddate()
     startdate = self._find_startdate()
     
-    self.subform.rpt_panel.items = anvil.server.call('select_templ_journals', 
+    self.subform.rpt_panel.items = anvil.server.call('select_journals', 
                                               enddate, 
                                               startdate, 
                                               symbol_list)

@@ -180,7 +180,7 @@ def psgldb_get_submitted_templ_list():
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT template_id, template_name FROM " + global_var.schemafin() + ".templates WHERE submitted=true")
-        result = list(mod_input.merge_templ_id_name(str(row['template_id']), row['template_name']) for row in cur.fetchall())
+        result = list(mod_input.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
         cur.close()
     result.insert(0, '')
     return result
@@ -299,8 +299,8 @@ def anvildb_delete_brokers(b_id):
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Anvil DB
 def anvildb_get_submitted_templ_list():
-    #content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search())
-    content = list(merge_templ_id_name(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=True))
+    #content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in app_tables.templates.search())
+    content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=True))
     content.insert(0, '')
     return content
 

@@ -108,14 +108,14 @@ class form_sub2_tranx_report(form_sub2_tranx_reportTemplate):
     """This method is called when the button is clicked"""
     symbol_list = self.get_selected_symbols()
     if self.tranx_rpt_time_dropdown.selected_value != "SDR":
-      self.tranx_rpt_repeating_panel.items = anvil.server.call('select_templ_journals', 
+      self.tranx_rpt_repeating_panel.items = anvil.server.call('select_journals', 
                                                                date.today(), 
                                                                anvil.server.call('get_start_date', 
                                                                                  date.today(), 
                                                                                  self.tranx_rpt_time_dropdown.selected_value), 
                                                                symbol_list)
     else:
-      self.tranx_rpt_repeating_panel.items = anvil.server.call('select_templ_journals', 
+      self.tranx_rpt_repeating_panel.items = anvil.server.call('select_journals', 
                                                                self.tranx_rpt_time_to_date.date, 
                                                                self.tranx_rpt_time_from_date.date, 
                                                                symbol_list)

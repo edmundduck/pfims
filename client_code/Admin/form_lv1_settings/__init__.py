@@ -151,13 +151,16 @@ class form_lv1_settings(form_lv1_settingsTemplate):
   def button_templ_edit_click(self, **event_args):
     """This method is called when the button is clicked"""
     to_be_enabled_templ_name = self.dropdown_sub_templ_list.selected_value
-    templ_id = anvil.server.call('get_templ_id', 
-                                 to_be_enabled_templ_name)
-    anvil.server.call('update_templates_submit_flag', 
-                      templ_id, 
-                      False)
-    """ Reflect the change in template dropdown """
-    self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+    templ_id = anvil.server.call('get_template_id', to_be_enabled_templ_name)
+    result = anvil.server.call('submit_templates', templ_id, False)
 
-    n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
-    n.show()
+    if result is not None:
+        """ Reflect the change in template dropdown """
+        self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+    
+        n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
+        n.show()
+    else:
+        n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=to_be_enabled_templ_name))
+        n.show()
+        

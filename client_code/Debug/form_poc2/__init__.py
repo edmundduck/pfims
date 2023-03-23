@@ -14,7 +14,7 @@ class form_poc2(form_poc2Template):
 
     # Any code you write here will run when the form opens.
     symbol_list = []
-    self.rpt_panel.items = anvil.server.call('select_templ_journals', 
+    self.rpt_panel.items = anvil.server.call('select_journals', 
                                                date.today(), 
                                                date(2000,1,1), 
                                                symbol_list)

@@ -47,16 +47,6 @@ class TradeJournal:
         return tuple_list
 
     def assignFromDict(self, dict):
-        self.attr['iid'] = dict.get('iid') if dict.get('iid') is not None else self.attr.get('iid')
-        self.attr['template_id'] = dict.get('template_id') if dict.get('template_id') is not None else self.attr.get('template_id')
-        self.attr['sell_date'] = dict.get('sell_date') if dict.get('sell_date') is not None else self.attr.get('sell_date')
-        self.attr['buy_date'] = dict.get('buy_date') if dict.get('buy_date') is not None else self.attr.get('buy_date')
-        self.attr['symbol'] = dict.get('symbol') if dict.get('symbol') is not None else self.attr.get('symbol')
-        self.attr['qty'] = dict.get('qty') if dict.get('qty') is not None else self.attr.get('qty')
-        self.attr['sales'] = dict.get('sales') if dict.get('sales') is not None else self.attr.get('sales')
-        self.attr['cost'] = dict.get('cost') if dict.get('cost') is not None else self.attr.get('cost')
-        self.attr['fee'] = dict.get('fee') if dict.get('fee') is not None else self.attr.get('fee')
-        self.attr['sell_price'] = dict.get('sell_price') if dict.get('sell_price') is not None else self.attr.get('sell_price')
-        self.attr['buy_price'] = dict.get('buy_price') if dict.get('buy_price') is not None else self.attr.get('buy_price')
-        self.attr['pnl'] = dict.get('pnl') if dict.get('pnl') is not None else self.attr.get('pnl')
+        for key in dict.keys():
+            self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
         return self
