@@ -94,7 +94,11 @@ def upsert_templ_journals(tid, rows):
             #         schema=global_var.schemafin(),
             #         p1=args
             #     ))
+            # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
+            # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
+            # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
             args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
+            mod_debug.print_data_debug("args",args)
             cur.execute("INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, \
             sales, cost, fee, sell_price, buy_price, pnl) VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET \
             sell_date=EXCLUDED.sell_date, \
@@ -107,7 +111,7 @@ def upsert_templ_journals(tid, rows):
             sell_price=EXCLUDED.sell_price, \
             buy_price=EXCLUDED.buy_price, \
             pnl=EXCLUDED.pnl \
-            ".format(
+            WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id".format(
                     schema=global_var.schemafin(),
                     p1=args
                 ))
