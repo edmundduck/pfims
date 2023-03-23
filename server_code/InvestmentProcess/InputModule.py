@@ -156,17 +156,22 @@ def upsert_journals(tid, rows):
     
 @anvil.server.callable
 # Delete journals from "templ_journals" DB table
-def delete_journals(template_id, iid):
+def delete_journals(template_id, iid_list):
     try:
-        conn = psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("DELETE FROM " + global_var.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid = " + iid)
-            conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                raise psycopg2.OperationalError("Delete journals fail.")
-            cur.close()
-        return count
+        mod_debug.print_data_debug("iid_list", iid_list)
+        if len(iid_list) > 0:
+            conn = psqldb_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                args = "(%s)".format(",".join(i for i in iid_list))
+                mod_debug.print_data_debug("args", args)
+                cur.execute("DELETE FROM " + global_var.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid IN " + args)
+                conn.commit()
+                count = cur.rowcount
+                if count <= 0:
+                    raise psycopg2.OperationalError("Delete journals fail.")
+                cur.close()
+            return count
+        return 0
     except psycopg2.OperationalError as err:
         mod_debug.print_data_debug("OperationalError in " + delete_journals.__name__, err)
         conn.rollback()
@@ -180,6 +185,9 @@ def save_templates(template_id, template_name, broker_id):
         currenttime = datetime.now()
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            if len(del_iid) > 0:
+                delete_journals(template_id, del_iid)
+                
             if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
                 sql = "INSERT INTO {schema}.templates (template_name, broker_id, submitted, template_create, template_lastsave) \
                 VALUES ('{p1}','{p2}',{p3},'{p4}','{p5}') RETURNING template_id"
@@ -335,3 +343,17 @@ def cal_profit(sell, buy, fee):
 # Calculate stock sell/buy price
 def cal_price(amt, qty):
     return round(float(amt) / float(qty), 2)
+
+@anvil.server.callable
+# Add IID into the deletion list for delete journals function to process
+def delete_row(iid):
+    mod_debug.print_data_debug("iid", iid)
+    mod_debug.print_data_debug("del_iid", del_iid)
+    del_iid.append(iid)
+    mod_debug.print_data_debug("iid", iid)
+    mod_debug.print_data_debug("del_iid", del_iid)
+
+@anvil.server.callable
+# Reset the deletion list
+def reset_delete():
+    del_iid = []
