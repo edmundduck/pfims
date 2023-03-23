@@ -88,15 +88,17 @@ def upsert_templ_journals(tid, rows):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             tj = fobj.TradeJournal()
             tj.assignFromDict({'template_id': tid})
+            
+            # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
+            # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
+            # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
+            # Following commented section is for INSERT only, not UPSERT
             # args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
             # cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
             #     VALUES {p1}".format(
             #         schema=global_var.schemafin(),
             #         p1=args
             #     ))
-            # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
-            # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
-            # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
             args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
             mod_debug.print_data_debug("args",args)
             cur.execute("INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, \
@@ -118,7 +120,7 @@ def upsert_templ_journals(tid, rows):
             conn.commit()
             count = cur.rowcount
             if count <= 0:
-                raise psycopg2.OperationalError("Delete fail.")
+                raise psycopg2.OperationalError("Upsert fail.")
             cur.close()
         return count
     except psycopg2.OperationalError as err:
