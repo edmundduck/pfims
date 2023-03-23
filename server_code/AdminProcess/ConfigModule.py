@@ -6,9 +6,9 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from . import mod_debug
-from .InvestmentProcess import InputModule
-from . import global_var
+from .. import mod_debug
+from .. import global_var
+from ..InvestmentProcess import InputModule
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.

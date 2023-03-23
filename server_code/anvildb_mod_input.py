@@ -8,7 +8,7 @@ import random
 import string
 from datetime import date, datetime
 from . import mod_debug
-from . import mod_setting
+from .AdminProcess import ConfigModule as cfmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -137,7 +137,7 @@ from . import mod_setting
 # # Return broker name based on template dropdown selection
 # def get_input_templ_broker(templ_choice_str):
 #     if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
-#         row = mod_setting.select_settings()
+#         row = cfmod.select_settings()
 #         return row['default_broker'] if row is not None else ''
 #     else:
 #         row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))

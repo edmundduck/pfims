@@ -9,8 +9,8 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from .. import mod_debug
-from .. import mod_setting
 from .. import global_var
+from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
 
 # This is a server module. It runs on the Anvil server,
@@ -286,7 +286,7 @@ def delete_templates(template_id):
 # Return selected template name and selected broker based on template dropdown selection
 def get_selected_template_attr(templ_choice_str):
     if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT:
-        row = mod_setting.select_settings()
+        row = cfmod.select_settings()
         return [DEFAULT_NEW_TEMPL_NAME, row['default_broker'] if row is not None else '']
     else:
         conn = psqldb_connect()
