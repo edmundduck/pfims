@@ -36,6 +36,8 @@ class input_template(input_templateTemplate):
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
 
+        global_var.track_input_stock_journals_change()
+
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         v = validation.Validator()
@@ -86,10 +88,15 @@ class input_template(input_templateTemplate):
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False
             
+            global_var.track_input_stock_journals_change()
+            self.parent.raise_event('x-disable-submit-button')
+
             #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
             self.parent.raise_event('x-save-change')
       
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        global_var.add_deleted_row(self.item['iid'])
+        if self.item['iid'] is not None: global_var.add_deleted_row(self.item['iid'])
+        global_var.track_input_stock_journals_change()
+        self.parent.raise_event('x-disable-submit-button')
         self.remove_from_parent()

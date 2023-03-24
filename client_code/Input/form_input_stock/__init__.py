@@ -16,13 +16,17 @@ class form_input_stock(form_input_stockTemplate):
     
         # Any code you write here will run when the form opens.
         self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
-        
+        self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
+
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
-        self.templ_name.text, self.dropdown_broker.selected_value = \
-            anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-  
+        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
+
+        # Reset on screen change status
+        global_var.reset_input_stock_change()
+        self.disable_submit_button()
+        
     def save_row_change(self, **event_args):
         """ 
         *** ESSENTIAL ***
@@ -69,13 +73,17 @@ class form_input_stock(form_input_stockTemplate):
                     "iid": None}
       
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
+        global_var.track_input_stock_journals_change()
+        self.disable_submit_button()
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.templ_name.text, self.dropdown_broker.selected_value = \
-            anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-        self.input_repeating_panel.items = \
-            anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
+        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
+        self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
+        # Reset on screen change status
+        global_var.reset_input_stock_change()
+        if self.dropdown_templ.selected_value != global_var.input_stock_default_templ_dropdown():
+            self.button_submit.enabled = True
 
     def dropdown_templ_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -89,17 +97,18 @@ class form_input_stock(form_input_stockTemplate):
         """This method is called when the button is clicked"""
         templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
         templ_name = self.templ_name.text
+        broker_id = self.dropdown_broker.selected_value
         templ_id = anvil.server.call('save_templates',
                                      template_id=templ_id,
                                      template_name=templ_name, 
-                                     broker_id=self.dropdown_broker.selected_value,
+                                     broker_id=broker_id,
                                      del_iid=global_var.del_iid
                                     )
 
         if templ_id is None or templ_id <= 0:
             n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
             n.show()
-            return            
+            return
         
         """ Trigger save_row_change if del_iid is not empty """
         if len(global_var.del_iid) > 0:
@@ -109,15 +118,16 @@ class form_input_stock(form_input_stockTemplate):
         """ Add/Update """
         result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
 
-        if result is not None:
+        if result is not None and result > 0:
             """ Reflect the change in template dropdown """
             self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-            self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, self.templ_name.text)
+            self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, templ_name)
+            self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
+            self.button_submit.enabled = True
             n = Notification("Template {templ_name} has been saved successfully.".format(templ_name=templ_name))
-            n.show()
         else:
             n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
-            n.show()
+        n.show()
             
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -147,30 +157,50 @@ class form_input_stock(form_input_stockTemplate):
     
         if userconf == "Y":
             templ_id = anvil.server.call('get_template_id', to_be_del_templ_name)
+            result = anvil.server.call('delete_templates', template_id=templ_id)
+            if result is not None and result > 0:
+                """ Reset row delete flag """
+                global_var.reset_deleted_row()
             
-            anvil.server.call('delete_templates', template_id=templ_id)
-            """ Reset row delete flag """
-            global_var.reset_deleted_row()
-        
-            """ Reflect the change in template dropdown """
-            self.dropdown_templ_show()
-            #self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-            #self.templ_name.text = ""
-            self.dropdown_broker_show()
-            self.input_repeating_panel.items = []
-            
-            n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
-            n.show()      
+                """ Reflect the change in template dropdown """
+                self.dropdown_templ_show()
+                self.dropdown_broker_show()
+                self.input_repeating_panel.items = []
+                
+                n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
+                n.show()
+            else:
+                n = Notification("ERROR: Fail to delete template {templ_name}.".format(templ_name=to_be_del_templ_name))
+                n.show()                
 
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_submitted_templ_name = self.dropdown_templ.selected_value
         templ_id = anvil.server.call('get_template_id', to_be_submitted_templ_name)
-        anvil.server.call('submit_templates', templ_id, True)
+        templ_name = self.templ_name.text
+        broker_id = self.dropdown_broker.selected_value
+        result = anvil.server.call('submit_templates', templ_id, True)
+
+        if result is not None and result > 0:
+            """ Reflect the change in template dropdown """
+            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+            self.dropdown_templ.raise_event('change')
         
-        """ Reflect the change in template dropdown """
-        self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-        self.dropdown_templ.raise_event('change')
-    
-        n = Notification("Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only.".format(templ_name=to_be_submitted_templ_name))
-        n.show()
+            n = Notification("Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only.".format(templ_name=to_be_submitted_templ_name))
+            n.show()
+        else:
+            n = Notification("ERROR: Fail to submit template {templ_name}.".format(templ_name=to_be_submitted_templ_name))
+            n.show()
+
+    def templ_name_change(self, **event_args):
+        """This method is called when the text in this text box is edited"""
+        global_var.track_input_stock_template_change()
+        self.disable_submit_button()
+
+    def dropdown_broker_change(self, **event_args):
+        """This method is called when an item is selected"""
+        global_var.track_input_stock_template_change()
+        self.disable_submit_button()
+
+    def disable_submit_button(self, **event_args):
+        self.button_submit.enabled = False    
