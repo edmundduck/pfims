@@ -6,10 +6,9 @@ from anvil.tables import app_tables
 import anvil.server
 from datetime import date, datetime, timedelta
 from . import global_var
-from . import mod_debug
-# PostgreSQL impl
 import psycopg2
 import psycopg2.extras
+from .System import SysInternalModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -154,11 +153,11 @@ def build_pnl_data(end_date, start_date, symbols):
         format_pnl_child(dictstruct_gchild, sell_yr_str, sell_date_str)
 
     # Debug
-    #mod_debug.print_data_debug('dictstruct_day', dictstruct_day)
-    #mod_debug.print_data_debug('dictstruct_mth', dictstruct_mth)
-    #mod_debug.print_data_debug('dictstruct_yr', dictstruct_yr)
-    #mod_debug.print_data_debug('dictstruct_child', dictstruct_child)
-    #mod_debug.print_data_debug('dictstruct_gchild', dictstruct_gchild)
+    #sysmod.print_data_debug('dictstruct_day', dictstruct_day)
+    #sysmod.print_data_debug('dictstruct_mth', dictstruct_mth)
+    #sysmod.print_data_debug('dictstruct_yr', dictstruct_yr)
+    #sysmod.print_data_debug('dictstruct_child', dictstruct_child)
+    #sysmod.print_data_debug('dictstruct_gchild', dictstruct_gchild)
     return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild
 
 @anvil.server.callable
@@ -194,11 +193,11 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
     rowstruct = []
     dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(end_date, start_date, symbols)
     # Debug
-    #mod_debug.print_data_debug('dictstruct_day', dictstruct_day)
-    #mod_debug.print_data_debug('dictstruct_mth', dictstruct_mth)
-    #mod_debug.print_data_debug('dictstruct_yr', dictstruct_yr)
-    #mod_debug.print_data_debug('dictstruct_child', dictstruct_child)
-    #mod_debug.print_data_debug('dictstruct_gchild', dictstruct_gchild)
+    #sysmod.print_data_debug('dictstruct_day', dictstruct_day)
+    #sysmod.print_data_debug('dictstruct_mth', dictstruct_mth)
+    #sysmod.print_data_debug('dictstruct_yr', dictstruct_yr)
+    #sysmod.print_data_debug('dictstruct_child', dictstruct_child)
+    #sysmod.print_data_debug('dictstruct_gchild', dictstruct_gchild)
     
     if action == global_var.pnl_list_expand_icon():
         dictstruct = None

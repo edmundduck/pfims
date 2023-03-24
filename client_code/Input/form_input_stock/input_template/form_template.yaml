@@ -122,6 +122,7 @@ components:
       background: '', bold: false, underline: false}
     name: row_sales
     layout_properties: {column: JRLRWP}
+    event_bindings: {}
   - type: TextBox
     properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
@@ -165,6 +166,7 @@ components:
       background: '', bold: false, underline: false}
     name: row_fee
     layout_properties: {column: LMHMKP}
+    event_bindings: {}
   - type: Label
     properties: {}
     name: row_pnl

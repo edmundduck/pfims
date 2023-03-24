@@ -8,10 +8,10 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from .. import mod_debug
 from .. import global_var
 from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
+from ..System import SysInternalModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -29,10 +29,6 @@ from ..DataObject import FinObject as fobj
 # Static variables
 DEFAULT_NEW_TEMPL_TEXT = "[NEW]"
 DEFAULT_NEW_TEMPL_NAME = "NewTemplate"
-
-# Global variable
-global del_iid
-del_iid = []
 
 @anvil.server.callable
 # Retrieve template ID by splitting template dropdown value
@@ -149,7 +145,7 @@ def upsert_journals(tid, rows):
             cur.close()
         return count
     except psycopg2.OperationalError as err:
-        mod_debug.print_data_debug("OperationalError in " + upsert_journals.__name__, err)
+        sysmod.print_data_debug("OperationalError in " + upsert_journals.__name__, err)
         conn.rollback()
         cur.close()
         return None
@@ -158,12 +154,12 @@ def upsert_journals(tid, rows):
 # Delete journals from "templ_journals" DB table
 def delete_journals(template_id, iid_list):
     try:
-        mod_debug.print_data_debug("iid_list", iid_list)
+        sysmod.print_data_debug("iid_list", iid_list)
         if len(iid_list) > 0:
             conn = psqldb_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "(%s)".format(",".join(i for i in iid_list))
-                mod_debug.print_data_debug("args", args)
+                sysmod.print_data_debug("args", args)
                 cur.execute("DELETE FROM " + global_var.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid IN " + args)
                 conn.commit()
                 count = cur.rowcount
@@ -173,7 +169,7 @@ def delete_journals(template_id, iid_list):
             return count
         return 0
     except psycopg2.OperationalError as err:
-        mod_debug.print_data_debug("OperationalError in " + delete_journals.__name__, err)
+        sysmod.print_data_debug("OperationalError in " + delete_journals.__name__, err)
         conn.rollback()
         cur.close()
         return None
@@ -226,7 +222,7 @@ def save_templates(template_id, template_name, broker_id):
             cur.close()
         return tid['template_id']
     except psycopg2.OperationalError as err:
-        mod_debug.print_data_debug("OperationalError in " + save_templates.__name__, err)
+        sysmod.print_data_debug("OperationalError in " + save_templates.__name__, err)
         conn.rollback()
         cur.close()
         return None
@@ -269,7 +265,7 @@ def submit_templates(template_id, submitted):
             cur.close()
         return count
     except psycopg2.OperationalError as err:
-        mod_debug.print_data_debug("OperationalError in " + submit_templates.__name__, err)
+        sysmod.print_data_debug("OperationalError in " + submit_templates.__name__, err)
         conn.rollback()
         cur.close()
         return None
@@ -289,7 +285,7 @@ def delete_templates(template_id):
             cur.close()
         return count
     except psycopg2.OperationalError as err:
-        mod_debug.print_data_debug("OperationalError in " + delete_templates.__name__, err)
+        sysmod.print_data_debug("OperationalError in " + delete_templates.__name__, err)
         conn.rollback()
         cur.close()
         return None
@@ -343,17 +339,3 @@ def cal_profit(sell, buy, fee):
 # Calculate stock sell/buy price
 def cal_price(amt, qty):
     return round(float(amt) / float(qty), 2)
-
-@anvil.server.callable
-# Add IID into the deletion list for delete journals function to process
-def delete_row(iid):
-    mod_debug.print_data_debug("iid", iid)
-    mod_debug.print_data_debug("del_iid", del_iid)
-    del_iid.append(iid)
-    mod_debug.print_data_debug("iid", iid)
-    mod_debug.print_data_debug("del_iid", del_iid)
-
-@anvil.server.callable
-# Reset the deletion list
-def reset_delete():
-    del_iid = []

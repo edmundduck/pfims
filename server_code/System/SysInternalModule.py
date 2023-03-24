@@ -18,7 +18,23 @@ import anvil.server
 #   return 42
 #
 
+# Global variable
+del_iid = []
+
 @anvil.server.callable
 # For debug print
 def print_data_debug(message, debug_data):
     print('***[DEBUG]*** {}: {}'.format(message, debug_data))
+
+@anvil.server.callable
+# Add IID into the deletion list for delete journals function to process
+def delete_row(iid):
+    global del_iid
+    del_iid.append(iid)
+    print_data_debug("del_iid", del_iid)
+
+@anvil.server.callable
+# Reset the deletion list
+def reset_delete():
+    global del_iid
+    del_iid = []

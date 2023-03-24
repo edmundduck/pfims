@@ -6,9 +6,9 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from .. import mod_debug
 from .. import global_var
-from ..InvestmentProcess import InputModule
+from ..InvestmentProcess import InputModule as imod
+from ..System import SysInternalModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -134,7 +134,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
             cur.close()
             return b_id
     except psycopg2.OperationalError as err:
-        mod_debug.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
+        sysmod.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
         conn.rollback()
         cur.close()
         return None
@@ -169,7 +169,7 @@ def psgldb_delete_brokers(b_id):
             cur.close()
         return count
     except psycopg2.OperationalError as err:
-        mod_debug.print_data_debug("OperationalError in " + psgldb_delete_brokers.__name__, err)
+        sysmod.print_data_debug("OperationalError in " + psgldb_delete_brokers.__name__, err)
         conn.rollback()
         cur.close()
         return None
@@ -180,7 +180,7 @@ def psgldb_get_submitted_templ_list():
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT template_id, template_name FROM " + global_var.schemafin() + ".templates WHERE submitted=true")
-        result = list(InputModule.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
+        result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
         cur.close()
     result.insert(0, '')
     return result
