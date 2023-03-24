@@ -79,8 +79,8 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                     i.remove_from_parent()
 
     def _upd_scr_enablement(self):
-       if self.dropdown_interval.selected_value == '' or self.dropdown_interval.selected_value is None:
-        self._reset_search()
+        if self.dropdown_interval.selected_value == '' or self.dropdown_interval.selected_value is None:
+            self._reset_search()
         else:
             if self.dropdown_interval.selected_value != "SDR":
                 self.time_datefrom.enabled = False
@@ -118,16 +118,14 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.button_exp_search.enabled = False
     
     def _find_enddate(self):
-        if self.dropdown_interval.selected_value != "SDR":
+        if self.dropdown_interval.selected_value != "SDR" or self.time_dateto.date is None:
             return date.today()
         else:
             return self.time_dateto.date
   
     def _find_startdate(self):
-        if self.dropdown_interval.selected_value != "SDR":
-            return anvil.server.call('get_start_date', 
-                                    date.today(), 
-                                    self.dropdown_interval.selected_value)      
+        if self.dropdown_interval.selected_value != "SDR" or self.time_datefrom.date is None:
+            return anvil.server.call('get_start_date', date.today(), self.dropdown_interval.selected_value)      
         else:
             return self.time_datefrom.date 
   
@@ -206,10 +204,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     
         self.subform.hidden_time_datefrom.date = startdate
         self.subform.hidden_symbol.text = symbol_list
-        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', 
-                                                        enddate, 
-                                                        startdate, 
-                                                        symbol_list)
+        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', enddate, startdate, symbol_list)
 
     def button_pnl_reset_click(self, **event_args):
         """This method is called when the button is clicked"""

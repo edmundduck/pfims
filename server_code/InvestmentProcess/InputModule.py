@@ -44,20 +44,22 @@ def generate_template_dropdown_item(templ_id, templ_name):
 def select_journals(end_date, start_date, symbols):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.templ_journals WHERE sell_date='{p1}', buy_date='{p2}'{p3} ORDER BY sell_date DESC, symbols ASC"
+        sql = "SELECT * FROM {schema}.templ_journals WHERE sell_date='{p1}' AND buy_date='{p2}'{p3} ORDER BY sell_date DESC, symbol ASC"
         if len(symbols) > 0:
             stmt = sql.format(
                 schema=sysmod.schemafin(),
-                p1=sell_date,
-                p2=buy_date,
+                p1=end_date,
+                p2=start_date,
                 p3=", symbol='" + symbols + "'"
             )
         else:
              stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=sell_date,
-                p2=buy_date
+                 schema=sysmod.schemafin(),
+                 p1=end_date,
+                 p2=start_date,
+                 p3=""
             )
+        sysmod.print_data_debug("sql", stmt)
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
