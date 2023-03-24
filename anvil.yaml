@@ -9,6 +9,7 @@ services:
 - source: /runtime/services/anvil/secrets.yml
   client_config: {}
   server_config: {}
+startup: {type: form, module: MainForm}
 package_name: IPES__Investment_Performance_Evaluation_System_
 allow_embedding: false
 name: IPES (Investment Performance Evaluation System)
@@ -18,7 +19,7 @@ runtime_options:
   server_version: python3-full
   server_spec: {base: python310-standard}
 metadata: {title: IPES}
-startup_form: form_main
+startup_form: null
 native_deps: {head_html: ''}
 db_schema:
   templ_journals:

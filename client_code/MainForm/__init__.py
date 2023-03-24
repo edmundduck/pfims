@@ -1,4 +1,4 @@
-from ._anvil_designer import form_mainTemplate
+from ._anvil_designer import MainFormTemplate
 from anvil import *
 import anvil.users
 import anvil.server
@@ -16,7 +16,7 @@ from ..Report.form_lv2_exp_list import form_lv2_exp_list
 from ..Obsolete.form_sub2_tranx_report import form_sub2_tranx_report
 from ..Debug.form_poc_main import form_poc_main
 
-class form_main(form_mainTemplate):
+class MainForm(MainFormTemplate):
     def __init__(self, **properties):
         # TODO - Move the logon logic to a new logon page
         anvil.users.login_with_form()
