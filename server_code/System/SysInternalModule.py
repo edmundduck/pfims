@@ -4,6 +4,8 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+import psycopg2
+import psycopg2.extras
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -17,6 +19,16 @@ import anvil.server
 #   print("Hello, " + name + "!")
 #   return 42
 #
+
+# Establish Postgres DB connection (Yugabyte DB)
+def psqldb_connect():
+    connection = psycopg2.connect(
+        dbname='pfimsdb',
+        host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
+        port='5433',
+        user=anvil.secrets.get_secret('yugadb_app_usr'),
+        password=anvil.secrets.get_secret('yugadb_app_pw'))
+    return connection
 
 # Return the DB FIN schema name
 def schemafin():

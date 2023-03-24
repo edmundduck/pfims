@@ -43,20 +43,10 @@ def get_template_id(selected_template):
 def generate_template_dropdown_item(templ_id, templ_name):
     return str(templ_id) + " - " + templ_name
 
-# Establish Postgres DB connection (Yugabyte DB)
-def psqldb_connect():
-    connection = psycopg2.connect(
-        dbname='pfimsdb',
-        host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
-        port='5433',
-        user=anvil.secrets.get_secret('yugadb_app_usr'),
-        password=anvil.secrets.get_secret('yugadb_app_pw'))
-    return connection
-
 @anvil.server.callable
 # Return journals for repeating panel to display based on sell and buy date criteria
 def select_journals(end_date, start_date, symbols):
-    conn = psqldb_connect()
+    conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.templ_journals WHERE \
             sell_date='{p1}', \
@@ -84,7 +74,7 @@ def select_journals(end_date, start_date, symbols):
 # Return template journals for repeating panel to display based on template selection dropdown
 def select_template_journals(templ_choice_str):
     if not (templ_choice_str is None or templ_choice_str == DEFAULT_NEW_TEMPL_TEXT):
-        conn = psqldb_connect()
+        conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.templ_journals WHERE template_id = {p1} \
                 ORDER BY sell_date DESC, buy_date DESC, symbol ASC"
@@ -103,7 +93,7 @@ def select_template_journals(templ_choice_str):
 # Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 def upsert_journals(tid, rows):
     try:
-        conn = psqldb_connect()
+        conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
@@ -155,12 +145,10 @@ def upsert_journals(tid, rows):
 def delete_journals(template_id, iid_list):
     try:
         if len(iid_list) > 0:
-            conn = psqldb_connect()
+            conn = sysmod.psqldb_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
-                sysmod.print_data_debug("args", args)
                 cur.execute("DELETE FROM " + sysmod.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid IN " + args)
-                sysmod.print_data_debug("cur", cur.query)
                 conn.commit()
                 count = cur.rowcount
                 if count <= 0:
@@ -179,7 +167,7 @@ def delete_journals(template_id, iid_list):
 def save_templates(template_id, template_name, broker_id, del_iid = []):
     try:
         currenttime = datetime.now()
-        conn = psqldb_connect()
+        conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(del_iid) > 0:
                 delete_journals(template_id, del_iid)
@@ -231,7 +219,7 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
 def submit_templates(template_id, submitted):
     try:
         currenttime = datetime.now()
-        conn = psqldb_connect()
+        conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
                 sql = "INSERT INTO {schema}.templates (template_id, submitted, template_submitted) \
@@ -274,7 +262,7 @@ def submit_templates(template_id, submitted):
 # Delete cascade is implemented in "templ_journals" DB table "template_id" column, hence journals under particular template will be deleted automatically
 def delete_templates(template_id):
     try:
-        conn = psqldb_connect()
+        conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("DELETE FROM " + sysmod.schemafin() + ".templates WHERE template_id = " + template_id)
             conn.commit()
@@ -296,7 +284,7 @@ def get_selected_template_attr(templ_choice_str):
         row = cfmod.select_settings()
         return [DEFAULT_NEW_TEMPL_NAME, row['default_broker'] if row is not None else '']
     else:
-        conn = psqldb_connect()
+        conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.templates WHERE template_id='{p1}'"   
             stmt = sql.format(
@@ -311,7 +299,7 @@ def get_selected_template_attr(templ_choice_str):
 @anvil.server.callable
 # Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items
 def generate_template_dropdown():
-    conn = psqldb_connect()
+    conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.templates WHERE submitted=false ORDER BY template_id ASC"
         stmt = sql.format(

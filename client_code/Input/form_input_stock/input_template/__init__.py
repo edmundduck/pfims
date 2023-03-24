@@ -93,4 +93,3 @@ class input_template(input_templateTemplate):
         """This method is called when the button is clicked"""
         global_var.add_deleted_row(self.item['iid'])
         self.remove_from_parent()
-        #global_var.input_row_del_trigger()

@@ -95,10 +95,9 @@ class form_input_stock(form_input_stockTemplate):
                                      del_iid=global_var.del_iid
                                     )
         
-        """ Trigger save_row_change if delete has been triggered at least once """
-        if global_var.is_input_row_deleted():
+        """ Trigger save_row_change if del_iid is not empty """
+        if len(global_var.del_iid) > 0:
             self.save_row_change()
-            #global_var.input_row_del_reset()
             global_var.reset_deleted_row()
         
         """ Add/Update """
@@ -121,7 +120,6 @@ class form_input_stock(form_input_stockTemplate):
         self.input_buy_price.text = ""
         self.input_pnl.text = ""
         """ Reset row delete flag """
-        #global_var.input_row_del_reset()
         global_var.reset_deleted_row()
     
     def button_delete_templ_click(self, **event_args):
@@ -140,7 +138,6 @@ class form_input_stock(form_input_stockTemplate):
             
             anvil.server.call('delete_templates', template_id=templ_id)
             """ Reset row delete flag """
-            #global_var.input_row_del_reset()
             global_var.reset_deleted_row()
         
             """ Reflect the change in template dropdown """
