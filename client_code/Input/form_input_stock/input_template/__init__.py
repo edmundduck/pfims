@@ -91,6 +91,6 @@ class input_template(input_templateTemplate):
       
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        anvil.server.call('delete_row', self.item['iid'])    
+        global_var.add_deleted_row(self.item['iid'])
         self.remove_from_parent()
         #global_var.input_row_del_trigger()

@@ -39,7 +39,7 @@ def psqldb_select_settings():
     conn = psqldb_connect()
     settings = {}
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM  " + global_var.schemafin() + ".settings")
+        cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM  " + sysmod.schemafin() + ".settings")
         for i in cur.fetchall():
             settings = {
                 'default_broker': i['default_broker'],
@@ -54,7 +54,7 @@ def psqldb_select_settings():
 def psgldb_select_brokers():
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT broker_id, name, ccy FROM  " + global_var.schemafin() + ".brokers ORDER BY broker_id ASC")
+        cur.execute("SELECT broker_id, name, ccy FROM  " + sysmod.schemafin() + ".brokers ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
         cur.close()
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
@@ -82,7 +82,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
             dateto2 = ",default_dateto=NULL"
 
         stmt = sql.format(
-            schema=global_var.schemafin(),
+            schema=sysmod.schemafin(),
             p1=anvil.users.get_user()['app_uid'],
             p2=def_broker,
             p3=def_interval,
@@ -108,7 +108,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
             if b_id is None or b_id == '':
                 sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) VALUES ('{p1}','{p2}','{p3}') RETURNING id"
                 stmt = sql.format(
-                    schema=global_var.schemafin(),
+                    schema=sysmod.schemafin(),
                     p1=prefix,
                     p2=name,
                     p3=ccy)
@@ -116,12 +116,12 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
                 id = cur.fetchone()['id']
                 conn.commit()
-                cur.execute("SELECT broker_id FROM  " + global_var.schemafin() + ".brokers WHERE id=" + str(id))
+                cur.execute("SELECT broker_id FROM  " + sysmod.schemafin() + ".brokers WHERE id=" + str(id))
                 b_id = cur.fetchone()['broker_id']
             else:
                 sql1 = "UPDATE {schema}.brokers SET prefix='{p1}', name='{p2}', ccy='{p3}' WHERE broker_id='{p4}'"
                 stmt = sql1.format(
-                    schema=global_var.schemafin(),
+                    schema=sysmod.schemafin(),
                     p1=prefix, \
                     p2=name, \
                     p3=ccy, \
@@ -143,7 +143,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
 def psgldb_get_broker_name(choice):
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT name FROM " + global_var.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
+        cur.execute("SELECT name FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
         result = cur.fetchone()
     return result['name'] if result is not None else ''
 
@@ -151,7 +151,7 @@ def psgldb_get_broker_name(choice):
 def psgldb_get_broker_ccy(choice):
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT ccy FROM " + global_var.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
+        cur.execute("SELECT ccy FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
         result = cur.fetchone()
     return result['ccy'] if result is not None else ''
 
@@ -160,7 +160,7 @@ def psgldb_delete_brokers(b_id):
     try:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("DELETE FROM " + global_var.schemafin() + ".brokers WHERE broker_id = '" + b_id + "'")
+            cur.execute("DELETE FROM " + sysmod.schemafin() + ".brokers WHERE broker_id = '" + b_id + "'")
             conn.commit()
             count = cur.rowcount
             if count <= 0:
@@ -179,7 +179,7 @@ def psgldb_delete_brokers(b_id):
 def psgldb_get_submitted_templ_list():
     conn = psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT template_id, template_name FROM " + global_var.schemafin() + ".templates WHERE submitted=true")
+        cur.execute("SELECT template_id, template_name FROM " + sysmod.schemafin() + ".templates WHERE submitted=true")
         result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
         cur.close()
     result.insert(0, '')

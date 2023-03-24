@@ -64,14 +64,14 @@ def select_journals(end_date, start_date, symbols):
             ORDER BY sell_date DESC, symbols ASC"
         if len(symbols) > 0:
             stmt = sql.format(
-                schema=global_var.schemafin(),
+                schema=sysmod.schemafin(),
                 p1=sell_date,
                 p2=buy_date,
                 p3=", symbol='" + symbols + "'"
             )
         else:
              stmt = sql.format(
-                schema=global_var.schemafin(),
+                schema=sysmod.schemafin(),
                 p1=sell_date,
                 p2=buy_date
             )
@@ -89,7 +89,7 @@ def select_template_journals(templ_choice_str):
             sql = "SELECT * FROM {schema}.templ_journals WHERE template_id = {p1} \
                 ORDER BY sell_date DESC, buy_date DESC, symbol ASC"
             stmt = sql.format(
-                schema=global_var.schemafin(),
+                schema=sysmod.schemafin(),
                 p1=get_template_id(templ_choice_str)
             )
             cur.execute(stmt)
@@ -112,7 +112,7 @@ def upsert_journals(tid, rows):
             # args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
             # cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
             #     VALUES {p1}".format(
-            #         schema=global_var.schemafin(),
+            #         schema=sysmod.schemafin(),
             #         p1=args
             #     ))
             mogstr = []
@@ -135,7 +135,7 @@ def upsert_journals(tid, rows):
             buy_price=EXCLUDED.buy_price, \
             pnl=EXCLUDED.pnl \
             WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id".format(
-                    schema=global_var.schemafin(),
+                    schema=sysmod.schemafin(),
                     p1=args
                 ))
             conn.commit()
@@ -154,13 +154,13 @@ def upsert_journals(tid, rows):
 # Delete journals from "templ_journals" DB table
 def delete_journals(template_id, iid_list):
     try:
-        sysmod.print_data_debug("iid_list", iid_list)
         if len(iid_list) > 0:
             conn = psqldb_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                args = "(%s)".format(",".join(i for i in iid_list))
+                args = "({0})".format(",".join(str(i) for i in iid_list))
                 sysmod.print_data_debug("args", args)
-                cur.execute("DELETE FROM " + global_var.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid IN " + args)
+                cur.execute("DELETE FROM " + sysmod.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid IN " + args)
+                sysmod.print_data_debug("cur", cur.query)
                 conn.commit()
                 count = cur.rowcount
                 if count <= 0:
@@ -176,19 +176,18 @@ def delete_journals(template_id, iid_list):
 
 @anvil.server.callable
 # Insert or update templates into "templates" DB table with time handling logic
-def save_templates(template_id, template_name, broker_id):
+def save_templates(template_id, template_name, broker_id, del_iid = []):
     try:
         currenttime = datetime.now()
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(del_iid) > 0:
                 delete_journals(template_id, del_iid)
-                
             if template_id is None or template_id == '' or template_id == DEFAULT_NEW_TEMPL_TEXT:
                 sql = "INSERT INTO {schema}.templates (template_name, broker_id, submitted, template_create, template_lastsave) \
                 VALUES ('{p1}','{p2}',{p3},'{p4}','{p5}') RETURNING template_id"
                 stmt = sql.format(
-                    schema=global_var.schemafin(),
+                    schema=sysmod.schemafin(),
                     p1=template_name,
                     p2=broker_id,
                     p3=False,
@@ -206,7 +205,7 @@ def save_templates(template_id, template_name, broker_id):
                 template_lastsave='{p6}' \
                 RETURNING template_id"
                 stmt = sql.format(
-                    schema=global_var.schemafin(),
+                    schema=sysmod.schemafin(),
                     p1=template_id,
                     p2=template_name,
                     p3=broker_id, 
@@ -241,7 +240,7 @@ def submit_templates(template_id, submitted):
                 submitted={p2}, template_submitted='{p3}' \
                 "
                 stmt = sql.format(
-                    schema=global_var.schemafin(),
+                    schema=sysmod.schemafin(),
                     p1=template_id,
                     p2=submitted,
                     p3=currenttime
@@ -253,7 +252,7 @@ def submit_templates(template_id, submitted):
                 submitted={p2} \
                 "
                 stmt = sql.format(
-                    schema=global_var.schemafin(),
+                    schema=sysmod.schemafin(),
                     p1=template_id,
                     p2=submitted
                 )
@@ -277,7 +276,7 @@ def delete_templates(template_id):
     try:
         conn = psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("DELETE FROM " + global_var.schemafin() + ".templates WHERE template_id = " + template_id)
+            cur.execute("DELETE FROM " + sysmod.schemafin() + ".templates WHERE template_id = " + template_id)
             conn.commit()
             count = cur.rowcount
             if count <= 0:
@@ -301,7 +300,7 @@ def get_selected_template_attr(templ_choice_str):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.templates WHERE template_id='{p1}'"   
             stmt = sql.format(
-                schema=global_var.schemafin(),
+                schema=sysmod.schemafin(),
                 p1=get_template_id(templ_choice_str)
             )
             cur.execute(stmt)
@@ -316,7 +315,7 @@ def generate_template_dropdown():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.templates WHERE submitted=false ORDER BY template_id ASC"
         stmt = sql.format(
-            schema=global_var.schemafin()
+            schema=sysmod.schemafin()
         )
         cur.execute(stmt)
         rows = cur.fetchall()

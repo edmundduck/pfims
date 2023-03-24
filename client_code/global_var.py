@@ -11,75 +11,83 @@ from anvil.tables import app_tables
 #    Module1.say_hello()
 #
 row_del = False
-
-def schemafin():
-  return "fin"
+del_iid = []
 
 def setting_ccy_dropdown():
-  ccy_list = [('$ USD', 'USD'), 
-              ('£ GBP', 'GBP'), 
-              ('$ HKD', 'HKD'),
-              ('€ EUR', 'EUR')]
-  return ccy_list
+    ccy_list = [('$ USD', 'USD'), 
+                ('£ GBP', 'GBP'), 
+                ('$ HKD', 'HKD'),
+                ('€ EUR', 'EUR')]
+    return ccy_list
 
 def setting_broker_id_prefix():
-  return "BR"
+    return "BR"
 
 def setting_broker_suffix_len():
-  return 5
+    return 5
 
 def setting_broker_dropdown():
-  broker_list = [('[Select to update or delete]', '')]
-  return broker_list
+    broker_list = [('[Select to update or delete]', '')]
+    return broker_list
 
 def search_interval_dropdown():
-  interval_list = [('[Interval]', ''), 
-                ('Last 1 Month', 'L1M'), 
-                ('Last 3 Month', 'L3M'),
-                ('Last 6 Month', 'L6M'),
-                ('Last 1 Year', 'L1Y'),
-                ('Year to Date', 'YTD'),
-                ('Self Defined Range', 'SDR')]
-  return interval_list
+    interval_list = [('[Interval]', ''), 
+                    ('Last 1 Month', 'L1M'), 
+                    ('Last 3 Month', 'L3M'),
+                    ('Last 6 Month', 'L6M'),
+                    ('Last 1 Year', 'L1Y'),
+                    ('Year to Date', 'YTD'),
+                    ('Self Defined Range', 'SDR')]
+    return interval_list
 
 def search_symbol_dropdown():
-  symbol_list = [('[Symbol]', '')]
-  return symbol_list
+    symbol_list = [('[Symbol]', '')]
+    return symbol_list
 
 def form_lv2_tranx_list():
-  return 'form_lv2_tranx_list'
+    return 'form_lv2_tranx_list'
 
 def form_lv2_pnl_report():
-  return 'form_lv2_pnl_report'
+    return 'form_lv2_pnl_report'
 
 def form_lv2_exp_list():
-  return 'form_lv2_exp_list'
+    return 'form_lv2_exp_list'
 
 def form_poc1():
-  return 'form_poc1'
+    return 'form_poc1'
+    
+# Add IID into the deletion list for delete journals function to process
+def add_deleted_row(iid):
+    global del_iid
+    del_iid.append(iid)
+
+# Reset the deletion list
+def reset_deleted_row():
+    global del_iid
+    del_iid = []
 
 def input_row_del_trigger():
-  global row_del
-  row_del = True
+    global row_del
+    row_del = True
   
 def input_row_del_reset():
-  global row_del
-  row_del = False
+    global row_del
+    row_del = False
   
 def is_input_row_deleted():
-  return row_del
+    return row_del
 
 def pnl_list_day_mode():
-  return 'd'
+    return 'd'
 
 def pnl_list_mth_mode():
-  return 'm'
+    return 'm'
 
 def pnl_list_yr_mode():
-  return 'y'
+    return 'y'
 
 def pnl_list_expand_icon():
-  return 'fa:plus-square'
+    return 'fa:plus-square'
 
 def pnl_list_shrink_icon():
-  return 'fa:minus-square'
+    return 'fa:minus-square'

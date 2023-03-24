@@ -89,15 +89,17 @@ class form_input_stock(form_input_stockTemplate):
         """This method is called when the button is clicked"""
         templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
         templ_id = anvil.server.call('save_templates',
-                        template_id=templ_id,
-                        template_name=self.templ_name.text, 
-                        broker_id=self.dropdown_broker.selected_value)
+                                     template_id=templ_id,
+                                     template_name=self.templ_name.text, 
+                                     broker_id=self.dropdown_broker.selected_value,
+                                     del_iid=global_var.del_iid
+                                    )
         
         """ Trigger save_row_change if delete has been triggered at least once """
         if global_var.is_input_row_deleted():
             self.save_row_change()
             #global_var.input_row_del_reset()
-            anvil.server.call('reset_delete')
+            global_var.reset_deleted_row()
         
         """ Add/Update """
         anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
@@ -120,7 +122,7 @@ class form_input_stock(form_input_stockTemplate):
         self.input_pnl.text = ""
         """ Reset row delete flag """
         #global_var.input_row_del_reset()
-        anvil.server.call('reset_delete')
+        global_var.reset_deleted_row()
     
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -139,7 +141,7 @@ class form_input_stock(form_input_stockTemplate):
             anvil.server.call('delete_templates', template_id=templ_id)
             """ Reset row delete flag """
             #global_var.input_row_del_reset()
-            anvil.server.call('reset_delete')
+            global_var.reset_deleted_row()
         
             """ Reflect the change in template dropdown """
             self.dropdown_templ_show()
