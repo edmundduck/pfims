@@ -40,32 +40,6 @@ def generate_template_dropdown_item(templ_id, templ_name):
     return str(templ_id) + " - " + templ_name
 
 @anvil.server.callable
-# Return journals for repeating panel to display based on sell and buy date criteria
-def select_journals(end_date, start_date, symbols):
-    conn = sysmod.psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.templ_journals WHERE sell_date <= '{p1}' AND buy_date >= '{p2}'{p3} ORDER BY sell_date DESC, symbol ASC"
-        if len(symbols) > 0:
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=end_date,
-                p2=start_date,
-                p3=", symbol='" + symbols + "'"
-            )
-        else:
-             stmt = sql.format(
-                 schema=sysmod.schemafin(),
-                 p1=end_date,
-                 p2=start_date,
-                 p3=""
-            )
-        sysmod.print_data_debug("sql", stmt)
-        cur.execute(stmt)
-        rows = cur.fetchall()
-        cur.close()
-    return list(rows)
-
-@anvil.server.callable
 # Return template journals for repeating panel to display based on template selection dropdown
 def select_template_journals(templ_choice_str):
     if not (templ_choice_str is None or templ_choice_str == glo.input_stock_default_templ_dropdown()):
@@ -304,11 +278,6 @@ def generate_template_dropdown():
     content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
     content.insert(0, glo.input_stock_default_templ_dropdown())
     return content
-
-@anvil.server.callable
-# Return template journals for csv generation
-def generate_csv(end_date, start_date, symbols):
-    return select_journals(end_date, start_date, symbols).to_csv()
 
 @anvil.server.callable
 # Set precision

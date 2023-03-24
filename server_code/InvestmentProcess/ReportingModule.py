@@ -57,10 +57,11 @@ def interval_default(end_date):
 @anvil.server.callable
 # Get all symbols which were transacted between start and end date into the dropdown
 def get_symbol_dropdown_items(end_date, start_date):
-    if end_date is not None and start_date is not None:
-        return list(sorted(set(row['symbol'] for row in app_tables.templ_journals.search(sell_date=q.less_than(end_date), buy_date=q.greater_than(start_date)))))
-    else:
-        return []
+    # if end_date is not None and start_date is not None:
+    #     return list(sorted(set(row['symbol'] for row in app_tables.templ_journals.search(sell_date=q.less_than(end_date), buy_date=q.greater_than(start_date)))))
+    # else:
+    #     return []
+    return list(sorted(set(row['symbol'] for row in select_journals(end_date, start_date))))
 
 @anvil.server.callable
 # Get start date based on end date and time interval dropdown value
@@ -73,6 +74,37 @@ def get_start_date(end_date, interval):
         INTERVAL_YEAR_TO_DATE: get_YTD_start_date,
     }
     return switcher.get(interval, interval_default)(end_date)
+
+@anvil.server.callable
+# Return journals for repeating panel to display based on sell and buy date criteria
+def select_journals(end_date, start_date, symbols=[]):
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.templ_journals WHERE sell_date <= '{p1}' AND buy_date >= '{p2}'{p3} ORDER BY sell_date DESC, symbol ASC"
+        if len(symbols) > 0:
+            stmt = sql.format(
+                schema=sysmod.schemafin(),
+                p1=end_date,
+                p2=start_date,
+                p3=", symbol='" + symbols + "'"
+            )
+        else:
+             stmt = sql.format(
+                 schema=sysmod.schemafin(),
+                 p1=end_date,
+                 p2=start_date,
+                 p3=""
+            )
+        sysmod.print_data_debug("sql", stmt)
+        cur.execute(stmt)
+        rows = cur.fetchall()
+        cur.close()
+    return list(rows)
+
+@anvil.server.callable
+# Return template journals for csv generation
+def generate_csv(end_date, start_date, symbols):
+    return select_journals(end_date, start_date, symbols).to_csv()
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
