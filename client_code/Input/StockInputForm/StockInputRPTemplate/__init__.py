@@ -1,14 +1,14 @@
-from ._anvil_designer import input_templateTemplate
+from ._anvil_designer import StockInputRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from .... import global_var
+from .... import Global as glo
 from .... import validation
 
-class input_template(input_templateTemplate):
+class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
@@ -36,7 +36,7 @@ class input_template(input_templateTemplate):
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
 
-        global_var.track_input_stock_journals_change()
+        glo.track_input_stock_journals_change()
 
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -88,7 +88,7 @@ class input_template(input_templateTemplate):
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False
             
-            global_var.track_input_stock_journals_change()
+            glo.track_input_stock_journals_change()
             self.parent.raise_event('x-disable-submit-button')
 
             #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
@@ -96,7 +96,7 @@ class input_template(input_templateTemplate):
       
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.item['iid'] is not None: global_var.add_deleted_row(self.item['iid'])
-        global_var.track_input_stock_journals_change()
+        if self.item['iid'] is not None: glo.add_deleted_row(self.item['iid'])
+        glo.track_input_stock_journals_change()
         self.parent.raise_event('x-disable-submit-button')
         self.remove_from_parent()

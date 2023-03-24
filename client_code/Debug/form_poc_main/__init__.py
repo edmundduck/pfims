@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ..form_poc1 import form_poc1
 from ..form_poc2 import form_poc2
 from ..form_poc3 import form_poc3
-from ... import global_var
+from ... import Global as glo
 
 class form_poc_main(form_poc_mainTemplate):
   subform = None

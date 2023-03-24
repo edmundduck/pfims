@@ -5,13 +5,12 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from .. import global_var
-from ..Admin.form_lv1_settings import form_lv1_settings
-from ..Input.form_input_stock import form_input_stock
+from .. import Global as glo
+from ..Admin.SettingForm import SettingForm
+from ..Input.StockInputForm import StockInputForm
 from ..Input.form_input_exp import form_input_exp
-from ..Report.form_lv1_dashb import form_lv1_dashb
-from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
-from ..Report.form_lv2_search_panel import form_lv2_search_panel
+from ..Report.DashboardForm import DashboardForm
+from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
 from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
 from ..Report.form_lv2_exp_list import form_lv2_exp_list
 from ..Obsolete.form_sub2_tranx_report import form_sub2_tranx_report
@@ -50,7 +49,7 @@ class form_main(form_mainTemplate):
         """This method is called when the link is clicked"""
         self.reset_link_status()
         self.content_panel.clear()
-        self.content_panel.add_component(form_lv1_dashb())
+        self.content_panel.add_component(DashboardForm())
         self.colpanel_link_dashb.role = 'selected'
 
     def colpanel_link_input_click(self, **event_args):
@@ -82,7 +81,7 @@ class form_main(form_mainTemplate):
         self.reset_link_status()
         self.colpanel_link_settings.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(form_lv1_settings())
+        self.content_panel.add_component(SettingForm())
 
     def colpanel_lv2link_tranx_list_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -90,7 +89,7 @@ class form_main(form_mainTemplate):
         self.colpanel_link_reports.role = 'selected'
         self.colpanel_lv2link_tranx_list.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(form_lv2_search_panel(global_var.form_lv2_tranx_list()))
+        self.content_panel.add_component(ReportSearchPanelFrom(glo.form_lv2_tranx_list()))
 
     def colpanel_lv2link_pnl_report_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -98,7 +97,7 @@ class form_main(form_mainTemplate):
         self.colpanel_link_reports.role = 'selected'
         self.colpanel_lv2link_pnl_report.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(form_lv2_search_panel(global_var.form_lv2_pnl_report()))
+        self.content_panel.add_component(ReportSearchPanelFrom(glo.form_lv2_pnl_report()))
 
     def colpanel_lv2link_exp_list_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -106,7 +105,7 @@ class form_main(form_mainTemplate):
         self.colpanel_link_reports.role = 'selected'
         self.colpanel_lv2link_exp_list.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(form_lv2_search_panel(global_var.form_lv2_exp_list()))
+        self.content_panel.add_component(ReportSearchPanelFrom(glo.form_lv2_exp_list()))
 
     def colpanel_lv2link_input_stock_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -114,7 +113,7 @@ class form_main(form_mainTemplate):
         self.colpanel_link_input.role = 'selected'
         self.colpanel_lv2link_input_stock.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(form_input_stock())
+        self.content_panel.add_component(StockInputForm())
 
     def colpanel_lv2link_input_exp_click(self, **event_args):
         """This method is called when the link is clicked"""

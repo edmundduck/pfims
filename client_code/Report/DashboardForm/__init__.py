@@ -1,4 +1,4 @@
-from ._anvil_designer import form_lv1_dashbTemplate
+from ._anvil_designer import DashboardFormTemplate
 from anvil import *
 import anvil.users
 import anvil.server
@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 
-class form_lv1_dashb(form_lv1_dashbTemplate):
+class DashboardForm(DashboardFormTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)

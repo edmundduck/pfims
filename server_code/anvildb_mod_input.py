@@ -7,6 +7,7 @@ import anvil.server
 import random
 import string
 from datetime import date, datetime
+from . import Global as glo
 from .AdminProcess import ConfigModule as cfmod
 from .System import SysInternalModule as sysmod
 
@@ -114,7 +115,7 @@ from .System import SysInternalModule as sysmod
 # # Otherwise return the selected template ID
 # def get_template_id(templ_choice_str):
 #     new_id = split_templ_id(templ_choice_str)
-#     if (new_id == global_var.input_stock_default_templ_dropdown()):
+#     if (new_id == glo.input_stock_default_templ_dropdown()):
 #         new_id = ''.join(random.choice(string.ascii_uppercase) for x in range(RANDOM_ID_ALPHA_LEN)) + str(random.randint(0,9))
 #         while app_tables.templates.get(template_id=new_id) is not None:
 #             new_id = ''.join(random.choice(string.ascii_uppercase) for x in range(RANDOM_ID_ALPHA_LEN)) + str(random.randint(0,9))
@@ -125,16 +126,16 @@ from .System import SysInternalModule as sysmod
 # @anvil.server.callable
 # # Update template name based on template dropdown selection
 # def get_input_templ_name(templ_choice_str):
-#     if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == global_var,input_stock_default_templ_dropdown():
-#         return global_var.input_stock_default_templ_name()
+#     if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == glo,input_stock_default_templ_dropdown():
+#         return glo.input_stock_default_templ_name()
 #     else:
 #         row = app_tables.templates.get(template_id=split_templ_id(templ_choice_str))
-#         return row['template_name'] if row is not None else global_var.input_stock_default_templ_name()
+#         return row['template_name'] if row is not None else glo.input_stock_default_templ_name()
   
 # @anvil.server.callable
 # # Return broker name based on template dropdown selection
 # def get_input_templ_broker(templ_choice_str):
-#     if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == global_var,input_stock_default_templ_dropdown():
+#     if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == glo,input_stock_default_templ_dropdown():
 #         row = cfmod.select_settings()
 #         return row['default_broker'] if row is not None else ''
 #     else:
@@ -146,7 +147,7 @@ from .System import SysInternalModule as sysmod
 # def generate_template_dropdown():
 #     #content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in app_tables.templates.search())
 #     content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=False))
-#     content.insert(0, global_var.input_stock_default_templ_dropdown())
+#     content.insert(0, glo.input_stock_default_templ_dropdown())
 #     return content
 
 # @anvil.server.callable
@@ -161,7 +162,7 @@ from .System import SysInternalModule as sysmod
 # # Return template items for repeating panel to display based on template selection dropdown
 # def select_template_journals(templ_choice_str):
 #     listitems = []
-#     if not (templ_choice_str is None or templ_choice_str == global_var.input_stock_default_templ_dropdown()):
+#     if not (templ_choice_str is None or templ_choice_str == glo.input_stock_default_templ_dropdown()):
 #         listitems = list(app_tables.templ_journals.search(template_id=split_templ_id(templ_choice_str)))
 #     return listitems
 

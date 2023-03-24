@@ -6,7 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from .. import global_var
+from .. import Global as glo
 from ..InvestmentProcess import InputModule as imod
 from ..System import SysInternalModule as sysmod
 
@@ -194,7 +194,7 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
 def upsert_brokers(b_id, name, ccy):
-    return psgldb_upsert_brokers(b_id, global_var.setting_broker_id_prefix(), name, ccy)
+    return psgldb_upsert_brokers(b_id, glo.setting_broker_id_prefix(), name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method callable by client modules
@@ -234,7 +234,7 @@ def anvildb_select_settings():
 
 # DB table "brokers" select method from Anvil DB
 def anvildb_select_brokers():
-    #broker_list = global_var.setting_broker_dropdown() + \
+    #broker_list = glo.setting_broker_dropdown() + \
     #              list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
     #return broker_list
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
@@ -259,9 +259,9 @@ def anvildb_upsert_brokers(b_id, name, ccy):
         # Generate new broker ID
         id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
         if len(id_list) == 0:
-            b_id = global_var.setting_broker_id_prefix() +  '1'.zfill(global_var.setting_broker_suffix_len())
+            b_id = glo.setting_broker_id_prefix() +  '1'.zfill(glo.setting_broker_suffix_len())
         else:
-            b_id = global_var.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(global_var.setting_broker_suffix_len())
+            b_id = glo.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(glo.setting_broker_suffix_len())
         app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
     else:
         rows = app_tables.brokers.search(id=b_id)

@@ -23,7 +23,7 @@ class exp_list_template(exp_list_templateTemplate):
   def row_link_symbol_click(self, **event_args):
     """This method is called when the link is clicked"""
     # TODO - To be implemented with hash routing in the future
-    #newform = form_lv1_settings(symname=self.row_link_symbol.text, 
+    #newform = SettingForm(symname=self.row_link_symbol.text, 
     #                    symid=self.row_hidden_iid.text, 
     #                    symtemplid=self.row_hidden_templ_id.text)
     #open_form(newform)

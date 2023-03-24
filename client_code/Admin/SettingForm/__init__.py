@@ -1,13 +1,13 @@
-from ._anvil_designer import form_lv1_settingsTemplate
+from ._anvil_designer import SettingFormTemplate
 from anvil import *
 import anvil.users
 import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ... import global_var
+from ... import Global as glo
 
-class form_lv1_settings(form_lv1_settingsTemplate):
+class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
@@ -34,11 +34,11 @@ class form_lv1_settings(form_lv1_settingsTemplate):
 
     def dropdown_interval_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_interval.items = global_var.search_interval_dropdown()
+        self.dropdown_interval.items = glo.search_interval_dropdown()
 
     def dropdown_ccy_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_ccy.items = global_var.setting_ccy_dropdown()
+        self.dropdown_ccy.items = glo.setting_ccy_dropdown()
 
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -73,7 +73,7 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                         '', 
                         self.text_broker_name.text, 
                         self.dropdown_ccy.selected_value)
-        #self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+        #self.dropdown_broker_list.items = glo.setting_broker_dropdown() + \
         #                                  anvil.server.call('select_brokers')
         #self.dropdown_broker_list.raise_event('change')
         self.dropdown_broker_list_show()
@@ -95,7 +95,7 @@ class form_lv1_settings(form_lv1_settingsTemplate):
                         self.hidden_b_id.text, 
                         self.text_broker_name.text, 
                         self.dropdown_ccy.selected_value)
-        #self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+        #self.dropdown_broker_list.items = glo.setting_broker_dropdown() + \
         #                                  anvil.server.call('select_brokers')
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
@@ -136,7 +136,7 @@ class form_lv1_settings(form_lv1_settingsTemplate):
   
     def dropdown_broker_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker_list.items = global_var.setting_broker_dropdown() + \
+        self.dropdown_broker_list.items = glo.setting_broker_dropdown() + \
                                           anvil.server.call('select_brokers')
         self.dropdown_broker_list.raise_event('change')
 
