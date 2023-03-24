@@ -80,22 +80,23 @@ def get_start_date(end_date, interval):
 def select_journals(end_date, start_date, symbols=[]):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.templ_journals WHERE sell_date <= '{p1}' AND buy_date >= '{p2}'{p3} ORDER BY sell_date DESC, symbol ASC"
-        if len(symbols) > 0:
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=end_date,
-                p2=start_date,
-                p3=", symbol='" + symbols + "'"
-            )
-        else:
-             stmt = sql.format(
-                 schema=sysmod.schemafin(),
-                 p1=end_date,
-                 p2=start_date,
-                 p3=""
-            )
-        sysmod.print_data_debug("sql", stmt)
+        sell_sql = "sell_date <= '{0}'".format(end_date) if end_date is not None else ""
+        buy_sql = "buy_date >= '{0}'".format(start_date) if start_date is not None else ""
+        symbol_sql = "symbol IN ({0})".format(",".join("'" + i + "'" for i in symbols)) if len(symbols) > 0 else ""
+        conn_sql1 = " WHERE " if sell_sql or buy_sql or symbol_sql else ""
+        conn_sql2 = " AND " if sell_sql and (buy_sql or symbol_sql) else ""
+        conn_sql3 = " AND " if (sell_sql or buy_sql) and symbol_sql else ""
+        sql = "SELECT * FROM {schema}.templ_journals {p1} {p2} {p3} {p4} {p5} {p6} ORDER BY sell_date DESC, symbol ASC"
+        
+        stmt = sql.format(
+            schema=sysmod.schemafin(),
+            p1=conn_sql1,
+            p2=sell_sql,
+            p3=conn_sql2,
+            p4=buy_sql,
+            p5=conn_sql3,
+            p6=symbol_sql
+        )
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
