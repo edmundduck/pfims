@@ -88,12 +88,18 @@ class form_input_stock(form_input_stockTemplate):
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
+        templ_name = self.templ_name.text
         templ_id = anvil.server.call('save_templates',
                                      template_id=templ_id,
-                                     template_name=self.templ_name.text, 
+                                     template_name=templ_name, 
                                      broker_id=self.dropdown_broker.selected_value,
                                      del_iid=global_var.del_iid
                                     )
+
+        if templ_id is None or templ_id <= 0:
+            n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
+            n.show()
+            return            
         
         """ Trigger save_row_change if del_iid is not empty """
         if len(global_var.del_iid) > 0:
@@ -101,12 +107,18 @@ class form_input_stock(form_input_stockTemplate):
             global_var.reset_deleted_row()
         
         """ Add/Update """
-        anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
-    
-        """ Reflect the change in template dropdown """
-        self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-        self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, self.templ_name.text)
+        result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
 
+        if result is not None:
+            """ Reflect the change in template dropdown """
+            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+            self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, self.templ_name.text)
+            n = Notification("Template {templ_name} has been saved successfully.".format(templ_name=templ_name))
+            n.show()
+        else:
+            n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
+            n.show()
+            
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.input_selldate.date = ""

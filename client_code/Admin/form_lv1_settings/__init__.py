@@ -157,7 +157,6 @@ class form_lv1_settings(form_lv1_settingsTemplate):
     if result is not None:
         """ Reflect the change in template dropdown """
         self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
-    
         n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
         n.show()
     else:

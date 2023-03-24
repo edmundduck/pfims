@@ -105,6 +105,7 @@ def upsert_journals(tid, rows):
             #         schema=sysmod.schemafin(),
             #         p1=args
             #     ))
+            # DEBUG TODO remove
             mogstr = []
             for row in rows:
                 tj = fobj.TradeJournal()
