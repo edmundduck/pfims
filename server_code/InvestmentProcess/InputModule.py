@@ -44,7 +44,7 @@ def generate_template_dropdown_item(templ_id, templ_name):
 def select_journals(end_date, start_date, symbols):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.templ_journals WHERE sell_date='{p1}' AND buy_date='{p2}'{p3} ORDER BY sell_date DESC, symbol ASC"
+        sql = "SELECT * FROM {schema}.templ_journals WHERE sell_date <= '{p1}' AND buy_date >= '{p2}'{p3} ORDER BY sell_date DESC, symbol ASC"
         if len(symbols) > 0:
             stmt = sql.format(
                 schema=sysmod.schemafin(),
@@ -63,7 +63,7 @@ def select_journals(end_date, start_date, symbols):
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
-    return rows
+    return list(rows)
 
 @anvil.server.callable
 # Return template journals for repeating panel to display based on template selection dropdown

@@ -4,10 +4,10 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-from datetime import date, datetime, timedelta
-from .. import Global as glo
 import psycopg2
 import psycopg2.extras
+from datetime import date, datetime, timedelta
+from .. import Global as glo
 from ..System import SysInternalModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
@@ -32,24 +32,15 @@ INTERVAL_YEAR_TO_DATE = "YTD"
 
 # Internal function - Return start date of last 1 month
 def get_L1M_start_date(end_date):
-    if end_date.month-1 < 1:
-        return date(end_date.year-1, end_date.month+12-1, end_date.day)
-    else:
-        return date(end_date.year, end_date.month+-1, end_date.day)
+    return date(end_date.year-1, end_date.month+12-1, end_date.day) if end_date.month-1 < 1 else date(end_date.year, end_date.month-1, end_date.day)
 
 # Internal function - Return start date of last 3 months
 def get_L3M_start_date(end_date):
-  if end_date.month-3 < 1:
-    return date(end_date.year-1, end_date.month+12-3, end_date.day)
-  else:
-    return date(end_date.year, end_date.month-3, end_date.day)
+    return date(end_date.year-1, end_date.month+12-3, end_date.day) if end_date.month-3 < 1 else date(end_date.year, end_date.month-3, end_date.day)
 
 # Internal function - Return start date of last 6 months
 def get_L6M_start_date(end_date):
-    if end_date.month-6 < 1:
-        return date(end_date.year-1, end_date.month+12-6, end_date.day)
-    else:
-        return date(end_date.year, end_date.month-6, end_date.day)
+    return date(end_date.year-1, end_date.month+12-6, end_date.day) if end_date.month-6 < 1 else date(end_date.year, end_date.month-6, end_date.day)
 
 # Internal function - Return start date of last 1 year
 def get_L1Y_start_date(end_date):
@@ -81,7 +72,6 @@ def get_start_date(end_date, interval):
         INTERVAL_LAST_1_YR: get_L1Y_start_date,
         INTERVAL_YEAR_TO_DATE: get_YTD_start_date,
     }
-  
     return switcher.get(interval, interval_default)(end_date)
 
 # Internal function - Format P&L dictionary
