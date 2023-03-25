@@ -155,13 +155,10 @@ def build_pnl_data(end_date, start_date, symbols):
         
         # Handling of Day
         format_pnl_dict(i, dictstruct_day, sell_date_str, glo.pnl_list_day_mode())
-        
         # Handling of Month
         format_pnl_dict(i, dictstruct_mth, sell_mth_str, glo.pnl_list_mth_mode())
-        
         # Handling of Year
         format_pnl_dict(i, dictstruct_yr, sell_yr_str, glo.pnl_list_yr_mode())
-        
         # Handling parent:child relationship dict
         format_pnl_child(dictstruct_child, sell_mth_str, sell_date_str)
         format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
