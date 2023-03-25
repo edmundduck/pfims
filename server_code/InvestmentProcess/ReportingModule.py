@@ -129,15 +129,16 @@ def format_pnl_child(dictupdate, parent, child):
   
 # Internal function - Load DB table 'templ_journals' to build 3 P&L data dictionaries - day, month, year
 def build_pnl_data(end_date, start_date, symbols):
-    rows = None
-    if len(symbols) > 0:
-        rows = app_tables.templ_journals.search(
-            sell_date=q.less_than_or_equal_to(end_date), 
-            buy_date=q.greater_than_or_equal_to(start_date),
-            symbol=q.any_of(*symbols))
-    else:
-        rows = app_tables.templ_journals.search(sell_date=q.between(start_date, end_date, max_inclusive=True))
-
+    # rows = None
+    # if len(symbols) > 0:
+    #     rows = app_tables.templ_journals.search(
+    #         sell_date=q.less_than_or_equal_to(end_date), 
+    #         buy_date=q.greater_than_or_equal_to(start_date),
+    #         symbol=q.any_of(*symbols))
+    # else:
+    #     rows = app_tables.templ_journals.search(sell_date=q.between(start_date, end_date, max_inclusive=True))
+    rows = select_journals(end_date, start_date, symbols)
+    
     # Prepare the data in dictionary structure
     dictstruct_day = {}
     dictstruct_mth = {}
