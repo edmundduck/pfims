@@ -13,8 +13,7 @@ from ..Report.DashboardForm import DashboardForm
 from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
 from ..Report.TransactionReportForm import TransactionReportForm
 from ..Report.PnLReportForm import PnLReportForm
-from ..Report.form_lv2_exp_list import form_lv2_exp_list
-from ..Obsolete.form_sub2_tranx_report import form_sub2_tranx_report
+from ..Report.ExpenseReportForm import ExpenseReportForm
 from ..Debug.form_poc_main import form_poc_main
 
 class MainForm(MainFormTemplate):
@@ -106,7 +105,7 @@ class MainForm(MainFormTemplate):
         self.colpanel_link_reports.role = 'selected'
         self.colpanel_lv2link_exp_list.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(ReportSearchPanelFrom(glo.form_lv2_exp_list()))
+        self.content_panel.add_component(ReportSearchPanelFrom(ExpenseReportForm()))
 
     def colpanel_lv2link_input_stock_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -124,12 +123,6 @@ class MainForm(MainFormTemplate):
         self.content_panel.clear()
         self.content_panel.add_component(ExpenseInputForm())
     
-    def column_panel_2_link_tranx_list_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        self.reset_link_status()
-        self.content_panel.clear()
-        self.content_panel.add_component(form_sub2_tranx_report())
-
     def poc_link_click(self, **event_args):
         """This method is called when the link is clicked"""
         self.content_panel.clear()

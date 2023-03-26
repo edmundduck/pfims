@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ... import Global as glo
-from ... import validation
+from ... import Validation as val
 
 class StockInputForm(StockInputFormTemplate):
     def __init__(self, **properties):
@@ -42,7 +42,7 @@ class StockInputForm(StockInputFormTemplate):
     
     def button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
-        v = validation.Validator()
+        v = val.Validator()
         v.display_when_invalid(self.valerror_title)
         v.require_date_field(self.input_selldate, self.valerror_1, True)
         v.require_date_field(self.input_buydate, self.valerror_2, True)

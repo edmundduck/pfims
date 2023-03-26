@@ -46,9 +46,6 @@ def search_symbol_dropdown():
     symbol_list = [('[Symbol]', '')]
     return symbol_list
 
-def form_lv2_exp_list():
-    return 'form_lv2_exp_list'
-
 def form_poc1():
     return 'form_poc1'
 

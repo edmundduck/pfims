@@ -9,7 +9,7 @@ from datetime import date
 from ... import Global as glo
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
-from ..form_lv2_exp_list import form_lv2_exp_list
+from ..ExpenseReportForm import ExpenseReportForm
 
 class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     subform = None
@@ -27,23 +27,22 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.time_datefrom.date = settings.get('default_datefrom')
         self.time_dateto.date = settings.get('default_dateto')
 
-        print(subform)
-        if subform is TransactionReportForm():
+        if "Transaction" in subform.report_name.text:
             self.subform = TransactionReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = True
             self.panel_tranx_list.visible = True
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = False
-        elif subform == PnLReportForm():
+        elif "P&L" in subform.report_name.text:
             self.subform = PnLReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = True
             self.panel_tranx_list.visible = False
             self.panel_pnl_report.visible = True
             self.panel_exp_list.visible = False
-        elif subform == glo.form_lv2_exp_list():
-            self.subform = form_lv2_exp_list()
+        elif "Expense" in subform.report_name.text:
+            self.subform = ExpenseReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = False
             self.panel_tranx_list.visible = False

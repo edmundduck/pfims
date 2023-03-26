@@ -11,7 +11,7 @@ from datetime import date, datetime
 from .. import Global as glo
 from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
-from ..System import SysInternalModule as sysmod
+from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.

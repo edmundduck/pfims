@@ -14,7 +14,7 @@ components:
       visible: true, text: Expense List Report, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: ''}
-    name: label_1
+    name: report_name
     layout_properties: {}
 - type: DataGrid
   properties:
@@ -46,7 +46,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Report.form_lv2_exp_list.exp_list_template,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Report.ExpenseReportForm.ExpenseReportRPTemplate,
       background: ''}
     name: rpt_panel
     layout_properties: {}

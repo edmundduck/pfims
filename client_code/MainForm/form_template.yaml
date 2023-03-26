@@ -150,18 +150,8 @@ components:
     event_bindings: {click: colpanel_link_settings_click}
     components: []
   - type: Link
-    properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: 'theme:Gray
-        300', visible: false, text: Old - Transaction List, font_size: 14, wrap_on: mobile,
-      font: '', col_spacing: medium, spacing_above: small, icon_align: right, col_widths: '{}',
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
-      icon: 'fa:file-excel-o'}
-    name: column_panel_2_link_tranx_list
-    layout_properties: {grid_position: 'RMQPUK,LFUQJU'}
-    event_bindings: {click: column_panel_2_link_tranx_list_click}
-    components: []
-  - type: Link
-    properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: 'theme:Gray
-        300', visible: true, text: Proof of Concept and Test, font_size: 14, wrap_on: mobile,
+    properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: 'theme:Black',
+      visible: true, text: Proof of Concept and Test, font_size: 14, wrap_on: mobile,
       font: '', col_spacing: medium, spacing_above: small, icon_align: right, col_widths: '',
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: 'fa:yahoo'}

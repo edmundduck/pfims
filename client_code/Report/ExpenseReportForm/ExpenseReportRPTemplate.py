@@ -1,4 +1,4 @@
-from ._anvil_designer import TransactionReportRPTemplateTemplate
+from ._anvil_designer import ExpenseReportRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
@@ -9,7 +9,7 @@ from anvil.tables import app_tables
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
 
-class TransactionReportRPTemplate(TransactionReportRPTemplateTemplate):
+class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
