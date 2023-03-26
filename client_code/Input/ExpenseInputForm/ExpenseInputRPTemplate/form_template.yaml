@@ -103,9 +103,5 @@ components:
     name: row_fee
     layout_properties: {column: LMHMKP}
     event_bindings: {}
-  - type: Label
-    properties: {}
-    name: row_pnl
-    layout_properties: {column: NMAPTI}
   data_bindings: []
 is_package: true
