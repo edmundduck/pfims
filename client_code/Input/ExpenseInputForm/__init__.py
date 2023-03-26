@@ -15,17 +15,17 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
-        self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
+        #self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
+        #self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-        self.input_repeating_panel.items = []
-        self.input_selldate.date = date.today()
-        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
+        #self.input_repeating_panel.items = []
+        #self.input_selldate.date = date.today()
+        #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
         # Reset on screen change status
-        glo.reset_input_stock_change()
-        self.disable_submit_button()
+        #glo.reset_input_stock_change()
+        #self.disable_submit_button()
 
     def save_row_change(self, **event_args):
         """

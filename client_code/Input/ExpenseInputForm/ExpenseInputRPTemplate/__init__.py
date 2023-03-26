@@ -100,3 +100,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         glo.track_input_stock_journals_change()
         self.parent.raise_event('x-disable-submit-button')
         self.remove_from_parent()
+
+    def text_box_1_pressed_enter(self, **event_args):
+        """This method is called when the user presses Enter in this text box"""
+        pass
+
