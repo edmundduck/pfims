@@ -132,10 +132,13 @@ components:
     columns:
     - {id: JNEVXO, title: '', data_key: iid, width: '20', $$hashKey: 'object:40081'}
     - {id: DNGCRO, title: Date, data_key: sell_date, width: '120', $$hashKey: 'object:40082'}
-    - {id: RMITXR, title: Symbol, data_key: symbol, width: '70', $$hashKey: 'object:40084'}
-    - {id: JRLRWP, title: Sales Amt, data_key: sales, width: '100', $$hashKey: 'object:40086'}
-    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: false, width: '70',
+    - {id: RMITXR, title: Account, data_key: acct, width: '120', $$hashKey: 'object:40084'}
+    - {id: JRLRWP, title: Amount, data_key: amt, width: '100', $$hashKey: 'object:40086'}
+    - {id: HHYTTP, title: Labels, data_key: labels, $$hashKey: 'object:57643', width: '100'}
+    - {id: DGKRSZ, title: Remarks, data_key: remarks, expand: false, width: '300',
       $$hashKey: 'object:40089'}
+    - {id: ROQBQR, title: Stmt Detail, data_key: stmt_dtl, $$hashKey: 'object:57645',
+      width: '300'}
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '30', $$hashKey: 'object:40092'}
     - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '30', $$hashKey: 'object:40093'}
     auto_header: true
@@ -158,31 +161,13 @@ components:
     layout_properties: {}
     components:
     - type: TextBox
-      properties: {}
-      name: input_symbol
-      layout_properties: {column: RMITXR}
-    - type: TextBox
       properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
         border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
         font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
-      name: input_qty
-      layout_properties: {column: DMKCOL}
-    - type: TextBox
-      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
-        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
-        background: '', bold: false, underline: false}
-      name: input_sales
+      name: input_amt
       layout_properties: {column: JRLRWP}
       data_bindings: []
-    - type: TextBox
-      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
-        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
-        background: '', bold: false, underline: false}
-      name: input_cost
-      layout_properties: {column: WXPMEY}
     - type: DatePicker
       properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
         placeholder: '', border: '', enabled: true, foreground: '', visible: true,
@@ -190,28 +175,13 @@ components:
         date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
       name: input_selldate
       layout_properties: {column: DNGCRO}
-    - type: DatePicker
-      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
-        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
-        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: input_buydate
-      layout_properties: {column: MOWHRG}
-    - type: Label
-      properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-        visible: true, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
-      name: input_sell_price
+    - type: TextBox
+      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_remarks
       layout_properties: {column: DGKRSZ}
-      data_bindings: []
-    - type: Label
-      properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-        visible: true, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
-      name: input_buy_price
-      layout_properties: {column: IFVNQY}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
@@ -228,16 +198,20 @@ components:
       name: button_erase
       layout_properties: {column: TOZXSD}
       event_bindings: {click: button_erase_click}
+    - type: DropDown
+      properties: {}
+      name: dropdown_acct
+      layout_properties: {column: RMITXR}
     - type: TextBox
       properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: null,
-        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
-      name: input_fee
-      layout_properties: {column: LMHMKP}
+      name: input_stmt_dtl
+      layout_properties: {column: ROQBQR}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Input.ExpenseInputForm.StockInputRPTemplate_copy,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Input.ExpenseInputForm.ExpenseInputRPTemplate,
       background: ''}
     name: input_repeating_panel
     layout_properties: {}
