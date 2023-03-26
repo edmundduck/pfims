@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from .... import Global as glo
-from .... import Validation
+from .... import validation
 
 class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -40,7 +40,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
 
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
-        v = Validation.Validator()
+        v = validation.Validator()
     
         # To access the parent form, needs to access 3 parent levels ...
         # self.parent = Repeating Panel

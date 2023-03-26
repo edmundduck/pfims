@@ -36,8 +36,8 @@ class Validator():
         def check_this_component(**e):
             result = predicate(component)
             # DEBUG
-            #print(component.text)
-            #print(predicate(component))
+            print(component.text)
+            print(predicate(component))
             self._validity[component] = result
             if error_lbl is not None:
                 error_lbl.visible = not result
