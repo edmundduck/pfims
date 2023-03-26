@@ -8,10 +8,11 @@ from anvil.tables import app_tables
 from .. import Global as glo
 from ..Admin.SettingForm import SettingForm
 from ..Input.StockInputForm import StockInputForm
-from ..Input.form_input_exp import form_input_exp
+from ..Input.ExpenseInputForm import ExpenseInputForm
 from ..Report.DashboardForm import DashboardForm
 from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
-from ..Report.form_lv2_pnl_report import form_lv2_pnl_report
+from ..Report.TransactionReportForm import TransactionReportForm
+from ..Report.PnLReportForm import PnLReportForm
 from ..Report.form_lv2_exp_list import form_lv2_exp_list
 from ..Obsolete.form_sub2_tranx_report import form_sub2_tranx_report
 from ..Debug.form_poc_main import form_poc_main
@@ -89,7 +90,7 @@ class MainForm(MainFormTemplate):
         self.colpanel_link_reports.role = 'selected'
         self.colpanel_lv2link_tranx_list.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(ReportSearchPanelFrom(glo.form_lv2_tranx_list()))
+        self.content_panel.add_component(ReportSearchPanelFrom(TransactionReportForm()))
 
     def colpanel_lv2link_pnl_report_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -97,7 +98,7 @@ class MainForm(MainFormTemplate):
         self.colpanel_link_reports.role = 'selected'
         self.colpanel_lv2link_pnl_report.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(ReportSearchPanelFrom(glo.form_lv2_pnl_report()))
+        self.content_panel.add_component(ReportSearchPanelFrom(PnLReportForm()))
 
     def colpanel_lv2link_exp_list_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -121,7 +122,7 @@ class MainForm(MainFormTemplate):
         self.colpanel_link_input.role = 'selected'
         self.colpanel_lv2link_input_exp.role = 'selected'
         self.content_panel.clear()
-        self.content_panel.add_component(form_input_exp())
+        self.content_panel.add_component(ExpenseInputForm())
     
     def column_panel_2_link_tranx_list_click(self, **event_args):
         """This method is called when the link is clicked"""

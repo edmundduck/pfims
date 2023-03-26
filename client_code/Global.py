@@ -46,12 +46,6 @@ def search_symbol_dropdown():
     symbol_list = [('[Symbol]', '')]
     return symbol_list
 
-def form_lv2_tranx_list():
-    return 'form_lv2_tranx_list'
-
-def form_lv2_pnl_report():
-    return 'form_lv2_pnl_report'
-
 def form_lv2_exp_list():
     return 'form_lv2_exp_list'
 

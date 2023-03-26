@@ -82,7 +82,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Report.form_lv2_pnl_report.pnl_report_template,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Report.PnLReportForm.PnLReportRPTemplate,
       background: ''}
     name: rpt_panel
     layout_properties: {}

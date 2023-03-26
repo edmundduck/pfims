@@ -7,8 +7,8 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ... import Global as glo
-from ..form_lv2_tranx_list import form_lv2_tranx_list
-from ..form_lv2_pnl_report import form_lv2_pnl_report
+from ..TransactionReportForm import TransactionReportForm
+from ..PnLReportForm import PnLReportForm
 from ..form_lv2_exp_list import form_lv2_exp_list
 
 class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
@@ -26,16 +26,17 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.dropdown_interval.selected_value = settings.get('default_interval')
         self.time_datefrom.date = settings.get('default_datefrom')
         self.time_dateto.date = settings.get('default_dateto')
-        
-        if subform == glo.form_lv2_tranx_list():
-            self.subform = form_lv2_tranx_list()
+
+        print(subform)
+        if subform is TransactionReportForm():
+            self.subform = TransactionReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = True
             self.panel_tranx_list.visible = True
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = False
-        elif subform == glo.form_lv2_pnl_report():
-            self.subform = form_lv2_pnl_report()
+        elif subform == PnLReportForm():
+            self.subform = PnLReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = True
             self.panel_tranx_list.visible = False

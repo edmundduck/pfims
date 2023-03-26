@@ -1,4 +1,4 @@
-from ._anvil_designer import form_input_expTemplate
+from ._anvil_designer import ExpenseInputFormTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 
-class form_input_exp(form_input_expTemplate):
+class ExpenseInputForm(ExpenseInputFormTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)

@@ -50,7 +50,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Report.form_lv2_tranx_list.tranx_list_template,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Report.TransactionReportForm.TransactionReportRPTemplate,
       background: ''}
     name: rpt_panel
     layout_properties: {}

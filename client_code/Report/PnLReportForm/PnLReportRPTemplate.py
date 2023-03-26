@@ -1,4 +1,4 @@
-from ._anvil_designer import pnl_report_templateTemplate
+from ._anvil_designer import PnLReportRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
@@ -10,7 +10,7 @@ from ... import Global as glo
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
 
-class pnl_report_template(pnl_report_templateTemplate):
+class PnLReportRPTemplate(PnLReportRPTemplateTemplate):
   def __init__(self, **properties):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
