@@ -1,6 +1,8 @@
 import anvil.server
 import anvil.users
-"""
+
+class Validator:
+    """
 A Validator instance performs form validation. You give it
 a set of components, and for each component you specify
 a checking function (a predicate), and optionally an error
@@ -25,8 +27,7 @@ to check the status of the form.
 
   validator.enable_when_valid(self.submit_button)
 
-"""
-class Validator():
+    """
     def __init__(self):
         self._validity = {}
         self._actions = []
@@ -36,26 +37,26 @@ class Validator():
         def check_this_component(**e):
             result = predicate(component)
             # DEBUG
-            print(component.text)
-            print(predicate(component))
+            #print(component.text)
+            #print(predicate(component))
             self._validity[component] = result
             if error_lbl is not None:
                 error_lbl.visible = not result
             self._check()
         
-            for e in event_list:
-                component.set_event_handler(e, check_this_component)
-            self._component_checks.append(check_this_component)
-        
-            if show_errors_immediately:
-                check_this_component()
-            else:
-                # By default, won't show the error until the event triggers,
-                # but we will (eg) disable buttons
-                if error_lbl is not None:
-                    error_lbl.visible = False
-                self._validity[component] = predicate(component)
-                self._check()
+        for e in event_list:
+            component.set_event_handler(e, check_this_component)
+        self._component_checks.append(check_this_component)
+    
+        if show_errors_immediately:
+            check_this_component()
+        else:
+            # By default, won't show the error until the event triggers,
+            # but we will (eg) disable buttons
+            if error_lbl is not None:
+                error_lbl.visible = False
+            self._validity[component] = predicate(component)
+            self._check()
     
     def require_text_field(self, text_box, error_lbl=None, show_errors_immediately=False):
         self.require(text_box, ['change', 'lost_focus'],
