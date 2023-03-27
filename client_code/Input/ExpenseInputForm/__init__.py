@@ -44,37 +44,20 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         v = Validator()
         v.display_when_invalid(self.valerror_title)
-        v.require_date_field(self.input_selldate, self.valerror_1, True)
-        v.require_date_field(self.input_buydate, self.valerror_2, True)
-        v.require_text_field(self.input_symbol, self.valerror_3, True)
-        v.require_text_field(self.input_qty, self.valerror_4, True)
-        v.require_text_field(self.input_sales, self.valerror_5, True)
-        v.require_text_field(self.input_cost, self.valerror_6, True)
-        v.require_text_field(self.input_fee, self.valerror_7, True)
+        v.require_date_field(self.input_date, self.valerror_1, True)
+        v.require_selected(self.dropdown_acct, self.valerror_2, True)
+        v.require_text_field(self.input_amt, self.valerror_3, True)
 
-        # IID generation logic is moved to database function
-        # When a new row is created, IID is default to be None
-        # if v.is_valid():
-        #     last_iid = 0
-        #     if len(self.input_repeating_panel.items) > 0:
-        #         last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
-
-        new_data = {"sell_date": self.input_selldate.date,
-                    "buy_date": self.input_buydate.date,
-                    "symbol": self.input_symbol.text,
-                    "qty": self.input_qty.text,
-                    "sales": self.input_sales.text,
-                    "cost": self.input_cost.text,
-                    "fee": self.input_fee.text,
-                    "sell_price": anvil.server.call('cal_price', self.input_sales.text, self.input_qty.text),
-                    "buy_price": anvil.server.call('cal_price', self.input_cost.text, self.input_qty.text),
-                    "pnl": anvil.server.call('cal_profit', self.input_sales.text, self.input_cost.text, self.input_fee.text),
-                    #"iid": int(last_iid)+1}
+        new_data = {"date": self.input_date.date,
+                    "account": self.dropdown_acct.selected_value,
+                    "amount": self.input_amt.text,
+                    "remarks": self.input_remarks.text,
+                    "stmt_dtl": self.input_stmt_dtl.text,
                     "iid": None}
 
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
-        glo.track_input_stock_journals_change()
-        self.disable_submit_button()
+        #glo.track_input_stock_journals_change()
+        #self.disable_submit_button()
 
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
