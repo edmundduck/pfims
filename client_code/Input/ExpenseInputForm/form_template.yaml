@@ -5,32 +5,32 @@ container:
     spacing_below: small, background: ''}
   event_bindings: {}
 components:
+- type: Label
+  properties: {role: subheading, align: left, tooltip: '', border: '', foreground: white,
+    visible: true, text: Account Maintenace, font_size: null, font: '', spacing_above: small,
+    icon_align: left, spacing_below: small, italic: false, background: grey, bold: false,
+    underline: false, icon: ''}
+  name: headline_2
+  layout_properties:
+    col_widths: {}
+    grid_position: IUAIKQ,GBBFXY
+    full_width_row: false
+    row: HBBORI
+    width_xs: 12
+    col_xs: 0
+- type: Button
+  properties: {role: primary-color, align: left, tooltip: '', border: '', enabled: true,
+    foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+    underline: false, icon: 'fa:caret-right'}
+  name: button_acct_expand
+  layout_properties: {grid_position: 'IUAIKQ,ISKJFT', full_width_row: false, row: LBEULR,
+    width_xs: 12, col_xs: 0, width: 970}
 - type: GridPanel
   properties: {}
   name: grid_panel_acct_maint
   layout_properties: {grid_position: 'VQXNWE,HVEDOB', full_width_row: false}
-  components:
-  - type: Button
-    properties: {role: primary-color, align: left, tooltip: '', border: '', enabled: true,
-      foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: 'fa:caret-right'}
-    name: button_acct_expand
-    layout_properties: {grid_position: 'VQXNWE,KOCRNE', full_width_row: false, row: YIFPXP,
-      width_xs: 12, col_xs: 0, width: 970}
-  - type: Label
-    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: white,
-      visible: true, text: Account Maintenace, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: grey, bold: false,
-      underline: false, icon: ''}
-    name: headline_2
-    layout_properties:
-      col_widths: {}
-      grid_position: VQXNWE,IYSYFE
-      full_width_row: false
-      row: TVLSAJ
-      width_xs: 12
-      col_xs: 0
+  components: []
 - type: ColumnPanel
   properties: {role: null, tooltip: '', border: solid, foreground: '', visible: true,
     wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
