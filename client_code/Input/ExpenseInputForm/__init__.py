@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
+from ..AccountMaintForm import AccountMaintForm
 from ... import Global as glo
 from ...Validation import Validator
 
@@ -15,8 +16,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.grid_panel_acct_maint.add_component(self.button_acct_expand, row="1strow", col_xs=0, width_xs=1)
-        self.grid_panel_acct_maint.add_component(self.headline_2, row="1strow", col_xs=1, width_xs=11)
         #self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
         #self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
@@ -189,3 +188,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def disable_submit_button(self, **event_args):
         self.button_submit.enabled = False
+
+    def link_acct_maint_click(self, **event_args):
+        """This method is called when the link is clicked"""
+        self.parent.add_component(AccountMaintForm)
