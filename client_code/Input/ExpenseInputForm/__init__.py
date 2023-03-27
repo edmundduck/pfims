@@ -15,6 +15,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.grid_panel_acct_maint.add_component(self.button_acct_expand, row="1strow", col_xs=0, width_xs=1)
+        self.grid_panel_acct_maint.add_component(self.headline_2, row="1strow", col_xs=1, width_xs=11)
         #self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
         #self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
