@@ -1,6 +1,8 @@
 container:
   type: ColumnPanel
-  properties: {col_widths: '{}'}
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: small, spacing_above: small, col_widths: '{}', spacing_below: small,
+    background: ''}
   event_bindings: {}
 components:
 - type: ColumnPanel
@@ -21,22 +23,10 @@ components:
     layout_properties: {grid_position: 'LEHWLY,IJDLKK'}
     event_bindings: {change: templ_name_change}
 - type: ColumnPanel
-  properties: {col_widths: '{"ANNNFE":15,"QKDMOJ":45}'}
+  properties: {col_widths: '{}'}
   name: column_panel_1
   layout_properties: {grid_position: 'KGRZCX,IEWBUN'}
-  components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Broker, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
-    name: label_3
-    layout_properties: {grid_position: 'QZCZKX,ANNNFE'}
-  - type: DropDown
-    properties: {}
-    name: dropdown_broker
-    layout_properties: {grid_position: 'QZCZKX,QKDMOJ'}
-    event_bindings: {show: dropdown_broker_show, change: dropdown_broker_change}
+  components: []
 - type: ColumnPanel
   properties: {col_widths: '{"FPTCAC":40}'}
   name: column_panel_2
