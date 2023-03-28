@@ -6,8 +6,8 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
-from ..AccountMaintForm import AccountMaintForm
 from ... import Global as glo
+from ... import Routing
 from ...Validation import Validator
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
@@ -191,4 +191,4 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def link_acct_maint_click(self, **event_args):
         """This method is called when the link is clicked"""
-        self.parent.add_component(AccountMaintForm)
+        Routing.open_acct_maint_form(self)
