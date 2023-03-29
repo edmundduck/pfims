@@ -17,3 +17,8 @@ class AccountMaintForm(AccountMaintFormTemplate):
     def link_acct_maint_click(self, **event_args):
         """This method is called when the link is clicked"""
         Routing.open_exp_input_form(self)
+
+    def dropdown_ccy_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        pass
+
