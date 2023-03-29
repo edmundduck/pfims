@@ -4,7 +4,6 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-#import string
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
@@ -29,10 +28,7 @@ from ..System import SystemModule as sysmod
 @anvil.server.callable
 # Retrieve template ID by splitting template dropdown value
 def get_template_id(selected_template):
-    if selected_template.find("-") < 0:
-        return None
-    else:
-        return selected_template[:selected_template.find("-")].strip()
+    return selected_template[:selected_template.find("-")].strip() if selected_template.find("-") >= 0 else None
   
 @anvil.server.callable
 # Generate template dropdown text for display
@@ -66,43 +62,37 @@ def upsert_journals(tid, rows):
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
             # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
-            # Following commented section is for INSERT only, not UPSERT
-            # args = ",".join(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.assignFromDict(row).getTuple()).decode('utf-8') for row in rows)
-            # cur.execute("INSERT INTO {schema}.templ_journals (template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-            #     VALUES {p1}".format(
-            #         schema=sysmod.schemafin(),
-            #         p1=args
-            #     ))
-            # DEBUG TODO remove
-            mogstr = []
-            for row in rows:
-                tj = fobj.TradeJournal()
-                tj.assignFromDict({'template_id': tid}).assignFromDict(row)
-                # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
-                mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
-            args = ",".join(mogstr)
-            cur.execute("INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, \
-            sales, cost, fee, sell_price, buy_price, pnl) VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET \
-            sell_date=EXCLUDED.sell_date, \
-            buy_date=EXCLUDED.buy_date, \
-            symbol=EXCLUDED.symbol, \
-            qty=EXCLUDED.qty, \
-            sales=EXCLUDED.sales, \
-            cost=EXCLUDED.cost, \
-            fee=EXCLUDED.fee, \
-            sell_price=EXCLUDED.sell_price, \
-            buy_price=EXCLUDED.buy_price, \
-            pnl=EXCLUDED.pnl \
-            WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id".format(
-                    schema=sysmod.schemafin(),
-                    p1=args
-                ))
-            conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                raise psycopg2.OperationalError("Journals (template id:{0}) creation or update fail.".format(tid))
-            cur.close()
-        return count
+            if len(rows) > 0:
+                mogstr = []
+                for row in rows:
+                    tj = fobj.TradeJournal()
+                    tj.assignFromDict({'template_id': tid}).assignFromDict(row)
+                    # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
+                    mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
+                args = ",".join(mogstr)
+                cur.execute("INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, \
+                sales, cost, fee, sell_price, buy_price, pnl) VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET \
+                sell_date=EXCLUDED.sell_date, \
+                buy_date=EXCLUDED.buy_date, \
+                symbol=EXCLUDED.symbol, \
+                qty=EXCLUDED.qty, \
+                sales=EXCLUDED.sales, \
+                cost=EXCLUDED.cost, \
+                fee=EXCLUDED.fee, \
+                sell_price=EXCLUDED.sell_price, \
+                buy_price=EXCLUDED.buy_price, \
+                pnl=EXCLUDED.pnl \
+                WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id".format(
+                        schema=sysmod.schemafin(),
+                        p1=args
+                    ))
+                conn.commit()
+                count = cur.rowcount
+                if count <= 0:
+                    raise psycopg2.OperationalError("Journals (template id:{0}) creation or update fail.".format(tid))
+                cur.close()
+                return count
+            return 0
     except psycopg2.OperationalError as err:
         sysmod.print_data_debug("OperationalError in " + upsert_journals.__name__, err)
         conn.rollback()
