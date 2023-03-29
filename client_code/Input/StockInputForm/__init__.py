@@ -118,7 +118,7 @@ class StockInputForm(StockInputFormTemplate):
         """ Add/Update """
         result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
 
-        if result is not None and result > 0:
+        if result is not None:
             """ Reflect the change in template dropdown """
             self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
             self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, templ_name)
