@@ -22,3 +22,33 @@ class AccountMaintForm(AccountMaintFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_ccy.items = anvil.server.call('generate_ccy_dropdown')
 
+    def button_accounts_create_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        acct_id = anvil.server.call('create_accounts',
+                                    name=self.text_acct_name.text,
+                                    ccy=self.dropdown_ccy.selected_value, 
+                                    valid_from=self.date_valid_from.date,
+                                    valid_to=self.date_valid_to.date,
+                                    status=True
+                                )
+
+        if acct_id is None or acct_id <= 0:
+            n = Notification("ERROR: Fail to create account {acct_name}.".format(acct_name=self.text_acct_name.text))
+        else:
+            """ Reflect the change in accounts dropdown """
+            self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+            n = Notification("Account {acct_name} has been created successfully.".format(acct_name=self.text_acct_name.text))
+        n.show()
+        return
+
+    def button_accounts_update_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
+    def button_accounts_delete_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
+
+
+

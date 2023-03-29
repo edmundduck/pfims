@@ -181,7 +181,7 @@ components:
         underline: false, icon: ''}
       name: button_accounts_create
       layout_properties: {grid_position: 'SZCLAG,IFGRFE'}
-      event_bindings: {}
+      event_bindings: {click: button_accounts_create_click}
     - type: Button
       properties: {role: secondary-color, align: center, tooltip: '', border: '',
         enabled: true, foreground: '', visible: true, text: Update, font_size: null,
@@ -189,7 +189,7 @@ components:
         background: '', bold: false, underline: false, icon: ''}
       name: button_accounts_update
       layout_properties: {grid_position: 'SZCLAG,SEEVLP'}
-      event_bindings: {}
+      event_bindings: {click: button_accounts_update_click}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
         foreground: white, visible: true, text: Delete, font_size: null, font: '',
@@ -197,5 +197,5 @@ components:
         background: black, bold: false, underline: false, icon: ''}
       name: button_accounts_delete
       layout_properties: {grid_position: 'SZCLAG,EIUKSJ'}
-      event_bindings: {}
+      event_bindings: {click: button_accounts_delete_click}
 is_package: true

@@ -51,7 +51,9 @@ def generate_accounts_dropdown():
     content = list(row['name'] + " (" + row['id'] + ")" for row in rows)
     return content
 
-def create_accounts(account):
+@anvil.server.callable
+# Create account
+def create_accounts(name, ccy, valid_from, valid_to, status):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -59,11 +61,11 @@ def create_accounts(account):
             VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}') RETURNING id"
             stmt = sql.format(
                 schema=sysmod.schemafin(),
-                p1=account['name'],
-                p2=account['ccy'],
-                p3=account['valid_from'],
-                p4=account['valid_to'],
-                p5=True
+                p1=name,
+                p2=ccy,
+                p3=valid_from,
+                p4=valid_to,
+                p5=status
             )
             cur.execute(stmt)
             conn.commit()
