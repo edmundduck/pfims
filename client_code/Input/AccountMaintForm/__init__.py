@@ -20,5 +20,5 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
     def dropdown_ccy_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        pass
+        self.dropdown_ccy.items = anvil.server.call('generate_ccy_dropdown')
 
