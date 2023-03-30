@@ -48,8 +48,26 @@ def generate_accounts_dropdown():
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
-    content = list(row['name'] + " (" + row['id'] + ")" for row in rows)
+    content = list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
     return content
+
+@anvil.server.callable
+#
+def get_selected_account_attr(selected_acct):
+    if selected_acct is None or selected_acct == '':
+        return [None, None, None, None, True]
+    else:
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "SELECT * FROM {schema}.accounts WHERE id={p1}"   
+            stmt = sql.format(
+                schema=sysmod.schemafin(),
+                p1=selected_acct
+            )
+            cur.execute(stmt)
+            row = cur.fetchone()
+            cur.close()
+        return [row['name'], row['ccy'], row['valid_from'], row['valid_to'], row['status']]
 
 @anvil.server.callable
 # Create account

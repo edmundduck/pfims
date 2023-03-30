@@ -18,6 +18,18 @@ class AccountMaintForm(AccountMaintFormTemplate):
         """This method is called when the link is clicked"""
         Routing.open_exp_input_form(self)
 
+    def dropdown_acct_list_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+
+    def dropdown_acct_list_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.text_acct_name.text, \
+        self.dropdown_ccy.selected_value, \
+        self.date_valid_from.date, \
+        self.date_valid_to.date, \
+        self.dropdown_status.selected_value = anvil.server.call('get_selected_account_attr', self.dropdown_acct_list.selected_value)
+
     def dropdown_ccy_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_ccy.items = anvil.server.call('generate_ccy_dropdown')
@@ -48,7 +60,4 @@ class AccountMaintForm(AccountMaintFormTemplate):
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         pass
-
-
-
 
