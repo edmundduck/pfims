@@ -33,7 +33,7 @@ def generate_ccy_dropdown():
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
-    content = list(row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'] for row in rows)
+    content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
     return content
 
 @anvil.server.callable
@@ -58,7 +58,7 @@ def create_accounts(name, ccy, valid_from, valid_to, status):
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "INSERT INTO {schema}.accounts (name, ccy, valid_from, valid_to, status) \
-            VALUES ('{p1}','{p2}','{p3}','{p4}','{p5}') RETURNING id"
+            VALUES ('{p1}','{p2}','{p3}','{p4}',{p5}) RETURNING id"
             stmt = sql.format(
                 schema=sysmod.schemafin(),
                 p1=name,
