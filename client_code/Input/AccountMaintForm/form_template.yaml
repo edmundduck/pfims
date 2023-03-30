@@ -173,7 +173,7 @@ components:
         visible: false, text: '', font_size: null, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
-      name: hidden_b_id
+      name: hidden_acct_id
       layout_properties: {grid_position: 'SZCLAG,WKKWVA'}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
