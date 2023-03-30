@@ -15,6 +15,7 @@ from anvil.tables import app_tables
 def open_exp_input_form(self):
     from .Input.ExpenseInputForm import ExpenseInputForm
     self.clear()
+    print("exp", (i.name for i in self.item))
     self.add_component(ExpenseInputForm())
 
 def open_acct_maint_form(self):

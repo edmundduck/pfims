@@ -37,7 +37,7 @@ components:
       icon: ''}
     name: link_exp_input
     layout_properties: {grid_position: 'ZDGNBU,MRFEUU'}
-    event_bindings: {click: link_acct_maint_click}
+    event_bindings: {click: link_exp_input_click}
 - type: Label
   properties: {role: subheading, align: left, tooltip: '', border: '', foreground: white,
     visible: true, text: ' Account Maintenace', font_size: null, font: '', spacing_above: small,
