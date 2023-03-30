@@ -13,7 +13,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-
+    
     def link_acct_maint_click(self, **event_args):
         """This method is called when the link is clicked"""
         Routing.open_exp_input_form(self)
@@ -33,6 +33,10 @@ class AccountMaintForm(AccountMaintFormTemplate):
     def dropdown_ccy_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_ccy.items = anvil.server.call('generate_ccy_dropdown')
+
+    def dropdown_status_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        self.dropdown_status.items = [('Active', True), ('Inactive', False)]
 
     def button_accounts_create_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -60,4 +64,3 @@ class AccountMaintForm(AccountMaintFormTemplate):
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         pass
-

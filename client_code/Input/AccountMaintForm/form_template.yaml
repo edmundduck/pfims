@@ -130,7 +130,7 @@ components:
         border: ''
         enabled: true
         foreground: ''
-        items: [Active, Inactive]
+        items: ['']
         visible: true
         font_size: null
         font: ''
@@ -143,6 +143,7 @@ components:
         include_placeholder: false
       name: dropdown_status
       layout_properties: {grid_position: 'NLSSIJ,RJJFPI'}
+      event_bindings: {show: dropdown_status_show}
   - type: ColumnPanel
     properties: {col_widths: '{}'}
     name: column_panel_5

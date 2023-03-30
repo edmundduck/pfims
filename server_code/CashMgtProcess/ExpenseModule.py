@@ -97,3 +97,34 @@ def create_accounts(name, ccy, valid_from, valid_to, status):
         conn.rollback()
         cur.close()
         return None
+
+@anvil.server.callable
+# Update account
+def update_accounts(id, name, ccy, valid_from, valid_to, status):
+    try:
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "INSERT INTO {schema}.accounts (id, name, ccy, valid_from, valid_to, status) \
+            VALUES ({p1},'{p2}','{p3}','{p4}','{p5}',{p6}) ON CONFLICT (id) DO UPDATE SET \
+            name='{p2}', ccy='{p3}', valid_from='{p4}', valid_to='{p5}', status={p6} RETURNING id"
+            stmt = sql.format(
+                schema=sysmod.schemafin(),
+                p1=id,
+                p2=name,
+                p3=ccy,
+                p4=valid_from,
+                p5=valid_to,
+                p6=status
+            )
+            cur.execute(stmt)
+            conn.commit()
+            id = cur.fetchone()
+            if id['id'] < 0:
+                    raise psycopg2.OperationalError("Account (id:{0}) creation fail.".format(id))
+            cur.close()
+        return id['id']
+    except psycopg2.OperationalError as err:
+        sysmod.print_data_debug("OperationalError in " + create_accounts.__name__, err)
+        conn.rollback()
+        cur.close()
+        return None
