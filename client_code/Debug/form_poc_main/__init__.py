@@ -7,23 +7,22 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..form_poc1 import form_poc1
 from ..form_poc2 import form_poc2
-from ..form_poc3 import form_poc3
 from ... import Global as glo
 
 class form_poc_main(form_poc_mainTemplate):
-  subform = None
+    subform = None
   
-  def __init__(self, **properties):
-    # Set Form properties and Data Bindings.
-    self.init_components(**properties)
+    def __init__(self, **properties):
+        # Set Form properties and Data Bindings.
+        self.init_components(**properties)
+    
+        # Any code you write here will run when the form opens.
+        self.drop_down_1.items = [
+            ('form_poc1 - Tags', 'form_poc1'),
+            ('form_poc2 - Repeating items', 'form_poc2')
+        ]
 
-    # Any code you write here will run when the form opens.
-
-  def button_select_click(self, **event_args):
-    """This method is called when the button is clicked"""
-    if self.radio_button_1.selected is True:
-      self.test_column_panel.add_component(form_poc1())
-    elif self.radio_button_2.selected is True:
-      self.test_column_panel.add_component(form_poc2())
-    elif self.radio_button_3.selected is True:
-      self.test_column_panel.add_component(form_poc3())
+    def button_select_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.test_panel.clear()
+        self.test_panel.add_component(Form(self.drop_down_1.selected_value))

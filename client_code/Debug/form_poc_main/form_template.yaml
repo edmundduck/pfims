@@ -48,7 +48,7 @@ components:
     event_bindings: {click: button_select_click}
 - type: ColumnPanel
   properties: {col_widths: '{}'}
-  name: column_panel_1
+  name: test_panel
   layout_properties: {grid_position: 'YQRPLV,RZLHYN'}
   components: []
 is_package: true
