@@ -1,0 +1,15 @@
+container: {type: DataRowPanel}
+components:
+- type: Label
+  properties: {}
+  name: row_texttag
+  layout_properties: {column: XORDJK}
+- type: FlowPanel
+  properties: {}
+  name: row_panel_tag
+  layout_properties: {column: WUWOAB}
+- type: TextBox
+  properties: {}
+  name: row_remarks
+  layout_properties: {column: QRNHED}
+is_package: true

@@ -16,4 +16,29 @@ components:
     properties: {}
     name: panel_tags
     layout_properties: {grid_position: 'MINMMX,QLWWMO'}
+- type: DataGrid
+  properties:
+    role: null
+    columns:
+    - {id: XORDJK, title: Create Tag, data_key: column_1, $$hashKey: 'object:8719'}
+    - {id: WUWOAB, title: Tags, data_key: column_2, $$hashKey: 'object:8720'}
+    - {id: QRNHED, title: Remarks, data_key: column_3, $$hashKey: 'object:8721'}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 20
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  name: data_grid_1
+  layout_properties: {grid_position: 'VBUQGT,WIIHTC'}
+  components:
+  - type: RepeatingPanel
+    properties: {spacing_above: none, spacing_below: none, item_template: Debug.form_poc1.RowTemplate1}
+    name: repeating_panel_1
+    layout_properties: {}
 is_package: true
