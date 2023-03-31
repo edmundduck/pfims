@@ -25,4 +25,4 @@ class form_poc_main(form_poc_mainTemplate):
     def button_select_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.test_panel.clear()
-        self.test_panel.add_component(Form(self.drop_down_1.selected_value))
+        self.test_panel.add_component(open_form(self.drop_down_1.selected_value))
