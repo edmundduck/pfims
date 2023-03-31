@@ -69,10 +69,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
             self.button_submit.enabled = True
 
-    def dropdown_templ_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-
     def dropdown_broker_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_broker.items = [''] + anvil.server.call('select_brokers')
@@ -189,6 +185,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def disable_submit_button(self, **event_args):
         self.button_submit.enabled = False
 
-    def link_acct_maint_click(self, **event_args):
-        """This method is called when the link is clicked"""
+    def button_acct_maint_click(self, **event_args):
+        """This method is called when the button is clicked"""
         Routing.open_acct_maint_form(self)
+
+    def dropdown_acct_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        self.dropdown_acct.items = anvil.server.call('generate_accounts_dropdown')

@@ -14,13 +14,16 @@ components:
   components:
   - type: DatePicker
     properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
-      placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: null,
+      placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: 12,
       font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
       min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
     name: row_date
     layout_properties: {column: DNGCRO}
   - type: TextBox
-    properties: {}
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
     name: row_remarks
     layout_properties: {column: DGKRSZ}
   - type: Label
@@ -31,12 +34,30 @@ components:
     name: row_iid
     layout_properties: {column: JNEVXO}
   - type: DropDown
-    properties: {}
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: ''
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: false
     name: row_acct
     layout_properties: {column: RMITXR}
   - type: TextBox
     properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
-      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
     name: row_amt
@@ -44,22 +65,25 @@ components:
     event_bindings: {}
   - type: Label
     properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-      visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: row_labels
     layout_properties: {column: HHYTTP}
-  - type: TextBox
-    properties: {}
-    name: row_stmt_dtl
-    layout_properties: {column: DNGCRO}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+      foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: 'fa:minus'}
     name: button_delete
     layout_properties: {column: RMITXR}
     event_bindings: {click: button_delete_click}
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: row_stmt_dtl
+    layout_properties: {column: ROQBQR}
   data_bindings: []
 is_package: true

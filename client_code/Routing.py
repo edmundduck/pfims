@@ -14,13 +14,15 @@ from anvil.tables import app_tables
 
 def open_exp_input_form(self, **event_args):
     from .Input.ExpenseInputForm import ExpenseInputForm
-    self.clear()
-    print("exp", (i.text for i in self.item))
-    #self.add_component(ExpenseInputForm())
-    anvil.get_open_form().add_component(ExpenseInputForm())
+    # The following doesn't work, but open_acct_maint_form one works, no idea why
+    # self.clear()
+    # self.add_component(ExpenseInputForm())
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ExpenseInputForm())
 
 def open_acct_maint_form(self, **event_args):
     from .Input.AccountMaintForm import AccountMaintForm
-    self.clear()
-    print("acct", self.label_1.text)
-    self.add_component(AccountMaintForm())
+    # self.clear()
+    # self.add_component(AccountMaintForm())
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(AccountMaintForm())

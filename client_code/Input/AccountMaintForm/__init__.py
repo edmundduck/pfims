@@ -14,8 +14,8 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
         # Any code you write here will run before the form opens.
     
-    def link_exp_input_click(self, **event_args):
-        """This method is called when the link is clicked"""
+    def button_exp_input_click(self, **event_args):
+        """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
 
     def dropdown_acct_list_show(self, **event_args):
@@ -112,4 +112,3 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.text_acct_name.text = None
         self.date_valid_from.date = None
         self.date_valid_to.date = None
-
