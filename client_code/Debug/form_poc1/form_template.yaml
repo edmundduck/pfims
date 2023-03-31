@@ -1,3 +1,19 @@
-container: {type: ColumnPanel}
-components: []
+container:
+  type: ColumnPanel
+  properties: {col_widths: '{}'}
+components:
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_1
+  layout_properties: {grid_position: 'XMELDG,NSVUPO'}
+  components:
+  - type: TextBox
+    properties: {}
+    name: text_taglabel
+    layout_properties: {grid_position: 'MINMMX,BMBTZB'}
+    event_bindings: {pressed_enter: text_taglabel_pressed_enter}
+  - type: FlowPanel
+    properties: {}
+    name: panel_tags
+    layout_properties: {grid_position: 'MINMMX,QLWWMO'}
 is_package: true
