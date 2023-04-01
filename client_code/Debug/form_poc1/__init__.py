@@ -20,7 +20,7 @@ class form_poc1(form_poc1Template):
         """
       
     def create_tag(self, txt):
-        self.panel_tags.add_component(Button(text=txt, background='theme:Primary 500', foreground='theme:White', font_size=10, icon='fa:minus', icon_align='left', spacing_above='None', spacing_below='None'))
+        self.panel_tags.add_component(Button(text=txt, background='theme:Primary 500', foreground='theme:White', font_size=9, icon='fa:minus', icon_align='left', spacing_above='None', spacing_below='None'))
 
     def text_taglabel_pressed_enter(self, **event_args):
         """This method is called when the user presses Enter in this text box"""
