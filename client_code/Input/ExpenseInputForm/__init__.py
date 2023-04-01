@@ -60,55 +60,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #glo.track_input_stock_journals_change()
         #self.disable_submit_button()
 
-    def dropdown_templ_change(self, **event_args):
-        """This method is called when an item is selected"""
-        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-        self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
-        # Reset on screen change status
-        glo.reset_input_stock_change()
-        if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
-            self.button_submit.enabled = True
-
-    def dropdown_broker_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker.items = [''] + anvil.server.call('select_brokers')
-
-    def button_save_templ_click(self, **event_args):
-        """This method is called when the button is clicked"""
-        templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
-        templ_name = self.templ_name.text
-        broker_id = self.dropdown_broker.selected_value
-        templ_id = anvil.server.call('save_templates',
-                                     template_id=templ_id,
-                                     template_name=templ_name,
-                                     broker_id=broker_id,
-                                     del_iid=glo.del_iid
-                                    )
-
-        if templ_id is None or templ_id <= 0:
-            n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
-            n.show()
-            return
-
-        """ Trigger save_row_change if del_iid is not empty """
-        if len(glo.del_iid) > 0:
-            self.save_row_change()
-            glo.reset_deleted_row()
-
-        """ Add/Update """
-        result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
-
-        if result is not None and result > 0:
-            """ Reflect the change in template dropdown """
-            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-            self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, templ_name)
-            self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
-            self.button_submit.enabled = True
-            n = Notification("Template {templ_name} has been saved successfully.".format(templ_name=templ_name))
-        else:
-            n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
-        n.show()
-
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.input_selldate.date = ""
@@ -124,7 +75,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """ Reset row delete flag """
         glo.reset_deleted_row()
 
-    def button_delete_templ_click(self, **event_args):
+    def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_templ_name = self.dropdown_templ.selected_value
         msg = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
@@ -192,3 +143,48 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def dropdown_acct_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_acct.items = anvil.server.call('generate_accounts_dropdown')
+
+    def dropdown_tabs_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+
+    def dropdown_tabs_change(self, **event_args):
+        """This method is called when an item is selected"""
+        tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', self.dropdown_tabs.selected_value['tab_id'])
+        self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_tabs.selected_value['tab_id'])
+        # Reset on screen change status
+        glo.reset_input_stock_change()
+        if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
+            self.button_submit.enabled = True
+
+    def button_save_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        tab_id = anvil.server.call('save_expensetab',
+                                    id=self.dropdown_tabs.selected_value,
+                                    name=self.tab_name.text,
+                                    )
+
+        if tab_id is None or tab_id <= 0:
+            n = Notification("ERROR: Fail to save tab {tab_name}.".format(tab_name=self.tab_name.text))
+            n.show()
+            return
+
+        # """ Trigger save_row_change if del_iid is not empty """
+        # if len(glo.del_iid) > 0:
+        #     self.save_row_change()
+        #     glo.reset_deleted_row()
+
+        # """ Add/Update """
+        # result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
+
+        # if result is not None and result > 0:
+        #     """ Reflect the change in template dropdown """
+        #     self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+        #     self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, templ_name)
+        #     self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
+        #     self.button_submit.enabled = True
+        #     n = Notification("Template {templ_name} has been saved successfully.".format(templ_name=templ_name))
+        # else:
+        #     n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
+        # n.show()
+

@@ -6,6 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from datetime import date, datetime
 from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
@@ -52,7 +53,22 @@ def generate_accounts_dropdown():
     return content
 
 @anvil.server.callable
-#
+# Generate expense tabs dropdown items
+def generate_expensetabs_dropdown():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.expensetab ORDER BY tab_id ASC, tab_name ASC"
+        stmt = sql.format(
+            schema=sysmod.schemafin()
+        )
+        cur.execute(stmt)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['tab_name'] + " (" + str(row['tab_id']) + ")", [row['tab_id'], row['tab_name']]) for row in rows)
+    return content
+
+@anvil.server.callable
+# Get selected account attributes
 def get_selected_account_attr(selected_acct):
     if selected_acct is None or selected_acct == '':
         return [None, None, None, None, None, True]
@@ -68,6 +84,24 @@ def get_selected_account_attr(selected_acct):
             row = cur.fetchone()
             cur.close()
         return [row['id'], row['name'], row['ccy'], row['valid_from'], row['valid_to'], row['status']]
+
+@anvil.server.callable
+# Get selected expense tab attributes
+def get_selected_expensetab_attr(selected_tab):
+    if selected_tab is None or selected_tab == '':
+        return [None, None]
+    else:
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "SELECT * FROM {schema}.expensetab WHERE tab_id={p1}"   
+            stmt = sql.format(
+                schema=sysmod.schemafin(),
+                p1=selected_tab
+            )
+            cur.execute(stmt)
+            row = cur.fetchone()
+            cur.close()
+        return [row['tab_id'], row['tab_name']]
 
 @anvil.server.callable
 # Create account
@@ -148,6 +182,52 @@ def delete_account(id):
         return count
     except psycopg2.OperationalError as err:
         sysmod.print_data_debug("OperationalError in " + delete_account.__name__, err)
+        conn.rollback()
+        cur.close()
+        return None
+
+@anvil.server.callable
+# Save expense tab
+def save_expensetab(id, name):
+    try:
+        currenttime = datetime.now()
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            if id is None or id == '':
+                sql = "INSERT INTO {schema}.expensetab (tab_name, submitted, tab_create, tab_lastsave) \
+                VALUES ('{p1}',{p2},'{p3}','{p4}') RETURNING tab_id"
+                stmt = sql.format(
+                    schema=sysmod.schemafin(),
+                    p1=name,
+                    p2=False,
+                    p3=currenttime,
+                    p4=currenttime
+                )
+            else:
+                sql = "INSERT INTO {schema}.expensetab (tab_id, tab_name, submitted, tab_create, tab_lastsave) \
+                VALUES ('{p1}','{p2}','{p3}',{p4},'{p5}','{p6}') ON CONFLICT (tab_id) DO UPDATE SET \
+                tab_name='{p2}', \
+                submitted={p3}, \
+                tab_create='{p4}', \
+                tab_lastsave='{p5}' \
+                RETURNING tab_id"
+                stmt = sql.format(
+                    schema=sysmod.schemafin(),
+                    p1=id,
+                    p2=name,
+                    p3=False,
+                    p4=currenttime,
+                    p5=currenttime,
+                )
+            cur.execute(stmt)
+            conn.commit()
+            tid = cur.fetchone()
+            if tid['tab_id'] < 0:
+                    raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))
+            cur.close()
+        return tid['tab_id']
+    except psycopg2.OperationalError as err:
+        sysmod.print_data_debug("OperationalError in " + save_expensetab.__name__, err)
         conn.rollback()
         cur.close()
         return None
