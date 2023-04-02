@@ -42,7 +42,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
         self.dropdown_status.selected_value = True
 
-    def button_accounts_create_click(self, **event_args):
+    def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_id = anvil.server.call('create_account',
                                     name=self.text_acct_name.text,
@@ -63,7 +63,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         n.show()
         return
 
-    def button_accounts_update_click(self, **event_args):
+    def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         result = anvil.server.call('update_account',
                                    id=self.hidden_acct_id.text,
@@ -83,7 +83,11 @@ class LabelMaintForm(LabelMaintFormTemplate):
         n.show()
         return
 
-    def button_accounts_delete_click(self, **event_args):
+    def button_labels_move_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
+    def button_labels_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         selected_acct_id, selected_acct_name = self.dropdown_acct_list.selected_value
         msg = Label(text="Proceed account <{acct_name}> ({acct_id}) deletion by clicking DELETE.".format(acct_name=selected_acct_name, acct_id=selected_acct_id))
