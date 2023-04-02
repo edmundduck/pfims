@@ -157,12 +157,40 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
             self.button_submit.enabled = True
 
+    def cb_hide_remarks_change(self, **event_args):
+        """This method is called when this checkbox is checked or unchecked"""
+        if self.cb_hide_remarks.checked:
+            column = [c for c in self.data_grid_1.columns if c['data_key'] == 'remarks'][0]
+            self.hidden_data_grid.columns.append(column)
+            self.data_grid_1.columns.remove(column)
+            self.data_grid_1.columns = self.data_grid_1.columns
+        else:
+            # TODO - hardcoded column definition, have to programmatically find the first and second half of columns
+            first_half_col = self.data_grid_1.columns[:3]
+            second_half_col = self.data_grid_1.columns[3:]
+            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'remarks'][0]
+            self.data_grid_1.columns = first_half_col + [column] + second_half_col
+
+    def cb_hide_stmtdtl_change(self, **event_args):
+        """This method is called when this checkbox is checked or unchecked"""
+        if self.cb_hide_stmtdtl.checked:
+            column = [c for c in self.data_grid_1.columns if c['data_key'] == 'stmt_dtl'][0]
+            self.hidden_data_grid.columns.append(column)
+            self.data_grid_1.columns.remove(column)
+            self.data_grid_1.columns = self.data_grid_1.columns
+        else:
+            # TODO - hardcoded column definition, have to programmatically find the first and second half of columns
+            first_half_col = self.data_grid_1.columns[:4]
+            second_half_col = self.data_grid_1.columns[4:]
+            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'stmt_dtl'][0]
+            self.data_grid_1.columns = first_half_col + [column] + second_half_col
+
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         tab_id = anvil.server.call('save_expensetab',
-                                    id=self.dropdown_tabs.selected_value,
-                                    name=self.tab_name.text,
-                                    )
+                                   id=self.dropdown_tabs.selected_value,
+                                   name=self.tab_name.text,
+                                   )
 
         if tab_id is None or tab_id <= 0:
             n = Notification("ERROR: Fail to save tab {tab_name}.".format(tab_name=self.tab_name.text))
