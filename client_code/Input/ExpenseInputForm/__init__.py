@@ -128,13 +128,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         glo.track_input_stock_template_change()
         self.disable_submit_button()
 
-    def dropdown_broker_change(self, **event_args):
-        """This method is called when an item is selected"""
-        glo.track_input_stock_template_change()
-        self.disable_submit_button()
-
     def disable_submit_button(self, **event_args):
         self.button_submit.enabled = False
+
+    def button_lbl_maint_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        Routing.open_lbl_maint_form(self)
 
     def button_acct_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -165,7 +164,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
-            # TODO - hardcoded column definition, have to programmatically find the first and second half of columns
+            # TODO - partial hardcoded column definition, need to cater if the col definition is changed in design
             first_half_col = self.data_grid_1.columns[:3]
             second_half_col = self.data_grid_1.columns[3:]
             column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'remarks'][0]
@@ -179,9 +178,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
-            # TODO - hardcoded column definition, have to programmatically find the first and second half of columns
-            first_half_col = self.data_grid_1.columns[:4]
-            second_half_col = self.data_grid_1.columns[4:]
+            # TODO - partial hardcoded column definition, need to cater if the col definition is changed in design
+            first_half_col = self.data_grid_1.columns[:4] if self.data_grid_1.columns[3]['data_key'] == 'remarks' else self.data_grid_1.columns[:3] 
+            second_half_col = self.data_grid_1.columns[4:] if self.data_grid_1.columns[3]['data_key'] == 'remarks' else self.data_grid_1.columns[3:]
             column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'stmt_dtl'][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
 
@@ -215,4 +214,3 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # else:
         #     n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
         # n.show()
-
