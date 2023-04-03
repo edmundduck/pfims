@@ -102,30 +102,33 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        to_be_submitted_templ_name = self.dropdown_templ.selected_value
-        templ_id = anvil.server.call('get_template_id', to_be_submitted_templ_name)
-        templ_name = self.templ_name.text
-        broker_id = self.dropdown_broker.selected_value
-        result = anvil.server.call('submit_templates', templ_id, True)
+        # to_be_submitted_templ_name = self.dropdown_templ.selected_value
+        # templ_id = anvil.server.call('get_template_id', to_be_submitted_templ_name)
+        # templ_name = self.templ_name.text
+        # broker_id = self.dropdown_broker.selected_value
+        # result = anvil.server.call('submit_templates', templ_id, True)
 
-        if result is not None and result > 0:
-            """ Reflect the change in template dropdown """
-            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-            self.dropdown_templ.raise_event('change')
+        # if result is not None and result > 0:
+        #     """ Reflect the change in template dropdown """
+        #     self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+        #     self.dropdown_templ.raise_event('change')
 
-            n = Notification("Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only.".format(templ_name=to_be_submitted_templ_name))
-            n.show()
-        else:
-            n = Notification("ERROR: Fail to submit template {templ_name}.".format(templ_name=to_be_submitted_templ_name))
-            n.show()
+        #     n = Notification("Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only.".format(templ_name=to_be_submitted_templ_name))
+        #     n.show()
+        # else:
+        #     n = Notification("ERROR: Fail to submit template {templ_name}.".format(templ_name=to_be_submitted_templ_name))
+        #     n.show()
+        pass
 
     def templ_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""
-        glo.track_input_stock_template_change()
-        self.disable_submit_button()
+        # glo.track_input_stock_template_change()
+        # self.disable_submit_button()
+        pass
 
     def disable_submit_button(self, **event_args):
-        self.button_submit.enabled = False
+        # self.button_submit.enabled = False
+        pass
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -142,7 +145,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
         # TODO
-        pass
+        print('x')
+        for i in self.input_repeating_panel.get_components():
+            print(i)
+            if isinstance(i, anvil.CheckBox()):
+                print(i.name)
 
     def dropdown_acct_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -155,11 +162,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
         tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', self.dropdown_tabs.selected_value['tab_id'])
-        self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_tabs.selected_value['tab_id'])
-        # Reset on screen change status
-        glo.reset_input_stock_change()
-        if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
-            self.button_submit.enabled = True
+        # self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_tabs.selected_value['tab_id'])
+        # # Reset on screen change status
+        # glo.reset_input_stock_change()
+        # if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
+        #     self.button_submit.enabled = True
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
