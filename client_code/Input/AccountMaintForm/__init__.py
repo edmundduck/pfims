@@ -55,7 +55,6 @@ class AccountMaintForm(AccountMaintFormTemplate):
         if acct_id is None or acct_id <= 0:
             n = Notification("ERROR: Fail to create account {acct_name}.".format(acct_name=self.text_acct_name.text))
         else:
-            print(acct_id)
             """ Reflect the change in accounts dropdown """
             self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
             self.dropdown_acct_list.selected_value = [acct_id, self.text_acct_name.text]
@@ -97,7 +96,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         if userconf == "Y":
             result = anvil.server.call('delete_account', selected_acct_id)
             if result is not None and result > 0:
-                """ Reflect the change in template dropdown """
+                """ Reflect the change in account dropdown """
                 self.clear()
                 
                 n = Notification("Account {acct_name} has been deleted.".format(acct_name=selected_acct_name))
