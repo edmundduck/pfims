@@ -13,6 +13,8 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
+        # TODO - Enable after Move to logic is implemented
+        self.button_labels_move.enabled = False
 
     def button_exp_input_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -27,13 +29,15 @@ class LabelMaintForm(LabelMaintFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_moveto.items = anvil.server.call('generate_labels_dropdown')
         self.dropdown_moveto.selected_value = None
+        # TODO - Enable after Move to logic is implemented
+        self.dropdown_moveto.enabled = False
 
     def dropdown_lbl_list_change(self, **event_args):
         """This method is called when an item is selected"""
         self.hidden_lbl_id.text, \
         self.text_lbl_name.text, \
         self.text_keywords.text, \
-        = anvil.server.call('get_selected_label_attr', self.dropdown_lbl_list.selected_value[0])
+        self.dropdown_status.selected_value = anvil.server.call('get_selected_label_attr', self.dropdown_lbl_list.selected_value[0])
 
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -65,7 +69,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
                                    id=self.hidden_lbl_id.text,
                                    name=self.text_lbl_name.text,
                                    keywords=self.text_keywords.text,
-                                   status=True
+                                   status=self.dropdown_status.selected_value
                                 )
 
         if result is None or result <= 0:
@@ -73,6 +77,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         else:
             """ Reflect the change in labels dropdown """
             self.dropdown_lbl_list.items = anvil.server.call('generate_labels_dropdown')
+            self.dropdown_lbl_list.selected_value = self.hidden_lbl_id.text
             n = Notification("Label {lbl_name} has been updated successfully.".format(lbl_name=self.text_lbl_name.text))
         n.show()
         return
@@ -105,9 +110,8 @@ class LabelMaintForm(LabelMaintFormTemplate):
             n.show()
 
     def clear(self, **event_args):
-        self.dropdown_acct_list_show()
-        self.dropdown_ccy.selected_value = None
+        self.dropdown_lbl_list_show()
         self.dropdown_status.selected_value = True
-        self.text_acct_name.text = None
-        self.date_valid_from.date = None
-        self.date_valid_to.date = None
+        self.dropdown_moveto.selected_value = None
+        self.text_lbl_name.text = None
+        self.text_keywords.text = None

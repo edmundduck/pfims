@@ -62,18 +62,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_selldate.date = ""
-        self.input_buydate.date = ""
-        self.input_symbol.text = ""
-        self.input_qty.text = ""
-        self.input_sales.text = ""
-        self.input_cost.text = ""
-        self.input_fee.text = 0
-        self.input_sell_price.text = ""
-        self.input_buy_price.text = ""
-        self.input_pnl.text = ""
+        self.input_date.date = ""
+        self.dropdown_acct.selected_value = None
+        self.input_amt.text = ""
+        self.input_remarks.text = ""
+        self.input_stmt_dtl.text = ""
+        self.panel_labels.clear()
         """ Reset row delete flag """
-        glo.reset_deleted_row()
+        #glo.reset_deleted_row()
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -138,6 +134,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def button_acct_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_acct_maint_form(self)
+
+    def dropdown_labels_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        self.dropdown_labels.items = anvil.server.call('generate_labels_dropdown')
 
     def dropdown_acct_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

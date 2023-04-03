@@ -144,6 +144,7 @@ components:
       layout_properties:
         col_widths: {}
         grid_position: QBWBLW,NPTGQI
+      event_bindings: {show: dropdown_status_show}
   - type: ColumnPanel
     properties: {col_widths: '{}'}
     name: column_panel_5

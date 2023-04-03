@@ -12,21 +12,30 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: spacer1
     layout_properties: {grid_position: 'ZDGNBU,JTLKUT'}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: spacer2
     layout_properties: {grid_position: 'ZDGNBU,ADIYWM'}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
+    name: spacer3
+    layout_properties:
+      col_widths: {}
+      grid_position: ZDGNBU,HFCFYJ
   - type: Button
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Manage Labels, font_size: null,
+      foreground: 'theme:White', visible: true, text: Manage Labels, font_size: 12,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Primary 500', bold: false, underline: false, icon: 'fa:tags'}
     name: button_lbl_maint
@@ -34,7 +43,7 @@ components:
     event_bindings: {click: button_lbl_maint_click}
   - type: Button
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Manage Accounts, font_size: null,
+      foreground: 'theme:White', visible: true, text: Manage Accounts, font_size: 12,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Primary 500', bold: false, underline: false, icon: 'fa:cc'}
     name: button_acct_maint
@@ -96,6 +105,7 @@ components:
       include_placeholder: true
     name: dropdown_labels
     layout_properties: {grid_position: 'IUMTEJ,JYSALR'}
+    event_bindings: {show: dropdown_labels_show}
   - type: DropDown
     properties:
       role: null
@@ -254,6 +264,10 @@ components:
         background: '', bold: false, underline: false}
       name: input_stmt_dtl
       layout_properties: {column: ROQBQR}
+    - type: ColumnPanel
+      properties: {}
+      name: panel_labels
+      layout_properties: {column: HHYTTP}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: Input.ExpenseInputForm.ExpenseInputRPTemplate,

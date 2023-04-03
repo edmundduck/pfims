@@ -233,7 +233,7 @@ def create_label(name, keywords, status):
 
 @anvil.server.callable
 # Update label
-def update_label(id, keywords, status):
+def update_label(id, name, keywords, status):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
