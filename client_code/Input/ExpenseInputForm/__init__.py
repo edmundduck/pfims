@@ -202,15 +202,15 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #     glo.reset_deleted_row()
 
         # """ Add/Update """
-        # result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
+        result = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
 
-        # if result is not None and result > 0:
-        #     """ Reflect the change in template dropdown """
-        #     self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-        #     self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, templ_name)
-        #     self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
-        #     self.button_submit.enabled = True
-        #     n = Notification("Template {templ_name} has been saved successfully.".format(templ_name=templ_name))
-        # else:
-        #     n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
-        # n.show()
+        if result is not None and result > 0:
+            """ Reflect the change in template dropdown """
+            self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+            self.dropdown_tabs.selected_value = anvil.server.call('generate_template_dropdown_item', tab_id, tab_name)
+            self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
+            # self.button_submit.enabled = True
+            n = Notification("Tab {tab_name} has been saved successfully.".format(tab_name=tab_name))
+        else:
+            n = Notification("ERROR: Fail to save template {tab_name}.".format(tab_name=tab_name))
+        n.show()

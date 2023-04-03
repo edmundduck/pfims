@@ -284,6 +284,48 @@ def delete_label(id):
         return None
 
 @anvil.server.callable
+# Insert or update transactions into "exp_transactions" DB table
+# Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
+def upsert_transactions(tid, rows):
+    try:
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
+            # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
+            # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
+            if len(rows) > 0:
+                mogstr = []
+                for row in rows:
+                    tj = fobj.TradeJournal()
+                    tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
+                    # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
+                    mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
+                args = ",".join(mogstr)
+                cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, account_id, amount, labels, \
+                remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
+                account_id=EXCLUDED.account_id, \
+                amount=EXCLUDED.amount, \
+                labels=EXCLUDED.labels, \
+                remarks=EXCLUDED.remarks, \
+                stmt_dtl=EXCLUDED.stmt_dtl \
+                WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(
+                        schema=sysmod.schemafin(),
+                        p1=args
+                    ))
+                conn.commit()
+                count = cur.rowcount
+                if count <= 0:
+                    raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
+                cur.close()
+                return count
+            return 0
+    except psycopg2.OperationalError as err:
+        sysmod.print_data_debug("OperationalError in " + upsert_transactions.__name__, err)
+        conn.rollback()
+        cur.close()
+        return None
+    
+@anvil.server.callable
 # Save expense tab
 def save_expensetab(id, name):
     try:
