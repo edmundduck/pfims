@@ -105,7 +105,7 @@ components:
       include_placeholder: true
     name: dropdown_labels
     layout_properties: {grid_position: 'IUMTEJ,JYSALR'}
-    event_bindings: {show: dropdown_labels_show}
+    event_bindings: {show: dropdown_labels_show, change: dropdown_labels_change}
   - type: DropDown
     properties:
       role: null

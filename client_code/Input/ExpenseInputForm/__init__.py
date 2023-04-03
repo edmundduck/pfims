@@ -139,6 +139,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_labels.items = anvil.server.call('generate_labels_dropdown')
 
+    def dropdown_labels_change(self, **event_args):
+        """This method is called when an item is selected"""
+        # TODO
+        pass
+
     def dropdown_acct_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_acct.items = anvil.server.call('generate_accounts_dropdown')
