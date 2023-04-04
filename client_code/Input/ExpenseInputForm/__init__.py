@@ -145,11 +145,26 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
         # TODO
+        b = Button(text=self.dropdown_labels.selected_value[1],
+                   icon='fa:minus',
+                   foreground="White",
+                   background="Blue",
+                   font_size=8,
+                   align="left"
+                  )
+        if self.cb_datarow.checked is True:
+            self.panel_labels.add_component(b, False, name=self.dropdown_labels.selected_value[0])
+            b.set_event_handler('click', self.label_button_minus_click)
         print('x')
         for i in self.input_repeating_panel.get_components():
             print(i)
             if isinstance(i, anvil.CheckBox()):
                 print(i.name)
+
+    def label_button_minus_click(self, **event_args):
+        b = event_args['sender']
+        print(b.text)
+        b.remove_from_parent()
 
     def dropdown_acct_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -226,3 +241,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             n = Notification("ERROR: Fail to save template {tab_name}.".format(tab_name=tab_name))
         n.show()
+
+    def panel_labels_refreshing_data_bindings(self, **event_args):
+        """This method is called when refreshing_data_bindings is called"""
+        # TODO
+        print('change happens')
+        pass
+
