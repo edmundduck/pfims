@@ -19,13 +19,6 @@ components:
       min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
     name: row_date
     layout_properties: {column: DNGCRO}
-  - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
-      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
-      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
-      background: '', bold: false, underline: false}
-    name: row_remarks
-    layout_properties: {column: DGKRSZ}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: '', font_size: 8, font: '', spacing_above: small, icon_align: left,
@@ -89,6 +82,14 @@ components:
       bold: false, checked: false, underline: false}
     name: row_cb_datarow
     layout_properties: {column: SBYHGF}
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: row_remarks
+    layout_properties: {column: DGKRSZ}
+    event_bindings: {pressed_enter: text_box_1_pressed_enter}
   data_bindings:
   - {property: tag, code: self.item}
 is_package: true
