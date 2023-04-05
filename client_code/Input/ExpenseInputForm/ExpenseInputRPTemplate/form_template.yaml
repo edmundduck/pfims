@@ -6,7 +6,7 @@ container:
   data_bindings: []
 components:
 - type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: false,
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
     visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
     italic: false, background: '', bold: false, underline: false}
   name: input_data_panel_editable
@@ -89,5 +89,6 @@ components:
       bold: false, checked: false, underline: false}
     name: row_cb_datarow
     layout_properties: {column: SBYHGF}
-  data_bindings: []
+  data_bindings:
+  - {property: tag, code: self.item}
 is_package: true
