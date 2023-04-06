@@ -15,10 +15,31 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = anvil.server.call('generate_accounts_dropdown')
+        self._generateall_selected_labels(self.item['labels'])
         # if self.item['amt'] < 0:
         #     self.foreground = 'Black'
         # else:
         #     self.foreground = 'Green'
+
+    def _generateall_selected_labels(self, label_list):
+        for i in label_list:
+            lbl_attr = anvil.server.call('get_selected_label_attr', i)
+            b = Button(text=lbl_attr[1],
+                    icon='fa:minus',
+                    foreground="White",
+                    background="Blue",
+                    font_size=8,
+                    align="left",
+                    tag=lbl_attr[0]
+                    )
+            self.row_panel_labels.add_component(b, False, name=lbl_attr[0])
+            b.set_event_handler('click', self.label_button_minus_click)
+
+    def label_button_minus_click(self, **event_args):
+        b = event_args['sender']
+        print(b.text)
+        print(b.id)
+        b.remove_from_parent()
 
     def button_edit_click(self, **event_args):
         """This method is called when the button is clicked"""

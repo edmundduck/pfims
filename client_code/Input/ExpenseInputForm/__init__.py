@@ -41,6 +41,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
                                             for c in self.input_repeating_panel.get_components()]
 
+    def _getall_selected_labels(self):
+        label_list = []
+        for i in self.panel_labels.get_components():
+            if isinstance(i, Button):
+                if i.icon == 'fa:minus':
+                    label_list += [i.tag]
+        return label_list
+
     def button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         v = Validator()
@@ -57,7 +65,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                     "amt": self.input_amt.text,
                     "remarks": self.input_remarks.text,
                     "stmt_dtl": self.input_stmt_dtl.text,
-                    "labels": self.panel_labels,
+                    "labels": self._getall_selected_labels(),
                     "iid": None}
 
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
@@ -154,15 +162,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                    foreground="White",
                    background="Blue",
                    font_size=8,
-                   align="left"
+                   align="left",
+                   tag=self.dropdown_labels.selected_value[0]
                   )
         if self.cb_datarow.checked is True:
             self.panel_labels.add_component(b, False, name=self.dropdown_labels.selected_value[0])
             b.set_event_handler('click', self.label_button_minus_click)
-        print('x')
         for i in self.input_repeating_panel.get_components():
-            print(i)
-            if isinstance(i, anvil.CheckBox()):
+            if isinstance(i, CheckBox):
                 print(i.name)
 
     def label_button_minus_click(self, **event_args):
