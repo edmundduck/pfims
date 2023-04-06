@@ -14,16 +14,14 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        print(self.item['acct'])
-        print(self.row_acct.selected_value)
-        self.row_date.date = self.item['date']
-        self.row_acct.items = anvil.server.call('generate_accounts_dropdown')
-        self.row_acct.selected_value = self.item['acct']
-        self.row_amt.text = self.item['amt']
-        self.row_remarks.text = self.item['remarks']
-        self.row_stmt_dtl.text = self.item['stmt_dtl']
-        self.row_panel_labels.text = self.item['labels']
-        self.row_iid.text = self.item['iid']
+        # self.row_date.date = self.item['date']
+        # self.row_acct.items = anvil.server.call('generate_accounts_dropdown')
+        # self.row_acct.selected_value = self.item['acct']
+        # self.row_amt.text = self.item['amt']
+        # self.row_remarks.text = self.item['remarks']
+        # self.row_stmt_dtl.text = self.item['stmt_dtl']
+        # self.row_panel_labels.text = self.item['labels']
+        # self.row_iid.text = self.item['iid']
         
         # if self.item['amt'] < 0:
         #     self.foreground = 'Black'
