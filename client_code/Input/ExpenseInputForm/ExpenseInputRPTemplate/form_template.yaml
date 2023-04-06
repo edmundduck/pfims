@@ -7,7 +7,7 @@ container:
 components:
 - type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
-    visible: false, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
+    visible: true, item: null, font_size: null, font: '', spacing_above: none, spacing_below: none,
     italic: false, background: '', bold: false, underline: false}
   name: input_data_panel_editable
   layout_properties: {column: null}
@@ -89,7 +89,6 @@ components:
       background: '', bold: false, underline: false}
     name: row_remarks
     layout_properties: {column: DGKRSZ}
-    event_bindings: {pressed_enter: text_box_1_pressed_enter}
   data_bindings:
-  - {property: tag, code: self.item}
+  - {property: item, code: self.item}
 is_package: true

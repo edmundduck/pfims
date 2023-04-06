@@ -49,6 +49,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         v.require_selected(self.dropdown_acct, self.valerror_2, True)
         v.require_text_field(self.input_amt, self.valerror_3, True)
 
+        print(self.input_date.date, self.dropdown_acct.selected_value, self.input_amt.text, self.input_remarks.text, \
+              self.input_stmt_dtl.text, self.panel_labels)
+
         new_data = {"date": self.input_date.date,
                     "acct": self.dropdown_acct.selected_value,
                     "amt": self.input_amt.text,
