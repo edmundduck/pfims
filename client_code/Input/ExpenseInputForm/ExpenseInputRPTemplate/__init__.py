@@ -14,6 +14,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        print(self.item['acct'])
+        print(self.row_acct.selected_value)
         self.row_date.date = self.item['date']
         self.row_acct.items = anvil.server.call('generate_accounts_dropdown')
         self.row_acct.selected_value = self.item['acct']
