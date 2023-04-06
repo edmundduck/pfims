@@ -30,6 +30,8 @@ components:
       background: '', bold: false, underline: false}
     name: row_stmt_dtl
     layout_properties: {column: ROQBQR}
+    data_bindings:
+    - {property: text, code: 'self.item[''stmt_dtl'']', writeback: true}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
@@ -52,6 +54,50 @@ components:
       background: '', bold: false, underline: false}
     name: row_remarks
     layout_properties: {column: DGKRSZ}
+    data_bindings:
+    - {property: text, code: 'self.item[''remarks'']', writeback: true}
+  - type: DatePicker
+    properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
+      placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: 12,
+      font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
+      min_date: '', background: '', bold: false, underline: false, format: ''}
+    name: row_date
+    layout_properties: {column: DNGCRO}
+    data_bindings:
+    - {property: date, code: 'self.item[''date'']', writeback: true}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: Choose an account
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: true
+    name: row_acct
+    layout_properties: {column: RMITXR}
+    data_bindings:
+    - {property: selected_value, code: 'self.item[''acct'']', writeback: true}
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: row_amt
+    layout_properties: {column: JRLRWP}
+    data_bindings:
+    - {property: text, code: 'self.item[''amt'']', writeback: true}
   data_bindings:
   - {property: item, code: self.item}
 is_package: true
