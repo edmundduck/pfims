@@ -14,7 +14,7 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: '', font_size: 8, font: '', spacing_above: small, icon_align: left,
+      visible: false, text: '', font_size: 8, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: row_iid
@@ -23,6 +23,8 @@ components:
     properties: {}
     name: row_panel_labels
     layout_properties: {column: HHYTTP}
+    data_bindings:
+    - {property: tag, code: 'self.item[''labels'']'}
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -60,7 +62,7 @@ components:
     properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
       placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: 12,
       font: '', spacing_above: small, spacing_below: small, italic: false, date: '',
-      min_date: '', background: '', bold: false, underline: false, format: ''}
+      min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
     name: row_date
     layout_properties: {column: DNGCRO}
     data_bindings:
@@ -90,7 +92,7 @@ components:
     data_bindings:
     - {property: selected_value, code: 'self.item[''acct'']', writeback: true}
   - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+    properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}

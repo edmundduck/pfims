@@ -14,6 +14,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.row_acct.items = anvil.server.call('generate_accounts_dropdown')
         # if self.item['amt'] < 0:
         #     self.foreground = 'Black'
         # else:
