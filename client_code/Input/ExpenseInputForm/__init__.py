@@ -138,31 +138,19 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
-        # TODO
-        b = Button(text=self.dropdown_labels.selected_value[1],
-                   icon='fa:minus',
-                   foreground="White",
-                   background="Blue",
-                   font_size=8,
-                   align="left",
-                   tag=self.dropdown_labels.selected_value[0]
-                  )
         for row in self.input_repeating_panel.get_components():
             if row.row_cb_datarow.checked is True:
+                b = Button(text=self.dropdown_labels.selected_value[1],
+                        icon='fa:minus',
+                        foreground="White",
+                        background="Blue",
+                        font_size=8,
+                        align="left",
+                        tag=self.dropdown_labels.selected_value[0]
+                        )
                 row.row_panel_labels.add_component(b, False, name=self.dropdown_labels.selected_value[0])
                 b.set_event_handler('click', self.label_button_minus_click)
-        # for row in self.input_repeating_panel.items:
-        #     print(row.__str__())
-        #     if row['cb'] is True:
-        #         row['labels'].add_component(b, False, name=self.dropdown_labels.selected_value[0])
-        #         b.set_event_handler('click', self.label_button_minus_click)
-        #     for key, value in row.items():
-        #         print(str(key) + " " + str(value))
         
-        if self.cb_datarow.checked is True:
-            self.panel_labels.add_component(b, False, name=self.dropdown_labels.selected_value[0])
-            b.set_event_handler('click', self.label_button_minus_click)
-
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
         print(b.text)
