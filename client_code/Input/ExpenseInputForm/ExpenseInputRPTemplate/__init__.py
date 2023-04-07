@@ -15,7 +15,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = anvil.server.call('generate_accounts_dropdown')
-        self._generateall_selected_labels(self.item['labels'])
+        isButtonGenerated = False
+        for i in self.row_panel_labels.get_components():
+            if isinstance(i, CheckBox):
+                isButtonGenerated = True
+        if not isButtonGenerated:
+            self._generateall_selected_labels(self.item['labels'])
         # if self.item['amt'] < 0:
         #     self.foreground = 'Black'
         # else:
