@@ -147,12 +147,20 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                    align="left",
                    tag=self.dropdown_labels.selected_value[0]
                   )
+        for row in self.input_repeating_panel.get_components():
+            if isinstance(row, ColumnPanel):
+                print('Test')
+        for row in self.input_repeating_panel.items:
+            print(row.__str__())
+            if row['cb'] is True:
+                row['labels'].add_component(b, False, name=self.dropdown_labels.selected_value[0])
+                b.set_event_handler('click', self.label_button_minus_click)
+            for key, value in row.items():
+                print(str(key) + " " + str(value))
+        
         if self.cb_datarow.checked is True:
             self.panel_labels.add_component(b, False, name=self.dropdown_labels.selected_value[0])
             b.set_event_handler('click', self.label_button_minus_click)
-        for i in self.input_repeating_panel.get_components():
-            if isinstance(i, CheckBox):
-                print(i.name)
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
