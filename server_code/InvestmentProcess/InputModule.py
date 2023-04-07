@@ -7,7 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from .. import Global as glo
+from ..App import Global as glo
 from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod

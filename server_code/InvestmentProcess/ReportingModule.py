@@ -7,7 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
-from .. import Global as glo
+from ..App import Global as glo
 from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,

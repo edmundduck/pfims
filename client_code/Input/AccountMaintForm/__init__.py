@@ -5,7 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ... import Routing
+from ...App import Routing
 
 class AccountMaintForm(AccountMaintFormTemplate):
     def __init__(self, **properties):

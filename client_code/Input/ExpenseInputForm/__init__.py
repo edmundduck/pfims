@@ -6,9 +6,9 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
-from ... import Global as glo
-from ... import Routing
-from ...Validation import Validator
+from ...App import Global as glo
+from ...App import Routing
+from ...App.Validation import Validator
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
     def __init__(self, **properties):

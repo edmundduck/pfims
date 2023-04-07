@@ -5,8 +5,9 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from .... import Global as glo
-from ....Validation import Validator
+from ....App.Global import Global as glo
+from ....App.Caching import Caching as cache
+from ....App.Validation import Validator
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -14,14 +15,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.row_acct.items = anvil.server.call('generate_accounts_dropdown')
-        # isButtonGenerated = False
-        # for i in self.row_panel_labels.get_components():
-        #     if isinstance(i, CheckBox):
-        #         isButtonGenerated = True
-        # if not isButtonGenerated:
-        #     pass
-            # self._generateall_selected_labels(self.item['labels'])
+        self.row_acct.items = cache.get_caching_accounts()
         # if self.item['amt'] < 0:
         #     self.foreground = 'Black'
         # else:

@@ -6,7 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from .. import Global as glo
+from ..App import Global as glo
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
 

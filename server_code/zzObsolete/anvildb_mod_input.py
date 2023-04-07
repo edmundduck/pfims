@@ -7,7 +7,7 @@ import anvil.server
 import random
 import string
 from datetime import date, datetime
-from .. import Global as glo
+from ..App import Global as glo
 from ..AdminProcess import ConfigModule as cfmod
 from ..System import SystemModule as sysmod
 

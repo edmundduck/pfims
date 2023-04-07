@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ..form_poc1 import form_poc1
 from ..form_poc2 import form_poc2
-from ... import Global as glo
+from ...App import Global as glo
 
 class form_poc_main(form_poc_mainTemplate):
     subform = None
