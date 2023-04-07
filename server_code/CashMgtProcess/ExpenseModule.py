@@ -7,6 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
+from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
@@ -296,7 +297,7 @@ def upsert_transactions(tid, rows):
             if len(rows) > 0:
                 mogstr = []
                 for row in rows:
-                    tj = fobj.TradeJournal()
+                    tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))

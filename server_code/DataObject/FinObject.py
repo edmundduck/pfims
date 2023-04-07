@@ -50,3 +50,32 @@ class TradeJournal:
         for key in dict.keys():
             self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
         return self
+
+class CashTransaction:
+    def __init__(self, attr=None):
+        self.attr = attr if attr is not None else {}
+
+    def __str__(self):
+        return "{0} (iid:{1}, tid:{2}) - {3}, {4}, {5}, {6}, {7}, {8}".format(
+            self.__class__,
+            self.attr.get('iid'), \
+            self.attr.get('tab_id'), \
+            self.attr.get('date'), \
+            self.attr.get('acct'), \
+            self.attr.get('amt'), \
+            self.attr.get('labels'), \
+            self.attr.get('remarks'), \
+            self.attr.get('stmt_dtl')
+        )
+
+    def getTuple(self):
+        param_list = ['iid', 'tab_id', 'date', 'acct', 'amt', 'labels', 'remarks', 'stmt_dtl']
+        tuple_list = []
+        for item in param_list:
+            tuple_list.append(str(self.attr.get(item)))
+        return tuple_list
+
+    def assignFromDict(self, dict):
+        for key in dict.keys():
+            self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
+        return self
