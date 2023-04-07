@@ -24,10 +24,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #self.input_selldate.date = date.today()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
-        # Reset on screen change status
-        #glo.reset_input_stock_change()
-        #self.disable_submit_button()
-
     def save_row_change(self, **event_args):
         """
         *** ESSENTIAL ***
@@ -69,8 +65,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                     "iid": None}
 
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
-        #glo.track_input_stock_journals_change()
-        #self.disable_submit_button()
 
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -80,8 +74,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.input_remarks.text = ""
         self.input_stmt_dtl.text = ""
         self.panel_labels.clear()
-        """ Reset row delete flag """
-        #glo.reset_deleted_row()
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -132,16 +124,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #     n.show()
         pass
 
-    def templ_name_change(self, **event_args):
-        """This method is called when the text in this text box is edited"""
-        # glo.track_input_stock_template_change()
-        # self.disable_submit_button()
-        pass
-
-    def disable_submit_button(self, **event_args):
-        # self.button_submit.enabled = False
-        pass
-
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_lbl_maint_form(self)
@@ -190,10 +172,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when an item is selected"""
         tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', self.dropdown_tabs.selected_value['tab_id'])
         # self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_tabs.selected_value['tab_id'])
-        # # Reset on screen change status
-        # glo.reset_input_stock_change()
-        # if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
-        #     self.button_submit.enabled = True
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -234,11 +212,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             n = Notification("ERROR: Fail to save tab {tab_name}.".format(tab_name=self.tab_name.text))
             n.show()
             return
-
-        # """ Trigger save_row_change if del_iid is not empty """
-        # if len(glo.del_iid) > 0:
-        #     self.save_row_change()
-        #     glo.reset_deleted_row()
 
         # """ Add/Update """
         result = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)

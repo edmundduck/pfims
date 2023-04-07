@@ -5,7 +5,8 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...App.Routing import Routing
+from ...App import Routing
+from ...App import Caching as cache
 
 class AccountMaintForm(AccountMaintFormTemplate):
     def __init__(self, **properties):
@@ -20,7 +21,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
     def dropdown_acct_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+        self.dropdown_acct_list.items = cache.get_caching_accounts()
         self.dropdown_acct_list.selected_value = None
 
     def dropdown_acct_list_change(self, **event_args):
@@ -56,7 +57,8 @@ class AccountMaintForm(AccountMaintFormTemplate):
             n = Notification("ERROR: Fail to create account {acct_name}.".format(acct_name=self.text_acct_name.text))
         else:
             """ Reflect the change in accounts dropdown """
-            self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+            cache.reset_caching_accounts()
+            self.dropdown_acct_list.items = cache.get_caching_accounts()
             self.dropdown_acct_list.selected_value = [acct_id, self.text_acct_name.text]
             n = Notification("Account {acct_name} has been created successfully.".format(acct_name=self.text_acct_name.text))
         n.show()
@@ -77,7 +79,8 @@ class AccountMaintForm(AccountMaintFormTemplate):
             n = Notification("ERROR: Fail to update account {acct_name}.".format(acct_name=self.text_acct_name.text))
         else:
             """ Reflect the change in accounts dropdown """
-            self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+            cache.reset_caching_accounts()
+            self.dropdown_acct_list.items = cache.get_caching_accounts()
             n = Notification("Account {acct_name} has been updated successfully.".format(acct_name=self.text_acct_name.text))
         n.show()
         return
@@ -94,6 +97,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
                         ])
     
         if userconf == "Y":
+            cache.reset_caching_accounts()
             result = anvil.server.call('delete_account', selected_acct_id)
             if result is not None and result > 0:
                 """ Reflect the change in account dropdown """

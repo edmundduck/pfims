@@ -5,8 +5,8 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....App.Global import Global as glo
-from ....App.Caching import Caching as cache
+from ....App import Global as glo
+from ....App import Caching as cache
 from ....App.Validation import Validator
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
