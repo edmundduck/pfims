@@ -77,7 +77,8 @@ class CashTransaction:
         tuple_list = []
         for item in param_list:
             value = self.attr.get(item)
-            tuple_list.append(str(value)) if value is not None else tuple_list.append("NULL".strip("\'"))
+            # tuple_list.append(value) if value is not None else tuple_list.append("NULL")
+            tuple_list.append(value)
         return tuple_list
 
     def assignFromDict(self, dict):
