@@ -139,7 +139,7 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
                     p2=broker_id,
                     p3=False,
                     p4=currenttime,
-                    p5=currenttime
+                    p5=currenttimer
                 )
             else:
                 sql = "INSERT INTO {schema}.templates (template_id, template_name, broker_id, submitted, template_create, template_lastsave) \
