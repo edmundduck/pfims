@@ -20,7 +20,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-        self.input_repeating_panel.items = [{} for i in range(100)]
+        self.input_repeating_panel.items = [{} for i in range(30)]
         #self.input_selldate.date = date.today()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
@@ -52,9 +52,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         v.require_date_field(self.input_date, self.valerror_1, True)
         v.require_selected(self.dropdown_acct, self.valerror_2, True)
         v.require_text_field(self.input_amt, self.valerror_3, True)
-
-        print(self.input_date.date, self.dropdown_acct.selected_value, self.input_amt.text, self.input_remarks.text, \
-              self.input_stmt_dtl.text, self.panel_labels)
 
         new_data = {"date": self.input_date.date,
                     "acct": self.dropdown_acct.selected_value,

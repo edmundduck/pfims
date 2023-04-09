@@ -35,7 +35,8 @@ def generate_accounts_dropdown():
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
+    # content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
+    content = list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
     return content
 
 @anvil.server.callable
@@ -303,7 +304,8 @@ def upsert_transactions(tid, rows):
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
                 args = ",".join(mogstr)
                 # TODO
-                args.replace()
+                args = args.replace("'None'", "NULL")
+                print(args)
                 cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                 remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
                 trandate=EXCLUDED.trandate, \
