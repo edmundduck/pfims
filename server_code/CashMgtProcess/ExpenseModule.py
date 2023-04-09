@@ -302,7 +302,7 @@ def upsert_transactions(tid, rows):
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
-                args = ",".join(mogstr)
+                # args = ",".join(mogstr)
                 # cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                 # remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
                 # trandate=EXCLUDED.trandate, \
@@ -315,8 +315,9 @@ def upsert_transactions(tid, rows):
                 #         schema=sysmod.schemafin(),
                 #         p1=args
                 #     ))
+                print(mogstr)
                 cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                remarks, stmt_dtl) VALUES (%s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
+                remarks, stmt_dtl) VALUES %s ON CONFLICT (iid, tab_id) DO UPDATE SET \
                 trandate=EXCLUDED.trandate, \
                 account_id=EXCLUDED.account_id, \
                 amount=EXCLUDED.amount, \
@@ -325,7 +326,7 @@ def upsert_transactions(tid, rows):
                 stmt_dtl=EXCLUDED.stmt_dtl \
                 WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(
                         schema=sysmod.schemafin()
-                    ), args)
+                    ), mogstr)
                 conn.commit()
                 count = cur.rowcount
                 if count <= 0:
