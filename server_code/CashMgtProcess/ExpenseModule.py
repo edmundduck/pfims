@@ -302,6 +302,8 @@ def upsert_transactions(tid, rows):
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
                 args = ",".join(mogstr)
+                # TODO
+                args.replace()
                 cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                 remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
                 trandate=EXCLUDED.trandate, \
