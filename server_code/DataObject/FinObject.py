@@ -68,11 +68,17 @@ class CashTransaction:
             self.attr.get('stmt_dtl')
         )
 
-    def getTuple(self):
+    # Return a record compatible for database operation in list type
+    # Database record is pre-filtered the following,
+    # 1. All 'None' (Python type) is replaced by NULL (DB type)
+    # 2. Whole record is filtered if any mandatory fields are missing (Blank row or invalid data which should be blocked by front end validation)
+    def getDatabaseRecord(self):
         param_list = ['iid', 'tab_id', 'date', 'acct', 'amt', 'labels', 'remarks', 'stmt_dtl']
         tuple_list = []
         for item in param_list:
-            tuple_list.append(str(self.attr.get(item)))
+            value = self.attr.get(item)
+            tuple_list.append(str(value)) if value is not None else tuple_list.append("NULL".strip("\'"))
+        print(tuple_list)
         return tuple_list
 
     def assignFromDict(self, dict):

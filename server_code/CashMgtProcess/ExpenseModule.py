@@ -301,11 +301,8 @@ def upsert_transactions(tid, rows):
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
-                    mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
+                    mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
                 args = ",".join(mogstr)
-                # TODO
-                args = args.replace("'None'", "NULL")
-                print(args)
                 cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                 remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
                 trandate=EXCLUDED.trandate, \
