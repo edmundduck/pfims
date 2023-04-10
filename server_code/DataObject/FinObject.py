@@ -79,6 +79,7 @@ class CashTransaction:
             value = self.attr.get(item)
             # tuple_list.append(value) if value is not None else tuple_list.append("NULL")
             tuple_list.append(value)
+        tuple_list.append('')
         return tuple_list
 
     def assignFromDict(self, dict):
