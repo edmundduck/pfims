@@ -73,7 +73,7 @@ class CashTransaction:
     # 1. All 'None' (Python type) is replaced by NULL (DB type)
     # 2. Whole record is filtered if any mandatory fields are missing (Blank row or invalid data which should be blocked by front end validation)
     def getDatabaseRecord(self):
-        param_list = ['iid', 'tab_id', 'date', 'acct', 'amt', 'labels', 'remarks', 'stmt_dtl']
+        param_list = ('iid', 'tab_id', 'date', 'acct', 'amt', 'labels', 'remarks', 'stmt_dtl')
         tuple_list = []
         for item in param_list:
             value = self.attr.get(item)

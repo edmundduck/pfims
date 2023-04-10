@@ -315,9 +315,9 @@ def upsert_transactions(tid, rows):
                 #         schema=sysmod.schemafin(),
                 #         p1=args
                 #     ))
-                print(mogstr)
+                print(v for v in mogstr)
                 cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                remarks, stmt_dtl) VALUES %s ON CONFLICT (iid, tab_id) DO UPDATE SET \
+                remarks, stmt_dtl) VALUES (%s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
                 trandate=EXCLUDED.trandate, \
                 account_id=EXCLUDED.account_id, \
                 amount=EXCLUDED.amount, \
