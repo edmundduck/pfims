@@ -317,17 +317,15 @@ def upsert_transactions(tid, rows):
                 #     ))
                 print(mogstr)
                 print(list(v for v in mogstr))
-                cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                remarks, stmt_dtl) VALUES (%s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
+                cur.executemany("INSERT INTO %s.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
+                remarks, stmt_dtl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
                 trandate=EXCLUDED.trandate, \
                 account_id=EXCLUDED.account_id, \
                 amount=EXCLUDED.amount, \
                 labels=EXCLUDED.labels, \
                 remarks=EXCLUDED.remarks, \
                 stmt_dtl=EXCLUDED.stmt_dtl \
-                WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(
-                        schema=sysmod.schemafin()
-                    ), list(v for v in mogstr))
+                WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id" % sysmod.schemafin(), mogstr)
                 conn.commit()
                 count = cur.rowcount
                 if count <= 0:
