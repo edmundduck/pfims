@@ -24,22 +24,6 @@ from ..System import SystemModule as sysmod
 #
 
 @anvil.server.callable
-# Generate accounts dropdown items
-def generate_accounts_dropdown():
-    conn = sysmod.psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_to DESC, valid_from DESC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
-        rows = cur.fetchall()
-        cur.close()
-    # content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
-    content = list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
-    return content
-
-@anvil.server.callable
 # Generate expense tabs dropdown items
 def generate_expensetabs_dropdown():
     conn = sysmod.psqldb_connect()
@@ -53,57 +37,6 @@ def generate_expensetabs_dropdown():
         cur.close()
     content = list((row['tab_name'] + " (" + str(row['tab_id']) + ")", [row['tab_id'], row['tab_name']]) for row in rows)
     return content
-
-@anvil.server.callable
-# Generate labels dropdown items
-def generate_labels_dropdown():
-    conn = sysmod.psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
-        rows = cur.fetchall()
-        cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
-    return content
-
-@anvil.server.callable
-# Get selected label attributes
-def get_selected_label_attr(selected_lbl):
-    if selected_lbl is None or selected_lbl == '':
-        return [None, None, None, True]
-    else:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.labels WHERE id={p1}"   
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=selected_lbl
-            )
-            cur.execute(stmt)
-            row = cur.fetchone()
-            cur.close()
-        return [row['id'], row['name'], row['keywords'], row['status']]
-
-@anvil.server.callable
-# Get selected account attributes
-def get_selected_account_attr(selected_acct):
-    if selected_acct is None or selected_acct == '':
-        return [None, None, None, None, None, True]
-    else:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.accounts WHERE id={p1}"   
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=selected_acct
-            )
-            cur.execute(stmt)
-            row = cur.fetchone()
-            cur.close()
-        return [row['id'], row['name'], row['ccy'], row['valid_from'], row['valid_to'], row['status']]
 
 @anvil.server.callable
 # Get selected expense tab attributes
@@ -124,166 +57,22 @@ def get_selected_expensetab_attr(selected_tab):
         return [row['tab_id'], row['tab_name']]
 
 @anvil.server.callable
-# Create account
-def create_account(name, ccy, valid_from, valid_to, status):
-    try:
+# Return transactions for repeating panel to display based on expense tab selection dropdown
+def select_transactions(tid):
+    if tid is not None:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.accounts (name, ccy, valid_from, valid_to, status) \
-            VALUES ('{p1}','{p2}','{p3}','{p4}',{p5}) RETURNING id"
+            sql = "SELECT * FROM {schema}.exp_transactions WHERE tab_id = {p1} ORDER BY trandate DESC, iid DESC"
             stmt = sql.format(
                 schema=sysmod.schemafin(),
-                p1=name,
-                p2=ccy,
-                p3=valid_from,
-                p4=valid_to,
-                p5=status
+                p1=tid
             )
             cur.execute(stmt)
-            conn.commit()
-            id = cur.fetchone()
-            if id['id'] < 0:
-                    raise psycopg2.OperationalError("Account ({0}) creation fail.".format(name))
+            rows = cur.fetchall()
             cur.close()
-        return id['id']
-    except psycopg2.OperationalError as err:
-        sysmod.print_data_debug("OperationalError in " + create_accounts.__name__, err)
-        conn.rollback()
-        cur.close()
-        return None
-
-@anvil.server.callable
-# Update account
-def update_account(id, name, ccy, valid_from, valid_to, status):
-    try:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.accounts SET name='{p2}', ccy='{p3}', valid_from='{p4}', valid_to='{p5}', status={p6} \
-            WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-                p2=name,
-                p3=ccy,
-                p4=valid_from,
-                p5=valid_to,
-                p6=status
-            )
-            cur.execute(stmt)
-            conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Account ({0}) update fail.".format(name))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
-        sysmod.print_data_debug("OperationalError in " + update_account.__name__, err)
-        conn.rollback()
-        cur.close()
-        return None
-
-@anvil.server.callable
-# Delete account
-def delete_account(id):
-    try:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.accounts WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-            )
-            cur.execute(stmt)
-            conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(name))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
-        sysmod.print_data_debug("OperationalError in " + delete_account.__name__, err)
-        conn.rollback()
-        cur.close()
-        return None
-
-@anvil.server.callable
-# Create label
-def create_label(name, keywords, status):
-    try:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.labels (name, keywords, status) \
-            VALUES ('{p1}','{p2}',{p3}) RETURNING id"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=name,
-                p2=keywords,
-                p3=status
-            )
-            cur.execute(stmt)
-            conn.commit()
-            id = cur.fetchone()
-            if id['id'] < 0:
-                    raise psycopg2.OperationalError("Label ({0}) creation fail.".format(name))
-            cur.close()
-        return id['id']
-    except psycopg2.OperationalError as err:
-        sysmod.print_data_debug("OperationalError in " + create_label.__name__, err)
-        conn.rollback()
-        cur.close()
-        return None
-
-@anvil.server.callable
-# Update label
-def update_label(id, name, keywords, status):
-    try:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.labels SET name='{p2}', keywords='{p3}', status={p4} \
-            WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-                p2=name,
-                p3=keywords,
-                p4=status
-            )
-            cur.execute(stmt)
-            conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
-        sysmod.print_data_debug("OperationalError in " + update_label.__name__, err)
-        conn.rollback()
-        cur.close()
-        return None
-
-@anvil.server.callable
-# Delete label
-def delete_label(id):
-    try:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.labels WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-            )
-            cur.execute(stmt)
-            conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
-        sysmod.print_data_debug("OperationalError in " + delete_label.__name__, err)
-        conn.rollback()
-        cur.close()
-        return None
+        return list(rows)
+    else:
+        return [{} for i in range(2)]
 
 @anvil.server.callable
 # Insert or update transactions into "exp_transactions" DB table
@@ -379,6 +168,26 @@ def save_expensetab(id, name):
         return tid['tab_id']
     except psycopg2.OperationalError as err:
         sysmod.print_data_debug("OperationalError in " + save_expensetab.__name__, err)
+        conn.rollback()
+        cur.close()
+        return None
+
+@anvil.server.callable
+# Delete expense tab
+# Delete cascade is implemented in "exp_transactions" DB table "tab_id" column, hence transactions under particular tab will be deleted automatically
+def delete_expensetab(tab_id):
+    try:
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute("DELETE FROM {schema}.expensetab WHERE tab_id = {p1}".format(schema=sysmod.schemafin(), p1=tab_id))
+            conn.commit()
+            count = cur.rowcount
+            if count <= 0:
+                raise psycopg2.OperationalError("Expense tab (id:{0}) deletion fail.".format(tab_id))
+            cur.close()
+        return count
+    except psycopg2.OperationalError as err:
+        sysmod.print_data_debug("OperationalError in " + delete_expensetab.__name__, err)
         conn.rollback()
         cur.close()
         return None

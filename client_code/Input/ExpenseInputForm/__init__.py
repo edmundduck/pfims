@@ -72,35 +72,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.input_stmt_dtl.text = ""
         self.panel_labels.clear()
 
-    def button_delete_click(self, **event_args):
-        """This method is called when the button is clicked"""
-        to_be_del_templ_name = self.dropdown_templ.selected_value
-        msg = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
-        userconf = alert(content=msg,
-                        title=f"Alert - Template Deletion",
-                        buttons=[
-                        ("DELETE", "Y"),
-                        ("CANCEL", "N")
-                        ])
-
-        if userconf == "Y":
-            templ_id = anvil.server.call('get_template_id', to_be_del_templ_name)
-            result = anvil.server.call('delete_templates', template_id=templ_id)
-            if result is not None and result > 0:
-                """ Reset row delete flag """
-                glo.reset_deleted_row()
-
-                """ Reflect the change in template dropdown """
-                self.dropdown_templ_show()
-                self.dropdown_broker_show()
-                self.input_repeating_panel.items = []
-
-                n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
-                n.show()
-            else:
-                n = Notification("ERROR: Fail to delete template {templ_name}.".format(templ_name=to_be_del_templ_name))
-                n.show()
-
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         # to_be_submitted_templ_name = self.dropdown_templ.selected_value
@@ -165,6 +136,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
         tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', self.dropdown_tabs.selected_value[0])
+        self.input_repeating_panel.items = anvil.server.call('select_transactions', self.dropdown_tabs.selected_value[0])
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -223,3 +195,30 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         print('change happens')
         pass
 
+    def button_delete_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        to_be_del_tab_id = self.dropdown_tabs.selected_value[0]
+        to_be_del_tab_name = self.dropdown_tabs.selected_value[1]
+        msg = Label(text="Proceed expense tab <{tab_name}> deletion by clicking DELETE.".format(tab_name=to_be_del_tab_name))
+        userconf = alert(content=msg,
+                        title=f"Alert - Expense Tab Deletion",
+                        buttons=[
+                        ("DELETE", "Y"),
+                        ("CANCEL", "N")
+                        ])
+
+        if userconf == "Y":
+            result = anvil.server.call('delete_expensetab', tab_id=to_be_del_tab_id)
+            if result is not None and result > 0:
+                """ Reset row delete flag """
+                # glo.reset_deleted_row()
+
+                """ Reflect the change in tab dropdown """
+                self.dropdown_tabs_show()
+                self.input_repeating_panel.items = []
+
+                n = Notification("Expense tab {tab_name} has been deleted.".format(tab_name=to_be_del_tab_name))
+                n.show()
+            else:
+                n = Notification("ERROR: Fail to delete expense tab {tab_name}.".format(tab_name=to_be_del_tab_name))
+                n.show()

@@ -13,7 +13,7 @@ from anvil.tables import app_tables
 #
 
 def open_exp_input_form(self, **event_args):
-    from .Input.ExpenseInputForm import ExpenseInputForm
+    from ..Input.ExpenseInputForm import ExpenseInputForm
     # The following doesn't work, but open_acct_maint_form one works, no idea why
     # self.clear()
     # self.add_component(ExpenseInputForm())
@@ -21,11 +21,11 @@ def open_exp_input_form(self, **event_args):
     anvil.get_open_form().content_panel.add_component(ExpenseInputForm())
 
 def open_lbl_maint_form(self, **event_args):
-    from .Input.LabelMaintForm import LabelMaintForm
+    from ..Input.LabelMaintForm import LabelMaintForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(LabelMaintForm())
     
 def open_acct_maint_form(self, **event_args):
-    from .Input.AccountMaintForm import AccountMaintForm
+    from ..Input.AccountMaintForm import AccountMaintForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(AccountMaintForm())
