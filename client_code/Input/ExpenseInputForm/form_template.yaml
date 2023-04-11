@@ -167,9 +167,9 @@ components:
     role: null
     columns:
     - {id: SBYHGF, title: '', data_key: cb, $$hashKey: 'object:131320', width: '30'}
-    - {id: DNGCRO, title: Date, data_key: date, width: '120', $$hashKey: 'object:40082'}
-    - {id: RMITXR, title: Account, data_key: acct, width: '150', $$hashKey: 'object:40084'}
-    - {id: JRLRWP, title: Amount, data_key: amt, width: '100', $$hashKey: 'object:40086'}
+    - {id: DNGCRO, title: Date, data_key: trandate, width: '120', $$hashKey: 'object:40082'}
+    - {id: RMITXR, title: Account, data_key: account_id, width: '150', $$hashKey: 'object:40084'}
+    - {id: JRLRWP, title: Amount, data_key: amount, width: '100', $$hashKey: 'object:40086'}
     - {id: DGKRSZ, title: Remarks, data_key: remarks, expand: false, width: '280',
       $$hashKey: 'object:40089'}
     - {id: ROQBQR, title: Statement Detail, data_key: stmt_dtl, $$hashKey: 'object:57645',

@@ -70,6 +70,7 @@ def select_transactions(tid):
             cur.execute(stmt)
             rows = cur.fetchall()
             cur.close()
+        print(list(rows))
         return list(rows)
     else:
         return [{} for i in range(2)]
@@ -87,6 +88,7 @@ def upsert_transactions(tid, rows):
             if len(rows) > 0:
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
+                print(rows)
                 for row in rows:
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)

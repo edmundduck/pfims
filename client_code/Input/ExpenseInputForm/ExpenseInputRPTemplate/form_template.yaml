@@ -68,7 +68,7 @@ components:
     name: row_date
     layout_properties: {column: DNGCRO}
     data_bindings:
-    - {property: date, code: 'self.item[''date'']', writeback: true}
+    - {property: date, code: 'self.item[''trandate'']', writeback: true}
   - type: DropDown
     properties:
       role: null
@@ -92,7 +92,7 @@ components:
     name: row_acct
     layout_properties: {column: RMITXR}
     data_bindings:
-    - {property: selected_value, code: 'self.item[''acct'']', writeback: true}
+    - {property: selected_value, code: 'self.item[''account_id'']', writeback: true}
   - type: TextBox
     properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -101,7 +101,7 @@ components:
     name: row_amt
     layout_properties: {column: JRLRWP}
     data_bindings:
-    - {property: text, code: 'self.item[''amt'']', writeback: true}
+    - {property: text, code: 'self.item[''amount'']', writeback: true}
   data_bindings:
   - {property: item, code: self.item}
 is_package: true
