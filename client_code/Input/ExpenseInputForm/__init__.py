@@ -20,7 +20,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-        self.input_repeating_panel.items = [{} for i in range(1)]
+        self.input_repeating_panel.items = [{} for i in range(2)]
         #self.input_selldate.date = date.today()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
@@ -164,8 +164,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
-        tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', self.dropdown_tabs.selected_value['tab_id'])
-        # self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_tabs.selected_value['tab_id'])
+        tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', self.dropdown_tabs.selected_value[0])
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -197,24 +196,21 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
-        tab_id = anvil.server.call('save_expensetab',
-                                   id=self.dropdown_tabs.selected_value,
-                                   name=self.tab_name.text,
-                                   )
+        tab_name = self.tab_name.text
+        tab_id = anvil.server.call('save_expensetab', id=self.dropdown_tabs.selected_value[0], name=tab_name)
 
         if tab_id is None or tab_id <= 0:
-            n = Notification("ERROR: Fail to save tab {tab_name}.".format(tab_name=self.tab_name.text))
+            n = Notification("ERROR: Fail to save tab {tab_name}.".format(tab_name=tab_name))
             n.show()
             return
 
         # """ Add/Update """
         result = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
 
-        if result is not None and result > 0:
+        if result is not None:
             """ Reflect the change in template dropdown """
             self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-            self.dropdown_tabs.selected_value = anvil.server.call('generate_template_dropdown_item', tab_id, tab_name)
-            self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
+            self.dropdown_tabs.selected_value = [tab_id, tab_name]
             # self.button_submit.enabled = True
             n = Notification("Tab {tab_name} has been saved successfully.".format(tab_name=tab_name))
         else:

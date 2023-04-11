@@ -296,12 +296,16 @@ def upsert_transactions(tid, rows):
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
             # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
             if len(rows) > 0:
+                # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
                 for row in rows:
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
-                    mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
+                    # mogrify makes the tuple double quoted as string, causing "TypeError: not all arguments converted during string formatting"
+                    # also makes None becomes string so cannot be auto converted to NULL when execute
+                    # mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
+                    if tj.isValidRecord(): mogstr.append(tj.getDatabaseRecord())
                 # args = ",".join(mogstr)
                 # cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                 # remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
@@ -315,32 +319,22 @@ def upsert_transactions(tid, rows):
                 #         schema=sysmod.schemafin(),
                 #         p1=args
                 #     ))
-                print(mogstr)
-                print(list(v for v in mogstr))
-                # cur.executemany("INSERT INTO %s.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                # remarks, stmt_dtl) VALUES %s ON CONFLICT (iid, tab_id) DO %sUPDATE SET \
-                # trandate=EXCLUDED.trandate, \
-                # account_id=EXCLUDED.account_id, \
-                # amount=EXCLUDED.amount, \
-                # labels=EXCLUDED.labels, \
-                # remarks=EXCLUDED.remarks, \
-                # stmt_dtl=EXCLUDED.stmt_dtl \
-                # WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id" % sysmod.schemafin(), mogstr)
-                cur.executemany("INSERT INTO fin.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                remarks, stmt_dtl) VALUES %s ON CONFLICT (iid, tab_id) DO %sUPDATE SET \
-                trandate=EXCLUDED.trandate, \
-                account_id=EXCLUDED.account_id, \
-                amount=EXCLUDED.amount, \
-                labels=EXCLUDED.labels, \
-                remarks=EXCLUDED.remarks, \
-                stmt_dtl=EXCLUDED.stmt_dtl \
-                WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id", mogstr)
-                conn.commit()
-                count = cur.rowcount
-                if count <= 0:
-                    raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
-                cur.close()
-                return count
+                if len(mogstr) > 0:
+                    cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
+                    remarks, stmt_dtl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
+                    trandate=EXCLUDED.trandate, \
+                    account_id=EXCLUDED.account_id, \
+                    amount=EXCLUDED.amount, \
+                    labels=EXCLUDED.labels, \
+                    remarks=EXCLUDED.remarks, \
+                    stmt_dtl=EXCLUDED.stmt_dtl \
+                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(schema=sysmod.schemafin()), mogstr)
+                    conn.commit()
+                    count = cur.rowcount
+                    if count <= 0:
+                        raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
+                    cur.close()
+                    return count
             return 0
     except psycopg2.OperationalError as err:
         sysmod.print_data_debug("OperationalError in " + upsert_transactions.__name__, err)
@@ -366,13 +360,8 @@ def save_expensetab(id, name):
                     p4=currenttime
                 )
             else:
-                sql = "INSERT INTO {schema}.expensetab (tab_id, tab_name, submitted, tab_create, tab_lastsave) \
-                VALUES ('{p1}','{p2}','{p3}',{p4},'{p5}','{p6}') ON CONFLICT (tab_id) DO UPDATE SET \
-                tab_name='{p2}', \
-                submitted={p3}, \
-                tab_create='{p4}', \
-                tab_lastsave='{p5}' \
-                RETURNING tab_id"
+                sql = "UPDATE {schema}.expensetab SET tab_name='{p2}', submitted={p3}, tab_create='{p4}', tab_lastsave='{p5}' \
+                WHERE tab_id={p1} RETURNING tab_id"
                 stmt = sql.format(
                     schema=sysmod.schemafin(),
                     p1=id,

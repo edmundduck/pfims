@@ -69,20 +69,23 @@ class CashTransaction:
         )
 
     # Return a record compatible for database operation in list type
-    # Database record is pre-filtered the following,
-    # 1. All 'None' (Python type) is replaced by NULL (DB type)
-    # 2. Whole record is filtered if any mandatory fields are missing (Blank row or invalid data which should be blocked by front end validation)
     def getDatabaseRecord(self):
         param_list = ('iid', 'tab_id', 'date', 'acct', 'amt', 'labels', 'remarks', 'stmt_dtl')
         tuple_list = []
-        for item in param_list:
-            value = self.attr.get(item)
-            # tuple_list.append(value) if value is not None else tuple_list.append("NULL")
-            tuple_list.append(value)
-        tuple_list.append('')
+        tuple_list.append(self.attr.get(item) for item in param_list) 
         return tuple_list
 
     def assignFromDict(self, dict):
         for key in dict.keys():
             self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
         return self
+
+    # Return False if any of the mandatory field value is None, otherwise True
+    def isValidRecord(self):
+        mandatory_list = ('date', 'acct', 'amt')
+        for item in mandatory_list:
+            if self.attr.get(item) is None:
+                return False
+        return True
+        
+        
