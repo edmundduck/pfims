@@ -106,17 +106,19 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
+        selected_lid = self.dropdown_labels.selected_value[0] if self.dropdown_labels.selected_value is not None else None
+        selected_lname = self.dropdown_labels.selected_value[1] if self.dropdown_labels.selected_value is not None else None
         for row in self.input_repeating_panel.get_components():
             if row.row_cb_datarow.checked is True:
-                b = Button(text=self.dropdown_labels.selected_value[1],
+                b = Button(text=selected_lname,
                         icon='fa:minus',
                         foreground="White",
                         background="Blue",
                         font_size=8,
                         align="left",
-                        tag=self.dropdown_labels.selected_value[0]
+                        tag=selected_lid
                         )
-                row.row_panel_labels.add_component(b, False, name=self.dropdown_labels.selected_value[0])
+                row.row_panel_labels.add_component(b, False, name=selected_lid)
                 b.set_event_handler('click', self.label_button_minus_click)
         
     def label_button_minus_click(self, **event_args):
@@ -135,8 +137,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
-        tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', self.dropdown_tabs.selected_value[0])
-        self.input_repeating_panel.items = anvil.server.call('select_transactions', self.dropdown_tabs.selected_value[0])
+        selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
+        tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', selected_tid)
+        self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -169,7 +172,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         tab_name = self.tab_name.text
-        tab_id = anvil.server.call('save_expensetab', id=self.dropdown_tabs.selected_value[0], name=tab_name)
+        tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
+        tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
 
         if tab_id is None or tab_id <= 0:
             n = Notification("ERROR: Fail to save tab {tab_name}.".format(tab_name=tab_name))
@@ -197,8 +201,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        to_be_del_tab_id = self.dropdown_tabs.selected_value[0]
-        to_be_del_tab_name = self.dropdown_tabs.selected_value[1]
+        to_be_del_tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
+        to_be_del_tab_name = self.dropdown_tabs.selected_value[1] if self.dropdown_tabs.selected_value is not None else None
         msg = Label(text="Proceed expense tab <{tab_name}> deletion by clicking DELETE.".format(tab_name=to_be_del_tab_name))
         userconf = alert(content=msg,
                         title=f"Alert - Expense Tab Deletion",
@@ -215,7 +219,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs_show()
-                self.input_repeating_panel.items = []
+                self.input_repeating_panel.items = anvil.server.call('generate_init_transactions')
 
                 n = Notification("Expense tab {tab_name} has been deleted.".format(tab_name=to_be_del_tab_name))
                 n.show()

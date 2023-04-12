@@ -57,6 +57,11 @@ def get_selected_expensetab_attr(selected_tab):
         return [row['tab_id'], row['tab_name']]
 
 @anvil.server.callable
+# Generate default transaction rows
+def generate_init_transactions():
+    return [{} for i in range(2)]
+
+@anvil.server.callable
 # Return transactions for repeating panel to display based on expense tab selection dropdown
 def select_transactions(tid):
     if tid is not None:
@@ -70,10 +75,9 @@ def select_transactions(tid):
             cur.execute(stmt)
             rows = cur.fetchall()
             cur.close()
-        print(list(rows))
-        return list(rows)
+        return list(rows) if len(rows) > 0 else generate_init_transactions()
     else:
-        return [{} for i in range(2)]
+        return generate_init_transactions()
 
 @anvil.server.callable
 # Insert or update transactions into "exp_transactions" DB table
@@ -88,7 +92,6 @@ def upsert_transactions(tid, rows):
             if len(rows) > 0:
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
-                print(rows)
                 for row in rows:
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)

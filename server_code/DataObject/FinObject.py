@@ -60,9 +60,9 @@ class CashTransaction:
             self.__class__,
             self.attr.get('iid'), \
             self.attr.get('tab_id'), \
-            self.attr.get('date'), \
-            self.attr.get('acct'), \
-            self.attr.get('amt'), \
+            self.attr.get('trandate'), \
+            self.attr.get('account_id'), \
+            self.attr.get('amount'), \
             self.attr.get('labels'), \
             self.attr.get('remarks'), \
             self.attr.get('stmt_dtl')
@@ -70,9 +70,10 @@ class CashTransaction:
 
     # Return a record compatible for database operation in list type
     def getDatabaseRecord(self):
-        param_list = ('iid', 'tab_id', 'date', 'acct', 'amt', 'labels', 'remarks', 'stmt_dtl')
+        param_list = ('iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl')
         tuple_list = []
-        tuple_list.append(self.attr.get(item) for item in param_list) 
+        for item in param_list:
+            tuple_list.append(self.attr.get(item)) 
         return tuple_list
 
     def assignFromDict(self, dict):
@@ -82,7 +83,7 @@ class CashTransaction:
 
     # Return False if any of the mandatory field value is None, otherwise True
     def isValidRecord(self):
-        mandatory_list = ('date', 'acct', 'amt')
+        mandatory_list = ('trandate', 'account_id', 'amount')
         for item in mandatory_list:
             if self.attr.get(item) is None:
                 return False
