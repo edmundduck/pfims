@@ -21,7 +21,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = [{} for i in range(2)]
-        #self.input_selldate.date = date.today()
+        glo.reset_deleted_row()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
     def save_row_change(self, **event_args):
@@ -62,15 +62,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                     "iid": None}
 
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
-
-    def button_erase_click(self, **event_args):
-        """This method is called when the button is clicked"""
-        self.input_date.date = ""
-        self.dropdown_acct.selected_value = None
-        self.input_amt.text = ""
-        self.input_remarks.text = ""
-        self.input_stmt_dtl.text = ""
-        self.panel_labels.clear()
 
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -181,12 +172,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         # """ Add/Update """
-        result = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
+        result = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items, glo.del_iid)
 
         if result is not None:
             """ Reflect the change in template dropdown """
             self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
             self.dropdown_tabs.selected_value = [tab_id, tab_name]
+            glo.reset_deleted_row()
             # self.button_submit.enabled = True
             n = Notification("Tab {tab_name} has been saved successfully.".format(tab_name=tab_name))
         else:
@@ -214,13 +206,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if userconf == "Y":
             result = anvil.server.call('delete_expensetab', tab_id=to_be_del_tab_id)
             if result is not None and result > 0:
-                """ Reset row delete flag """
-                # glo.reset_deleted_row()
-
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs_show()
                 self.input_repeating_panel.items = anvil.server.call('generate_init_transactions')
-
+                glo.reset_deleted_row()
                 n = Notification("Expense tab {tab_name} has been deleted.".format(tab_name=to_be_del_tab_name))
                 n.show()
             else:
