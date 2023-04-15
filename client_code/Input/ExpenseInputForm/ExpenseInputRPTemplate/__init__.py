@@ -119,6 +119,4 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item['iid'] is not None: glo.add_deleted_row(self.item['iid'])
-        glo.track_input_stock_journals_change()
-        self.parent.raise_event('x-disable-submit-button')
         self.remove_from_parent()
