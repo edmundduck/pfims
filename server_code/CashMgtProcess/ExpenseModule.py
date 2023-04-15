@@ -155,8 +155,6 @@ def delete_transactions(tid, iid_list):
                 cur.execute(stmt)
                 conn.commit()
                 count = cur.rowcount
-                print(count)
-                print(cur.query)
                 if count <= 0:
                     raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
                 cur.close()
