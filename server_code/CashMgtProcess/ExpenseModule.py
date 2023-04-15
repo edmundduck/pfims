@@ -84,14 +84,15 @@ def select_transactions(tid):
 # Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 def upsert_transactions(tid, rows, del_iid = []):
     try:
+        if len(del_iid) > 0:
+            count = delete_transactions(tid, del_iid)
+            if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
+
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
             # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
-            if len(del_iid) > 0:
-                count = delete_transactions(tid, del_iid)
-                if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
                     
             if len(rows) > 0:
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
