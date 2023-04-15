@@ -90,7 +90,9 @@ def upsert_transactions(tid, rows, del_iid = []):
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
             # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
             if len(del_iid) > 0:
-                delete_transactions(tid, del_iid)
+                count = delete_transactions(tid, del_iid)
+                if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
+                    
             if len(rows) > 0:
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
@@ -127,8 +129,7 @@ def upsert_transactions(tid, rows, del_iid = []):
                     WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(schema=sysmod.schemafin()), mogstr)
                     conn.commit()
                     count = cur.rowcount
-                    if count <= 0:
-                        raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
+                    if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
                     cur.close()
                     return count
             return 0
