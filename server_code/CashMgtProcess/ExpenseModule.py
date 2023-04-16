@@ -136,7 +136,7 @@ def upsert_transactions(tid, rows, del_iid = []):
             return 0
     except psycopg2.OperationalError as err:
         sysmod.print_data_debug("OperationalError in " + upsert_transactions.__name__, err)
-        conn.rollback()
+        # conn.rollback()
         cur.close()
         return None
     
@@ -164,7 +164,7 @@ def delete_transactions(tid, iid_list):
         return 0
     except psycopg2.OperationalError as err:
         sysmod.print_data_debug("OperationalError in " + delete_transactions.__name__, err)
-        conn.rollback()
+        # conn.rollback()
         cur.close()
         return None
 
