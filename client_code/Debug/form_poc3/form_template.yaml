@@ -30,8 +30,28 @@ components:
     underline: false, icon: ''}
   name: valerror
   layout_properties: {grid_position: 'JHHIIA,RQNPVL'}
-- type: RepeatingPanel
-  properties: {item_template: Debug.form_poc3.ItemTemplate1}
-  name: repeating_panel_1
-  layout_properties: {grid_position: 'KTKURB,VUSAQE'}
+- type: DataGrid
+  properties:
+    role: null
+    columns:
+    - {id: UUWVZS, title: TEST, data_key: column_1, $$hashKey: 'object:24531'}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 20
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  name: data_grid_1
+  layout_properties: {grid_position: 'CSRLBJ,ATIMAJ'}
+  components:
+  - type: RepeatingPanel
+    properties: {spacing_above: none, spacing_below: none, item_template: Debug.form_poc3.RowTemplate3}
+    name: repeating_panel_1
+    layout_properties: {}
+  data_bindings: []
 is_package: true
