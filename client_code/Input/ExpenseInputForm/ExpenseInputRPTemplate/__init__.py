@@ -41,26 +41,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         print(b.id)
         b.remove_from_parent()
 
-    def button_edit_click(self, **event_args):
-        """This method is called when the button is clicked"""
-        self.row_selldate.date = self.item['sell_date']
-        self.row_buydate.date = self.item['buy_date']
-        self.row_symbol.text = self.item['symbol']
-        self.row_qty.text = self.item['qty']
-        self.row_sales.text = self.item['sales']
-        self.row_cost.text = self.item['cost']
-        self.row_fee.text = self.item['fee']
-        self.row_sell_price.text = self.item['sell_price']
-        self.row_buy_price.text = self.item['buy_price']
-        self.row_pnl.text = self.item['pnl']
-        self.row_iid.text = self.item['iid']
-
-        self.input_data_panel_readonly.visible = False
-        self.input_data_panel_editable.visible = True
-
-        glo.track_input_stock_journals_change()
-
-    def button_save_click(self, **event_args):
+    def validate(self, **event_args):
         """This method is called when the button is clicked"""
         v = Validator()
 
@@ -70,42 +51,14 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # self.parent.parent.parent = Parent Form
         #print(self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
-        v.require_date_field(self.row_selldate, self.parent.parent.parent.valerror_1, True)
-        v.require_date_field(self.row_buydate, self.parent.parent.parent.valerror_2, True)
-        v.require_text_field(self.row_symbol, self.parent.parent.parent.valerror_3, True)
-        v.require_text_field(self.row_qty, self.parent.parent.parent.valerror_4, True)
-        v.require_text_field(self.row_sales, self.parent.parent.parent.valerror_5, True)
-        v.require_text_field(self.row_cost, self.parent.parent.parent.valerror_6, True)
-        v.require_text_field(self.row_fee, self.parent.parent.parent.valerror_7, True)
+        v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
+        v.require_text_field(self.row_acct, self.parent.parent.parent.valerror_2, True)
+        v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
 
         if v.is_valid():
             self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
             self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
             self.row_pnl.text = anvil.server.call('cal_profit', self.row_sales.text, self.row_cost.text, self.row_fee.text)
-
-            # Lesson learnt ... THIS LINE DOESN'T WORK!!
-            # new_data = {"sell_date": self.row_selldate.date,
-            #                "buy_date": self.row_buydate.date,
-            #                "symbol": self.row_symbol.text,
-            #                "qty": self.row_qty.text,
-            #                "sales": self.row_sales.text,
-            #                "cost": self.row_cost.text,
-            #                "sell_price": self.row_sell_price.text,
-            #                "buy_price": self.row_buy_price.text,
-            #                "iid": self.row_iid.text}
-            # self.item = self.row_symbol.text
-            # self.item = new_data
-            self.item = {"sell_date": self.row_selldate.date,
-                        "buy_date": self.row_buydate.date,
-                        "symbol": self.row_symbol.text,
-                        "qty": self.row_qty.text,
-                        "sales": float(self.row_sales.text),
-                        "cost": float(self.row_cost.text),
-                        "fee": float(self.row_fee.text),
-                        "sell_price": self.row_sell_price.text,
-                        "buy_price": self.row_buy_price.text,
-                        "pnl": self.row_pnl.text,
-                        "iid": self.row_iid.text}
 
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False

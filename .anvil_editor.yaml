@@ -1,5 +1,6 @@
 unique_ids:
   forms:
+    Debug.form_poc3: '1681770078220804355523189.5985'
     Input.ExpenseInputForm: '1679866786840686636553602.4291'
     Input.StockInputForm: 7MYSTEFMWLERSXWHMZVPLOZHKNV2AAJO
     Input.AccountMaintForm: '1679938376387228133454622.95874'
@@ -15,6 +16,7 @@ unique_ids:
     Debug.form_poc_main: I4UQL5D742KHJ2RDJH22CP7RC7QSJ56P
     Input.ExpenseInputForm.ExpenseInputRPTemplate: '1679866798759321711192937.876'
     Report.ExpenseReportForm: SVBUOIX7NY24L72NVIWCMW2E2G6EHBY2
+    Debug.form_poc3.ItemTemplate1: '1681770237164378049350760.0271'
     Input.StockInputForm.StockInputRPTemplate: RATFOYIZP6VUKZC3UPCLVGOSPW6MLNYC
     Debug.form_poc1.RowTemplate1: '1680305819662177003996200.11398'
     Report.PnLReportForm.PnLReportRPTemplate: OUTTZAPFSS7IJQ6B6S7IQ5RBBM6UKNAW
