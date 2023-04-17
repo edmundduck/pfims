@@ -146,29 +146,33 @@ def delete_transactions(tid, iid_list):
     try:
         if len(iid_list) > 0:
             conn = sysmod.psqldb_connect()
+            # conn.autocommit = True
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
-                sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {p1} AND iid IN {p2}"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=tid,
-                    p2=args
-                )
-                cur.execute(stmt)
+                cur.execute("DELETE FROM " + sysmod.schemafin() + ".exp_transactions WHERE tab_id = " + str(tid) + " AND iid IN " + args)
+                # sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {p1} AND iid IN {p2}"
+                # stmt = sql.format(
+                #     schema=sysmod.schemafin(),
+                #     p1=tid,
+                #     p2=args
+                # )
+                # cur.execute(stmt)
                 conn.commit()
                 count = cur.rowcount
-                print(cur.statusmessage)
-                print(count)
                 if count <= 0:
                     raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
-                conn.close()
+                print(cur.query)
+                print(cur.statusmessage)
+                print(count)
+                cur.close()
             return count
         return 0
-    except psycopg2.OperationalError as err:
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_transactions.__name__, err)
-        # conn.rollback()
-        cur.close()
-        return None
+        conn.rollback()
+    finally:
+        if conn is not None: conn.close()        
+    return None
 
 @anvil.server.callable
 # Save expense tab
