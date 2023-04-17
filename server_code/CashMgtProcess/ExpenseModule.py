@@ -57,11 +57,6 @@ def get_selected_expensetab_attr(selected_tab):
         return [row['tab_id'], row['tab_name']]
 
 @anvil.server.callable
-# Generate default transaction rows
-def generate_init_transactions():
-    return [{} for i in range(2)]
-
-@anvil.server.callable
 # Return transactions for repeating panel to display based on expense tab selection dropdown
 def select_transactions(tid):
     if tid is not None:
@@ -75,19 +70,16 @@ def select_transactions(tid):
             cur.execute(stmt)
             rows = cur.fetchall()
             cur.close()
-        return list(rows) if len(rows) > 0 else generate_init_transactions()
-    else:
-        return generate_init_transactions()
+        return list(rows)
+    return []
 
 @anvil.server.callable
 # Insert or update transactions into "exp_transactions" DB table
 # Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
-def upsert_transactions(tid, rows, del_iid = []):
+def upsert_transactions(tid, rows):
+    conn = None
+    count = None
     try:
-        if len(del_iid) > 0:
-            count = delete_transactions(tid, del_iid)
-            if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
-
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
@@ -105,19 +97,6 @@ def upsert_transactions(tid, rows, del_iid = []):
                     # also makes None becomes string so cannot be auto converted to NULL when execute
                     # mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
                     if tj.isValidRecord(): mogstr.append(tj.getDatabaseRecord())
-                # args = ",".join(mogstr)
-                # cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                # remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
-                # trandate=EXCLUDED.trandate, \
-                # account_id=EXCLUDED.account_id, \
-                # amount=EXCLUDED.amount, \
-                # labels=EXCLUDED.labels, \
-                # remarks=EXCLUDED.remarks, \
-                # stmt_dtl=EXCLUDED.stmt_dtl \
-                # WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(
-                #         schema=sysmod.schemafin(),
-                #         p1=args
-                #     ))
                 if len(mogstr) > 0:
                     cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                     remarks, stmt_dtl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
@@ -132,47 +111,47 @@ def upsert_transactions(tid, rows, del_iid = []):
                     count = cur.rowcount
                     if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
                     cur.close()
-                    return count
-            return 0
-    except psycopg2.OperationalError as err:
+                else:
+                    count = 0
+            else:
+                count = 0
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + upsert_transactions.__name__, err)
-        # conn.rollback()
-        cur.close()
-        return None
+        conn.rollback()
+    finally:
+        if conn is not None: conn.close()        
+    return count
     
 @anvil.server.callable
 # Delete transactions from "exp_transactions" DB table
 def delete_transactions(tid, iid_list):
+    conn = None
+    count = None
     try:
         if len(iid_list) > 0:
             conn = sysmod.psqldb_connect()
-            # conn.autocommit = True
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
-                cur.execute("DELETE FROM " + sysmod.schemafin() + ".exp_transactions WHERE tab_id = " + str(tid) + " AND iid IN " + args)
-                # sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {p1} AND iid IN {p2}"
-                # stmt = sql.format(
-                #     schema=sysmod.schemafin(),
-                #     p1=tid,
-                #     p2=args
-                # )
-                # cur.execute(stmt)
+                sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {p1} AND iid IN {p2}"
+                stmt = sql.format(
+                    schema=sysmod.schemafin(),
+                    p1=tid,
+                    p2=args
+                )
+                cur.execute(stmt)
                 conn.commit()
                 count = cur.rowcount
                 if count <= 0:
                     raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
-                print(cur.query)
-                print(cur.statusmessage)
-                print(count)
                 cur.close()
-            return count
-        return 0
+        else:
+            count = 0
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_transactions.__name__, err)
         conn.rollback()
     finally:
         if conn is not None: conn.close()        
-    return None
+    return count
 
 @anvil.server.callable
 # Save expense tab

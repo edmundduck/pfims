@@ -20,7 +20,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-        self.input_repeating_panel.items = [{} for i in range(2)]
+        self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
         glo.reset_deleted_row()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
@@ -83,6 +83,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         #     n.show()
         pass
 
+    def button_add_rows_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(glo.input_expense_row_size())]
+
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_lbl_maint_form(self)
@@ -131,6 +135,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', selected_tid)
         self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
+        if len(self.input_repeating_panel.items) < glo.input_expense_row_size():
+            diff = glo.input_expense_row_size() - len(self.input_repeating_panel.items)
+            self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -165,24 +172,29 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
-
         if tab_id is None or tab_id <= 0:
-            n = Notification("ERROR: Fail to save tab {tab_name}.".format(tab_name=tab_name))
+            n = Notification("ERROR: Fail to save expense tab {tab_name}.".format(tab_name=tab_name))
             n.show()
             return
 
+        """ Reflect the change in template dropdown """
+        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        self.dropdown_tabs.selected_value = [tab_id, tab_name]
         # """ Add/Update """
-        result = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items, glo.del_iid)
+        result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
+        # """ Delete """
+        result_d = anvil.server.call('delete_transactions', tab_id, glo.del_iid)
 
-        if result is not None:
-            """ Reflect the change in template dropdown """
-            self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-            self.dropdown_tabs.selected_value = [tab_id, tab_name]
+        if result_d is not None and result_u is not None:
             glo.reset_deleted_row()
-            # self.button_submit.enabled = True
-            n = Notification("Tab {tab_name} has been saved successfully.".format(tab_name=tab_name))
+            n = Notification("Expense tab {tab_name} has been saved successfully.".format(tab_name=tab_name))
+        elif result_d is not None:
+            glo.reset_deleted_row()
+            n = Notification("WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again.".format(tab_name=tab_name))
+        elif result_u is not None:
+            n = Notification("WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again.".format(tab_name=tab_name))
         else:
-            n = Notification("ERROR: Fail to save template {tab_name}.".format(tab_name=tab_name))
+            n = Notification("WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again.".format(tab_name=tab_name))
         n.show()
 
     def panel_labels_refreshing_data_bindings(self, **event_args):
@@ -208,7 +220,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             if result is not None and result > 0:
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs_show()
-                self.input_repeating_panel.items = anvil.server.call('generate_init_transactions')
+                self.dropdown_tabs_change()
                 glo.reset_deleted_row()
                 n = Notification("Expense tab {tab_name} has been deleted.".format(tab_name=to_be_del_tab_name))
                 n.show()
