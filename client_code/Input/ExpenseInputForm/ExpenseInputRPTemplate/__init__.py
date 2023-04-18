@@ -45,6 +45,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
     def validate(self, **event_args):
         """This method is called when the button is clicked"""
+        if self.row_acct.selected_value in (None, '') and self.row_amt.text in (None, '') and self.row_date.date in (None, ''):
+            return True
         v = Validator()
 
         # To access the parent form, needs to access 3 parent levels ...
