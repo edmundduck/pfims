@@ -9,15 +9,15 @@ components:
   components:
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: '', visible: true, text: Red, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
+      foreground: 'theme:White', visible: true, text: Highlight the field, font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
     name: button_1
     layout_properties: {grid_position: 'CWNGTK,GMWFMI'}
     event_bindings: {click: button_1_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: '', visible: true, text: Green, font_size: null, font: '', spacing_above: small,
+      foreground: '', visible: true, text: Dummy, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: button_2
