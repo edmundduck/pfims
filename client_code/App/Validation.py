@@ -42,6 +42,7 @@ to check the status of the form.
             self._validity[component] = result
             if error_lbl is not None:
                 error_lbl.visible = not result
+            component.background = 'Red'
             self._check()
         
         for e in event_list:
@@ -81,6 +82,7 @@ to check the status of the form.
     def enable_when_valid(self, component):
         def on_change(is_valid):
             component.enabled = is_valid
+            component.background = 'White'
         self._actions.append(on_change)
         self._check()
     
