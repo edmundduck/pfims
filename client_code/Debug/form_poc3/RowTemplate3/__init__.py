@@ -17,6 +17,6 @@ class RowTemplate3(RowTemplate3Template):
 
     def validate(self, **properties):
         v = Validator()
-        v.require_text_field(self.text_box_1, self.parent.parent.parent.valerror, True)
+        v.require_text_field(self.text_box_1, self.parent.parent.parent.valerror, False)
         v.highlight_when_invalid(self.text_box_1, 'rgb(245,135,200)', self.text_box_1.background)
         
