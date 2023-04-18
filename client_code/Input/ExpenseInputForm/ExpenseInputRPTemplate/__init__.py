@@ -16,6 +16,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = cache.get_caching_accounts()
+        self.add_event_handler('x-validate', self.validate)
+        
         # if self.item['amt'] < 0:
         #     self.foreground = 'Black'
         # else:
@@ -52,22 +54,13 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         #print(self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
-        v.require_text_field(self.row_acct, self.parent.parent.parent.valerror_2, True)
+        v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
         v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
+        v.highlight_when_invalid(self.row_date, 'rgb(245,135,200)', self.row_date.background)
+        v.highlight_when_invalid(self.row_acct, 'rgb(245,135,200)', self.row_acct.background)
+        v.highlight_when_invalid(self.row_amt, 'rgb(245,135,200)', self.row_amt.background)
 
-        if v.is_valid():
-            self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
-            self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
-            self.row_pnl.text = anvil.server.call('cal_profit', self.row_sales.text, self.row_cost.text, self.row_fee.text)
-
-            self.input_data_panel_readonly.visible = True
-            self.input_data_panel_editable.visible = False
-
-            glo.track_input_stock_journals_change()
-            self.parent.raise_event('x-disable-submit-button')
-
-            #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
-            self.parent.raise_event('x-save-change')
+        return v.is_valid()
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""

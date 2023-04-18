@@ -45,24 +45,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                     label_list += [i.tag]
         return label_list
 
-    def button_plus_click(self, **event_args):
-        """This method is called when the button is clicked"""
-        v = Validator()
-        v.display_when_invalid(self.valerror_title)
-        v.require_date_field(self.input_date, self.valerror_1, True)
-        v.require_selected(self.dropdown_acct, self.valerror_2, True)
-        v.require_text_field(self.input_amt, self.valerror_3, True)
-
-        new_data = {"date": self.input_date.date,
-                    "acct": self.dropdown_acct.selected_value,
-                    "amt": self.input_amt.text,
-                    "remarks": self.input_remarks.text,
-                    "stmt_dtl": self.input_stmt_dtl.text,
-                    "labels": self._getall_selected_labels(),
-                    "iid": None}
-
-        self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
-
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         # to_be_submitted_templ_name = self.dropdown_templ.selected_value
@@ -168,6 +150,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
 
     def button_save_click(self, **event_args):
+        """Validation"""
+        result = self.input_repeating_panel.raise_event_on_children('x-validate')
+        print(result)
+        if result is not True:
+            return
+
         """This method is called when the button is clicked"""
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
