@@ -101,6 +101,7 @@ to check the status of the form.
         
     def is_valid(self):
         """Return True if this form is valid, False if it's not"""
+        print (self._validity.values())
         return all(self._validity.values())
     
     def show_all_errors(self):
