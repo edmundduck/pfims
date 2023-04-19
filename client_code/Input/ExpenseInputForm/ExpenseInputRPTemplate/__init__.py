@@ -58,16 +58,16 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
         v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
-        v.highlight_when_invalid(self.row_date, 'rgb(245,135,200)', self.row_date.background)
-        v.highlight_when_invalid(self.row_acct, 'rgb(245,135,200)', self.row_acct.background)
-        v.highlight_when_invalid(self.row_amt, 'rgb(245,135,200)', self.row_amt.background)
+        v.highlight_when_invalid(self.row_date, glo.validation_errfield_colour(), self.row_date.background)
+        v.highlight_when_invalid(self.row_acct, glo.validation_errfield_colour(), self.row_acct.background)
+        v.highlight_when_invalid(self.row_amt, glo.validation_errfield_colour(), self.row_amt.background)
 
         return v.is_valid()
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.parent.raise_event('x-switch-to-save-button')
-        if self.item['iid'] is not None: glo.add_deleted_row(self.item['iid'])
+        if self.item.get('iid') is not None: glo.add_deleted_row(self.item['iid'])
         self.remove_from_parent()
 
     def row_date_change(self, **event_args):

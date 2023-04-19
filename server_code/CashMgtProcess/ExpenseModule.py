@@ -92,6 +92,7 @@ def upsert_transactions(tid, rows):
                 for row in rows:
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
+                    print(tj.__str__())
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
                     # mogrify makes the tuple double quoted as string, causing "TypeError: not all arguments converted during string formatting"
                     # also makes None becomes string so cannot be auto converted to NULL when execute
@@ -183,6 +184,7 @@ def save_expensetab(id, name):
                 )
             cur.execute(stmt)
             conn.commit()
+            print(cur.query)
             tid = cur.fetchone()
             if tid['tab_id'] < 0:
                     raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))

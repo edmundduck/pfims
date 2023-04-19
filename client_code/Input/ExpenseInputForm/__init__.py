@@ -23,13 +23,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         glo.reset_deleted_row()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
-    def _switch_to_submit_button(self):
+    def _switch_to_submit_button(self, **event_args):
         self.button_save_exptab.text = "SUBMIT TAB"
         self.button_save_exptab.background = 'theme:Primary 500'
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_submit_click)
 
-    def _switch_to_save_button(self):
+    def _switch_to_save_button(self, **event_args):
         self.button_save_exptab.text = "SAVE DRAFT"
         self.button_save_exptab.background = 'theme:Secondary 500'
         self.button_save_exptab.remove_event_handler('click')
@@ -201,10 +201,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             if result is not None and result > 0:
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs_show()
-                self.dropdown_tabs_change()
+                self.dropdown_tabs.raise_event('change')
                 glo.reset_deleted_row()
                 n = Notification("Expense tab {tab_name} has been deleted.".format(tab_name=to_be_del_tab_name))
-                n.show()
             else:
                 n = Notification("ERROR: Fail to delete expense tab {tab_name}.".format(tab_name=to_be_del_tab_name))
-                n.show()
+            n.show()
