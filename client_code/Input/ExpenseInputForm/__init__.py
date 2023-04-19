@@ -9,6 +9,7 @@ from datetime import date
 from ...App import Global as glo
 from ...App import Routing
 from ...App.Validation import Validator
+from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
     def __init__(self, **properties):
@@ -63,27 +64,21 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when an item is selected"""
         selected_lid = self.dropdown_labels.selected_value[0] if self.dropdown_labels.selected_value is not None else None
         selected_lname = self.dropdown_labels.selected_value[1] if self.dropdown_labels.selected_value is not None else None
-        for row in self.input_repeating_panel.get_components():
-            if row.row_cb_datarow.checked is True:
-                b = Button(text=selected_lname,
-                        icon='fa:minus',
-                        foreground="White",
-                        background="Blue",
-                        font_size=8,
-                        align="left",
-                        tag=selected_lid
-                        )
-                row.row_panel_labels.add_component(b, False, name=selected_lid)
-                b.set_event_handler('click', self.label_button_minus_click)
-                row.hidden_lid.text =  + str(selected_lid)
-                print(self.item['labels'])
+        self.input_repeating_panel.raise_event_on_children('x-create-lbl-button', selected_lid=selected_lid, selected_lname=selected_lname)
+        # for row in self.input_repeating_panel.get_components():
+        #     if row.row_cb_datarow.checked is True:
+        #         b = Button(text=selected_lname,
+        #                 icon='fa:minus',
+        #                 foreground="White",
+        #                 background="Blue",
+        #                 font_size=8,
+        #                 align="left",
+        #                 tag=selected_lid
+        #                 )
+        #         row.hidden_lid.text = row.hidden_lid.text + str(selected_lid) + ","
+        #         row.row_panel_labels.add_component(b, False, name=selected_lid)
+        #         b.set_event_handler('click', expintmpl().label_button_minus_click)
         
-    def label_button_minus_click(self, **event_args):
-        b = event_args['sender']
-        print(b.text)
-        print(b.id)
-        b.remove_from_parent()
-
     def dropdown_acct_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_acct.items = anvil.server.call('generate_accounts_dropdown')
