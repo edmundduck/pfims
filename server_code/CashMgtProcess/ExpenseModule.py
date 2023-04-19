@@ -90,6 +90,7 @@ def upsert_transactions(tid, rows):
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
                 for row in rows:
+                    print(row)
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
                     print(tj.__str__())
