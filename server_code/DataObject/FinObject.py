@@ -78,6 +78,7 @@ class CashTransaction:
 
     def assignFromDict(self, dict):
         for key in dict.keys():
+            if key == 'labels': print("labels:", dict.get(key))
             self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
         return self
 
@@ -88,5 +89,3 @@ class CashTransaction:
             if self.attr.get(item) is None:
                 return False
         return True
-        
-        
