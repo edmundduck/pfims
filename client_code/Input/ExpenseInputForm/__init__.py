@@ -75,6 +75,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                         )
                 row.row_panel_labels.add_component(b, False, name=selected_lid)
                 b.set_event_handler('click', self.label_button_minus_click)
+                row.row_panel_labels.tag.append(selected_lid)
+                print(row.row_panel_labels.tag)
         
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']

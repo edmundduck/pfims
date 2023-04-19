@@ -15,6 +15,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.row_panel_labels.tag = []
         self.row_acct.items = cache.get_caching_accounts()
         # self.add_event_handler('x-validate', self._validate)
         
