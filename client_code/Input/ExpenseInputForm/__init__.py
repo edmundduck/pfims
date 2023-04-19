@@ -16,27 +16,25 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        #self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
-        #self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
+        self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
         glo.reset_deleted_row()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
-    def save_row_change(self, **event_args):
-        """
-        *** ESSENTIAL ***
-        Update child items from repeating panel to parent form items
-        Refer to the following reference links for detail
-        https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
-        https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
-        https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
-        """
-        # TODO - Improve the update change logic so that don't have to go through whole list everytime
-        self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
-                                            for c in self.input_repeating_panel.get_components()]
+    def _switch_to_submit_button(self):
+        self.button_save_exptab.text = "SUBMIT TAB"
+        self.button_save_exptab.background = 'theme:Primary 500'
+        self.button_save_exptab.remove_event_handler('click')
+        self.button_save_exptab.add_event_handler('click', self.button_submit_click)
 
+    def _switch_to_save_button(self):
+        self.button_save_exptab.text = "SAVE DRAFT"
+        self.button_save_exptab.background = 'theme:Secondary 500'
+        self.button_save_exptab.remove_event_handler('click')
+        self.button_save_exptab.add_event_handler('click', self.button_save_click)
+        
     def _getall_selected_labels(self):
         label_list = []
         for i in self.panel_labels.get_components():
@@ -44,26 +42,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 if i.icon == 'fa:minus':
                     label_list += [i.tag]
         return label_list
-
-    def button_submit_click(self, **event_args):
-        """This method is called when the button is clicked"""
-        # to_be_submitted_templ_name = self.dropdown_templ.selected_value
-        # templ_id = anvil.server.call('get_template_id', to_be_submitted_templ_name)
-        # templ_name = self.templ_name.text
-        # broker_id = self.dropdown_broker.selected_value
-        # result = anvil.server.call('submit_templates', templ_id, True)
-
-        # if result is not None and result > 0:
-        #     """ Reflect the change in template dropdown """
-        #     self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-        #     self.dropdown_templ.raise_event('change')
-
-        #     n = Notification("Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only.".format(templ_name=to_be_submitted_templ_name))
-        #     n.show()
-        # else:
-        #     n = Notification("ERROR: Fail to submit template {templ_name}.".format(templ_name=to_be_submitted_templ_name))
-        #     n.show()
-        pass
 
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -151,8 +129,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_save_click(self, **event_args):
         """Validation"""
-        result = self.input_repeating_panel.raise_event_on_children('x-validate')
-        print(result)
+        result = all(c._validate() for c in self.input_repeating_panel.get_components())
         if result is not True:
             return
 
@@ -175,6 +152,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if result_d is not None and result_u is not None:
             glo.reset_deleted_row()
+            self._switch_to_submit_button()
             n = Notification("Expense tab {tab_name} has been saved successfully.".format(tab_name=tab_name))
         elif result_d is not None:
             glo.reset_deleted_row()
@@ -183,6 +161,21 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             n = Notification("WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again.".format(tab_name=tab_name))
         else:
             n = Notification("WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again.".format(tab_name=tab_name))
+        n.show()
+
+    def button_submit_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        tab_name = self.tab_name.text
+        tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
+        result = anvil.server.call('submit_expensetab', tab_id, True)
+
+        if result is not None and result > 0:
+            """ Reflect the change in template dropdown """
+            self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+            self.dropdown_tabs.raise_event('change')
+            n = Notification("Expense tab {tab_name} has been submitted.".format(tab_name=tab_name))
+        else:
+            n = Notification("ERROR: Fail to submit expense tab {tab_name}.".format(tab_name=tab_name))
         n.show()
 
     def panel_labels_refreshing_data_bindings(self, **event_args):

@@ -28,7 +28,7 @@ from ..System import SystemModule as sysmod
 def generate_expensetabs_dropdown():
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.expensetab ORDER BY tab_id ASC, tab_name ASC"
+        sql = "SELECT * FROM {schema}.expensetab WHERE submitted=FALSE ORDER BY tab_id ASC, tab_name ASC"
         stmt = sql.format(
             schema=sysmod.schemafin()
         )
@@ -193,6 +193,44 @@ def save_expensetab(id, name):
         conn.rollback()
         cur.close()
         return None
+
+@anvil.server.callable
+# Submit expense tab
+def submit_expensetab(id, submitted):
+    try:
+        currenttime = datetime.now()
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            if submitted is True:
+                sql = "UPDATE {schema}.expensetab SET submitted={p2}, tab_submitted='{p3}' \
+                WHERE tab_id={p1} RETURNING tab_id"
+                stmt = sql.format(
+                    schema=sysmod.schemafin(),
+                    p1=id,
+                    p2=submitted,
+                    p3=currenttime
+                )
+            else:
+                sql = "UPDATE {schema}.expensetab SET submitted={p2} \
+                WHERE tab_id={p1} RETURNING tab_id"
+                stmt = sql.format(
+                    schema=sysmod.schemafin(),
+                    p1=id,
+                    p2=submitted
+                )
+            cur.execute(stmt)
+            conn.commit()
+            tid = cur.fetchone()
+            if tid['tab_id'] < 0:
+                    raise psycopg2.OperationalError("Tab (id:{0}) submission fail.".format(template_id))
+            cur.close()
+        return tid['tab_id']
+    except (Exception, psycopg2.OperationalError) as err:
+        sysmod.print_data_debug("OperationalError in " + submit_expensetab.__name__, err)
+        conn.rollback()
+    finally:
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Delete expense tab

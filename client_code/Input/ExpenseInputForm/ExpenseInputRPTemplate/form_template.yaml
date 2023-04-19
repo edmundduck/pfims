@@ -34,6 +34,7 @@ components:
     layout_properties: {column: ROQBQR}
     data_bindings:
     - {property: text, code: 'self.item[''stmt_dtl'']', writeback: true}
+    event_bindings: {change: row_stmt_dtl_change}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
@@ -60,6 +61,7 @@ components:
     layout_properties: {column: DGKRSZ}
     data_bindings:
     - {property: text, code: 'self.item[''remarks'']', writeback: true}
+    event_bindings: {change: row_remarks_change}
   - type: DatePicker
     properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
       placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: 12,
@@ -69,6 +71,7 @@ components:
     layout_properties: {column: DNGCRO}
     data_bindings:
     - {property: date, code: 'self.item[''trandate'']', writeback: true}
+    event_bindings: {change: row_date_change}
   - type: DropDown
     properties:
       role: null
@@ -93,6 +96,7 @@ components:
     layout_properties: {column: RMITXR}
     data_bindings:
     - {property: selected_value, code: 'self.item[''account_id'']', writeback: true}
+    event_bindings: {change: row_acct_change}
   - type: TextBox
     properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -102,6 +106,7 @@ components:
     layout_properties: {column: JRLRWP}
     data_bindings:
     - {property: text, code: 'self.item[''amount'']', writeback: true}
+    event_bindings: {change: row_amt_change}
   data_bindings:
   - {property: item, code: self.item}
 is_package: true
