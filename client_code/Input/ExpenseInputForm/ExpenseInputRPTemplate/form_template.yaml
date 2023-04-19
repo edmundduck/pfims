@@ -27,9 +27,12 @@ components:
     - {property: tag, code: 'self.item[''labels'']'}
     components:
     - type: Label
-      properties: {}
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: '', font_size: 8, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: hidden_lid
-      layout_properties: {grid_position: 'YKQUUN,COFAIR'}
+      layout_properties: {grid_position: 'BKINDL,YHMRKF', column: TOZXSD}
       data_bindings:
       - {property: text, code: 'self.item[''labels'']'}
   - type: TextBox
