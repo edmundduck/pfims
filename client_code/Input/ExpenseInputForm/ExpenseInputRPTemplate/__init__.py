@@ -29,8 +29,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()
             for i in label_list.split(","):
-                lbl_attr = lbl_map.get(i)
-                b = Button(text=lbl_attr[0],
+                j.get("name") for j in lbls if j.get("id") == i
+                for j in lbls:
+                    if j.get("id") == i:
+                        lbl_name = j.get("name")
+                b = Button(text=lbl_name,
                         icon='fa:minus',
                         foreground="White",
                         background="Blue",
@@ -38,7 +41,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                         align="left",
                         tag=i
                         )
-                self.row_panel_labels.add_component(b, False, name=lbl_attr[0])
+                self.row_panel_labels.add_component(b, False, name=lbl_name)
                 b.set_event_handler('click', self.label_button_minus_click)
 
     def label_button_minus_click(self, **event_args):
