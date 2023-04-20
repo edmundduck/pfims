@@ -17,6 +17,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # Any code you write here will run when the form opens.
         self.row_acct.items = cache.get_caching_accounts()
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
+        self.row_panel_labels.full_width_row = False
         
         # if self.item['amt'] < 0:
         #     self.foreground = 'Black'
@@ -38,17 +39,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             b.set_event_handler('click', self.label_button_minus_click)
 
     def label_button_minus_click(self, **event_args):
-        print(event_args)
         b = event_args['sender']
-        
-        print("1:", b.tag)
         loc = self.hidden_lid.text.find(str(b.tag))
-        print("2:", self.hidden_lid.text)
         if loc+len(str(b.tag))+1 >= len(self.hidden_lid.text):
             self.hidden_lid.text = self.hidden_lid.text[:loc]
         else:
             self.hidden_lid.text = self.hidden_lid.text[:loc] + self.hidden_lid.text[loc+len(str(b.tag))+1]
-        print("3:", self.hidden_lid.text)
         b.remove_from_parent()
 
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
@@ -62,7 +58,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     tag=selected_lid
                     )
             self.hidden_lid.text = self.hidden_lid.text + str(selected_lid) + ","
-            self.row_panel_labels.add_component(b, False, name=selected_lid)
+            self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             b.set_event_handler('click', self.label_button_minus_click)
         
     def _validate(self, **event_args):
