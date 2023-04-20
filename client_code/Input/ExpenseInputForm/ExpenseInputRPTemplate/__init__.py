@@ -29,7 +29,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()
             for i in label_list.split(","):
-                j.get("name") for j in lbls if j.get("id") == i
+                lbl_name = None
                 for j in lbls:
                     if j.get("id") == i:
                         lbl_name = j.get("name")
