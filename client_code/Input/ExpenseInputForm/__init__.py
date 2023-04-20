@@ -92,9 +92,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
-            # TODO - partial hardcoded column definition, need to cater if the col definition is changed in design
-            first_half_col = self.data_grid_1.columns[:3]
-            second_half_col = self.data_grid_1.columns[3:]
+            pos = 0
+            for c in self.data_grid_1.columns:
+                if c['data_key'] is not 'amount':
+                    pos = pos + 1
+                else:
+                    break
+            first_half_col = self.data_grid_1.columns[:pos+1]
+            second_half_col = self.data_grid_1.columns[pos+1:]
             column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'remarks'][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
 
@@ -106,9 +111,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
-            # TODO - partial hardcoded column definition, need to cater if the col definition is changed in design
-            first_half_col = self.data_grid_1.columns[:4] if self.data_grid_1.columns[3]['data_key'] == 'remarks' else self.data_grid_1.columns[:3] 
-            second_half_col = self.data_grid_1.columns[4:] if self.data_grid_1.columns[3]['data_key'] == 'remarks' else self.data_grid_1.columns[3:]
+            pos = 0
+            for c in self.data_grid_1.columns:
+                if c['data_key'] is not 'amount':
+                    pos = pos + 1
+                else:
+                    break
+            first_half_col = self.data_grid_1.columns[:pos+2] if self.data_grid_1.columns[pos+1]['data_key'] == 'remarks' else self.data_grid_1.columns[:pos+1] 
+            second_half_col = self.data_grid_1.columns[pos+2:] if self.data_grid_1.columns[pos+1]['data_key'] == 'remarks' else self.data_grid_1.columns[pos+1:]
             column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'stmt_dtl'][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
 
