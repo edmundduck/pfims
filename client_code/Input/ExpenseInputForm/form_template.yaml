@@ -175,8 +175,9 @@ components:
     - {id: ROQBQR, title: Statement Detail, data_key: stmt_dtl, $$hashKey: 'object:57645',
       width: '150'}
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '30', $$hashKey: 'object:40092'}
-    - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '30', $$hashKey: 'object:40093'}
-    - {id: HHYTTP, title: '', data_key: labels, $$hashKey: 'object:57643', width: '900'}
+    - {id: TOZXSD, title: '', data_key: labels, width: '30', $$hashKey: 'object:40093'}
+    - {id: HHYTTP, title: '', data_key: labels_button, $$hashKey: 'object:57643',
+      width: '900'}
     auto_header: true
     tooltip: ''
     border: ''

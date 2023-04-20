@@ -185,7 +185,6 @@ def save_expensetab(id, name):
                 )
             cur.execute(stmt)
             conn.commit()
-            print(cur.query)
             tid = cur.fetchone()
             if tid['tab_id'] < 0:
                     raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))
