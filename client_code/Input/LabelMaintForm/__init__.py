@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...App import Routing
+from ...App import Caching as cache
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):
@@ -22,12 +23,12 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def dropdown_lbl_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_lbl_list.items = anvil.server.call('generate_labels_dropdown')
+        self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
         self.dropdown_lbl_list.selected_value = None
 
     def dropdown_moveto_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_moveto.items = anvil.server.call('generate_labels_dropdown')
+        self.dropdown_moveto.items = cache.get_caching_labels_dropdown()
         self.dropdown_moveto.selected_value = None
         # TODO - Enable after Move to logic is implemented
         self.dropdown_moveto.enabled = False
@@ -47,38 +48,44 @@ class LabelMaintForm(LabelMaintFormTemplate):
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_id = anvil.server.call('create_label',
-                                    name=self.text_lbl_name.text,
+                                    name=lbl_name,
                                     keywords=self.text_keywords.text,
                                     status=True
                                 )
+        lbl_name = self.text_lbl_name.text
 
         if lbl_id is None or lbl_id <= 0:
-            n = Notification("ERROR: Fail to create label {lbl_name}.".format(lbl_name=self.text_lbl_name.text))
+            n = Notification("ERROR: Fail to create label {lbl_name}.".format(lbl_name=lbl_name))
         else:
             """ Reflect the change in labels dropdown """
-            self.dropdown_lbl_list.items = anvil.server.call('generate_labels_dropdown')
-            self.dropdown_lbl_list.selected_value = [lbl_id, self.text_lbl_name.text]
+            cache.reset_caching_labels()
+            self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+            self.dropdown_lbl_list.selected_value = [lbl_id, lbl_name]
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
-            n = Notification("Label {lbl_name} has been created successfully.".format(lbl_name=self.text_lbl_name.text))
+            n = Notification("Label {lbl_name} has been created successfully.".format(lbl_name=lbl_name))
         n.show()
         return
 
     def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
+        lbl_id, lbl_name = self.dropdown_lbl_list.selected_value
+        # lbl_name retrieved should be replaced by text field value
+        lbl_name = self.text_lbl_name.text
         result = anvil.server.call('update_label',
-                                   id=self.hidden_lbl_id.text,
-                                   name=self.text_lbl_name.text,
+                                   id=lbl_id,
+                                   name=lbl_name,
                                    keywords=self.text_keywords.text,
                                    status=self.dropdown_status.selected_value
                                 )
 
         if result is None or result <= 0:
-            n = Notification("ERROR: Fail to update label {lbl_name}.".format(lbl_name=self.text_lbl_name.text))
+            n = Notification("ERROR: Fail to update label {lbl_name}.".format(lbl_name=lbl_name))
         else:
             """ Reflect the change in labels dropdown """
-            self.dropdown_lbl_list.items = anvil.server.call('generate_labels_dropdown')
-            self.dropdown_lbl_list.selected_value = self.hidden_lbl_id.text
-            n = Notification("Label {lbl_name} has been updated successfully.".format(lbl_name=self.text_lbl_name.text))
+            cache.reset_caching_labels()
+            self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+            self.dropdown_lbl_list.selected_value = [lbl_id, lbl_name]
+            n = Notification("Label {lbl_name} has been updated successfully.".format(lbl_name=lbl_name))
         n.show()
         return
 
@@ -99,6 +106,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
                         ])
 
         if userconf == "Y":
+            cache.reset_caching_labels()
             result = anvil.server.call('delete_label', selected_lbl_id)
             if result is not None and result > 0:
                 """ Reflect the change in label dropdown """

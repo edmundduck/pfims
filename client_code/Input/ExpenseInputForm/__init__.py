@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from datetime import date
 from ...App import Global as glo
 from ...App import Routing
+from ...App import Caching as cache
 from ...App.Validation import Validator
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
@@ -58,7 +59,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_labels.items = anvil.server.call('generate_labels_dropdown')
+        self.dropdown_labels.items = cache.get_caching_labels_dropdown()
 
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""

@@ -16,6 +16,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = cache.get_caching_accounts()
+        self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.row_panel_labels.full_width_row = False
         
@@ -25,18 +26,21 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         #     self.foreground = 'Green'
 
     def _generateall_selected_labels(self, label_list):
-        for i in label_list:
-            lbl_attr = anvil.server.call('get_selected_label_attr', i)
-            b = Button(text=lbl_attr[1],
-                    icon='fa:minus',
-                    foreground="White",
-                    background="Blue",
-                    font_size=8,
-                    align="left",
-                    tag=lbl_attr[0]
-                    )
-            self.row_panel_labels.add_component(b, False, name=lbl_attr[0])
-            b.set_event_handler('click', self.label_button_minus_click)
+        if label_list not in ('', None):
+            lbl_attr = cache.get_caching_labels_dropdown()
+            print(lbl_attr)
+            for i in label_list.split(","):
+                lbl_attr = anvil.server.call('get_selected_label_attr', i)
+                b = Button(text=lbl_attr[1],
+                        icon='fa:minus',
+                        foreground="White",
+                        background="Blue",
+                        font_size=8,
+                        align="left",
+                        tag=lbl_attr[0]
+                        )
+                self.row_panel_labels.add_component(b, False, name=lbl_attr[0])
+                b.set_event_handler('click', self.label_button_minus_click)
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
@@ -46,6 +50,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         else:
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[loc+len(str(b.tag))+1]
         b.remove_from_parent()
+        self.parent.raise_event('x-switch-to-save-button')
 
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         if self.row_cb_datarow.checked is True:
@@ -58,8 +63,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     tag=selected_lid
                     )
             self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ","
+            # Without self.item['labels'] assignment the data binding won't work
+            self.item['labels'] = self.hidden_lbls_id.text
             self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             b.set_event_handler('click', self.label_button_minus_click)
+            self.parent.raise_event('x-switch-to-save-button')
         
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
