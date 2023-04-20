@@ -40,5 +40,4 @@ def get_caching_labels_list():
     global labels_list
     if labels_list is None:
         labels_list = anvil.server.call('generate_labels_list')
-        print(labels_list)
     return labels_list

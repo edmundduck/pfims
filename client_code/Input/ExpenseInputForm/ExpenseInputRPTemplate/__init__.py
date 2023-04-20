@@ -31,8 +31,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             for i in label_list.split(","):
                 lbl_name = None
                 for j in lbls:
-                    if j.get("id") == i:
-                        lbl_name = j.get("name")
+                    if str(j.get("id")).strip() == i:
+                        lbl_name = j.get("name").strip()
                 b = Button(text=lbl_name,
                         icon='fa:minus',
                         foreground="White",
