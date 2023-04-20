@@ -10,6 +10,3 @@ from anvil.tables import app_tables
 #
 #    Package1.say_hello()
 #
-
-def say_hello():
-  print("Hello, world")

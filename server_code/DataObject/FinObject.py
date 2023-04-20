@@ -8,16 +8,7 @@ from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-#
-# To allow anvil.server.call() to call functions here, we mark
-# them with @anvil.server.callable.
-# Here is an example - you can replace it with your own:
-#
-# @anvil.server.callable
-# def say_hello(name):
-#   print("Hello, " + name + "!")
-#   return 42
-#
+
 class TradeJournal:
     def __init__(self, attr=None):
         self.attr = attr if attr is not None else {}
@@ -78,7 +69,6 @@ class CashTransaction:
 
     def assignFromDict(self, dict):
         for key in dict.keys():
-            if key == 'labels': print("labels:", dict.get(key))
             self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
         return self
 

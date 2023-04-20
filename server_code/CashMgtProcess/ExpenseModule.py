@@ -12,16 +12,6 @@ from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-#
-# To allow anvil.server.call() to call functions here, we mark
-# them with @anvil.server.callable.
-# Here is an example - you can replace it with your own:
-#
-# @anvil.server.callable
-# def say_hello(name):
-#   print("Hello, " + name + "!")
-#   return 42
-#
 
 @anvil.server.callable
 # Generate expense tabs dropdown items
@@ -90,10 +80,8 @@ def upsert_transactions(tid, rows):
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
                 for row in rows:
-                    print("ROW=", row)
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
-                    print(tj.__str__())
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
                     # mogrify makes the tuple double quoted as string, causing "TypeError: not all arguments converted during string formatting"
                     # also makes None becomes string so cannot be auto converted to NULL when execute

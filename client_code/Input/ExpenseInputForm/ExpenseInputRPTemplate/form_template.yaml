@@ -19,13 +19,6 @@ components:
       icon: ''}
     name: row_iid
     layout_properties: {column: JNEVXO}
-  - type: ColumnPanel
-    properties: {col_widths: '{}'}
-    name: row_panel_labels
-    layout_properties: {column: HHYTTP}
-    data_bindings:
-    - {property: tag, code: 'self.item[''labels'']'}
-    components: []
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -117,6 +110,10 @@ components:
     layout_properties: {column: TOZXSD}
     data_bindings:
     - {property: text, code: 'self.item[''labels'']', writeback: true}
+  - type: FlowPanel
+    properties: {}
+    name: row_panel_labels
+    layout_properties: {column: HHYTTP}
   data_bindings:
   - {property: item, code: self.item}
 is_package: true

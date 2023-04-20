@@ -28,7 +28,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()
-            for i in label_list.split(","):
+            for i in label_list[:-1].split(","):
                 lbl_name = None
                 for j in lbls:
                     if str(j.get("id")).strip() == i:
@@ -39,6 +39,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                         background="Blue",
                         font_size=8,
                         align="left",
+                        spacing_above="small",
+                        spacing_below="small",
                         tag=i
                         )
                 self.row_panel_labels.add_component(b, False, name=lbl_name)
@@ -50,7 +52,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if loc+len(str(b.tag))+1 >= len(self.hidden_lbls_id.text):
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc]
         else:
-            self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[loc+len(str(b.tag))+1]
+            self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[(loc+len(str(b.tag))+1):]
+        # Without self.item['labels'] assignment the data binding won't work
+        self.item['labels'] = self.hidden_lbls_id.text
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
