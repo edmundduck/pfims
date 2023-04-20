@@ -108,15 +108,15 @@ components:
     data_bindings:
     - {property: text, code: 'self.item[''amount'']', writeback: true}
     event_bindings: {change: row_amt_change}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
-      icon: ''}
-    name: hidden_lid
-    layout_properties: {grid_position: 'YKQUUN,COFAIR', column: TOZXSD}
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: false, foreground: '', visible: true, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: hidden_lbls_id
+    layout_properties: {column: TOZXSD}
     data_bindings:
-    - {property: text, code: 'self.item[''labels'']'}
+    - {property: text, code: 'self.item[''labels'']', writeback: true}
   data_bindings:
   - {property: item, code: self.item}
 is_package: true

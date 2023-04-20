@@ -40,11 +40,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
-        loc = self.hidden_lid.text.find(str(b.tag))
-        if loc+len(str(b.tag))+1 >= len(self.hidden_lid.text):
-            self.hidden_lid.text = self.hidden_lid.text[:loc]
+        loc = self.hidden_lbls_id.text.find(str(b.tag))
+        if loc+len(str(b.tag))+1 >= len(self.hidden_lbls_id.text):
+            self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc]
         else:
-            self.hidden_lid.text = self.hidden_lid.text[:loc] + self.hidden_lid.text[loc+len(str(b.tag))+1]
+            self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[loc+len(str(b.tag))+1]
         b.remove_from_parent()
 
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
@@ -57,7 +57,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     align="left",
                     tag=selected_lid
                     )
-            self.hidden_lid.text = self.hidden_lid.text + str(selected_lid) + ","
+            self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ","
             self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             b.set_event_handler('click', self.label_button_minus_click)
         
