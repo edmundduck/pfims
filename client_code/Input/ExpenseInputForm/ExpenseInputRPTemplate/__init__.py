@@ -27,17 +27,16 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
-            lbl_attr = cache.get_caching_labels_dropdown()
-            print(lbl_attr)
+            lbls = cache.get_caching_labels_list()
             for i in label_list.split(","):
-                lbl_attr = anvil.server.call('get_selected_label_attr', i)
-                b = Button(text=lbl_attr[1],
+                lbl_attr = lbl_map.get(i)
+                b = Button(text=lbl_attr[0],
                         icon='fa:minus',
                         foreground="White",
                         background="Blue",
                         font_size=8,
                         align="left",
-                        tag=lbl_attr[0]
+                        tag=i
                         )
                 self.row_panel_labels.add_component(b, False, name=lbl_attr[0])
                 b.set_event_handler('click', self.label_button_minus_click)

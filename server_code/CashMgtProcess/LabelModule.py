@@ -37,6 +37,24 @@ def generate_labels_dropdown():
     return content
 
 @anvil.server.callable
+# Generate labels into list
+def generate_labels_list():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC"
+        stmt = sql.format(
+            schema=sysmod.schemafin()
+        )
+        cur.execute(stmt)
+        rows = cur.fetchall()
+        cur.close()
+    content = list({
+        "id": row['id'], 
+        "name": row['name'], 
+        "status": row['status']} for row in rows)
+    return content
+
+@anvil.server.callable
 # Get selected label attributes
 def get_selected_label_attr(selected_lbl):
     if selected_lbl is None or selected_lbl == '':

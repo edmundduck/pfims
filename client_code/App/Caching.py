@@ -13,7 +13,7 @@ from anvil.tables import app_tables
 
 accounts = None
 labels = None
-labels_dict = None
+labels_list = None
 
 def get_caching_accounts():
     global accounts
@@ -34,11 +34,11 @@ def get_caching_labels_dropdown():
 def reset_caching_labels():
     global labels
     labels = None
-    labels_dict = None
+    labels_list = None
 
-def get_caching_labels_dict():
-    global labels_dict
-    if labels_dict is None:
-        labels = anvil.server.call('generate_labels_dropdown')
-        
-    return labels_dict
+def get_caching_labels_list():
+    global labels_list
+    if labels_list is None:
+        labels_list = anvil.server.call('generate_labels_list')
+        print(labels_list)
+    return labels_list
