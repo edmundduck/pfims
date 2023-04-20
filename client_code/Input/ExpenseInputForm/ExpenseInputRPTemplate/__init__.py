@@ -18,6 +18,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.get_caching_accounts()
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
+        # This setting allows multiple buttons to place in the same row
+        # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
         # if self.item['amt'] < 0:
