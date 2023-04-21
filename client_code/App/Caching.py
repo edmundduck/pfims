@@ -18,7 +18,7 @@ labels_list = None
 def get_caching_accounts():
     global accounts
     if accounts is None:
-        accounts = anvil.server.call('generate_accounts_dropdown')
+        accounts = anvil.server.call('generate_accounts_dropdown_only_id')
     return accounts
 
 def reset_caching_accounts():

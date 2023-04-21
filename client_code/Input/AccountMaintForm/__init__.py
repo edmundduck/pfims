@@ -21,7 +21,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
     def dropdown_acct_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_acct_list.items = cache.get_caching_accounts()
+        self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
         self.dropdown_acct_list.selected_value = None
 
     def dropdown_acct_list_change(self, **event_args):
@@ -60,7 +60,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         else:
             """ Reflect the change in accounts dropdown """
             cache.reset_caching_accounts()
-            self.dropdown_acct_list.items = cache.get_caching_accounts()
+            self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             n = Notification("Account {acct_name} has been created successfully.".format(acct_name=acct_name))
         n.show()
@@ -81,8 +81,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
             n = Notification("ERROR: Fail to update account {acct_name}.".format(acct_name=self.text_acct_name.text))
         else:
             """ Reflect the change in accounts dropdown """
-            cache.reset_caching_accounts()
-            self.dropdown_acct_list.items = cache.get_caching_accounts()
+            self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
             n = Notification("Account {acct_name} has been updated successfully.".format(acct_name=self.text_acct_name.text))
         n.show()
         return

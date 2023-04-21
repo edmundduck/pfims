@@ -70,7 +70,8 @@ class CashTransaction:
     def assignFromDict(self, dict):
         for key in dict.keys():
             if dict.get(key) is not None:
-                self.attr[key] = dict.get(key)[0] if key == 'account_id' else dict.get(key)
+                # self.attr[key] = dict.get(key)[0] if key == 'account_id' else dict.get(key)
+                self.attr[key] = dict.get(key)
             else:
                 (0 if key == 'iid' else '')
         return self
