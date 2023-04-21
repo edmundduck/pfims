@@ -117,9 +117,9 @@ components:
         bold: false
         underline: false
         include_placeholder: true
-      name: dropdown_ccy
+      name: dropdown_moveto
       layout_properties: {grid_position: 'NLSSIJ,VSMJOG'}
-      event_bindings: {show: dropdown_ccy_show}
+      event_bindings: {show: dropdown_moveto_show}
     - type: DropDown
       properties:
         role: null

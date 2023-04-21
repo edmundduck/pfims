@@ -33,10 +33,10 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.date_valid_to.date, \
         self.dropdown_status.selected_value = anvil.server.call('get_selected_account_attr', self.dropdown_acct_list.selected_value[0])
 
-    def dropdown_ccy_show(self, **event_args):
+    def dropdown_moveto_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_ccy.items = anvil.server.call('generate_ccy_dropdown')
-        self.dropdown_ccy.selected_value = None
+        # TODO to implement the logic
+        pass
 
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

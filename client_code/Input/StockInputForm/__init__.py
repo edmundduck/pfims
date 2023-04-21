@@ -144,7 +144,7 @@ class StockInputForm(StockInputFormTemplate):
         """ Reset row delete flag """
         glo.reset_deleted_row()
     
-    def button_delete_templ_click(self, **event_args):
+    def button_delete_exptab_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_templ_name = self.dropdown_templ.selected_value
         msg = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))

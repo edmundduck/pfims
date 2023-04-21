@@ -24,7 +24,7 @@ class form_poc3(form_poc3Template):
             print(c['data_key'])
         # column = [c for c in self.data_grid_1.columns if c['data_key'] == 'column_2'][0]
         column = self.data_grid_1.columns[0]
+        if column['data_key'] == 'column_2':
+            self.repeating_panel_1.raise_event_on_children('x-visible')
         self.data_grid_1.columns.remove(column)
         self.data_grid_1.columns = self.data_grid_1.columns
-
-
