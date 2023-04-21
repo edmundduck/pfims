@@ -16,11 +16,8 @@ from ..System import SystemModule as sysmod
 def generate_accounts_dropdown():
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_to DESC, valid_from DESC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
+        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_to DESC, valid_from DESC".format(schema=sysmod.schemafin())
+        cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
     # content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
@@ -32,11 +29,8 @@ def generate_accounts_dropdown():
 def generate_ccy_dropdown():
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.ccy ORDER BY common_seq ASC, abbv ASC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
+        sql = "SELECT * FROM {schema}.ccy ORDER BY common_seq ASC, abbv ASC".format(schema=sysmod.schemafin())
+        cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
     content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
@@ -50,11 +44,8 @@ def get_selected_account_attr(selected_acct):
     else:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.accounts WHERE id={p1}"   
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=selected_acct
-            )
+            sql = "SELECT * FROM {schema}.accounts WHERE id=%s".format(schema=sysmod.schemafin())  
+            stmt = cur.mogrify(sql, (selected_acct))
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
@@ -67,15 +58,8 @@ def create_account(name, ccy, valid_from, valid_to, status):
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "INSERT INTO {schema}.accounts (name, ccy, valid_from, valid_to, status) \
-            VALUES ('{p1}','{p2}','{p3}','{p4}',{p5}) RETURNING id"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=name,
-                p2=ccy,
-                p3=valid_from,
-                p4=valid_to,
-                p5=status
-            )
+            VALUES (%s,%s,%s,%s,%s) RETURNING id".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (name, ccy, valid_from, valid_to, status))
             cur.execute(stmt)
             conn.commit()
             id = cur.fetchone()
@@ -95,17 +79,8 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.accounts SET name='{p2}', ccy='{p3}', valid_from='{p4}', valid_to='{p5}', status={p6} \
-            WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-                p2=name,
-                p3=ccy,
-                p4=valid_from,
-                p5=valid_to,
-                p6=status
-            )
+            sql = "UPDATE {schema}.accounts SET name=%s, ccy=%s, valid_from=%s, valid_to=%s, status=%s WHERE id=%s".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (name, ccy, valid_from, valid_to, status, id))
             cur.execute(stmt)
             conn.commit()
             count = cur.rowcount
@@ -125,11 +100,8 @@ def delete_account(id):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.accounts WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-            )
+            sql = "DELETE FROM {schema}.accounts WHERE id=%s".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (id))
             cur.execute(stmt)
             conn.commit()
             count = cur.rowcount

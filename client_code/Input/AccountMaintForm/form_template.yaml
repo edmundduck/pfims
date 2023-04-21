@@ -72,7 +72,7 @@ components:
         foreground: ''
         items: []
         visible: true
-        font_size: null
+        font_size: 14
         font: ''
         spacing_above: small
         spacing_below: small
@@ -86,7 +86,7 @@ components:
       event_bindings: {show: dropdown_acct_list_show, change: dropdown_acct_list_change}
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Account name,
-        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 14,
         font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
       name: text_acct_name
@@ -108,7 +108,7 @@ components:
         foreground: ''
         items: []
         visible: true
-        font_size: null
+        font_size: 14
         font: ''
         spacing_above: small
         spacing_below: small
@@ -131,7 +131,7 @@ components:
         foreground: ''
         items: ['']
         visible: true
-        font_size: null
+        font_size: 14
         font: ''
         spacing_above: small
         spacing_below: small
@@ -151,14 +151,14 @@ components:
     - type: DatePicker
       properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
         placeholder: Date valid from, border: '', enabled: true, foreground: '', visible: true,
-        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
+        font_size: 14, font: '', spacing_above: small, spacing_below: small, italic: false,
         date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
       name: date_valid_from
       layout_properties: {grid_position: 'LPDTWG,TUQFYK'}
     - type: DatePicker
       properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
         placeholder: Date valid to, border: '', enabled: true, foreground: '', visible: true,
-        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
+        font_size: 14, font: '', spacing_above: small, spacing_below: small, italic: false,
         date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
       name: date_valid_to
       layout_properties: {grid_position: 'LPDTWG,LOEVRQ'}
@@ -169,9 +169,9 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 14, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: hidden_acct_id
       layout_properties: {grid_position: 'SZCLAG,WKKWVA'}
     - type: Button
