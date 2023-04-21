@@ -25,6 +25,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
         self.dropdown_lbl_list.selected_value = None
+        self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
 
     def dropdown_moveto_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -35,10 +36,12 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def dropdown_lbl_list_change(self, **event_args):
         """This method is called when an item is selected"""
+        lbl_id, lbl_name = self.dropdown_lbl_list.selected_value if self.dropdown_lbl_list.selected_value is not None else [None, None]
         self.hidden_lbl_id.text, \
         self.text_lbl_name.text, \
         self.text_keywords.text, \
-        self.dropdown_status.selected_value = anvil.server.call('get_selected_label_attr', self.dropdown_lbl_list.selected_value[0])
+        self.dropdown_status.selected_value = anvil.server.call('get_selected_label_attr', lbl_id)
+        self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
 
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -47,12 +50,12 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
+        lbl_name = self.text_lbl_name.text
         lbl_id = anvil.server.call('create_label',
                                     name=lbl_name,
                                     keywords=self.text_keywords.text,
                                     status=True
                                 )
-        lbl_name = self.text_lbl_name.text
 
         if lbl_id is None or lbl_id <= 0:
             n = Notification("ERROR: Fail to create label {lbl_name}.".format(lbl_name=lbl_name))
@@ -62,6 +65,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
             self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
             self.dropdown_lbl_list.selected_value = [lbl_id, lbl_name]
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
+            self.button_labels_update.enabled = True
             n = Notification("Label {lbl_name} has been created successfully.".format(lbl_name=lbl_name))
         n.show()
         return

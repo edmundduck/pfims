@@ -16,11 +16,8 @@ from ..System import SystemModule as sysmod
 def generate_labels_dropdown():
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
+        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
+        cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
     content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
@@ -31,11 +28,8 @@ def generate_labels_dropdown():
 def generate_labels_list():
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
+        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
+        cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
     content = list({
@@ -52,11 +46,8 @@ def get_selected_label_attr(selected_lbl):
     else:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.labels WHERE id={p1}"   
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=selected_lbl
-            )
+            sql = "SELECT * FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())   
+            stmt = cur.mogrify(sql, (selected_lbl, ))
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
@@ -68,14 +59,8 @@ def create_label(name, keywords, status):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.labels (name, keywords, status) \
-            VALUES ('{p1}','{p2}',{p3}) RETURNING id"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=name,
-                p2=keywords,
-                p3=status
-            )
+            sql = "INSERT INTO {schema}.labels (name, keywords, status) VALUES (%s,%s,%s) RETURNING id".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (name, keywords, status))
             cur.execute(stmt)
             conn.commit()
             id = cur.fetchone()
@@ -95,15 +80,8 @@ def update_label(id, name, keywords, status):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.labels SET name='{p2}', keywords='{p3}', status={p4} \
-            WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-                p2=name,
-                p3=keywords,
-                p4=status
-            )
+            sql = "UPDATE {schema}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (name, keywords, status, id))
             cur.execute(stmt)
             conn.commit()
             count = cur.rowcount
@@ -123,11 +101,8 @@ def delete_label(id):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.labels WHERE id={p1}"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=id,
-            )
+            sql = "DELETE FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()
             count = cur.rowcount

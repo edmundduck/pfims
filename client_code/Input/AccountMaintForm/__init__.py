@@ -61,7 +61,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
             """ Reflect the change in accounts dropdown """
             cache.reset_caching_accounts()
             self.dropdown_acct_list.items = cache.get_caching_accounts()
-            self.dropdown_acct_list.selected_value = acct_id, acct_name
+            self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             n = Notification("Account {acct_name} has been created successfully.".format(acct_name=acct_name))
         n.show()
         return
