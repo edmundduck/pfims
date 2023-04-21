@@ -22,7 +22,8 @@ class form_poc3(form_poc3Template):
         """This method is called when the button is clicked"""
         for c in self.data_grid_1.columns:
             print(c['data_key'])
-        column = [c for c in self.data_grid_1.columns if c['data_key'] == 'column_2'][0]
+        # column = [c for c in self.data_grid_1.columns if c['data_key'] == 'column_2'][0]
+        column = self.data_grid_1.columns[0]
         self.data_grid_1.columns.remove(column)
         self.data_grid_1.columns = self.data_grid_1.columns
 
