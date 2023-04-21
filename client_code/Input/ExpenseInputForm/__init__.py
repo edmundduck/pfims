@@ -74,6 +74,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def dropdown_tabs_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
 
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -83,6 +84,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if len(self.input_repeating_panel.items) < glo.input_expense_row_size():
             diff = glo.input_expense_row_size() - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
+        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -102,6 +104,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             second_half_col = self.data_grid_1.columns[pos+1:]
             column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'remarks'][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
+        self.input_repeating_panel.raise_event_on_children('x-set-remarks-visible', vis=not self.cb_hide_remarks.checked)
 
     def cb_hide_stmtdtl_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -121,6 +124,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             second_half_col = self.data_grid_1.columns[pos+2:] if self.data_grid_1.columns[pos+1]['data_key'] == 'remarks' else self.data_grid_1.columns[pos+1:]
             column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'stmt_dtl'][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
+        self.input_repeating_panel.raise_event_on_children('x-set-stmt-dtl-visible', vis=not self.cb_hide_stmtdtl.checked)
 
     def button_save_click(self, **event_args):
         """Validation"""
@@ -172,12 +176,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             n = Notification("ERROR: Fail to submit expense tab {tab_name}.".format(tab_name=tab_name))
         n.show()
-
-    def panel_labels_refreshing_data_bindings(self, **event_args):
-        """This method is called when refreshing_data_bindings is called"""
-        # TODO
-        print('change happens')
-        pass
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""

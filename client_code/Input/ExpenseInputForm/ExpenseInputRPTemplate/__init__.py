@@ -18,6 +18,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.get_caching_accounts()
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
+        self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
+        self.add_event_handler('x-set-stmt-dtl-visible', self._set_stmt_dtl_visible)
         # This setting allows multiple buttons to place in the same row
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
@@ -97,6 +99,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         v.highlight_when_invalid(self.row_amt, glo.validation_errfield_colour(), self.row_amt.background)
 
         return v.is_valid()
+
+    def _set_remarks_visible(self, vis, **event_args):
+        self.row_remarks.visible = vis
+        
+    def _set_stmt_dtl_visible(self, vis, **event_args):
+        self.row_stmt_dtl.visible = vis
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""

@@ -219,7 +219,7 @@ components:
       foreground: 'theme:White', visible: true, text: Delete Tab, font_size: null,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Gray 800', bold: false, underline: false, icon: ''}
-    name: button_delete_templ
+    name: button_delete_exptab
     layout_properties: {}
     event_bindings: {click: button_delete_click}
   - type: Button
