@@ -16,12 +16,12 @@ from ..System import SystemModule as sysmod
 def generate_accounts_dropdown():
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_to DESC, valid_from DESC".format(schema=sysmod.schemafin())
+        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(schema=sysmod.schemafin())
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    # content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
-    content = list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
+    content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
+    # content = list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
     return content
 
 @anvil.server.callable
@@ -45,7 +45,7 @@ def get_selected_account_attr(selected_acct):
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.accounts WHERE id=%s".format(schema=sysmod.schemafin())  
-            stmt = cur.mogrify(sql, (selected_acct))
+            stmt = cur.mogrify(sql, (selected_acct, ))
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
@@ -101,7 +101,7 @@ def delete_account(id):
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "DELETE FROM {schema}.accounts WHERE id=%s".format(schema=sysmod.schemafin())
-            stmt = cur.mogrify(sql, (id))
+            stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()
             count = cur.rowcount
