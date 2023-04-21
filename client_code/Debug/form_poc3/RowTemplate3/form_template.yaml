@@ -6,4 +6,12 @@ components:
   layout_properties: {column: UUWVZS}
   data_bindings:
   - {property: text, code: 'self.item[''test'']', writeback: true}
+- type: DropDown
+  properties: {}
+  name: drop_down_1
+  layout_properties: {column: TUSTXE}
+- type: DatePicker
+  properties: {}
+  name: date_picker_1
+  layout_properties: {column: SXNLWL}
 is_package: true
