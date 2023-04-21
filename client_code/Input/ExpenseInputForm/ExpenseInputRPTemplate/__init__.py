@@ -38,10 +38,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     if str(j.get("id")).strip() == i:
                         lbl_name = j.get("name").strip()
                 b = Button(text=lbl_name,
-                        icon='fa:minus',
+                        # icon='fa:minus',
                         foreground="White",
                         background="Blue",
-                        font_size=8,
+                        font_size=10,
                         align="left",
                         spacing_above="small",
                         spacing_below="small",
@@ -65,11 +65,13 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
-                    icon='fa:minus',
+                    # icon='fa:minus',
                     foreground="White",
                     background="Blue",
-                    font_size=8,
+                    font_size=10,
                     align="left",
+                    spacing_above="small",
+                    spacing_below="small",
                     tag=selected_lid
                     )
             self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ","
