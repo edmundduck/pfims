@@ -5,7 +5,6 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-import pandas as pd
 
 class form_poc4(form_poc4Template):
     def __init__(self, **properties):
@@ -16,5 +15,4 @@ class form_poc4(form_poc4Template):
 
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
-        df = pd.read_excel(file, sheet_name=None)
-        self.text_area_1.text = df
+        self.text_area_1.text = anvil.server.call('import_file', file=file)
