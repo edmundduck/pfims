@@ -19,5 +19,6 @@ import pandas as pd
 #   return 42
 #
 
-def import_file(self, file, **event_args):
+@anvil.server.callable
+def import_file(file):
     return pd.read_excel(file, sheet_name=None)
