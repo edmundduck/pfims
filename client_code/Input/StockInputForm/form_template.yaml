@@ -10,14 +10,14 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Template Name, font_size: 14, font: '', spacing_above: small,
+      visible: true, text: Template Name, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_1
     layout_properties: {grid_position: 'LEHWLY,HRMOYO'}
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
-      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 14,
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
     name: templ_name
@@ -30,7 +30,7 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Broker, font_size: 14, font: '', spacing_above: small,
+      visible: true, text: Broker, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_3
@@ -46,7 +46,7 @@ components:
       foreground: ''
       items: []
       visible: true
-      font_size: 14
+      font_size: 12
       font: ''
       spacing_above: small
       spacing_below: small
@@ -65,7 +65,7 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Template, font_size: 14, font: '', spacing_above: small,
+      visible: true, text: Template, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_2
@@ -81,7 +81,7 @@ components:
       foreground: ''
       items: ['']
       visible: true
-      font_size: 14
+      font_size: 12
       font: ''
       spacing_above: small
       spacing_below: small
@@ -296,7 +296,7 @@ components:
     properties: {role: null, align: center, tooltip: 'Once all transactions in a template
         are submitted to the system, this template will be removed from input view.',
       border: '', enabled: true, foreground: 'theme:Black', visible: true, text: Submit,
-      font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+      font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
       italic: false, background: 'theme:Primary 500', bold: false, underline: false,
       icon: ''}
     name: button_submit
@@ -304,7 +304,7 @@ components:
     event_bindings: {click: button_submit_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:Black', visible: true, text: Save Template, font_size: null,
+      foreground: 'theme:Black', visible: true, text: Save Template, font_size: 12,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
     name: button_save_templ
@@ -312,7 +312,7 @@ components:
     event_bindings: {click: button_save_templ_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Delete Template, font_size: null,
+      foreground: 'theme:White', visible: true, text: Delete Template, font_size: 12,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Gray 800', bold: false, underline: false, icon: ''}
     name: button_delete_templ
@@ -320,7 +320,7 @@ components:
     event_bindings: {click: button_delete_templ_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Clear, font_size: null, font: '',
+      foreground: 'theme:White', visible: true, text: Clear, font_size: 12, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Gray 300', bold: false, underline: false, icon: ''}
     name: button_clear

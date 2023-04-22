@@ -4,7 +4,7 @@ container:
 components:
 - type: Label
   properties: {role: subheading, align: left, tooltip: '', border: '', foreground: white,
-    visible: true, text: ' Default Setting', font_size: null, font: '', spacing_above: small,
+    visible: true, text: ' Default Setting', font_size: 14, font: '', spacing_above: small,
     icon_align: left, spacing_below: small, italic: false, background: grey, bold: false,
     underline: false, icon: ''}
   name: headline_1
@@ -25,7 +25,7 @@ components:
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
         visible: true, text: 'Default Broker
 
-          ', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+          ', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
         italic: false, background: '', bold: false, underline: false, icon: ''}
       name: label_1
       layout_properties: {grid_position: 'QMERAZ,TLDCXF'}
@@ -40,7 +40,7 @@ components:
         foreground: ''
         items: ['']
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -63,7 +63,7 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Default Search Interval, font_size: null, font: '', spacing_above: small,
+        visible: true, text: Default Search Interval, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_2
@@ -79,7 +79,7 @@ components:
         foreground: ''
         items: []
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -108,7 +108,7 @@ components:
     - type: DatePicker
       properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
         placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
         date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
       name: time_datefrom
       layout_properties:
@@ -124,7 +124,7 @@ components:
     - type: DatePicker
       properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
         placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
         date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
       name: time_dateto
       layout_properties:
@@ -137,16 +137,16 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer2
       layout_properties: {grid_position: 'CGRCHN,BSHBSM'}
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer3
       layout_properties: {grid_position: 'CGRCHN,UICTDE'}
   - type: ColumnPanel
@@ -156,14 +156,14 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer4
       layout_properties: {grid_position: 'SNQFJG,DZNASD'}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Submit, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Submit, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_submit
@@ -176,7 +176,7 @@ components:
   components: []
 - type: Label
   properties: {role: subheading, align: left, tooltip: '', border: '', foreground: white,
-    visible: true, text: ' Brokers Setup', font_size: null, font: '', spacing_above: small,
+    visible: true, text: ' Brokers Setup', font_size: 14, font: '', spacing_above: small,
     icon_align: left, spacing_below: small, italic: false, background: grey, bold: false,
     underline: false, icon: ''}
   name: headline_2
@@ -198,7 +198,7 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Creation / Update, font_size: null, font: '', spacing_above: small,
+        visible: true, text: Creation / Update, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_5
@@ -206,7 +206,7 @@ components:
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '[
           Broker Name ]', border: '', enabled: true, foreground: '', visible: true,
-        text: '', font_size: null, font: '', spacing_above: small, type: text, spacing_below: small,
+        text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small,
         italic: false, background: '', bold: false, underline: false}
       name: text_broker_name
       layout_properties: {grid_position: 'OOWIVP,RBPAWF'}
@@ -217,7 +217,25 @@ components:
     layout_properties: {grid_position: 'OZHOVC,WUARSE'}
     components:
     - type: DropDown
-      properties: {}
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: ''
+        border: ''
+        enabled: true
+        foreground: ''
+        items: []
+        visible: true
+        font_size: 12
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: false
       name: dropdown_ccy
       layout_properties: {grid_position: 'NLSSIJ,VSMJOG'}
       event_bindings: {show: dropdown_ccy_show}
@@ -228,7 +246,7 @@ components:
       components:
       - type: Button
         properties: {role: primary-color, align: center, tooltip: '', border: '',
-          enabled: true, foreground: '', visible: true, text: Create, font_size: null,
+          enabled: true, foreground: '', visible: true, text: Create, font_size: 12,
           font: '', spacing_above: small, icon_align: left, spacing_below: small,
           italic: false, background: '', bold: false, underline: false, icon: ''}
         name: button_broker_create
@@ -236,7 +254,7 @@ components:
         event_bindings: {click: button_broker_create_click}
       - type: Button
         properties: {role: secondary-color, align: center, tooltip: '', border: '',
-          enabled: true, foreground: '', visible: true, text: Update, font_size: null,
+          enabled: true, foreground: '', visible: true, text: Update, font_size: 12,
           font: '', spacing_above: small, icon_align: left, spacing_below: small,
           italic: false, background: '', bold: false, underline: false, icon: ''}
         name: button_broker_update
@@ -249,7 +267,7 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Deletion, font_size: null, font: '', spacing_above: small,
+        visible: true, text: Deletion, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_8
@@ -265,7 +283,7 @@ components:
         foreground: ''
         items: []
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -284,16 +302,16 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: hidden_b_id
       layout_properties: {grid_position: 'SZCLAG,FFBDLP'}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: white, visible: true, text: Delete, font_size: null, font: '',
-        spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-        background: black, bold: false, underline: false, icon: ''}
+        foreground: white, visible: true, text: Delete, font_size: 12, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: black,
+        bold: false, underline: false, icon: ''}
       name: button_broker_delete
       layout_properties: {grid_position: 'SZCLAG,EIUKSJ'}
       event_bindings: {click: button_broker_delete_click}
@@ -303,7 +321,7 @@ components:
   layout_properties: {grid_position: 'RMULFR,ODQVDN'}
 - type: Label
   properties: {role: subheading, align: left, tooltip: '', border: '', foreground: white,
-    visible: true, text: ' Template Maintenance', font_size: null, font: '', spacing_above: small,
+    visible: true, text: ' Template Maintenance', font_size: 14, font: '', spacing_above: small,
     icon_align: left, spacing_below: small, italic: false, background: grey, bold: false,
     underline: false, icon: ''}
   name: headline_3
@@ -327,7 +345,7 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Submitted Templates, font_size: null, font: '', spacing_above: small,
+        visible: true, text: Submitted Templates, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_9
@@ -343,7 +361,7 @@ components:
         foreground: ''
         items: []
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -362,16 +380,16 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer5
       layout_properties:
         col_widths: {}
         grid_position: SZCLAG,KCNKTJ
     - type: Button
       properties: {role: secondary-color, align: center, tooltip: '', border: '',
-        enabled: true, foreground: '', visible: true, text: Enable Edit, font_size: null,
+        enabled: true, foreground: '', visible: true, text: Enable Edit, font_size: 12,
         font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
         background: '', bold: false, underline: false, icon: ''}
       name: button_templ_edit
