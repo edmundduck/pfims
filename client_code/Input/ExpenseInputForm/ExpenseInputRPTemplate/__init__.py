@@ -47,6 +47,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                         spacing_below="small",
                         tag=i
                         )
+                # self.row_panel_labels.add_component(b, False, name=lbl_name, expand=True)
                 self.row_panel_labels.add_component(b, False, name=lbl_name)
                 b.set_event_handler('click', self.label_button_minus_click)
 
@@ -77,7 +78,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ","
             # Without self.item['labels'] assignment the data binding won't work
             self.item['labels'] = self.hidden_lbls_id.text
-            self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
+            # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
+            self.row_panel_labels.add_component(b, False, name=selected_lid)
             b.set_event_handler('click', self.label_button_minus_click)
             self.parent.raise_event('x-switch-to-save-button')
         
