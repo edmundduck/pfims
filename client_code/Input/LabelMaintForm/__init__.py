@@ -26,6 +26,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
         self.dropdown_lbl_list.selected_value = None
         self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
+        self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
 
     def dropdown_moveto_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -42,6 +43,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.text_keywords.text, \
         self.dropdown_status.selected_value = anvil.server.call('get_selected_label_attr', lbl_id)
         self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
+        self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
 
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
