@@ -5,7 +5,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from .. import Global as glo
+from ..App import Global as glo
 from ..Admin.SettingForm import SettingForm
 from ..Input.StockInputForm import StockInputForm
 from ..Input.ExpenseInputForm import ExpenseInputForm

@@ -32,13 +32,14 @@ to check the status of the form.
         self._validity = {}
         self._actions = []
         self._component_checks = []
+        self._colours = []
         
     def require(self, component, event_list, predicate, error_lbl=None, show_errors_immediately=False):
         def check_this_component(**e):
             result = predicate(component)
             # DEBUG
-            #print(component.text)
-            #print(predicate(component))
+            # print(component.text)
+            # print(predicate(component))
             self._validity[component] = result
             if error_lbl is not None:
                 error_lbl.visible = not result
@@ -73,6 +74,11 @@ to check the status of the form.
                     lambda cb: cb.checked,
                     error_lbl, show_errors_immediately)
         
+    def require_selected(self, dropdown_box, error_lbl=None, show_errors_immediately=False):
+        self.require(dropdown_box, ['change'],
+                    lambda dd: dd.selected_value not in ('', None),
+                    error_lbl, show_errors_immediately)
+        
     def enable_when_valid(self, component):
         def on_change(is_valid):
             component.enabled = is_valid
@@ -85,7 +91,14 @@ to check the status of the form.
             component.visible = not is_valid
         self._actions.append(on_change)
         self._check()
-    
+
+    """To highlight the error field(s)"""
+    def highlight_when_invalid(self, component, errcolour, okcolour):
+        def on_change(is_valid):
+            component.background = errcolour if not is_valid else okcolour
+        self._colours.append(on_change)
+        self._check()
+        
     def is_valid(self):
         """Return True if this form is valid, False if it's not"""
         return all(self._validity.values())
@@ -98,4 +111,6 @@ to check the status of the form.
     def _check(self):
         v = self.is_valid()
         for f in self._actions:
+            f(v)
+        for f in self._colours:
             f(v)

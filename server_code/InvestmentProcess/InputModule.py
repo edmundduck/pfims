@@ -7,23 +7,13 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from .. import Global as glo
+from ..App import Global as glo
 from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-#
-# To allow anvil.server.call() to call functions here, we mark
-# them with @anvil.server.callable.
-# Here is an example - you can replace it with your own:
-#
-# @anvil.server.callable
-# def say_hello(name):
-#   print("Hello, " + name + "!")
-#   return 42
-#
 
 @anvil.server.callable
 # Retrieve template ID by splitting template dropdown value
@@ -139,7 +129,7 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
                     p2=broker_id,
                     p3=False,
                     p4=currenttime,
-                    p5=currenttime
+                    p5=currenttimer
                 )
             else:
                 sql = "INSERT INTO {schema}.templates (template_id, template_name, broker_id, submitted, template_create, template_lastsave) \

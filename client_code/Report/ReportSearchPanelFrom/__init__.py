@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
-from ... import Global as glo
+from ...App import Global as glo
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
 from ..ExpenseReportForm import ExpenseReportForm

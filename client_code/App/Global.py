@@ -15,6 +15,11 @@ del_iid = []
 input_stock_templ_chg = False
 input_stock_jour_chg = False
 
+""" === Validation functions === """
+def validation_errfield_colour():
+    return 'rgb(245,135,200)'
+
+""" === Settings functions === """
 def setting_ccy_dropdown():
     ccy_list = [('$ USD', 'USD'), 
                 ('£ GBP', 'GBP'), 
@@ -49,14 +54,14 @@ def search_symbol_dropdown():
 def form_poc1():
     return 'form_poc1'
 
-# === Input stock functions ===
+""" === Input stock functions === """
 def input_stock_default_templ_dropdown():
     return "[NEW]"
 
 def input_stock_default_templ_name():
     return "NewTemplate"
 
-# Add IID into the deletion list for delete journals function to process
+# Add IID into the deletion list for delete journals / delete transactions function to process
 def add_deleted_row(iid):
     global del_iid
     del_iid.append(iid)
@@ -82,6 +87,11 @@ def reset_input_stock_change():
     input_stock_templ_chg = False
     input_stock_jour_chg = False
 
+""" === Input expense functions === """
+def input_expense_row_size():
+    return 10
+
+""" === PNL report functions === """
 def pnl_list_day_mode():
     return 'd'
 

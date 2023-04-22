@@ -5,7 +5,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ... import Global as glo
+from ...App import Global as glo
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
