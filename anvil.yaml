@@ -10,15 +10,15 @@ services:
   client_config: {}
   server_config: {}
 startup: {type: form, module: MainForm}
-package_name: IPES__Investment_Performance_Evaluation_System_
+package_name: Personal_Finance_and_Inventory_Management_System
 allow_embedding: false
-name: IPES (Investment Performance Evaluation System)
+name: Personal Finance and Inventory Management System
 runtime_options:
   version: 2
   client_version: '3'
   server_version: python3-full
   server_spec: {base: python310-standard}
-metadata: {title: IPES}
+metadata: {title: PFIMS, description: One integrated system for your own finance and inventory management}
 startup_form: null
 native_deps: {head_html: ''}
 db_schema:
