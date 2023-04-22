@@ -10,28 +10,28 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: spacer1
     layout_properties: {grid_position: 'ZDGNBU,JTLKUT'}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: spacer2
     layout_properties: {grid_position: 'ZDGNBU,ADIYWM'}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: hidden_lbl_id
     layout_properties: {grid_position: 'ZDGNBU,ZBHOGB'}
   - type: Button
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Expense Input, font_size: null,
+      foreground: 'theme:White', visible: true, text: Expense Input, font_size: 12,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Primary 500', bold: false, underline: false, icon: 'fa:chevron-circle-left'}
     name: button_exp_input
@@ -39,7 +39,7 @@ components:
     event_bindings: {click: button_exp_input_click}
 - type: Label
   properties: {role: subheading, align: left, tooltip: '', border: '', foreground: white,
-    visible: true, text: Label Maintenace, font_size: null, font: '', spacing_above: small,
+    visible: true, text: Label Maintenace, font_size: 14, font: '', spacing_above: small,
     icon_align: left, spacing_below: small, italic: false, background: grey, bold: false,
     underline: false, icon: ''}
   name: headline
@@ -72,7 +72,7 @@ components:
         foreground: ''
         items: []
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -86,7 +86,7 @@ components:
       event_bindings: {show: dropdown_lbl_list_show, change: dropdown_lbl_list_change}
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Label name,
-        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
         font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
       name: text_lbl_name
@@ -108,7 +108,7 @@ components:
         foreground: ''
         items: []
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -131,7 +131,7 @@ components:
         foreground: ''
         items: ['']
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -152,7 +152,7 @@ components:
     components:
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Type some keywords separated by comma,
-        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+        border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
         font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
       name: text_keywords
@@ -164,7 +164,7 @@ components:
     components:
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Create, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Create, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_labels_create
@@ -172,7 +172,7 @@ components:
       event_bindings: {click: button_labels_create_click}
     - type: Button
       properties: {role: secondary-color, align: center, tooltip: '', border: '',
-        enabled: true, foreground: '', visible: true, text: Update, font_size: null,
+        enabled: true, foreground: '', visible: true, text: Update, font_size: 12,
         font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
         background: '', bold: false, underline: false, icon: ''}
       name: button_labels_update
@@ -180,8 +180,8 @@ components:
       event_bindings: {click: button_labels_update_click}
     - type: Button
       properties: {role: secondary-color, align: center, tooltip: '', border: '',
-        enabled: true, foreground: '', visible: true, text: Move, font_size: null,
-        font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+        enabled: true, foreground: '', visible: true, text: Move, font_size: 12, font: '',
+        spacing_above: small, icon_align: left, spacing_below: small, italic: false,
         background: '', bold: false, underline: false, icon: ''}
       name: button_labels_move
       layout_properties:
@@ -190,9 +190,9 @@ components:
       event_bindings: {click: button_labels_move_click}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: white, visible: true, text: Delete, font_size: null, font: '',
-        spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-        background: black, bold: false, underline: false, icon: ''}
+        foreground: white, visible: true, text: Delete, font_size: 12, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: black,
+        bold: false, underline: false, icon: ''}
       name: button_labels_delete
       layout_properties: {grid_position: 'SZCLAG,EIUKSJ'}
       event_bindings: {click: button_labels_delete_click}

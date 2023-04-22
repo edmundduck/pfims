@@ -55,7 +55,7 @@ components:
   components:
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter tab name,
-      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 14,
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
     name: tab_name
@@ -93,7 +93,7 @@ components:
       foreground: ''
       items: []
       visible: true
-      font_size: 14
+      font_size: 12
       font: ''
       spacing_above: small
       spacing_below: small
@@ -116,7 +116,7 @@ components:
       foreground: ''
       items: ['']
       visible: true
-      font_size: 14
+      font_size: 12
       font: ''
       spacing_above: small
       spacing_below: small
@@ -208,23 +208,23 @@ components:
   components:
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:Black', visible: true, text: Save Draft, font_size: null,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      foreground: 'theme:Black', visible: true, text: Save Draft, font_size: 12, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
     name: button_save_exptab
     layout_properties: {}
     event_bindings: {click: button_save_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Delete Tab, font_size: null,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      foreground: 'theme:White', visible: true, text: Delete Tab, font_size: 12, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Gray 800', bold: false, underline: false, icon: ''}
     name: button_delete_exptab
     layout_properties: {}
     event_bindings: {click: button_delete_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Clear, font_size: null, font: '',
+      foreground: 'theme:White', visible: true, text: Clear, font_size: 12, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Gray 300', bold: false, underline: false, icon: ''}
     name: button_clear
