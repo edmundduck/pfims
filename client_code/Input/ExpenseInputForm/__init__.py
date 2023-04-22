@@ -47,7 +47,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(glo.input_expense_row_size())]
+        self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())] + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
