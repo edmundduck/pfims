@@ -15,4 +15,5 @@ class form_poc4(form_poc4Template):
 
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
-        self.text_area_1.text = anvil.server.call('import_file', file=file)
+        if file is not None:
+            self.text_area_1.text = anvil.server.call('import_file', file=file)

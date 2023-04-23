@@ -21,4 +21,6 @@ import pandas as pd
 
 @anvil.server.callable
 def import_file(file):
-    return pd.read_excel(file, sheet_name=None)
+    print("server:", file.name, "/", file.url)
+    xls = pd.read_excel(file.name)
+    return xls.head()
