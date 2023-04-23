@@ -22,6 +22,6 @@ import pandas as pd
 
 @anvil.server.callable
 def import_file(file):
-    xls = pd.read_excel(BytesIO(file.get_bytes()))
-    print(xls)
+    xls = pd.read_excel(BytesIO(file.get_bytes()), sheet_name=None)
+    print(xls.keys())
     return xls.head()

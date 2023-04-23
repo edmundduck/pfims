@@ -9,6 +9,10 @@ components:
   event_bindings: {change: file_loader_1_change}
 - type: FlowPanel
   properties: {}
+  name: flow_panel_3
+  layout_properties: {grid_position: 'ZIRFPQ,WNTRHO'}
+- type: FlowPanel
+  properties: {}
   name: flow_panel_1
   layout_properties: {grid_position: 'QZZTAP,FAHSKW'}
   components:
