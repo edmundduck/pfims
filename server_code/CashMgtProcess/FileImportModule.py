@@ -4,6 +4,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+from io import BytesIO
 import pandas as pd
 
 # This is a server module. It runs on the Anvil server,
@@ -21,6 +22,5 @@ import pandas as pd
 
 @anvil.server.callable
 def import_file(file):
-    print("server:", file.name, "/", file.url)
-    xls = pd.read_excel(file.name)
+    xls = pd.read_excel(BytesIO(file.get_bytes()))
     return xls.head()
