@@ -1,0 +1,49 @@
+container:
+  type: ColumnPanel
+  properties: {col_widths: '{}'}
+components:
+- type: FlowPanel
+  properties: {}
+  name: flow_panel_1
+  layout_properties: {grid_position: 'SPPEHH,WZEFNS'}
+  components:
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter template name,
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: row_uptempl_name
+    layout_properties: {}
+- type: FlowPanel
+  properties: {}
+  name: flow_panel_2
+  layout_properties: {grid_position: 'TDATED,WTSLHX'}
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Map "Date" to column ', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: row_lbl_date
+    layout_properties: {}
+- type: FlowPanel
+  properties: {}
+  name: flow_panel_3
+  layout_properties: {grid_position: 'HYVTYJ,GJXCFH'}
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Map "Account" to column, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: row_lbl_acct
+    layout_properties: {}
+- type: FlowPanel
+  properties: {}
+  name: flow_panel_4
+  layout_properties: {grid_position: 'QYDBKW,UHQAYW'}
+- type: FlowPanel
+  properties: {}
+  name: flow_panel_5
+  layout_properties: {grid_position: 'GJCWFM,QFSPJI'}
+is_package: true

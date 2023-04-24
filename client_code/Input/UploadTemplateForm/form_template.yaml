@@ -1,5 +1,9 @@
 container:
   type: ColumnPanel
   properties: {col_widths: '{}'}
-components: []
+components:
+- type: RepeatingPanel
+  properties: {item_template: Input.UploadTemplateForm.ItemTemplate1}
+  name: repeating_panel_1
+  layout_properties: {grid_position: 'LTOPDH,LKKWHN'}
 is_package: true
