@@ -9,10 +9,46 @@ components:
   components:
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter template name,
-      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null,
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 14,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
     name: row_uptempl_name
+    layout_properties: {}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: S P A C E R, font_size: 14, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: row_hidden_spacer1
+    layout_properties: {}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Applicable file type, font_size: 14, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_3
+    layout_properties: {}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: ''
+      border: ''
+      enabled: true
+      foreground: ''
+      items: [Excel, PDF]
+      visible: true
+      font_size: 14
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: false
+    name: drop_down_5
     layout_properties: {}
 - type: FlowPanel
   properties: {}
@@ -21,29 +57,136 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Map "Date" to column ', font_size: null, font: '', spacing_above: small,
+      visible: true, text: 'Map Excel column ', font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
-    name: row_lbl_date
+    name: label_1
+    layout_properties: {}
+    data_bindings: []
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: ''
+      border: ''
+      enabled: true
+      foreground: ''
+      items: [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W,
+        X, Y, Z]
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: false
+    name: drop_down_1
+    layout_properties: {}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: ' to data column ', font_size: 12, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_2
+    layout_properties: {grid_position: 'BHSPDO,ASOCLE'}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: ''
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: false
+    name: drop_down_2
+    layout_properties: {}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: S P A C E R, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: row_hidden_spacer2
+    layout_properties: {}
+  - type: CheckBox
+    properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
+      foreground: '', allow_indeterminate: false, visible: true, text: '', font_size: 12,
+      font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
+      bold: false, checked: false, underline: false}
+    name: check_box_1
+    layout_properties: {}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: Choose additional action
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: true
+    name: drop_down_3
+    layout_properties: {}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: Choose label
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: true
+    name: drop_down_4
+    layout_properties: {}
+  - type: Button
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: 'fa:plus'}
+    name: button_1
     layout_properties: {}
 - type: FlowPanel
   properties: {}
   name: flow_panel_3
   layout_properties: {grid_position: 'HYVTYJ,GJXCFH'}
-  components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Map "Account" to column, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
-    name: row_lbl_acct
-    layout_properties: {}
+  components: []
 - type: FlowPanel
   properties: {}
   name: flow_panel_4
   layout_properties: {grid_position: 'QYDBKW,UHQAYW'}
-- type: FlowPanel
-  properties: {}
-  name: flow_panel_5
-  layout_properties: {grid_position: 'GJCWFM,QFSPJI'}
 is_package: true

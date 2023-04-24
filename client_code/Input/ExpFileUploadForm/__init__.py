@@ -5,6 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ...App import Routing
 
 class ExpFileUploadForm(ExpFileUploadFormTemplate):
   def __init__(self, **properties):
@@ -12,3 +13,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
+
+  def button_upload_template_click(self, **event_args):
+      """This method is called when the button is clicked"""
+      Routing.open_upload_template_form(self)
