@@ -23,7 +23,7 @@ import pandas as pd
 @anvil.server.callable
 def import_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    print(ef.)
+    print(ef.sheet_names)
     xls = pd.read_excel(ef)
     # xls = pd.read_excel(BytesIO(file.get_bytes()), sheet_name=None)
     print(xls)
