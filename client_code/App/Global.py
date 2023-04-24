@@ -91,6 +91,19 @@ def reset_input_stock_change():
 def input_expense_row_size():
     return 10
 
+def input_expense_col_def():
+    col_def = [('Date', 'date'), 
+                ('Account', 'acct'), 
+                ('Amount', 'amt'),
+                ('Labels', 'lbl'),
+                ('Remarks', 'remarks'),
+                ('Statement Detail', 'stmt_dtl')]
+    return col_def
+
+def input_expense_upload_additional_action():
+    action = [('Apply label', 'applylbl')]
+    return action
+
 """ === PNL report functions === """
 def pnl_list_day_mode():
     return 'd'
