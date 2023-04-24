@@ -24,8 +24,8 @@ import pandas as pd
 def import_file(file):
     xls = pd.read_excel(BytesIO(file.get_bytes()), sheet_name=None)
     # print(xls)
-    print(xls.keys())
-    print(xls.head())
+    print(xls['Oct2006'])
+    print(xls.keys()[0].keys())
     return list(xls.keys())
 
 def get_xls_tabs(f):
