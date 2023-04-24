@@ -23,7 +23,9 @@ import pandas as pd
 @anvil.server.callable
 def import_file(file):
     xls = pd.read_excel(BytesIO(file.get_bytes()), sheet_name=None)
-    print(xls)
+    # print(xls)
+    print(xls.keys())
+    print(xls.head())
     return list(xls.keys())
 
 def get_xls_tabs(f):
