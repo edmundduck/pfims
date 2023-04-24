@@ -113,7 +113,7 @@ components:
       bold: false
       underline: false
       include_placeholder: false
-    name: drop_down_2
+    name: row_dropdown_datacol
     layout_properties: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',

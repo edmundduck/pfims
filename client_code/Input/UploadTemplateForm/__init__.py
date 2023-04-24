@@ -12,4 +12,4 @@ class UploadTemplateForm(UploadTemplateFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.repeating_panel_1.items = []
+        self.repeating_panel_1.items = [{} for i in range(1)]
