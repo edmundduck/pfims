@@ -14,6 +14,14 @@ class ItemTemplate1(ItemTemplate1Template):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.row_dropdown_datacol.items = glo.input_expense_col_def()
+        self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = glo.input_expense_upload_additional_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
+
+    def row_button_add_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        rule = self.row_lbl_1.text + " " + self.row_dropdown_excelcol.selected_value + " " + self.row_lbl_2.text + " " \
+                + self.row_dropdown_datacol.selected_value["text"] + "."
+        if self.row_dropdown_extraact.selected_value is not None:
+            rule = rule + " In addition " + self.row_dropdown_extraact.selected_value + " " + self.row_dropdown_lbl.selected_value[1]
+        self.row_flowpanel_rules.add_component(Label(text=rule, font_size=10, foreground='White'))

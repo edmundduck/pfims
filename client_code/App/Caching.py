@@ -5,15 +5,11 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
-#
-#    from . import Module1
-#
-#    Module1.say_hello()
-#
 
 accounts = None
 labels = None
 labels_list = None
+exp_tbl_def = None
 
 def get_caching_accounts():
     global accounts
@@ -41,3 +37,13 @@ def get_caching_labels_list():
     if labels_list is None:
         labels_list = anvil.server.call('generate_labels_list')
     return labels_list
+
+def get_caching_exp_tbl_def():
+    global exp_tbl_def
+    if exp_tbl_def is None:
+        exp_tbl_def = anvil.server.call('generate_expense_tbl_def_dropdown')
+    return exp_tbl_def
+
+def reset_caching_exp_tbl_def():
+    global exp_tbl_def
+    exp_tbl_def = None

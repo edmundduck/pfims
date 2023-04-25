@@ -30,6 +30,10 @@ def psqldb_connect():
 def schemafin():
   return "fin"
 
+# Return the DB REFDATA schema name
+def schemarefd():
+  return "refdata"
+
 # For debug print
 def print_data_debug(message, debug_data):
     print('***[DEBUG]*** {}: {}'.format(message, debug_data))

@@ -14,6 +14,21 @@ from ..System import SystemModule as sysmod
 # rather than in the user's browser.
 
 @anvil.server.callable
+# Generate input expense table definition dropdown items
+def generate_expense_tbl_def_dropdown():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.expense_tbl_def ORDER BY seq ASC"
+        stmt = sql.format(
+            schema=sysmod.schemarefd()
+        )
+        cur.execute(stmt)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['col_name'], {"id": row['col_code'], "text": row['col_name']}) for row in rows)
+    return content
+
+@anvil.server.callable
 # Generate expense tabs dropdown items
 def generate_expensetabs_dropdown():
     conn = sysmod.psqldb_connect()
