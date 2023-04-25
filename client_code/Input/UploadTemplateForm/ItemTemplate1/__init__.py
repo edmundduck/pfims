@@ -15,13 +15,29 @@ class ItemTemplate1(ItemTemplate1Template):
 
         # Any code you write here will run before the form opens.
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
-        self.row_dropdown_extraact.items = glo.input_expense_upload_additional_action()
+        self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
 
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
-        rule = self.row_lbl_1.text + " " + self.row_dropdown_excelcol.selected_value + " " + self.row_lbl_2.text + " " \
-                + self.row_dropdown_datacol.selected_value["text"] + "."
-        if self.row_dropdown_extraact.selected_value is not None:
-            rule = rule + " In addition " + self.row_dropdown_extraact.selected_value + " " + self.row_dropdown_lbl.selected_value[1]
-        self.row_flowpanel_rules.add_component(Label(text=rule, font_size=10, foreground='White'))
+        excelcol = self.row_dropdown_excelcol.selected_value
+        # datacol = self.row_dropdown_datacol.selected_value["text"] if self.row_dropdown_datacol.selected_value is not None else None
+        # datacol_id = self.row_dropdown_datacol.selected_value["id"] if self.row_dropdown_datacol.selected_value is not None else None
+        datacol_id, datacol = self.row_dropdown_datacol.selected_value if self.row_dropdown_datacol.selected_value is not None else [None, None]
+        extraact = self.row_dropdown_extraact.selected_value["text"] if self.row_dropdown_extraact.selected_value is not None else None
+        extraact_id = self.row_dropdown_extraact.selected_value["id"] if self.row_dropdown_extraact.selected_value is not None else None
+        lbl = self.row_dropdown_lbl.selected_value[1] if self.row_dropdown_lbl.selected_value is not None else None
+        rule = self.row_lbl_1.text + " " + excelcol + " " + self.row_lbl_2.text + " " + datacol + "."
+        rule = rule + " In addition " + extraact + " " + lbl if extraact is not None else rule
+        lbl_obj = Label(text=rule, font_size=12, foreground='Dark Orange', tag=[excelcol, datacol_id, extraact_id, lbl], icon='fa:info')
+        b = Button(
+            icon='fa:minus',
+            foreground="Blue",
+            font_size=12,
+            align="left",
+            spacing_above="small",
+            spacing_below="small",
+            tag=[excelcol, datacol_id]
+        )
+        self.row_flowpanel_rules.add_component(lbl_obj)
+        self.row_flowpanel_rules.add_component(b)

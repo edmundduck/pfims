@@ -10,6 +10,7 @@ accounts = None
 labels = None
 labels_list = None
 exp_tbl_def = None
+upload_action = None
 
 def get_caching_accounts():
     global accounts
@@ -47,3 +48,13 @@ def get_caching_exp_tbl_def():
 def reset_caching_exp_tbl_def():
     global exp_tbl_def
     exp_tbl_def = None
+
+def get_caching_upload_action():
+    global upload_action
+    if upload_action is None:
+        upload_action = anvil.server.call('generate_upload_action_dropdown')
+    return upload_action
+
+def reset_caching_upload_action():
+    global upload_action
+    upload_action = None

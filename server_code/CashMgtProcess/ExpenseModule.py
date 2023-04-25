@@ -29,6 +29,21 @@ def generate_expense_tbl_def_dropdown():
     return content
 
 @anvil.server.callable
+# Generate input expense table definition dropdown items
+def generate_upload_action_dropdown():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.upload_action ORDER BY seq ASC"
+        stmt = sql.format(
+            schema=sysmod.schemarefd()
+        )
+        cur.execute(stmt)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    return content
+
+@anvil.server.callable
 # Generate expense tabs dropdown items
 def generate_expensetabs_dropdown():
     conn = sysmod.psqldb_connect()

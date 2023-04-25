@@ -95,10 +95,6 @@ def input_expense_col_def():
                 ('Statement Detail', 'SD')]
     return col_def
 
-def input_expense_upload_additional_action():
-    action = [('Apply label', 'applylbl')]
-    return action
-
 """ === PNL report functions === """
 def pnl_list_day_mode():
     return 'd'
