@@ -1,8 +1,8 @@
 container:
   type: ColumnPanel
-  properties: {role: null, tooltip: '', border: solid, foreground: '', visible: true,
+  properties: {role: null, tooltip: '', border: solid, foreground: deepblue, visible: true,
     wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
-    spacing_below: small, background: ''}
+    spacing_below: small, background: lightblue}
 components:
 - type: FlowPanel
   properties: {}

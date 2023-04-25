@@ -92,12 +92,12 @@ def input_expense_row_size():
     return 10
 
 def input_expense_col_def():
-    col_def = [('Date', 'date'), 
-                ('Account', 'acct'), 
-                ('Amount', 'amt'),
-                ('Labels', 'lbl'),
-                ('Remarks', 'remarks'),
-                ('Statement Detail', 'stmt_dtl')]
+    col_def = [('Date', 'D'), 
+                ('Account', 'AC'), 
+                ('Amount', 'AM'),
+                ('Labels', 'L'),
+                ('Remarks', 'R'),
+                ('Statement Detail', 'SD')]
     return col_def
 
 def input_expense_upload_additional_action():
