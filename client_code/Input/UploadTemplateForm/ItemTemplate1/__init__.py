@@ -21,15 +21,11 @@ class ItemTemplate1(ItemTemplate1Template):
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
         excelcol = self.row_dropdown_excelcol.selected_value
-        # datacol = self.row_dropdown_datacol.selected_value["text"] if self.row_dropdown_datacol.selected_value is not None else None
-        # datacol_id = self.row_dropdown_datacol.selected_value["id"] if self.row_dropdown_datacol.selected_value is not None else None
-        datacol_id, datacol = self.row_dropdown_datacol.selected_value if self.row_dropdown_datacol.selected_value is not None else [None, None]
-        print(datacol_id, ", ", datacol)
-        extraact = self.row_dropdown_extraact.selected_value["text"] if self.row_dropdown_extraact.selected_value is not None else None
-        extraact_id = self.row_dropdown_extraact.selected_value["id"] if self.row_dropdown_extraact.selected_value is not None else None
+        datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
+        extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
         lbl = self.row_dropdown_lbl.selected_value[1] if self.row_dropdown_lbl.selected_value is not None else None
-        rule = self.row_lbl_1.text + " " + excelcol + " " + self.row_lbl_2.text + " " + datacol + "."
-        rule = rule + " In addition " + extraact + " " + lbl if extraact is not None else rule
+        rule = self.row_lbl_1.text + excelcol + self.row_lbl_2.text + datacol + "."
+        rule = rule + " Extra action(s): " + extraact + " " + lbl if extraact is not None else rule
         lbl_obj = Label(text=rule, font_size=12, foreground='indigo', tag=[excelcol, datacol_id, extraact_id, lbl], icon='fa:info')
         b = Button(
             icon='fa:minus',
@@ -42,3 +38,9 @@ class ItemTemplate1(ItemTemplate1Template):
         )
         self.row_flowpanel_rules.add_component(lbl_obj)
         self.row_flowpanel_rules.add_component(b)
+        b.set_event_handler('click', self.filter_button_minus_click)
+
+    def filter_button_minus_click(self, **event_args):
+        b = event_args['sender']
+        b.remove_from_parent()
+        
