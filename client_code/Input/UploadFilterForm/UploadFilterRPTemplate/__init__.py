@@ -1,4 +1,4 @@
-from ._anvil_designer import ItemTemplate1Template
+from ._anvil_designer import UploadFilterRPTemplateTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ....App import Caching as cache
 from ....App import Global as glo
 
-class ItemTemplate1(ItemTemplate1Template):
+class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
@@ -27,6 +27,7 @@ class ItemTemplate1(ItemTemplate1Template):
         rule = self.row_lbl_1.text + excelcol + self.row_lbl_2.text + datacol + "."
         rule = rule + " Extra action(s): " + extraact + " " + lbl if extraact is not None else rule
         lbl_obj = Label(text=rule, font_size=12, foreground='indigo', tag=[excelcol, datacol_id, extraact_id, lbl], icon='fa:info')
+        fp = FlowPanel(spacing_above="small", spacing_below="small")
         b = Button(
             icon='fa:minus',
             foreground="Blue",
@@ -36,13 +37,13 @@ class ItemTemplate1(ItemTemplate1Template):
             spacing_below="small",
             tag=[excelcol, datacol_id]
         )
-        self.row_flowpanel_rules.add_component(lbl_obj)
-        self.row_flowpanel_rules.add_component(b)
+        self.add_component(fp)
+        fp.add_component(lbl_obj)
+        fp.add_component(b)
         b.set_event_handler('click', self.filter_button_minus_click)
 
-    def filter_button_minus_click(self, lbl_obj, **event_args):
+    def filter_button_minus_click(self, **event_args):
         b = event_args['sender']
         # TODO ... remove only minus button and the label
-        b.remove_from_parent()
-        lbl_obj.remove_from_parent()
+        b.parent.remove_from_parent()
         

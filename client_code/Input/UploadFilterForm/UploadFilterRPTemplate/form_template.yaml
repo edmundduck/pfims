@@ -11,7 +11,7 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: SPACER, font_size: 14, font: '', spacing_above: small,
+      visible: false, text: SPACER, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: row_hidden_spacer3
@@ -20,21 +20,21 @@ components:
       grid_position: ECCLDF,IXDRTZ
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter template name,
-      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 14,
+      border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
     name: row_uptempl_name
     layout_properties: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: S P A C E R, font_size: 14, font: '', spacing_above: small,
+      visible: false, text: S P A C E R, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: row_hidden_spacer1
     layout_properties: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Applicable file type, font_size: 14, font: '', spacing_above: small,
+      visible: true, text: Applicable file type, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_3
@@ -50,7 +50,7 @@ components:
       foreground: ''
       items: [Excel, PDF]
       visible: true
-      font_size: 14
+      font_size: 12
       font: ''
       spacing_above: small
       spacing_below: small
@@ -68,7 +68,7 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: SPACER, font_size: 14, font: '', spacing_above: small,
+      visible: false, text: SPACER, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: row_hidden_spacer4
@@ -137,7 +137,7 @@ components:
     layout_properties: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: S P A C E R, font_size: null, font: '', spacing_above: small,
+      visible: false, text: S P A C E R, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: row_hidden_spacer2
@@ -201,18 +201,4 @@ components:
     name: row_button_add
     layout_properties: {}
     event_bindings: {click: row_button_add_click}
-- type: FlowPanel
-  properties: {}
-  name: row_flowpanel_rules
-  layout_properties: {grid_position: 'HYVTYJ,GJXCFH'}
-  components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: SPACER, font_size: 14, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
-    name: row_hidden_spacer5
-    layout_properties:
-      col_widths: {}
-      grid_position: ZTMEVK,FRCXRA
 is_package: true

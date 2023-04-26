@@ -14,6 +14,6 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
 
     # Any code you write here will run when the form opens.
 
-  def button_upload_template_click(self, **event_args):
+  def button_upload_filter_click(self, **event_args):
       """This method is called when the button is clicked"""
-      Routing.open_upload_template_form(self)
+      Routing.open_upload_filter_form(self)

@@ -20,10 +20,10 @@ def open_file_import_form(self, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpFileUploadForm())
 
-def open_upload_template_form(self, **event_args):
-    from ..Input.UploadTemplateForm import UploadTemplateForm
+def open_upload_filter_form(self, **event_args):
+    from ..Input.UploadFilterForm import UploadFilterForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(UploadTemplateForm())
+    anvil.get_open_form().content_panel.add_component(UploadFilterForm())
 
 def open_lbl_maint_form(self, **event_args):
     from ..Input.LabelMaintForm import LabelMaintForm
