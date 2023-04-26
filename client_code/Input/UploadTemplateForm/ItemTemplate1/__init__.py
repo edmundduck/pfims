@@ -40,7 +40,9 @@ class ItemTemplate1(ItemTemplate1Template):
         self.row_flowpanel_rules.add_component(b)
         b.set_event_handler('click', self.filter_button_minus_click)
 
-    def filter_button_minus_click(self, **event_args):
+    def filter_button_minus_click(self, lbl_obj, **event_args):
         b = event_args['sender']
+        # TODO ... remove only minus button and the label
         b.remove_from_parent()
+        lbl_obj.remove_from_parent()
         
