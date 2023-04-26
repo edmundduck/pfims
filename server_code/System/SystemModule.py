@@ -14,6 +14,7 @@ import psycopg2.extras
 # Get user logon name
 def get_username(userid):
     row = app_tables.users.get_by_id(userid)
+    print(dict(row))
     return row['email'] if row is not None else "" 
 
 # Establish Postgres DB connection (Yugabyte DB)
