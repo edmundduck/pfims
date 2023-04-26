@@ -19,11 +19,11 @@ components:
       col_widths: {}
       grid_position: ECCLDF,IXDRTZ
   - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter template name,
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter filter name,
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
-    name: row_uptempl_name
+    name: row_filter_name
     layout_properties: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -59,8 +59,30 @@ components:
       bold: false
       underline: false
       include_placeholder: false
-    name: drop_down_5
+    name: row_dropdown_type
     layout_properties: {}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: 'S  P  A  C  E  R  S  P  A  C  E  R  S  P  A  C  E  R ',
+      font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+      italic: false, background: '', bold: false, underline: false, icon: ''}
+    name: row_hidden_spacer5
+    layout_properties: {}
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: false, foreground: '', visible: true, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: row_hidden_fid
+    layout_properties: {width: 83}
+  - type: Button
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      foreground: 'theme:White', visible: true, text: Save, font_size: null, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
+    name: row_button_save
+    layout_properties: {}
+    event_bindings: {click: row_button_save_click}
 - type: FlowPanel
   properties: {}
   name: flow_panel_2

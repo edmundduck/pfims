@@ -46,4 +46,14 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         b = event_args['sender']
         # TODO ... remove only minus button and the label
         b.parent.remove_from_parent()
-        
+
+    def row_button_save_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        fid = self.row_hidden_fid.text if self.row_hidden_fid.text is not None else None
+        fname = self.row_filter_name.text
+        ftype = self.row_dropdown_type.selected_value
+        frules = None
+        for i in self.get_components():
+            print(dict(i))
+            if isinstance(i, FlowPanel):
+                print(i)
