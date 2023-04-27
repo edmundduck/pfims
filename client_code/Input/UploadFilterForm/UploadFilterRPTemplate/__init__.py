@@ -26,8 +26,8 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         lbl = self.row_dropdown_lbl.selected_value[1] if self.row_dropdown_lbl.selected_value is not None else None
         rule = self.row_lbl_1.text + excelcol + self.row_lbl_2.text + datacol + "."
         rule = rule + " Extra action(s): " + extraact + " " + lbl if extraact is not None else rule
-        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', tag=[excelcol, datacol_id, extraact_id, lbl], icon='fa:info')
-        fp = FlowPanel(spacing_above="small", spacing_below="small")
+        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon='fa:info')
+        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, lbl])
         b = Button(
             icon='fa:minus',
             foreground="Blue",
@@ -35,7 +35,6 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
             align="left",
             spacing_above="small",
             spacing_below="small",
-            tag=[excelcol, datacol_id]
         )
         self.add_component(fp)
         fp.add_component(lbl_obj)
@@ -44,7 +43,6 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
 
     def filter_button_minus_click(self, **event_args):
         b = event_args['sender']
-        # TODO ... remove only minus button and the label
         b.parent.remove_from_parent()
 
     def row_button_save_click(self, **event_args):
@@ -54,6 +52,5 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         ftype = self.row_dropdown_type.selected_value
         frules = None
         for i in self.get_components():
-            print(dict(i))
-            if isinstance(i, FlowPanel):
-                print(i)
+            if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
+                print(i.tag)
