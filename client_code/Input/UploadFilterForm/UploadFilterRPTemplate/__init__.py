@@ -23,11 +23,11 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         excelcol = self.row_dropdown_excelcol.selected_value
         datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
-        lbl = self.row_dropdown_lbl.selected_value[1] if self.row_dropdown_lbl.selected_value is not None else None
+        lbl_id, lbl = self.row_dropdown_lbl.selected_value.values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
         rule = self.row_lbl_1.text + excelcol + self.row_lbl_2.text + datacol + "."
         rule = rule + " Extra action(s): " + extraact + " " + lbl if extraact is not None else rule
         lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon='fa:info')
-        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, lbl])
+        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, lbl_id])
         b = Button(
             icon='fa:minus',
             foreground="Blue",
@@ -50,7 +50,14 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         fid = self.row_hidden_fid.text if self.row_hidden_fid.text is not None else None
         fname = self.row_filter_name.text
         ftype = self.row_dropdown_type.selected_value
-        frules = None
+        frules = []
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
-                print(i.tag)
+                frules.append(i.tag)
+        result = anvil.server.call('save_filter_rules', fid=fid, filter_obj={"name":fname, "type":ftype, "rules":frules})
+
+        if result is not None:
+            n = Notification("Filter {filter_name} has been saved successfully.".format(filter_name=fname))
+        else:
+            n = Notification("ERROR: Fail to save filter {filter_name}.".format(filter_name=fname))
+        n.show()

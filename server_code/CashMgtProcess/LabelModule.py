@@ -20,7 +20,7 @@ def generate_labels_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
+    content = list((row['name'] + " (" + str(row['id']) + ")", {"id": row['id'], "text": row['name']}) for row in rows)
     return content
 
 @anvil.server.callable

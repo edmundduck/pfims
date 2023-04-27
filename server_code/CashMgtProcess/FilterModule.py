@@ -11,4 +11,5 @@ import anvil.server
 @anvil.server.callable
 # Save the filter and rules
 def save_filter_rules(fid, filter_obj):
-    pass
+    print(fid)
+    print(filter_obj)
