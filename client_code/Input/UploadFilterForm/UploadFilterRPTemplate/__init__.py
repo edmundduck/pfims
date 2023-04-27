@@ -47,6 +47,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
 
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
+        userid - anvil.server.call('get_current_userid')
         fid = self.row_hidden_fid.text if self.row_hidden_fid.text is not None else None
         fname = self.row_filter_name.text
         ftype = self.row_dropdown_type.selected_value
@@ -54,9 +55,9 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 frules.append(i.tag)
-        result = anvil.server.call('save_filter_rules', fid=fid, filter_obj={"name":fname, "type":ftype, "rules":frules})
+        fid = anvil.server.call('save_filter_rules', uid=userid, fid=fid, filter_obj={"name":fname, "type":ftype, "rules":frules})
 
-        if result is not None:
+        if fid is not None:
             n = Notification("Filter {filter_name} has been saved successfully.".format(filter_name=fname))
         else:
             n = Notification("ERROR: Fail to save filter {filter_name}.".format(filter_name=fname))
