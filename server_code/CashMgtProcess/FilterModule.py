@@ -22,6 +22,8 @@ def save_filter_rules(uid, fid, filter_obj):
                 # First insert/update filter group
                 name = filter_obj.get('name', None)
                 type = filter_obj.get('type', None)
+                
+                
                 mogstr = []
                 for row in rows:
                     tj = fobj.CashTransaction()
