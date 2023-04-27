@@ -55,9 +55,9 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 frules.append(i.tag)
-        fid = anvil.server.call('save_filter_rules', uid=userid, fid=fid, filter_obj={"name":fname, "type":ftype, "rules":frules})
+        result = anvil.server.call('save_filter_rules', uid=userid, fid=fid, filter_obj={"name":fname, "type":ftype, "rules":frules})
 
-        if fid is not None:
+        if result['fid'] is not None and result['count'] is not None:
             n = Notification("Filter {filter_name} has been saved successfully.".format(filter_name=fname))
         else:
             n = Notification("ERROR: Fail to save filter {filter_name}.".format(filter_name=fname))
