@@ -23,14 +23,22 @@ def save_filter_rules(uid, fid, filter_obj):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(filter_obj) > 0:
                 # First insert/update filter group
-                if fid is None: fid = "DEFAULT".strip('''''')
                 name = filter_obj.get('name', None)
                 type = filter_obj.get('type', None)
                 rules = filter_obj.get('rules', [])
                 currenttime = datetime.now()
-                sql = "INSERT INTO {schema}.filtergrp (userid, fid, fname, flastsave) \
-                VALUES (%s,%s,%s,%s) RETURNING fid".format(schema=sysmod.schemafin())
-                stmt = cur.mogrify(sql, (int(uid), fid, name, currenttime))
+                schema = sysmod.schemafin()
+                if fid is not None:
+                    sql = f"INSERT INTO {schema}.filtergrp (userid, fid, fname, flastsave) \
+                    VALUES (%s,%s,%s,%s) ON CONFLICT (fid) DO UPDATE SET \
+                    fname=EXCLUDED.fname, \
+                    flastsave=EXCLUDED.flastsave \
+                    WHERE filtergrp.fid=EXCLUDED.fid RETURNING fid"
+                    stmt = cur.mogrify(sql, (int(uid), fid, name, currenttime))
+                else:
+                    sql = f"INSERT INTO {schema}.filtergrp (userid, fid, fname, flastsave) \
+                    VALUES (%s,DEFAULT,%s,%s) RETURNING fid"
+                    stmt = cur.mogrify(sql, (int(uid), name, currenttime))
                 cur.execute(stmt)
                 conn.commit()
                 fid = cur.fetchone()
