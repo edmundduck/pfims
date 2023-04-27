@@ -19,13 +19,22 @@ def save_filter_rules(uid, fid, filter_obj):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(filter_obj) > 0:
                 # First insert/update filter group
-                if fid is None: fid = "DEFAULT"
+                if fid is None: fid = "DEFAULT".strip('''''')
                 name = filter_obj.get('name', None)
                 type = filter_obj.get('type', None)
-                
-                
+                rules = filter_obj.get('rules', [])
+                currenttime = datetime.now()
+                sql = "INSERT INTO {schema}.filtergrp (userid, fid, fname, flastsave) \
+                VALUES (%s,%s,%s,%s) RETURNING fid".format(schema=sysmod.schemafin())
+                stmt = cur.mogrify(sql, (uid, fid, name, currenttime))
+                cur.execute(stmt)
+                conn.commit()
+                fid = cur.fetchone()
+                if fid['fid'] < 0:
+                    raise psycopg2.OperationalError("Fail to save the filter ({0}).".format(name))
+            
                 mogstr = []
-                for row in rows:
+                for rule in rules:
                     tj = fobj.CashTransaction()
                     tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
                     if tj.isValidRecord(): mogstr.append(tj.getDatabaseRecord())
