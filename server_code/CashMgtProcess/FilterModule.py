@@ -13,13 +13,13 @@ import anvil.server
 # Filter and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 def save_filter_rules(uid, fid, filter_obj):
     conn = None
-    fid = None
     count = None
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(filter_obj) > 0:
                 # First insert/update filter group
+                if fid is None: fid = "DEFAULT"
                 name = filter_obj.get('name', None)
                 type = filter_obj.get('type', None)
                 
