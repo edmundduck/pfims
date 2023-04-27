@@ -30,7 +30,7 @@ def save_filter_rules(uid, fid, filter_obj):
                 currenttime = datetime.now()
                 sql = "INSERT INTO {schema}.filtergrp (userid, fid, fname, flastsave) \
                 VALUES (%s,%s,%s,%s) RETURNING fid".format(schema=sysmod.schemafin())
-                stmt = cur.mogrify(sql, (uid, fid, name, currenttime))
+                stmt = cur.mogrify(sql, (int(uid), fid, name, currenttime))
                 cur.execute(stmt)
                 conn.commit()
                 fid = cur.fetchone()

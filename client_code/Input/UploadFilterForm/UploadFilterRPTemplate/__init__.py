@@ -48,7 +48,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         userid = anvil.server.call('get_current_userid')
-        fid = self.row_hidden_fid.text if self.row_hidden_fid.text is not None else None
+        fid = self.row_hidden_fid.text if self.row_hidden_fid.text not in (None, '') else None
         fname = self.row_filter_name.text
         ftype = self.row_dropdown_type.selected_value
         frules = []
