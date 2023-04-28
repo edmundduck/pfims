@@ -60,6 +60,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
 
         if result['fid'] is not None and result['count'] is not None:
             self.row_hidden_fid.text = result['fid']
+            # TODO - Need to refresh this filter in screen so that iid is populated for further update
             n = Notification(f"Filter {fname} has been saved successfully.")
         else:
             n = Notification(f"ERROR: Fail to save filter {fname}.")
@@ -72,3 +73,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
     def row_dropdown_extraact_change(self, **event_args):
         """This method is called when an item is selected"""
         self.row_dropdown_lbl.visible = False if self.row_dropdown_extraact.selected_value is None else True
+
+    def _load_filters(self, **event_args):
+        # TODO
+        pass

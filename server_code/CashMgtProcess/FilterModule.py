@@ -49,6 +49,26 @@ def generate_upload_action_dropdown():
     return content
 
 @anvil.server.callable
+# Select the filter and rules belong to the logged on user, it can be all or particular one only
+def select_filter_rules(uid, fid=None):
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
+        WHERE a.fid = b.fid AND a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" if fid is None else \
+        f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
+        WHERE a.fid = b.fid AND a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+
+        for row in rows:
+            result = {}
+            result['fid'] = row['fid']
+            
+        cur.close()
+    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    return content
+
+@anvil.server.callable
 # Save the filter and rules
 # Filter and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 def save_filter_rules(uid, fid, filter_obj):
