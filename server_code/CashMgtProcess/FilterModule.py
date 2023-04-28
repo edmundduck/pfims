@@ -59,11 +59,8 @@ def select_filter_rules(uid, fid=None):
         WHERE a.fid = b.fid AND a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
-
-        result = []
-        print("set:", set(rows['fid']))
         cur.close()
-    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    content = list(row for row in rows)
     return content
 
 @anvil.server.callable
