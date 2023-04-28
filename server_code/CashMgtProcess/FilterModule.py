@@ -64,7 +64,7 @@ def select_filter_rules(uid, fid=None):
         for row in rows:
             action1, action2 = row['action'].split(",") if row['action'] is not None else [None, None]
             extra1, extra2 = row['extra'].split(",") if row['extra'] is not None else [None, None]
-            if result.get('fid', None) is None:
+            if result.get(row['fid'], None) is None:
                 result[row['fid']] = {
                     'fid': row['fid'],
                     'fname': row['fname'],
@@ -73,10 +73,9 @@ def select_filter_rules(uid, fid=None):
                 }
             else:
                 r = result.get(row['fid'], None)['frules']
-                r.append(row['iid'], action1, action2, extra1, extra2)
-        print("result=", result)
+                r.append([row['iid'], action1, action2, extra1, extra2])
         cur.close()
-    return None
+    return list(result.values())
 
 @anvil.server.callable
 # Save the filter and rules
