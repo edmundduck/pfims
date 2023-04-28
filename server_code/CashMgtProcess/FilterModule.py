@@ -53,6 +53,11 @@ def generate_upload_action_dropdown():
 def select_filter_rules(uid, fid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = f"SELECT fid, fname, ftype FROM {sysmod.schemafin()}.filtergrp WHERE userid = {uid} ORDER BY fid ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        
+        
         sql = f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
         WHERE a.fid = b.fid AND a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" if fid is None else \
         f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
