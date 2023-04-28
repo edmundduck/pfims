@@ -60,10 +60,8 @@ def select_filter_rules(uid, fid=None):
         cur.execute(sql)
         rows = cur.fetchall()
 
-        for row in rows:
-            result = {}
-            result['fid'] = row['fid']
-            
+        result = []
+        print("set:", set(rows['fid']))
         cur.close()
     content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
     return content
