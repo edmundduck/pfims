@@ -7,6 +7,7 @@ from anvil.tables import app_tables
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 accounts = None
+filter_type = None
 labels = None
 labels_list = None
 exp_tbl_def = None
@@ -58,3 +59,13 @@ def get_caching_upload_action():
 def reset_caching_upload_action():
     global upload_action
     upload_action = None
+
+def get_caching_filter_type():
+    global filter_type
+    if filter_type is None:
+        filter_type = anvil.server.call('generate_filter_type_dropdown')
+    return filter_type
+
+def reset_caching_filter_type():
+    global filter_type
+    filter_type = None

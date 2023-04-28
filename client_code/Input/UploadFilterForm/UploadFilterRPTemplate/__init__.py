@@ -14,6 +14,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
+        self.row_dropdown_type.items = cache.get_caching_filter_type()
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
@@ -24,8 +25,8 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
         lbl_id, lbl = self.row_dropdown_lbl.selected_value.values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
-        rule = self.row_lbl_1.text + excelcol + self.row_lbl_2.text + datacol + "."
-        rule = rule + " Extra action(s): " + extraact + " " + lbl if extraact is not None else rule
+        rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
+        rule = f"{rule} Extra action(s): {extraact} {lbl}" if extraact is not None else rule
         lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon='fa:info')
         fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[None, excelcol, datacol_id, extraact_id, lbl_id])
         b = Button(
@@ -58,8 +59,16 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         result = anvil.server.call('save_filter_rules', uid=userid, fid=fid, filter_obj={"name":fname, "type":ftype, "rules":frules})
 
         if result['fid'] is not None and result['count'] is not None:
-            self.row_hidden_fid.text = fid
-            n = Notification("Filter {filter_name} has been saved successfully.".format(filter_name=fname))
+            self.row_hidden_fid.text = result['fid']
+            n = Notification(f"Filter {fname} has been saved successfully.")
         else:
-            n = Notification("ERROR: Fail to save filter {filter_name}.".format(filter_name=fname))
+            n = Notification(f"ERROR: Fail to save filter {fname}.")
         n.show()
+
+    def row_dropdown_extraact_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        self.row_dropdown_lbl.visible = False if self.row_dropdown_extraact.selected_value is None else True
+
+    def row_dropdown_extraact_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.row_dropdown_lbl.visible = False if self.row_dropdown_extraact.selected_value is None else True

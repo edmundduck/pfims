@@ -34,7 +34,7 @@ components:
     layout_properties: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Applicable file type, font_size: 12, font: '', spacing_above: small,
+      visible: true, text: Filter type, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_3
@@ -48,7 +48,7 @@ components:
       border: ''
       enabled: true
       foreground: ''
-      items: [Excel, PDF]
+      items: ['']
       visible: true
       font_size: 12
       font: ''
@@ -193,6 +193,7 @@ components:
       include_placeholder: true
     name: row_dropdown_extraact
     layout_properties: {}
+    event_bindings: {change: row_dropdown_extraact_change, show: row_dropdown_extraact_show}
   - type: DropDown
     properties:
       role: null

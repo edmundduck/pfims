@@ -13,6 +13,42 @@ from ..System import SystemModule as sysmod
 # rather than in the user's browser.
 
 @anvil.server.callable
+# Generate filter type dropdown items
+def generate_filter_type_dropdown():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = f"SELECT * FROM {sysmod.schemarefd()}.filter_type ORDER BY seq ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['name'], {"id": row['id'], "text": row['name']}) for row in rows)
+    return content
+
+@anvil.server.callable
+# Generate input expense table definition dropdown items
+def generate_expense_tbl_def_dropdown():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['col_name'], {"id": row['col_code'], "text": row['col_name']}) for row in rows)
+    return content
+
+@anvil.server.callable
+# Generate input expense table definition dropdown items
+def generate_upload_action_dropdown():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = f"SELECT * FROM {sysmod.schemarefd()}.upload_action ORDER BY seq ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    return content
+
+@anvil.server.callable
 # Save the filter and rules
 # Filter and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 def save_filter_rules(uid, fid, filter_obj):
@@ -24,36 +60,31 @@ def save_filter_rules(uid, fid, filter_obj):
             if len(filter_obj) > 0:
                 # First insert/update filter group
                 name = filter_obj.get('name', None)
-                type = filter_obj.get('type', None)
+                type_id, type = filter_obj.get('type', None).values()
                 rules = filter_obj.get('rules', [])
                 currenttime = datetime.now()
-                schema = sysmod.schemafin()
                 if fid is not None:
-                    sql = f"INSERT INTO {schema}.filtergrp (userid, fid, fname, flastsave) \
-                    VALUES (%s,%s,%s,%s) ON CONFLICT (fid) DO UPDATE SET \
-                    fname=EXCLUDED.fname, \
-                    flastsave=EXCLUDED.flastsave \
+                    sql = f"INSERT INTO {sysmod.schemafin()}.filtergrp (userid, fid, fname, ftype, flastsave) VALUES (%s,%s,%s,%s,%s) \
+                    ON CONFLICT (fid) DO UPDATE SET fname=EXCLUDED.fname, flastsave=EXCLUDED.flastsave \
                     WHERE filtergrp.fid=EXCLUDED.fid RETURNING fid"
-                    stmt = cur.mogrify(sql, (int(uid), fid, name, currenttime))
+                    stmt = cur.mogrify(sql, (int(uid), fid, name, type_id, currenttime))
                 else:
-                    sql = f"INSERT INTO {schema}.filtergrp (userid, fid, fname, flastsave) \
-                    VALUES (%s,DEFAULT,%s,%s) RETURNING fid"
-                    stmt = cur.mogrify(sql, (int(uid), name, currenttime))
+                    sql = f"INSERT INTO {sysmod.schemafin()}.filtergrp (userid, fid, fname, ftype, flastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING fid"
+                    stmt = cur.mogrify(sql, (int(uid), name, type_id, currenttime))
                 cur.execute(stmt)
                 conn.commit()
-                fid = cur.fetchone()
-                if fid['fid'] < 0:
+                fid = (cur.fetchone())['fid']
+                if fid < 0:
                     raise psycopg2.OperationalError(f"Fail to save the filter ({name}).")
             
                 mogstr = []
                 for rule in rules:
                     iid = int(rule[0]) if rule[0] is not None else None
-                    action = f"{rule[1]}, {rule[2]}"
-                    extra = f"{rule[3]}, {rule[4]}"
+                    action = f"{rule[1]},{rule[2]}"
+                    extra = f"{rule[3]},{rule[4]}" if rule[3] not in (None, '') and rule[4] not in (None, '') else None
                     mogstr.append([iid, fid, action, extra])
-                print("mogstr: " % mogstr)
                 if len(mogstr) > 0:
-                    cur.executemany(f"INSERT INTO {schema}.filterrules (iid, fid, action, extra) VALUES (%s, %s, %s, %s) \
+                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.filterrules (iid, fid, action, extra) VALUES (%s, %s, %s, %s) \
                     ON CONFLICT (iid, fid) DO UPDATE SET \
                     action=EXCLUDED.action, \
                     extra=EXCLUDED.extra \
