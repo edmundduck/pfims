@@ -19,9 +19,6 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
 
-        userid = anvil.server.call('get_current_userid')
-        anvil.server.call('select_filter_rules', userid)
-
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
         excelcol = self.row_dropdown_excelcol.selected_value

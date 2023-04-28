@@ -60,8 +60,7 @@ def select_filter_rules(uid, fid=None):
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list(row for row in rows)
-    return content
+    return list(row for row in rows)
 
 @anvil.server.callable
 # Save the filter and rules

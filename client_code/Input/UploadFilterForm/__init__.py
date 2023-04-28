@@ -12,4 +12,5 @@ class UploadFilterForm(UploadFilterFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.repeating_panel_1.items = [{} for i in range(1)]
+        userid = anvil.server.call('get_current_userid')
+        self.repeating_panel_1.items = anvil.server.call('select_filter_rules', userid)
