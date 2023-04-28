@@ -43,29 +43,31 @@ def save_filter_rules(uid, fid, filter_obj):
                 conn.commit()
                 fid = cur.fetchone()
                 if fid['fid'] < 0:
-                    raise psycopg2.OperationalError("Fail to save the filter ({0}).".format(name))
+                    raise psycopg2.OperationalError(f"Fail to save the filter ({name}).")
             
                 mogstr = []
                 for rule in rules:
-                    action = rule[0] + rule[1]
-                    extra = rule[2] + rule[3]
-                    mogstr.append([fid, fid, action, extra])
+                    iid = int(rule[0]) if rule[0] is not None else None
+                    action = f"{rule[1]}, {rule[2]}"
+                    extra = f"{rule[3]}, {rule[4]}"
+                    mogstr.append([iid, fid, action, extra])
+                print("mogstr: " % mogstr)
                 if len(mogstr) > 0:
-                    cur.executemany("INSERT INTO {schema}.filterrules (iid, fid, action, extra) VALUES (%s, %s, %s, %s) \
+                    cur.executemany(f"INSERT INTO {schema}.filterrules (iid, fid, action, extra) VALUES (%s, %s, %s, %s) \
                     ON CONFLICT (iid, fid) DO UPDATE SET \
                     action=EXCLUDED.action, \
                     extra=EXCLUDED.extra \
-                    WHERE filterrules.iid=EXCLUDED.iid AND filterrules.fid=EXCLUDED.fid".format(schema=sysmod.schemafin()), mogstr)
+                    WHERE filterrules.iid=EXCLUDED.iid AND filterrules.fid=EXCLUDED.fid", mogstr)
                     conn.commit()
                     count = cur.rowcount
-                    if count <= 0: raise psycopg2.OperationalError("Fail to save filter rules (filter name={0}).".format(name))
+                    if count <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
                     cur.close()
                 else:
                     count = 0
             else:
                 count = 0
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + save_filter_rules.__name__, err)
+        sysmod.print_data_debug(f"OperationalError in {save_filter_rules.__name__}", err)
         conn.rollback()
     finally:
         if conn is not None: conn.close()        
