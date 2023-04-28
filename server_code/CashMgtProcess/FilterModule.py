@@ -53,19 +53,30 @@ def generate_upload_action_dropdown():
 def select_filter_rules(uid, fid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT fid, fname, ftype FROM {sysmod.schemafin()}.filtergrp WHERE userid = {uid} ORDER BY fid ASC"
-        cur.execute(sql)
-        rows = cur.fetchall()
-        
-        
         sql = f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
         WHERE a.fid = b.fid AND a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" if fid is None else \
         f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
         WHERE a.fid = b.fid AND a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
+
+        result = {}
+        for row in rows:
+            action1, action2 = row['action'].split(",") if row['action'] is not None else [None, None]
+            extra1, extra2 = row['extra'].split(",") if row['extra'] is not None else [None, None]
+            if result.get('fid', None) is None:
+                result[row['fid']] = {
+                    'fid': row['fid'],
+                    'fname': row['fname'],
+                    'flastsave': row['flastsave'],
+                    'frules': [row['iid'], action1, action2, extra1, extra2]
+                }
+            else:
+                r = result.get(row['fid'], None)['frules']
+                r.append(row['iid'], action1, action2, extra1, extra2)
+        print("result=", result)
         cur.close()
-    return list(row for row in rows)
+    return None
 
 @anvil.server.callable
 # Save the filter and rules
