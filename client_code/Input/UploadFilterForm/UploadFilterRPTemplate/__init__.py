@@ -73,6 +73,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
 
     def filter_button_minus_click(self, **event_args):
         b = event_args['sender']
+        print(b.parent.tag[0])
         b.parent.remove_from_parent()
 
     def row_button_save_click(self, **event_args):
