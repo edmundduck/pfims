@@ -97,6 +97,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
 
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        userid = anvil.server.call('get_current_userid')
         to_be_del_fid = self.row_hidden_fid.text
         to_be_del_fname = self.row_filter_name.text
         msg = Label(text=f"Proceed filter <{to_be_del_fname}> deletion by clicking DELETE.")
@@ -109,17 +110,16 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
 
         if userconf == "Y":
             if to_be_del_fid not in (None, ''):
-                result = anvil.server.call('delete_expensetab', tab_id=to_be_del_fid)
+                result = anvil.server.call('delete_filter', uid=userid, fid=to_be_del_fid)
                 if result is not None and result > 0:
                     """ Reflect the change in tab dropdown """
-                    self.dropdown_tabs_show()
-                    self.dropdown_tabs.raise_event('change')
-                    glo.reset_deleted_row()
-                    n = Notification("Expense tab {tab_name} has been deleted.".format(tab_name=to_be_del_fname))
+                    self.remove_from_parent()
+                    n = Notification(f"Filter {to_be_del_fname} has been deleted.")
                 else:
-                    n = Notification("ERROR: Fail to delete expense tab {tab_name}.".format(tab_name=to_be_del_fname))
+                    n = Notification(f"ERROR: Fail to delete filter {to_be_del_fname}.")
                 n.show()
-            self.remove_from_parent()
+            else:
+                self.remove_from_parent()
 
     def row_dropdown_extraact_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

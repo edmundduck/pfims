@@ -132,3 +132,25 @@ def save_filter_rules(uid, fid, filter_obj):
     finally:
         if conn is not None: conn.close()        
     return {"fid": fid, "count": count}
+
+@anvil.server.callable
+# Delete the filter
+def delete_filter(uid, fid):
+    conn = None
+    count = None
+    try:
+        conn = sysmod.psqldb_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = f"DELETE FROM {sysmod.schemafin()}.filtergrp WHERE userid = {uid} AND fid = {fid}"
+            cur.execute(sql)
+            conn.commit()
+            count = cur.rowcount
+            if count <= 0:
+                raise psycopg2.OperationalError(f"Filter (id:{fid}) deletion fail.")
+            cur.close()
+    except (Exception, psycopg2.OperationalError) as err:
+        sysmod.print_data_debug(f"OperationalError in {delete_filter.__name__}", err)
+        conn.rollback()
+    finally:
+        if conn is not None: conn.close()        
+    return count
