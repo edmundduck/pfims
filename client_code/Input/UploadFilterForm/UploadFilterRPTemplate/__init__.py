@@ -18,6 +18,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
+        self.row_hidden_del_fid.text = ""
         dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
         dict_extraact = cache.to_dict_caching_upload_action()
         dict_lbl = cache.to_dict_caching_labels()
@@ -73,7 +74,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
 
     def filter_button_minus_click(self, **event_args):
         b = event_args['sender']
-        print(b.parent.tag[0])
+        if b.parent.tag[0] is not None: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 
     def row_button_save_click(self, **event_args):
@@ -83,17 +84,19 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         fname = self.row_filter_name.text
         ftype = self.row_dropdown_type.selected_value
         frules = []
+        del_iid = self.row_hidden_del_fid.text[:-1].split(",")
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 frules.append(i.tag)
-        result = anvil.server.call('save_filter_rules', uid=userid, fid=fid, filter_obj={"name":fname, "type":ftype, "rules":frules})
+        result = anvil.server.call('save_filter_rules', uid=userid, fid=fid, \
+                                   filter_obj={"name":fname, "type":ftype, "rules":frules}, del_iid=del_iid)
 
-        if result['fid'] is not None and result['count'] is not None:
+        if result['fid'] is not None and result['count'] is not None and result['dcount'] is not None:
             self.row_hidden_fid.text = result['fid']
             # TODO - Need to refresh this filter in screen so that iid is populated for further update
             n = Notification(f"Filter {fname} has been saved successfully.")
         else:
-            n = Notification(f"ERROR: Fail to save filter {fname}.")
+            n = Notification(f"WARNING: Problem occurs when saving filter {fname}.")
         n.show()
 
     def row_button_delete_click(self, **event_args):

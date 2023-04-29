@@ -46,6 +46,7 @@ components:
     layout_properties:
       col_widths: {}
       grid_position: HMSPPM,NLZTAV
+    event_bindings: {click: button_file_import_click}
 - type: RepeatingPanel
   properties: {item_template: Input.UploadFilterForm.UploadFilterRPTemplate}
   name: repeating_panel_1

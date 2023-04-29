@@ -80,7 +80,7 @@ def select_filter_rules(uid, fid=None):
 @anvil.server.callable
 # Save the filter and rules
 # Filter and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
-def save_filter_rules(uid, fid, filter_obj):
+def save_filter_rules(uid, fid, filter_obj, del_iid):
     conn = None
     count = None
     try:
@@ -105,7 +105,8 @@ def save_filter_rules(uid, fid, filter_obj):
                 fid = (cur.fetchone())['fid']
                 if fid < 0:
                     raise psycopg2.OperationalError(f"Fail to save the filter ({name}).")
-            
+
+                # Second insert/update filter rules
                 mogstr = []
                 for rule in rules:
                     iid = int(rule[0]) if rule[0] is not None else None
@@ -121,17 +122,25 @@ def save_filter_rules(uid, fid, filter_obj):
                     conn.commit()
                     count = cur.rowcount
                     if count <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
-                    cur.close()
                 else:
                     count = 0
             else:
                 count = 0
+
+            # At last perform rules deletion (if any)
+            args = "({0})".format(",".join(str(i) for i in del_iid))
+            sql = f"DELETE FROM {sysmod.schemafin()}.filterrules WHERE fid = {fid} AND iid IN {args}"
+            cur.execute(sql)
+            conn.commit()
+            dcount = cur.rowcount
+            if dcount <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
+            cur.close()            
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug(f"OperationalError in {save_filter_rules.__name__}", err)
         conn.rollback()
     finally:
         if conn is not None: conn.close()        
-    return {"fid": fid, "count": count}
+    return {"fid": fid, "count": count, "dcount": dcount}
 
 @anvil.server.callable
 # Delete the filter
