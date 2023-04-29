@@ -67,9 +67,9 @@ components:
     - {property: selected_value, code: 'self.item[''ftype'']', writeback: true}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: 'S  P  A  C  E  R  S  P  A  C  E  R  S  P  A  C  E  R ',
-      font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-      italic: false, background: '', bold: false, underline: false, icon: ''}
+      visible: false, text: S  P  A  C  E  R  S  P  A  C  E  R, font_size: 12, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false, icon: ''}
     name: row_hidden_spacer5
     layout_properties: {}
   - type: TextBox
@@ -89,6 +89,14 @@ components:
     name: row_button_save
     layout_properties: {}
     event_bindings: {click: row_button_save_click}
+  - type: Button
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      foreground: 'theme:White', visible: true, text: Delete, font_size: null, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: 'theme:Gray 800', bold: false, underline: false, icon: ''}
+    name: row_button_delete
+    layout_properties: {}
+    event_bindings: {click: row_button_delete_click}
 - type: FlowPanel
   properties: {}
   name: flow_panel_2
