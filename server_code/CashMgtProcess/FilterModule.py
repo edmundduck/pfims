@@ -69,7 +69,7 @@ def select_filter_rules(uid, fid=None):
                     'fid': row['fid'],
                     'fname': row['fname'],
                     'flastsave': row['flastsave'],
-                    'frules': [row['iid'], action1, action2, extra1, extra2]
+                    'frules': [[row['iid'], action1, action2, extra1, extra2]]
                 }
             else:
                 r = result.get(row['fid'], None)['frules']

@@ -18,6 +18,35 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
+        dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
+        dict_extraact = cache.to_dict_caching_upload_action()
+        dict_lbl = cache.to_dict_caching_labels()
+
+        # Generate all rules in a filter
+        if self.item.get('frules', None) is not None:
+            for r in self.item['frules']:
+                iid, excelcol, datacol_id, extraact_id, lbl_id = r
+                # Without converting to int it cannot fetch the value in get method below
+                lbl_id = int(lbl_id) if lbl_id is not None else lbl_id
+                datacol = dict_exp_tbl_def.get(datacol_id, None)
+                extraact = dict_extraact.get(extraact_id, None)
+                lbl = dict_lbl.get(lbl_id, None)
+                rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
+                rule = f"{rule} Extra action(s): {extraact} {lbl}" if extraact is not None else rule
+                lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon='fa:info')
+                fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[iid, excelcol, datacol_id, extraact_id, lbl_id])
+                b = Button(
+                    icon='fa:minus',
+                    foreground="Blue",
+                    font_size=12,
+                    align="left",
+                    spacing_above="small",
+                    spacing_below="small",
+                )
+                self.add_component(fp)
+                fp.add_component(lbl_obj)
+                fp.add_component(b)
+                b.set_event_handler('click', self.filter_button_minus_click)
 
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
