@@ -82,7 +82,7 @@ def select_filter_rules(uid, fid=None):
 @anvil.server.callable
 # Save the filter and rules
 # Filter and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
-def save_filter_rules(uid, fid, filter_obj, del_iid):
+def save_filter_rules(uid, fid, filter_obj, del_iid=None):
     conn = None
     count = None
     dcount = None
@@ -131,7 +131,7 @@ def save_filter_rules(uid, fid, filter_obj, del_iid):
                 count = 0
 
             # At last perform rules deletion (if any)a
-            if len(del_iid) > 0:
+            if del_iid not in (None, ''):
                 args = "({0})".format(",".join(str(i) for i in del_iid))
                 sql = f"DELETE FROM {sysmod.schemafin()}.filterrules WHERE fid = {fid} AND iid IN {args}"
                 cur.execute(sql)
