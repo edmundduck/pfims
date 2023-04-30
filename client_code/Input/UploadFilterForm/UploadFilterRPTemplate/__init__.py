@@ -18,17 +18,10 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
-        dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
-        dict_extraact = cache.to_dict_caching_upload_action()
-        dict_lbl = cache.to_dict_caching_labels()
 
         # Generate all rules in a filter
         if self.item.get('frules', None) is not None:
-            for r in self.item['frules']:
-                iid, excelcol, datacol_id, extraact_id, lbl_id = r
-                # Without converting to int it cannot fetch the value in get method below
-                lbl_id = int(lbl_id) if lbl_id is not None else lbl_id
-                self._generate_filter_rules(iid, excelcol, datacol_id, extraact_id, lbl_id)
+            self._generate_all_filter_rules(self.item['frules'])
 
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -36,7 +29,7 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
         lbl_id, lbl = self.row_dropdown_lbl.selected_value.values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
-        self._generate_filter_rules(None, excelcol, datacol_id, extraact_id, lbl_id)
+        self._generate_filter_rule(None, excelcol, datacol_id, extraact_id, lbl_id)
 
     def filter_button_minus_click(self, **event_args):
         b = event_args['sender']
@@ -54,16 +47,20 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 frules.append(i.tag)
+                # TODO to regenerate iid after saving
+                # i.remove_from_parent()
         result = anvil.server.call('save_filter_rules', uid=userid, fid=fid, \
                                    filter_obj={"name":fname, "type":ftype, "rules":frules}, del_iid=del_iid)
 
         if result['fid'] is not None and result['count'] is not None and result['dcount'] is not None:
             self.row_hidden_fid.text = result['fid']
             self.row_hidden_del_fid.text = ''
-            # TODO - Need to refresh this filter in screen so that iid is populated for further update
             n = Notification(f"Filter {fname} has been saved successfully.")
         else:
             n = Notification(f"WARNING: Problem occurs when saving filter {fname}.")
+        # TODO to regenerate iid after saving
+        # if len(frules) > 0:
+        #     self._generate_all_filter_rules(frules)
         n.show()
 
     def row_button_delete_click(self, **event_args):
@@ -100,7 +97,10 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         """This method is called when an item is selected"""
         self.row_dropdown_lbl.visible = False if self.row_dropdown_extraact.selected_value is None else True
 
-    def _generate_filter_rules(self, iid, excelcol, datacol_id, extraact_id, lbl_id, **event_args):
+    def _generate_filter_rule(self, iid, excelcol, datacol_id, extraact_id, lbl_id, **event_args):
+        dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
+        dict_extraact = cache.to_dict_caching_upload_action()
+        dict_lbl = cache.to_dict_caching_labels()
         datacol = dict_exp_tbl_def.get(datacol_id, None)
         extraact = dict_extraact.get(extraact_id, None)
         lbl = dict_lbl.get(lbl_id, None)
@@ -121,3 +121,11 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         fp.add_component(lbl_obj)
         fp.add_component(b)
         b.set_event_handler('click', self.filter_button_minus_click)
+
+    def _generate_all_filter_rules(self, rules, **event):
+        for r in rules:
+            iid, excelcol, datacol_id, extraact_id, lbl_id = r
+            # Without converting to int it cannot fetch the value in get method below
+            lbl_id = int(lbl_id) if lbl_id is not None else lbl_id
+            self._generate_filter_rule(iid, excelcol, datacol_id, extraact_id, lbl_id)
+        
