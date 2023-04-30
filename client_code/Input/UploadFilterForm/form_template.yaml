@@ -39,7 +39,7 @@ components:
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,
       foreground: 'theme:White', visible: true, text: 'File Import
 
-        ', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+        ', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
       italic: false, background: 'theme:Primary 500', bold: false, underline: false,
       icon: 'fa:chevron-circle-left'}
     name: button_file_import

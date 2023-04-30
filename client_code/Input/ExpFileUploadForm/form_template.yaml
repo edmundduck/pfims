@@ -8,23 +8,19 @@ components:
   layout_properties: {grid_position: 'PJXYGE,OSWBRM'}
   components:
   - type: Label
-    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Upload PDF statement file ', font_size: null, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: false, underline: false, icon: ''}
-    name: label_1
-    layout_properties: {grid_position: 'UNEXRN,SWGSSF'}
-  - type: FileLoader
-    properties: {}
-    name: file_loader_1
-    layout_properties: {grid_position: 'UNEXRN,UPGXNV'}
-  - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Analyse, font_size: 12, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Primary 500', bold: false, underline: false, icon: ''}
-    name: button_1
-    layout_properties: {grid_position: 'UNEXRN,SBUYOB'}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
+    name: spacer1
+    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
+    name: spacer2
+    layout_properties: {grid_position: 'UNEXRN,NFQIYG'}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: 'theme:White', visible: true, text: Manage Upload Filters, font_size: 12,
@@ -33,4 +29,94 @@ components:
     name: button_upload_filter
     layout_properties: {grid_position: 'UNEXRN,TYXYJD'}
     event_bindings: {click: button_upload_filter_click}
+  - type: Button
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      foreground: 'theme:White', visible: true, text: Input Expense, font_size: 12,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: 'theme:Primary 500', bold: false, underline: false, icon: 'fa:chevron-circle-left'}
+    name: button_input_exp
+    layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
+    event_bindings: {click: button_input_exp_click}
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_2
+  layout_properties: {grid_position: 'NYUFTO,XJBZAZ'}
+  components:
+  - type: ColumnPanel
+    properties: {col_widths: '{}'}
+    name: column_panel_3
+    layout_properties: {grid_position: 'HTPBTU,LLXXVX'}
+    components:
+    - type: DropDown
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: Choose file type
+        border: ''
+        enabled: true
+        foreground: ''
+        items: []
+        visible: true
+        font_size: 12
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: true
+      name: dropdown_filetype
+      layout_properties: {grid_position: 'ZYDOOZ,HXSXTZ'}
+      event_bindings: {show: dropdown_filetype_show, change: dropdown_filetype_change}
+    - type: DropDown
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: Choose a filter
+        border: ''
+        enabled: true
+        foreground: ''
+        items: []
+        visible: true
+        font_size: 12
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: true
+      name: dropdown_filter
+      layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
+  - type: FileLoader
+    properties:
+      role: null
+      show_state: true
+      align: center
+      tooltip: ''
+      border: ''
+      file_types: null
+      enabled: true
+      files: []
+      foreground: ''
+      visible: true
+      text: Upload
+      font_size: 12
+      font: ''
+      spacing_above: small
+      icon_align: left
+      spacing_below: small
+      italic: false
+      file: null
+      background: ''
+      bold: false
+      underline: false
+      multiple: false
+      icon: fa:upload
+    name: file_loader_1
+    layout_properties: {grid_position: 'HTPBTU,VQKCCV'}
 is_package: true

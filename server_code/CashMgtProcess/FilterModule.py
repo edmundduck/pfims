@@ -13,6 +13,19 @@ from ..System import SystemModule as sysmod
 # rather than in the user's browser.
 
 @anvil.server.callable
+# Generate filter dropdown items
+def generate_filter_dropdown(ftype):
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = f"SELECT * FROM {sysmod.schemafin()}.filtergrp WHERE ftype = %s ORDER BY fid ASC"
+        stmt = cur.mogrify(sql, (ftype, ))
+        cur.execute(stmt)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['fname'], row['fid']) for row in rows)
+    return content
+
+@anvil.server.callable
 # Generate filter type dropdown items
 def generate_filter_type_dropdown():
     conn = sysmod.psqldb_connect()
