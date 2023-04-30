@@ -48,19 +48,22 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 frules.append(i.tag)
                 # TODO to regenerate iid after saving
-                # i.remove_from_parent()
+                i.remove_from_parent()
         result = anvil.server.call('save_filter_rules', uid=userid, fid=fid, \
                                    filter_obj={"name":fname, "type":ftype, "rules":frules}, del_iid=del_iid)
 
-        if result['fid'] is not None and result['count'] is not None and result['dcount'] is not None:
-            self.row_hidden_fid.text = result['fid']
+        fid = result['fid']
+        if fid is not None and result['count'] is not None and result['dcount'] is not None:
+            self.row_hidden_fid.text = fid
             self.row_hidden_del_fid.text = ''
             n = Notification(f"Filter {fname} has been saved successfully.")
         else:
             n = Notification(f"WARNING: Problem occurs when saving filter {fname}.")
         # TODO to regenerate iid after saving
-        # if len(frules) > 0:
-        #     self._generate_all_filter_rules(frules)
+        self.item = (anvil.server.call('select_filter_rules', userid, fid))[0]
+        if self.item.get('frules', None) is not None:
+            print(self.item['frules'])
+            self._generate_all_filter_rules(self.item['frules'])
         n.show()
 
     def row_button_delete_click(self, **event_args):

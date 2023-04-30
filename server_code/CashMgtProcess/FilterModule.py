@@ -54,9 +54,9 @@ def select_filter_rules(uid, fid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Filter group can have no rules so left join is required
-        sql = f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
+        sql = f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
         LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" if fid is None else \
-        f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
+        f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
         LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
@@ -70,6 +70,7 @@ def select_filter_rules(uid, fid=None):
                 result[row['fid']] = {
                     'fid': row['fid'],
                     'fname': row['fname'],
+                    'ftype': row['ftype'],
                     'flastsave': row['flastsave'],
                     'frules': [[row['iid'], action1, action2, extra1, extra2]] if row['iid'] is not None and action1 is not None and action2 is not None else None
                 }
@@ -77,6 +78,7 @@ def select_filter_rules(uid, fid=None):
                 r = result.get(row['fid'], None)['frules']
                 r.append([row['iid'], action1, action2, extra1, extra2]) if row['iid'] is not None and action1 is not None and action2 is not None else r.append(None)
         cur.close()
+        print("result before return:", result)
     return list(result.values())
 
 @anvil.server.callable
@@ -91,6 +93,7 @@ def save_filter_rules(uid, fid, filter_obj, del_iid=None):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(filter_obj) > 0:
                 # First insert/update filter group
+                print("filter_obj:", filter_obj)
                 name = filter_obj.get('name', None)
                 type_id, type = filter_obj.get('type', None).values()
                 rules = filter_obj.get('rules', [])
