@@ -21,7 +21,7 @@ def generate_filter_type_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'], {"id": row['id'], "text": row['name']}) for row in rows)
+    content = list((row['name'], row['id']) for row in rows)
     return content
 
 @anvil.server.callable
@@ -78,7 +78,6 @@ def select_filter_rules(uid, fid=None):
                 r = result.get(row['fid'], None)['frules']
                 r.append([row['iid'], action1, action2, extra1, extra2]) if row['iid'] is not None and action1 is not None and action2 is not None else r.append(None)
         cur.close()
-        print("result before return:", result)
     return list(result.values())
 
 @anvil.server.callable
@@ -93,9 +92,8 @@ def save_filter_rules(uid, fid, filter_obj, del_iid=None):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(filter_obj) > 0:
                 # First insert/update filter group
-                print("filter_obj:", filter_obj)
                 name = filter_obj.get('name', None)
-                type_id, type = filter_obj.get('type', None).values()
+                type_id = filter_obj.get('type', None)
                 rules = filter_obj.get('rules', [])
                 currenttime = datetime.now()
                 if fid is not None:

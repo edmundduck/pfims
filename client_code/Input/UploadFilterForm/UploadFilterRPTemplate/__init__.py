@@ -62,7 +62,6 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         # TODO to regenerate iid after saving
         self.item = (anvil.server.call('select_filter_rules', userid, fid))[0]
         if self.item.get('frules', None) is not None:
-            print(self.item['frules'])
             self._generate_all_filter_rules(self.item['frules'])
         n.show()
 
