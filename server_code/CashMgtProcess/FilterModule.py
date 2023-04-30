@@ -53,13 +53,15 @@ def generate_upload_action_dropdown():
 def select_filter_rules(uid, fid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
-        WHERE a.fid = b.fid AND a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" if fid is None else \
-        f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a, fin.filterrules b \
-        WHERE a.fid = b.fid AND a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
+        # Filter group can have no rules so left join is required
+        sql = f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
+        LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" if fid is None else \
+        f"SELECT a.fid, a.fname, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
+        LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
 
+        # Group all filter rules under corresponding filter group
         result = {}
         for row in rows:
             action1, action2 = row['action'].split(",") if row['action'] is not None else [None, None]
@@ -69,11 +71,11 @@ def select_filter_rules(uid, fid=None):
                     'fid': row['fid'],
                     'fname': row['fname'],
                     'flastsave': row['flastsave'],
-                    'frules': [[row['iid'], action1, action2, extra1, extra2]]
+                    'frules': [[row['iid'], action1, action2, extra1, extra2]] if row['iid'] is not None and action1 is not None and action2 is not None else None
                 }
             else:
                 r = result.get(row['fid'], None)['frules']
-                r.append([row['iid'], action1, action2, extra1, extra2])
+                r.append([row['iid'], action1, action2, extra1, extra2]) if row['iid'] is not None and action1 is not None and action2 is not None else r.append(None)
         cur.close()
     return list(result.values())
 
@@ -83,6 +85,7 @@ def select_filter_rules(uid, fid=None):
 def save_filter_rules(uid, fid, filter_obj, del_iid):
     conn = None
     count = None
+    dcount = None
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -127,13 +130,16 @@ def save_filter_rules(uid, fid, filter_obj, del_iid):
             else:
                 count = 0
 
-            # At last perform rules deletion (if any)
-            args = "({0})".format(",".join(str(i) for i in del_iid))
-            sql = f"DELETE FROM {sysmod.schemafin()}.filterrules WHERE fid = {fid} AND iid IN {args}"
-            cur.execute(sql)
-            conn.commit()
-            dcount = cur.rowcount
-            if dcount <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
+            # At last perform rules deletion (if any)a
+            if len(del_iid) > 0:
+                args = "({0})".format(",".join(str(i) for i in del_iid))
+                sql = f"DELETE FROM {sysmod.schemafin()}.filterrules WHERE fid = {fid} AND iid IN {args}"
+                cur.execute(sql)
+                conn.commit()
+                dcount = cur.rowcount
+                if dcount <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
+            else:
+                dcount = 0
             cur.close()            
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug(f"OperationalError in {save_filter_rules.__name__}", err)

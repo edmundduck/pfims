@@ -18,7 +18,8 @@ class UploadFilterRPTemplate(UploadFilterRPTemplateTemplate):
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
-        self.row_hidden_del_fid.text = ""
+        # TODO fix the del_iid issue
+        self.row_hidden_del_fid.text = ''
         dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
         dict_extraact = cache.to_dict_caching_upload_action()
         dict_lbl = cache.to_dict_caching_labels()

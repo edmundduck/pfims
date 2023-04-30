@@ -72,7 +72,7 @@ components:
     components:
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: false, foreground: '', visible: true, text: '', font_size: 12,
+        border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12,
         font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
       name: row_hidden_fid
@@ -81,7 +81,7 @@ components:
       - {property: text, code: 'self.item[''fid'']', writeback: true}
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: false, foreground: '', visible: true, text: '', font_size: 12,
+        border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12,
         font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
       name: row_hidden_del_fid
