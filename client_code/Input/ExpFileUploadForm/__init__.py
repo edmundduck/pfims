@@ -15,6 +15,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
     
         # Any code you write here will run when the form opens.
         self.dropdown_filetype.items = cache.get_caching_filter_type()
+        self.file_loader_1.enabled = False
 
     def button_upload_filter_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -35,3 +36,18 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         else:
             self.dropdown_filter.items = anvil.server.call('generate_filter_dropdown', self.dropdown_filetype.selected_value)
 
+    def dropdown_filter_change(self, **event_args):
+        """This method is called when an item is selected"""
+        if self.dropdown_filter.selected_value is None:
+            self.file_loader_1.enabled = False
+        else:
+            self.file_loader_1.enabled = True
+
+    def file_loader_1_change(self, file, **event_args):
+        """This method is called when a new file is loaded into this FileLoader"""
+        if file is not None:
+            self.label_filename.text = f"Filename: {file.name}"
+            result = anvil.server.call('import_file', file=file)
+            # for i in result:
+            #     cb = CheckBox(text=i)
+            #     self.flow_panel_3.add_component(cb)

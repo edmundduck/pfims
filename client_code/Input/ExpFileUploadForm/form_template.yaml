@@ -92,6 +92,19 @@ components:
         include_placeholder: true
       name: dropdown_filter
       layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
+      event_bindings: {change: dropdown_filter_change}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Filename:', font_size: 12, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    name: label_filename
+    layout_properties: {grid_position: 'HTPBTU,UBAXZG'}
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_4
+  layout_properties: {grid_position: 'JXWYRB,YIDNKG'}
+  components:
   - type: FileLoader
     properties:
       role: null
@@ -118,5 +131,6 @@ components:
       multiple: false
       icon: fa:upload
     name: file_loader_1
-    layout_properties: {grid_position: 'HTPBTU,VQKCCV'}
+    layout_properties: {grid_position: 'RMKEXX,IDRMJD'}
+    event_bindings: {change: file_loader_1_change}
 is_package: true
