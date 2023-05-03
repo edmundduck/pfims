@@ -144,4 +144,24 @@ components:
   properties: {}
   name: sheet_tabs_panel
   layout_properties: {grid_position: 'KMUYYD,HWKURY'}
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_5
+  layout_properties:
+    col_widths: {}
+    grid_position: KQZPFO,GGVPPA
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Configure the labels to import, font_size: 12, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: lightgreen, bold: true, underline: false, icon: ''}
+    name: label_2
+    layout_properties: {grid_position: 'RJRGJU,XBJNKZ'}
+- type: FlowPanel
+  properties: {}
+  name: labels_panel
+  layout_properties:
+    col_widths: {}
+    grid_position: SPHIAF,PGSDAY
 is_package: true
