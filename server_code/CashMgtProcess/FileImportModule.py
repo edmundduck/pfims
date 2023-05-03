@@ -11,9 +11,9 @@ import pandas as pd
 # rather than in the user's browser.
 
 @anvil.server.callable
-def import_file(file):
+def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    print(ef.sheet_names)
+    # print(ef.sheet_names)
     xls = pd.read_excel(ef)
     # xls = pd.read_excel(BytesIO(file.get_bytes()), sheet_name=None)
     print(xls)

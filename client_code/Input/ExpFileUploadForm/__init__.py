@@ -47,7 +47,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
             self.label_filename.text = f"Filename: {file.name}"
-            result = anvil.server.call('import_file', file=file)
+            result = anvil.server.call('preview_file', file=file)
             # for i in result:
             #     cb = CheckBox(text=i)
             #     self.flow_panel_3.add_component(cb)
