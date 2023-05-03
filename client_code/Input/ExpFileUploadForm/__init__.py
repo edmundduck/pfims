@@ -48,6 +48,12 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         if file is not None:
             self.label_filename.text = f"Filename: {file.name}"
             result = anvil.server.call('preview_file', file=file)
-            # for i in result:
-            #     cb = CheckBox(text=i)
-            #     self.flow_panel_3.add_component(cb)
+            for i in result:
+                cb = CheckBox(
+                    text=i,
+                    font_size=12,
+                    align="left",
+                    spacing_above="small",
+                    spacing_below="small"
+                )
+                self.sheet_tabs_panel.add_component(cb)

@@ -14,10 +14,9 @@ import pandas as pd
 def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     # print(ef.sheet_names)
-    xls = pd.read_excel(ef)
+    # xls = pd.read_excel(ef)
     # xls = pd.read_excel(BytesIO(file.get_bytes()), sheet_name=None)
-    print(xls)
-    return list(xls.keys())
+    return list(ef.sheet_names)
 
 def get_xls_tabs(f):
     return list(f.keys())

@@ -37,10 +37,17 @@ components:
     name: button_input_exp
     layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
     event_bindings: {click: button_input_exp_click}
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true,
+    text: 'Filename:', font_size: 12, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
+  name: label_filename
+  layout_properties: {grid_position: 'NYUFTO,EAOLZO'}
 - type: ColumnPanel
   properties: {col_widths: '{}'}
   name: column_panel_2
-  layout_properties: {grid_position: 'NYUFTO,XJBZAZ'}
+  layout_properties: {grid_position: 'NYUFTO,WULGML'}
   components:
   - type: ColumnPanel
     properties: {col_widths: '{}'}
@@ -93,44 +100,48 @@ components:
       name: dropdown_filter
       layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
       event_bindings: {change: dropdown_filter_change}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Filename:', font_size: 12, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
-    name: label_filename
-    layout_properties: {grid_position: 'HTPBTU,UBAXZG'}
+    - type: FileLoader
+      properties:
+        role: null
+        show_state: true
+        align: center
+        tooltip: ''
+        border: ''
+        file_types: null
+        enabled: true
+        files: []
+        foreground: ''
+        visible: true
+        text: Upload
+        font_size: 12
+        font: ''
+        spacing_above: small
+        icon_align: left
+        spacing_below: small
+        italic: false
+        file: null
+        background: ''
+        bold: false
+        underline: false
+        multiple: false
+        icon: fa:upload
+      name: file_loader_1
+      layout_properties: {grid_position: 'ZYDOOZ,RLZLSF'}
+      event_bindings: {change: file_loader_1_change}
 - type: ColumnPanel
   properties: {col_widths: '{}'}
   name: column_panel_4
   layout_properties: {grid_position: 'JXWYRB,YIDNKG'}
   components:
-  - type: FileLoader
-    properties:
-      role: null
-      show_state: true
-      align: center
-      tooltip: ''
-      border: ''
-      file_types: null
-      enabled: true
-      files: []
-      foreground: ''
-      visible: true
-      text: Upload
-      font_size: 12
-      font: ''
-      spacing_above: small
-      icon_align: left
-      spacing_below: small
-      italic: false
-      file: null
-      background: ''
-      bold: false
-      underline: false
-      multiple: false
-      icon: fa:upload
-    name: file_loader_1
-    layout_properties: {grid_position: 'RMKEXX,IDRMJD'}
-    event_bindings: {change: file_loader_1_change}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Select the tabs to import, font_size: 12, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: lightgreen,
+      bold: true, underline: false, icon: ''}
+    name: label_1
+    layout_properties: {grid_position: 'RJRGJU,XBJNKZ'}
+- type: FlowPanel
+  properties: {}
+  name: sheet_tabs_panel
+  layout_properties: {grid_position: 'KMUYYD,HWKURY'}
 is_package: true
