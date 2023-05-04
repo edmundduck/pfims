@@ -46,9 +46,10 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
+            userid = anvil.server.call('get_current_userid')
             self.label_filename.text = f"Filename: {file.name}"
-            result = anvil.server.call('preview_file', file=file)
-            for i in result:
+            xls, frules = anvil.server.call('preview_file', file=file, uid=userid, fid=self.dropdown_filter.selected_value)
+            for i in xls:
                 cb = CheckBox(
                     text=i,
                     font_size=12,
@@ -57,3 +58,5 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                     spacing_below="small"
                 )
                 self.sheet_tabs_panel.add_component(cb)
+            for j in frules:
+                print(j)
