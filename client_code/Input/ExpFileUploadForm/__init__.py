@@ -59,5 +59,3 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                     spacing_below="small"
                 )
                 self.sheet_tabs_panel.add_component(cb)
-            for j in frules:
-                print(j)
