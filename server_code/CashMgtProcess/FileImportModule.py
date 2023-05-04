@@ -14,7 +14,7 @@ import pandas as pd
 def preview_file(file, fid):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     frules = anvil.server.call('select_filter_labels_rules', fid)
-    xls = pd.read_excel(ef, usecols="B", index_col=0)
+    xls = pd.read_excel(ef, sheet_name=None, usecols="B", index_col=0)
     print(xls)
     # print(xls.sort_values(by='label'))
     # xls = pd.read_excel(BytesIO(file.get_bytes()), sheet_name=None)
