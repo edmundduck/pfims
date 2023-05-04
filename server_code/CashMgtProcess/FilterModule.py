@@ -14,11 +14,11 @@ from ..System import SystemModule as sysmod
 
 @anvil.server.callable
 # Generate filter dropdown items
-def generate_filter_dropdown(ftype):
+def generate_filter_dropdown(uid, ftype):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemafin()}.filtergrp WHERE ftype = %s ORDER BY fid ASC"
-        stmt = cur.mogrify(sql, (ftype, ))
+        sql = f"SELECT * FROM {sysmod.schemafin()}.filtergrp WHERE userid = %s AND ftype = %s ORDER BY fid ASC"
+        stmt = cur.mogrify(sql, (uid, ftype, ))
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
@@ -92,6 +92,21 @@ def select_filter_rules(uid, fid=None):
                 r.append([row['iid'], action1, action2, extra1, extra2]) if row['iid'] is not None and action1 is not None and action2 is not None else r.append(None)
         cur.close()
     return list(result.values())
+
+@anvil.server.callable
+# Select the filter and rules (labels only) belong to the logged on user
+def select_filter_labels_rules(fid):
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        # Filter group can have no rules so left join is required
+        sql = f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
+        WHERE POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC" if fid is None \
+        else f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
+        WHERE fid = {fid} AND POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
+    return list(rows)
 
 @anvil.server.callable
 # Save the filter and rules

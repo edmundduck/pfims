@@ -31,10 +31,12 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
 
     def dropdown_filetype_change(self, **event_args):
         """This method is called when an item is selected"""
+        # TODO cache the filter dropdown
+        userid = anvil.server.call('get_current_userid')
         if self.dropdown_filetype.selected_value is None:
             self.dropdown_filter.items = []
         else:
-            self.dropdown_filter.items = anvil.server.call('generate_filter_dropdown', self.dropdown_filetype.selected_value)
+            self.dropdown_filter.items = anvil.server.call('generate_filter_dropdown', userid, self.dropdown_filetype.selected_value)
 
     def dropdown_filter_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -46,9 +48,8 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
-            userid = anvil.server.call('get_current_userid')
             self.label_filename.text = f"Filename: {file.name}"
-            xls, frules = anvil.server.call('preview_file', file=file, uid=userid, fid=self.dropdown_filter.selected_value)
+            xls, frules = anvil.server.call('preview_file', file=file, fid=self.dropdown_filter.selected_value)
             for i in xls:
                 cb = CheckBox(
                     text=i,
