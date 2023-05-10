@@ -17,5 +17,5 @@ def preview_file(file, fid):
     # xls = pd.read_excel(ef, sheet_name=None, usecols="B", index_col=0)
     return list(ef.sheet_names)
 
-def get_xls_tabs(f):
+def import_file(file):
     return list(f.keys())

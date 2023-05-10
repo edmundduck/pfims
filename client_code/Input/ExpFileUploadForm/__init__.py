@@ -75,4 +75,10 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
 
     def button_import_tab_click(self, **event_args):
         """This method is called when the button is clicked"""
+        tablist = []
+        for i in self.sheet_tabs_panel.get_components():
+            if isinstance(i, CheckBox) and i.checked:
+                tablist.append(i.text)
+        rules = anvil.server.call('select_filter_labels_rules', self.dropdown_filter.selected_value)
+        print(rules)
         pass
