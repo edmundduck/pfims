@@ -16,6 +16,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         # Any code you write here will run when the form opens.
         self.dropdown_filetype.items = cache.get_caching_filter_type()
         self.file_loader_1.enabled = False
+        self.button_import_tab.visible = False
 
     def button_upload_filter_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -59,7 +60,19 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                     spacing_below="small"
                 )
                 self.sheet_tabs_panel.add_component(cb)
-                cb.set_event_handler('change', self.switch_import_button)
+                cb.set_event_handler('change', self.enable_import_button)
 
-    def switch_import_button(self, **event_args):
+    def enable_import_button(self, **event_args):
+        cb = event_args['sender']
+        if cb.checked:
+            self.button_import_tab.visible = True
+        else:
+            vis = False
+            for i in cb.parent.get_components():
+                if isinstance(i, CheckBox) and i.checked:
+                    vis = True
+            self.button_import_tab.visible = vis
+
+    def button_import_tab_click(self, **event_args):
+        """This method is called when the button is clicked"""
         pass
