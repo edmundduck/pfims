@@ -99,10 +99,14 @@ def select_filter_labels_rules(fid):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Filter group can have no rules so left join is required
+        # sql = f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
+        # WHERE POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC" if fid is None \
+        # else f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
+        # WHERE fid = {fid} AND POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC"
         sql = f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
-        WHERE POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC" if fid is None \
+        ORDER BY fid ASC, iid ASC" if fid is None \
         else f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
-        WHERE fid = {fid} AND POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC"
+        WHERE fid = {fid} ORDER BY fid ASC, iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
