@@ -103,10 +103,10 @@ def select_filter_labels_rules(fid):
         # WHERE POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC" if fid is None \
         # else f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
         # WHERE fid = {fid} AND POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC"
-        sql = f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
-        ORDER BY fid ASC, iid ASC" if fid is None \
-        else f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
-        WHERE fid = {fid} ORDER BY fid ASC, iid ASC"
+        sql = f"SELECT '[' || string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ':') || ']' FROM fin.filterrules \
+        " if fid is None \
+        else f"SELECT '[' || string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ':') || ']' FROM fin.filterrules \
+        WHERE fid = {fid}"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()

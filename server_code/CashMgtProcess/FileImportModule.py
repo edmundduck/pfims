@@ -11,11 +11,12 @@ import pandas as pd
 # rather than in the user's browser.
 
 @anvil.server.callable
-def preview_file(file, fid):
+def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    # frules = anvil.server.call('select_filter_labels_rules', fid)
-    # xls = pd.read_excel(ef, sheet_name=None, usecols="B", index_col=0)
     return list(ef.sheet_names)
 
-def import_file(file):
-    return list(f.keys())
+@anvil.server.callable
+def import_file(file, tablist, rules):
+    ef = pd.ExcelFile(BytesIO(file.get_bytes()))
+    xls = pd.read_excel(ef, sheet_name=f"{tablist}", usecols=f"{rules}")
+    print(xls)

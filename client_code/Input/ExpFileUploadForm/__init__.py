@@ -50,7 +50,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
             self.label_filename.text = f"Uploaded filename: {file.name}"
-            xls = anvil.server.call('preview_file', file=file, fid=self.dropdown_filter.selected_value)
+            xls = anvil.server.call('preview_file', file=file)
             for i in xls:
                 cb = CheckBox(
                     text=i,
@@ -80,5 +80,5 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
         rules = anvil.server.call('select_filter_labels_rules', self.dropdown_filter.selected_value)
-        print(rules)
+        anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=rules)
         pass
