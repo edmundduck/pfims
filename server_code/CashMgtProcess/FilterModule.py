@@ -103,14 +103,14 @@ def select_filter_labels_rules(fid):
         # WHERE POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC" if fid is None \
         # else f"SELECT SUBSTRING(action, POSITION(',' IN action)-1, 1) AS col FROM fin.filterrules \
         # WHERE fid = {fid} AND POSITION(',L' IN action) > 0 ORDER BY fid ASC, iid ASC"
-        sql = f"SELECT '[' || string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ':') || ']' FROM fin.filterrules \
+        sql = f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ':') AS col FROM fin.filterrules \
         " if fid is None \
-        else f"SELECT '[' || string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ':') || ']' FROM fin.filterrules \
+        else f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ':') AS col FROM fin.filterrules \
         WHERE fid = {fid}"
         cur.execute(sql)
-        rows = cur.fetchall()
+        row = cur.fetchone()
         cur.close()
-    return list(rows)
+    return row['col'] if row is not None else None
 
 @anvil.server.callable
 # Save the filter and rules
