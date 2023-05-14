@@ -81,4 +81,3 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                 tablist.append(i.text)
         rules = anvil.server.call('select_filter_labels_rules', self.dropdown_filter.selected_value)
         anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=rules)
-        pass
