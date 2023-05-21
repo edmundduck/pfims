@@ -67,10 +67,19 @@ def select_filter_rules(uid, fid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Filter group can have no rules so left join is required
-        sql = f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
-        LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" if fid is None else \
-        f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.iid, b.action, b.extra FROM fin.filtergrp a \
-        LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
+        datecol VARCHAR(10),
+        acctcol VARCHAR(10),
+        amtcol VARCHAR(10),
+        remarkscol VARCHAR(10),
+        stmtdtlcol VARCHAR(10),
+        lblcol VARCHAR(10),
+        eaction VARCHAR(2),
+        etarget VARCHAR(10),
+        sql = f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
+        FROM fin.filtergrp a LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" \
+        if fid is None else \
+        f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
+        FROM fin.filtergrp a LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
 
@@ -143,10 +152,12 @@ def save_filter_rules(uid, fid, filter_obj, del_iid=None):
                 # Second insert/update filter rules
                 mogstr = []
                 for rule in rules:
+                    print(f"Rule:{rule}")
                     iid = int(rule[0]) if rule[0] is not None else None
                     action = f"{rule[1]},{rule[2]}"
                     extra = f"{rule[3]},{rule[4]}" if rule[3] not in (None, '') and rule[4] not in (None, '') else None
                     mogstr.append([iid, fid, action, extra])
+                raise psycopg2.OperationalError(f"TERMINATE for test")
                 if len(mogstr) > 0:
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.filterrules (iid, fid, action, extra) VALUES (%s, %s, %s, %s) \
                     ON CONFLICT (iid, fid) DO UPDATE SET \
