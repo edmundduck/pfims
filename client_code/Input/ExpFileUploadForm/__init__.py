@@ -14,13 +14,13 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.dropdown_filetype.items = cache.get_caching_filter_type()
+        self.dropdown_filetype.items = cache.get_caching_mapping_type()
         self.file_loader_1.enabled = False
         self.button_import_tab.visible = False
 
-    def button_upload_filter_click(self, **event_args):
+    def button_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
-        Routing.open_upload_filter_form(self)
+        Routing.open_upload_mapping_form(self)
 
     def button_input_exp_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -28,7 +28,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
 
     def dropdown_filetype_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_filetype.items = cache.get_caching_filter_type()
+        self.dropdown_filetype.items = cache.get_caching_mapping_type()
 
     def dropdown_filetype_change(self, **event_args):
         """This method is called when an item is selected"""

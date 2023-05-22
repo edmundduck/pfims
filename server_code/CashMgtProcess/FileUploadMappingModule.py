@@ -67,31 +67,38 @@ def generate_upload_action_dropdown():
 def select_mapping_rules(uid, gid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        # Filter group can have no rules so left join is required
-        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.iid ASC" \
-        if fid is None else \
-        f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.iid ASC"
+        # # Filter group can have no rules so left join is required
+        # sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
+        # FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.iid ASC" \
+        # if fid is None else \
+        # f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
+        # FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.iid ASC"
+        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.col ASC" \
+        if gid is None else \
+        f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
 
         # Group all filter rules under corresponding filter group
         result = {}
         for row in rows:
-            action1, action2 = row['action'].split(",") if row['action'] is not None else [None, None]
-            extra1, extra2 = row['extra'].split(",") if row['extra'] is not None else [None, None]
-            if result.get(row['fid'], None) is None:
-                result[row['fid']] = {
-                    'fid': row['fid'],
-                    'fname': row['fname'],
-                    'ftype': row['ftype'],
-                    'flastsave': row['flastsave'],
-                    'frules': [[row['iid'], action1, action2, extra1, extra2]] if row['iid'] is not None and action1 is not None and action2 is not None else None
+            action1 = row['col']
+            action2 = row['col_code']
+            extra1 = row['eaction']
+            extra2 = row['etarget']
+            if result.get(row['id'], None) is None:
+                result[row['id']] = {
+                    'id': row['id'],
+                    'name': row['name'],
+                    'filetype': row['filetype'],
+                    'lastsave': row['lastsave'],
+                    'rule': [[action1, action2, extra1, extra2]] if action1 is not None and action2 is not None else None
                 }
             else:
-                r = result.get(row['fid'], None)['frules']
-                r.append([row['iid'], action1, action2, extra1, extra2]) if row['iid'] is not None and action1 is not None and action2 is not None else r.append(None)
+                r = result.get(row['id'], None)['rule']
+                r.append([action1, action2, extra1, extra2]) if action1 is not None and action2 is not None else r.append(None)
         cur.close()
     return list(result.values())
 

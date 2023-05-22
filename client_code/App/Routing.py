@@ -20,7 +20,7 @@ def open_file_import_form(self, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpFileUploadForm())
 
-def open_upload_filter_form(self, **event_args):
+def open_upload_mapping_form(self, **event_args):
     from ..Input.FileUploadMappingForm import FileUploadMappingForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(FileUploadMappingForm())
