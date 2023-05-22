@@ -64,15 +64,15 @@ def generate_upload_action_dropdown():
 
 @anvil.server.callable
 # Select the mapping and rules belong to the logged on user, it can be all or particular one only
-def select_mapping_rules(uid, fid=None):
+def select_mapping_rules(uid, gid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Filter group can have no rules so left join is required
         sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" \
+        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.iid ASC" \
         if fid is None else \
         f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.fid = b.fid WHERE a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
+        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
 
