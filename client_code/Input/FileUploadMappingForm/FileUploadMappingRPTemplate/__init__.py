@@ -29,7 +29,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
         lbl_id, lbl = self.row_dropdown_lbl.selected_value.values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
-        self._generate_mapping_rule(None, excelcol, datacol_id, extraact_id, lbl_id)
+        self._generate_mapping_rule(excelcol, datacol_id, extraact_id, lbl_id)
 
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
@@ -41,16 +41,16 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         userid = anvil.server.call('get_current_userid')
         id = self.row_hidden_fid.text if self.row_hidden_fid.text not in (None, '') else None
         name = self.row_mapping_name.text
-        type = self.row_dropdown_type.selected_value
+        filetype = self.row_dropdown_type.selected_value
         rules = []
         del_iid = self.row_hidden_del_fid.text[:-1].split(",") if self.row_hidden_del_fid.text else None
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
-                frules.append(i.tag)
+                rules.append(i.tag)
                 # TODO to regenerate iid after saving
                 i.remove_from_parent()
         result = anvil.server.call('save_mapping_rules', uid=userid, id=id, \
-                                   mapping_obj={"name":name, "type":type, "rules":rules}, del_iid=del_iid)
+                                   mapping_obj={"name":name, "filetype":filetype, "rules":rules}, del_iid=del_iid)
 
         fid = result['fid']
         if fid is not None and result['count'] is not None and result['dcount'] is not None:
@@ -99,7 +99,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         """This method is called when an item is selected"""
         self.row_dropdown_lbl.visible = False if self.row_dropdown_extraact.selected_value is None else True
 
-    def _generate_mapping_rule(self, iid, excelcol, datacol_id, extraact_id, lbl_id, **event_args):
+    def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, lbl_id, **event_args):
         dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
         dict_extraact = cache.to_dict_caching_upload_action()
         dict_lbl = cache.to_dict_caching_labels()
@@ -110,7 +110,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         rule = f"{rule} Extra action(s): {extraact} {lbl}" if extraact is not None else rule
         
         lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon='fa:info')
-        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[iid, excelcol, datacol_id, extraact_id, lbl_id])
+        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, lbl_id, rule])
         b = Button(
             icon='fa:minus',
             foreground="Blue",
@@ -126,8 +126,8 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
 
     def _generate_all_mapping_rules(self, rules, **event):
         for r in rules:
-            iid, excelcol, datacol_id, extraact_id, lbl_id = r
+            excelcol, datacol_id, extraact_id, lbl_id = r
             # Without converting to int it cannot fetch the value in get method below
             lbl_id = int(lbl_id) if lbl_id is not None else lbl_id
-            self._generate_mapping_rule(iid, excelcol, datacol_id, extraact_id, lbl_id)
+            self._generate_mapping_rule(excelcol, datacol_id, extraact_id, lbl_id)
         

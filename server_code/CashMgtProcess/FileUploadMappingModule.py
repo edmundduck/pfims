@@ -128,41 +128,39 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
             if len(mapping_obj) > 0:
                 # First insert/update filter group
                 name = mapping_obj.get('name', None)
-                type_id = mapping_obj.get('type', None)
+                type_id = mapping_obj.get('filetype', None)
                 rules = mapping_obj.get('rules', [])
                 currenttime = datetime.now()
-                if fid is not None:
-                    sql = f"INSERT INTO {sysmod.schemafin()}.filtergrp (userid, fid, fname, ftype, flastsave) VALUES (%s,%s,%s,%s,%s) \
-                    ON CONFLICT (fid) DO UPDATE SET fname=EXCLUDED.fname, flastsave=EXCLUDED.flastsave \
-                    WHERE filtergrp.fid=EXCLUDED.fid RETURNING fid"
-                    stmt = cur.mogrify(sql, (int(uid), fid, name, type_id, currenttime))
+                if id is not None:
+                    sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
+                    ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
+                    stmt = cur.mogrify(sql, (int(uid), id, name, type_id, currenttime))
                 else:
-                    sql = f"INSERT INTO {sysmod.schemafin()}.filtergrp (userid, fid, fname, ftype, flastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING fid"
+                    sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
                     stmt = cur.mogrify(sql, (int(uid), name, type_id, currenttime))
                 cur.execute(stmt)
                 conn.commit()
-                fid = (cur.fetchone())['fid']
-                if fid < 0:
-                    raise psycopg2.OperationalError(f"Fail to save the filter ({name}).")
+                id = (cur.fetchone())['id']
+                if id < 0:
+                    raise psycopg2.OperationalError(f"Fail to save the mapping ({name}).")
 
                 # Second insert/update filter rules
                 mogstr = []
                 for rule in rules:
                     print(f"Rule:{rule}")
-                    iid = int(rule[0]) if rule[0] is not None else None
-                    action = f"{rule[1]},{rule[2]}"
-                    extra = f"{rule[3]},{rule[4]}" if rule[3] not in (None, '') and rule[4] not in (None, '') else None
-                    mogstr.append([iid, fid, action, extra])
-                raise psycopg2.OperationalError(f"TERMINATE for test")
+                    col_id = f"{rule[0]}"
+                    column = f"{rule[1]}"
+                    eaction = f"{rule[2]}" if rule[2] not in (None, '') else None
+                    etarget = f"{rule[3]}" if rule[3] not in (None, '') else None
+                    rule = f"{rule[4]}"
+                    mogstr.append([id, col_id, column, eaction, etarget, rule])
                 if len(mogstr) > 0:
-                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.filterrules (iid, fid, action, extra) VALUES (%s, %s, %s, %s) \
-                    ON CONFLICT (iid, fid) DO UPDATE SET \
-                    action=EXCLUDED.action, \
-                    extra=EXCLUDED.extra \
-                    WHERE filterrules.iid=EXCLUDED.iid AND filterrules.fid=EXCLUDED.fid", mogstr)
+                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
+                    (%s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
+                    etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col", mogstr)
                     conn.commit()
                     count = cur.rowcount
-                    if count <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
+                    if count <= 0: raise psycopg2.OperationalError(f"Fail to save mapping rules (Mapping name={name}).")
                 else:
                     count = 0
             else:
