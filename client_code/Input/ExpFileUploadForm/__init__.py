@@ -37,7 +37,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         if self.dropdown_filetype.selected_value is None:
             self.dropdown_filter.items = []
         else:
-            self.dropdown_filter.items = anvil.server.call('generate_filter_dropdown', userid, self.dropdown_filetype.selected_value)
+            self.dropdown_filter.items = anvil.server.call('generate_mapping_dropdown', userid, self.dropdown_filetype.selected_value)
 
     def dropdown_filter_change(self, **event_args):
         """This method is called when an item is selected"""

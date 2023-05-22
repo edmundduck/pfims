@@ -13,23 +13,24 @@ from ..System import SystemModule as sysmod
 # rather than in the user's browser.
 
 @anvil.server.callable
-# Generate filter dropdown items
-def generate_filter_dropdown(uid, ftype):
+# Generate mapping dropdown items
+def generate_mapping_dropdown(uid, ftype):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemafin()}.filtergrp WHERE userid = %s AND ftype = %s ORDER BY fid ASC"
-        stmt = cur.mogrify(sql, (uid, ftype, ))
+        sql = f"SELECT * FROM {sysmod.schemafin()}.mappinggroup WHERE userid = %s AND type = %s ORDER BY fid ASC"
+        stmt = cur.mogrify(sql, (uid, type, ))
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['fname'], row['fid']) for row in rows)
+    content = list((row['name'], row['id']) for row in rows)
     return content
 
 @anvil.server.callable
-# Generate filter type dropdown items
-def generate_filter_type_dropdown():
+# Generate mapping file type dropdown items
+def generate_mapping_type_dropdown():
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        # TODO change filter_type to mapping_file_type
         sql = f"SELECT * FROM {sysmod.schemarefd()}.filter_type ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
@@ -62,19 +63,11 @@ def generate_upload_action_dropdown():
     return content
 
 @anvil.server.callable
-# Select the filter and rules belong to the logged on user, it can be all or particular one only
-def select_filter_rules(uid, fid=None):
+# Select the mapping and rules belong to the logged on user, it can be all or particular one only
+def select_mapping_rules(uid, fid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Filter group can have no rules so left join is required
-        datecol VARCHAR(10),
-        acctcol VARCHAR(10),
-        amtcol VARCHAR(10),
-        remarkscol VARCHAR(10),
-        stmtdtlcol VARCHAR(10),
-        lblcol VARCHAR(10),
-        eaction VARCHAR(2),
-        etarget VARCHAR(10),
         sql = f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
         FROM fin.filtergrp a LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" \
         if fid is None else \
@@ -120,20 +113,20 @@ def select_filter_labels_rules(fid):
     return row['col'] if row is not None else None
 
 @anvil.server.callable
-# Save the filter and rules
-# Filter and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
-def save_filter_rules(uid, fid, filter_obj, del_iid=None):
+# Save the mapping and rules
+# Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
+def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
     conn = None
     count = None
     dcount = None
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if len(filter_obj) > 0:
+            if len(mapping_obj) > 0:
                 # First insert/update filter group
-                name = filter_obj.get('name', None)
-                type_id = filter_obj.get('type', None)
-                rules = filter_obj.get('rules', [])
+                name = mapping_obj.get('name', None)
+                type_id = mapping_obj.get('type', None)
+                rules = mapping_obj.get('rules', [])
                 currenttime = datetime.now()
                 if fid is not None:
                     sql = f"INSERT INTO {sysmod.schemafin()}.filtergrp (userid, fid, fname, ftype, flastsave) VALUES (%s,%s,%s,%s,%s) \
@@ -184,7 +177,7 @@ def save_filter_rules(uid, fid, filter_obj, del_iid=None):
                 dcount = 0
             cur.close()            
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug(f"OperationalError in {save_filter_rules.__name__}", err)
+        sysmod.print_data_debug(f"OperationalError in {save_mapping_rules.__name__}", err)
         conn.rollback()
     finally:
         if conn is not None: conn.close()        

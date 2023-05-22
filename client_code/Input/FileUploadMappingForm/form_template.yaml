@@ -27,14 +27,14 @@ components:
       grid_position: HMSPPM,MZDKPR
   - type: Button
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Create Filter, font_size: 12,
+      foreground: 'theme:White', visible: true, text: Create Mapping, font_size: 12,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Primary 500', bold: false, underline: false, icon: 'fa:filter'}
-    name: button_create_filter
+    name: button_create_mapping
     layout_properties:
       col_widths: {}
       grid_position: HMSPPM,ADBGPC
-    event_bindings: {click: button_create_filter_click}
+    event_bindings: {click: button_create_mapping_click}
   - type: Button
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,
       foreground: 'theme:White', visible: true, text: 'File Import
@@ -48,7 +48,7 @@ components:
       grid_position: HMSPPM,NLZTAV
     event_bindings: {click: button_file_import_click}
 - type: RepeatingPanel
-  properties: {item_template: Input.UploadFilterForm.UploadFilterRPTemplate}
+  properties: {item_template: Input.FileUploadMappingForm.FileUploadMappingRPTemplate}
   name: repeating_panel_1
   layout_properties: {grid_position: 'LTOPDH,LKKWHN'}
 is_package: true
