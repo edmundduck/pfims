@@ -68,11 +68,11 @@ def select_mapping_rules(uid, fid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Filter group can have no rules so left join is required
-        sql = f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        FROM fin.filtergrp a LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" \
+        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
+        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.fid = b.fid WHERE a.userid = {uid} ORDER BY a.fid ASC, b.iid ASC" \
         if fid is None else \
-        f"SELECT a.fid, a.fname, a.ftype, a.flastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        FROM fin.filtergrp a LEFT JOIN fin.filterrules b ON a.fid = b.fid WHERE a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
+        f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
+        FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.fid = b.fid WHERE a.userid = {uid} AND a.fid = {fid} ORDER BY a.fid ASC, b.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
 
