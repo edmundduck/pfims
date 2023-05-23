@@ -67,12 +67,7 @@ def generate_upload_action_dropdown():
 def select_mapping_rules(uid, gid=None):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        # # Filter group can have no rules so left join is required
-        # sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        # FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.iid ASC" \
-        # if fid is None else \
-        # f"SELECT a.id, a.name, a.filetype, a.lastsave, b.datecol, b.acctcol, b.amtcol, b.remarkscol, b.stmtdtlcol, b.lblcol, b.eaction, b.etarget \
-        # FROM fin.mappinggroup a LEFT JOIN fin.mappingmatrix b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.iid ASC"
+        # Mapping group can have no rules so left join is required
         sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.col ASC" \
         if gid is None else \
@@ -151,7 +146,7 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                     col_id = f"{rule[0]}"
                     column = f"{rule[1]}"
                     eaction = f"{rule[2]}" if rule[2] not in (None, '') else None
-                    etarget = f"{rule[3]}" if rule[3] not in (None, '') else None
+                    etarget = f"{rule[3]}" if rule[2] not in (None, '') and rule[3] not in (None, '') else None
                     rule = f"{rule[4]}"
                     mogstr.append([id, col_id, column, eaction, etarget, rule])
                 if len(mogstr) > 0:

@@ -20,8 +20,8 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
 
         # Generate all rules in a mapping
-        if self.item.get('frules', None) is not None:
-            self._generate_all_mapping_rules(self.item['frules'])
+        if self.item.get('rule', None) is not None:
+            self._generate_all_mapping_rules(self.item['rule'])
 
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -61,6 +61,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
             n = Notification(f"WARNING: Problem occurs when saving mapping {name}.")
         # TODO to regenerate iid after saving
         self.item = (anvil.server.call('select_mapping_rules', userid, id))[0]
+        self.row_dropdown_type.selected_value = self.item.get('filetype')
         if self.item.get('rule', None) is not None:
             self._generate_all_mapping_rules(self.item['rule'])
         n.show()
