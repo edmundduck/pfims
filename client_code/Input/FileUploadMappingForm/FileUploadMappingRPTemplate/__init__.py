@@ -39,7 +39,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         userid = anvil.server.call('get_current_userid')
-        id = self.row_hidden_fid.text if self.row_hidden_fid.text not in (None, '') else None
+        id = self.row_hidden_id.text if self.row_hidden_id.text not in (None, '') else None
         name = self.row_mapping_name.text
         filetype = self.row_dropdown_type.selected_value
         rules = []
@@ -52,23 +52,23 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         result = anvil.server.call('save_mapping_rules', uid=userid, id=id, \
                                    mapping_obj={"name":name, "filetype":filetype, "rules":rules}, del_iid=del_iid)
 
-        fid = result['fid']
-        if fid is not None and result['count'] is not None and result['dcount'] is not None:
-            self.row_hidden_fid.text = fid
+        id = result['id']
+        if id is not None and result['count'] is not None and result['dcount'] is not None:
+            self.row_hidden_id.text = id
             self.row_hidden_del_fid.text = ''
-            n = Notification(f"mapping {fname} has been saved successfully.")
+            n = Notification(f"mapping {name} has been saved successfully.")
         else:
-            n = Notification(f"WARNING: Problem occurs when saving mapping {fname}.")
+            n = Notification(f"WARNING: Problem occurs when saving mapping {name}.")
         # TODO to regenerate iid after saving
-        self.item = (anvil.server.call('select_mapping_rules', userid, fid))[0]
-        if self.item.get('frules', None) is not None:
-            self._generate_all_mapping_rules(self.item['frules'])
+        self.item = (anvil.server.call('select_mapping_rules', userid, id))[0]
+        if self.item.get('rule', None) is not None:
+            self._generate_all_mapping_rules(self.item['rule'])
         n.show()
 
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         userid = anvil.server.call('get_current_userid')
-        to_be_del_fid = self.row_hidden_fid.text
+        to_be_del_fid = self.row_hidden_id.text
         to_be_del_fname = self.row_mapping_name.text
         msg = Label(text=f"Proceed mapping <{to_be_del_fname}> deletion by clicking DELETE.")
         userconf = alert(content=msg,

@@ -156,7 +156,7 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                     mogstr.append([id, col_id, column, eaction, etarget, rule])
                 if len(mogstr) > 0:
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
-                    (%s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
+                    (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
                     etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col", mogstr)
                     conn.commit()
                     count = cur.rowcount
@@ -182,7 +182,7 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
         conn.rollback()
     finally:
         if conn is not None: conn.close()        
-    return {"fid": fid, "count": count, "dcount": dcount}
+    return {"id": id, "count": count, "dcount": dcount}
 
 @anvil.server.callable
 # Delete the filter
