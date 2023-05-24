@@ -62,6 +62,35 @@ def generate_upload_action_dropdown():
     content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
     return content
 
+def combinations_filter(filter, col=0):
+    match col:
+        case 0:
+            split_arr = filter.get('date').split(",")
+        case 1:
+            split_arr = filter.get('acct').split(",")
+        case 2:
+            split_arr = filter.get('amt').split(",")
+        case 3:
+            split_arr = filter.get('remarks').split(",")
+        case 4:
+            split_arr = filter.get('stmt_dtl').split(",")
+        case 5:
+            split_arr = filter.get('lbl').split(",")
+        case _:
+            return []
+
+    # Duplicate result according to filter param size
+    arr = [combinations_filter(filter, col+1) for i in range(len(split_arr))]
+    result = None
+    for i in split_arr:
+        j = arr.pop()
+        if len(j) == 0:
+            j.append([i])
+        else:
+            for b in j: b.insert(0, i)
+        result = result + j if result is not None else j
+    return result
+
 @anvil.server.callable
 # Select the mapping and rules belong to the logged on user, it can be all or particular one only
 def select_mapping_rules(uid, gid=None):
@@ -121,7 +150,7 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(mapping_obj) > 0:
-                # First insert/update filter group
+                # First insert/update mapping group
                 name = mapping_obj.get('name', None)
                 type_id = mapping_obj.get('filetype', None)
                 rules = mapping_obj.get('rules', [])
@@ -139,8 +168,14 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                 if id < 0:
                     raise psycopg2.OperationalError(f"Fail to save the mapping ({name}).")
 
-                # Second insert/update filter rules
+                # Second insert/update mapping rules
                 mogstr = []
+                # For later on the mapping matrix 
+                matrixobj = {}
+                tbl_def = anvil.server.call('generate_expense_tbl_def_dropdown')
+                for c in tbl_def:
+                    matrixobj[c[1]['id']] = []
+                print("before=", matrixobj)
                 for rule in rules:
                     print(f"Rule:{rule}")
                     col_id = f"{rule[0]}"
@@ -149,6 +184,8 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                     etarget = f"{rule[3]}" if rule[2] not in (None, '') and rule[3] not in (None, '') else None
                     rule = f"{rule[4]}"
                     mogstr.append([id, col_id, column, eaction, etarget, rule])
+                    matrixobj[column].append(col_id)
+                print("after=", matrixobj)
                 if len(mogstr) > 0:
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                     (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
@@ -158,6 +195,9 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                     if count <= 0: raise psycopg2.OperationalError(f"Fail to save mapping rules (Mapping name={name}).")
                 else:
                     count = 0
+
+                # Third insert/update mapping matrix
+                
             else:
                 count = 0
 
