@@ -70,7 +70,7 @@ def generate_mapping_matrix(matrix, col_def):
     # Duplicate result according to filter param size
     agg_result = [generate_mapping_matrix(matrix, col_def) for i in range(len(col_val))] if len(col_val) > 0 else generate_mapping_matrix(matrix, col_def)
     print("agg_result=", agg_result, ", matrix=", matrix)
-    result = []
+    result = agg_result
     for i in col_val:
         print("i=", i, " col_val=", col_val)
         j = agg_result.pop()
