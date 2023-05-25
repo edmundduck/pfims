@@ -62,34 +62,36 @@ def generate_upload_action_dropdown():
     content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
     return content
 
-def combinations_filter(filter, col=0):
-    match col:
-        case 0:
-            split_arr = filter.get('date').split(",")
-        case 1:
-            split_arr = filter.get('acct').split(",")
-        case 2:
-            split_arr = filter.get('amt').split(",")
-        case 3:
-            split_arr = filter.get('remarks').split(",")
-        case 4:
-            split_arr = filter.get('stmt_dtl').split(",")
-        case 5:
-            split_arr = filter.get('lbl').split(",")
-        case _:
-            return []
-
+# Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
+def generate_mapping_matrix(matrix, col_def):
+    if len(col_def) < 1:
+        return []
+    col_val = matrix.get(col_def.pop(0))
     # Duplicate result according to filter param size
-    arr = [combinations_filter(filter, col+1) for i in range(len(split_arr))]
-    result = None
-    for i in split_arr:
-        j = arr.pop()
-        if len(j) == 0:
-            j.append([i])
+    agg_result = [generate_mapping_matrix(matrix, col_def) for i in range(len(col_val))] if len(col_val) > 0 else generate_mapping_matrix(matrix, col_def)
+    print("agg_result=", agg_result)
+    result = []
+    for i in col_val:
+        print("i=", i, " col_val=", col_val)
+        j = agg_result.pop()
+        if j is None:
+            result = [i]
+        elif len(j) == 0:
+            result.append([i])
         else:
-            for b in j: b.insert(0, i)
-        result = result + j if result is not None else j
+            for b in result: b.insert(0, i)
     return result
+
+# Select input expense table definition column ID
+def select_expense_tbl_def_id():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
+    content = list(row['col_code'] for row in rows)
+    return content
 
 @anvil.server.callable
 # Select the mapping and rules belong to the logged on user, it can be all or particular one only
@@ -172,12 +174,10 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                 mogstr = []
                 # For later on the mapping matrix 
                 matrixobj = {}
-                tbl_def = anvil.server.call('generate_expense_tbl_def_dropdown')
+                tbl_def = select_expense_tbl_def_id()
                 for c in tbl_def:
-                    matrixobj[c[1]['id']] = []
-                print("before=", matrixobj)
+                    matrixobj[c] = []
                 for rule in rules:
-                    print(f"Rule:{rule}")
                     col_id = f"{rule[0]}"
                     column = f"{rule[1]}"
                     eaction = f"{rule[2]}" if rule[2] not in (None, '') else None
@@ -185,7 +185,6 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                     rule = f"{rule[4]}"
                     mogstr.append([id, col_id, column, eaction, etarget, rule])
                     matrixobj[column].append(col_id)
-                print("after=", matrixobj)
                 if len(mogstr) > 0:
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                     (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
@@ -197,7 +196,8 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                     count = 0
 
                 # Third insert/update mapping matrix
-                
+                matrixstr = generate_mapping_matrix(matrixobj, tbl_def)
+                print("matrixstr=", matrixstr)
             else:
                 count = 0
 
