@@ -80,6 +80,7 @@ def generate_mapping_matrix(matrix, col_def):
             result.append([i])
         else:
             for b in result: b.insert(0, i)
+    print("result=", result)
     return result
 
 # Select input expense table definition column ID
