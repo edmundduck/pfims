@@ -69,18 +69,27 @@ def generate_mapping_matrix(matrix, col_def):
     col_val = matrix.get(col_def.pop(0))
     # Duplicate result according to filter param size
     r = generate_mapping_matrix(matrix, col_def)
-    agg_result = [r for i in range(len(col_val))] if len(col_val) > 0 else r
-    print("agg_result=", agg_result, ", matrix=", matrix)
-    result = agg_result
-    for i in col_val:
-        print("i=", i, " col_val=", col_val, " result=", result)
-        j = agg_result.pop()
-        if j is None:
-            result = i
-        elif len(j) == 0:
-            result.append(i)
-        else:
-            for b in result: b.insert(0, i)
+    # agg_result = [r for i in range(len(col_val))] if len(col_val) > 0 else r
+    # print("agg_result=", agg_result, ", matrix=", matrix)
+    # result = agg_result
+    print("r=", r, " col_val=", col_val)
+    result = col_val.copy()
+    if r is not None and len(r) > 0:
+        for i in result:
+            for b in r:
+                result.append(b)
+                print("i=", i, " b=", b, " result=", result, " r=", r)
+    # for i in col_val:
+    #     print("i=", i, " col_val=", col_val, " result=", result)
+    #     j = agg_result.pop()
+    #     if j is None:
+    #         print("j is None")
+    #         result = i
+    #     elif len(j) == 0:
+    #         print("len(j) is 0")
+    #         result.append(i)
+    #     else:
+    #         for b in result: b.insert(0, i)
     print("result=", result)
     return result
 
