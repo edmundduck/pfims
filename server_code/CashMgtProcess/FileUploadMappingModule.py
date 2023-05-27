@@ -68,11 +68,12 @@ def generate_mapping_matrix(matrix, col_def):
         return []
     col_val = matrix.get(col_def.pop(0))
     # Duplicate result according to filter param size
-    agg_result =[generate_mapping_matrix(matrix, col_def) for i in range(len(col_val))] if len(col_val) > 0 else generate_mapping_matrix(matrix, col_def)
+    r = generate_mapping_matrix(matrix, col_def)
+    agg_result = [r for i in range(len(col_val))] if len(col_val) > 0 else r
     print("agg_result=", agg_result, ", matrix=", matrix)
     result = agg_result
     for i in col_val:
-        print("i=", i, " col_val=", col_val)
+        print("i=", i, " col_val=", col_val, " result=", result)
         j = agg_result.pop()
         if j is None:
             result = i
