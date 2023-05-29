@@ -73,7 +73,7 @@ def generate_mapping_matrix(matrix, col_def):
     # print("agg_result=", agg_result, ", matrix=", matrix)
     # result = agg_result
     print("r=", r, " col_val=", col_val)
-    result = col_val.copy()
+    result = r + col_val.copy()
     if r is not None and len(r) > 0:
         for i in result:
             for b in r:
