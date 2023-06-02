@@ -72,7 +72,7 @@ def generate_mapping_matrix(matrix, col_def):
     # agg_result = [r for i in range(len(col_val))] if len(col_val) > 0 else r
     # print("agg_result=", agg_result, ", matrix=", matrix)
     # result = agg_result
-    result = r
+    result = None
     if r is not None and len(r) > 0:
         # for i in col_val:
         # for i in range(len(col_val)):
@@ -80,10 +80,10 @@ def generate_mapping_matrix(matrix, col_def):
             for i in col_val:
                 y = ri.copy()
                 y.extend(i)
-                
                 print("ri=", ri, ", y=", y)
-                result = result + y
+                result = result + y if result is not None else [y]
                 print("...", result)
+        if result is None: result = r
     else:
         result = r + col_val.copy()
         print("r is None or len <= 0 ... ", result)
