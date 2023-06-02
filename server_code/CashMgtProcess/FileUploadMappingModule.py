@@ -65,7 +65,7 @@ def generate_upload_action_dropdown():
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
 def generate_mapping_matrix(matrix, col_def):
     if len(col_def) < 1:
-        return []
+        return [[]]
     col_val = matrix.get(col_def.pop(0))
     # Duplicate result according to filter param size
     r = generate_mapping_matrix(matrix, col_def)
