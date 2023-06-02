@@ -77,7 +77,7 @@ def generate_mapping_matrix(matrix, col_def):
     if r is not None and len(r) > 0:
         for i in col_val:
             for b in r:
-                result.append(b)
+                b.append(i)
                 print("i=", i, " b=", b, " result=", result, " r=", r)
     # for i in col_val:
     #     print("i=", i, " col_val=", col_val, " result=", result)
