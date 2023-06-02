@@ -72,13 +72,18 @@ def generate_mapping_matrix(matrix, col_def):
     # agg_result = [r for i in range(len(col_val))] if len(col_val) > 0 else r
     # print("agg_result=", agg_result, ", matrix=", matrix)
     # result = agg_result
-    print("r=", r, " col_val=", col_val)
-    result = r + col_val.copy()
+    result = []
     if r is not None and len(r) > 0:
-        for i in col_val:
+        # for i in col_val:
+        for i in range(len(col_val)):
             for b in r:
-                b.append(i)
-                print("i=", i, " b=", b, " result=", result, " r=", r)
+                y = r.copy()
+                y.extend(col_val)
+                result = result + y
+                print("...", result)
+    else:
+        result = r + col_val.copy()
+        print("r is None or len <= 0 ... ", result)
     # for i in col_val:
     #     print("i=", i, " col_val=", col_val, " result=", result)
     #     j = agg_result.pop()
