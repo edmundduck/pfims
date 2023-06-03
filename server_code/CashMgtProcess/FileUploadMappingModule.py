@@ -64,42 +64,18 @@ def generate_upload_action_dropdown():
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
 def generate_mapping_matrix(matrix, col_def):
-    print("init=", matrix, "/", col_def)
     if len(col_def) < 1:
         return [[]]
     col_val = matrix.get(col_def.pop(0))
     # Duplicate result according to filter param size
     r = generate_mapping_matrix(matrix, col_def)
-    # agg_result = [r for i in range(len(col_val))] if len(col_val) > 0 else r
-    # print("agg_result=", agg_result, ", matrix=", matrix)
-    # result = agg_result
     result = None
-    if r is not None and len(r) > 0:
-        # for i in col_val:
-        # for i in range(len(col_val)):
-        for ri in r:
-            for i in col_val:
-                y = ri.copy()
-                y.extend(i)
-                print("ri=", ri, ", y=", y)
-                result = result + y if result is not None else [y]
-                print("...", result)
-        if result is None: result = r
-    else:
-        result = r + col_val.copy()
-        print("r is None or len <= 0 ... ", result)
-    # for i in col_val:
-    #     print("i=", i, " col_val=", col_val, " result=", result)
-    #     j = agg_result.pop()
-    #     if j is None:
-    #         print("j is None")
-    #         result = i
-    #     elif len(j) == 0:
-    #         print("len(j) is 0")
-    #         result.append(i)
-    #     else:
-    #         for b in result: b.insert(0, i)
-    print("result=", result)
+    for ri in r:
+        for i in col_val:
+            y = ri.copy()
+            y.extend(i)
+            result = result + [y] if result is not None else [y]
+    if result is None: result = r
     return result
 
 # Select input expense table definition column ID
@@ -217,7 +193,16 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
 
                 # Third insert/update mapping matrix
                 matrixstr = generate_mapping_matrix(matrixobj, tbl_def)
-                print("matrixstr=", matrixstr)
+                if len(matrixstr) > 0:
+                    cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}")
+                    conn.commit()
+                    dcount = cur.rowcount
+                    
+                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingmatrix (gid, datecol, acctcol, amtcol, remarkscol, stmtdtlcol, lblcol, eaction, etarget) \
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", matrixstr)
+                    # conn.commit()
+                    count = cur.rowcount
+                    if count <= 0 or dcount < 0: raise psycopg2.OperationalError(f"Fail to save mapping matrix (Mapping name={name}).")
             else:
                 count = 0
 
