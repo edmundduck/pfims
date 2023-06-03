@@ -71,10 +71,13 @@ def generate_mapping_matrix(matrix, col_def):
     r = generate_mapping_matrix(matrix, col_def)
     result = None
     for ri in r:
-        for i in col_val:
-            y = ri.copy()
-            y.extend(i)
-            result = result + [y] if result is not None else [y]
+        if len(col_val) > 0:
+            for i in col_val:
+                y = ri.copy()
+                y.extend(i)
+                result = [y] + result if result is not None else [y]
+        else:
+            result = [['']] + result if result is not None else [['']]
     if result is None: result = r
     return result
 
@@ -193,13 +196,15 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
 
                 # Third insert/update mapping matrix
                 matrixstr = generate_mapping_matrix(matrixobj, tbl_def)
+                print(matrixstr)
+                return
                 if len(matrixstr) > 0:
                     cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}")
                     conn.commit()
                     dcount = cur.rowcount
                     
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingmatrix (gid, datecol, acctcol, amtcol, remarkscol, stmtdtlcol, lblcol, eaction, etarget) \
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)", matrixstr)
+                    VALUES ({id}, %s, %s, %s, %s, %s, %s, %s, %s)", matrixstr)
                     # conn.commit()
                     count = cur.rowcount
                     if count <= 0 or dcount < 0: raise psycopg2.OperationalError(f"Fail to save mapping matrix (Mapping name={name}).")
