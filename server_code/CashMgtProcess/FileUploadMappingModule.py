@@ -198,6 +198,7 @@ def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
                     count = 0
 
                 # Third insert/update mapping matrix
+                print(matrixobj)
                 matrixstr = generate_mapping_matrix(matrixobj, tbl_def)
                 print(matrixstr)
                 return
