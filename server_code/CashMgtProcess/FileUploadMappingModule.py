@@ -78,6 +78,7 @@ def generate_mapping_matrix(matrix, col_def):
                 result = [y] + result if result is not None else [y]
         else:
             result = [['']] + result if result is not None else [['']]
+        print("result=", result)
     if result is None: result = r
     return result
 
