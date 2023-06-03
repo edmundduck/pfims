@@ -74,10 +74,12 @@ def generate_mapping_matrix(matrix, col_def):
         if len(col_val) > 0:
             for i in col_val:
                 y = ri.copy()
-                y.extend(i)
+                y.insert(0, i)
                 result = [y] + result if result is not None else [y]
         else:
-            result = [['']] + result if result is not None else [['']]
+            y = ri.copy()
+            y.insert(0, '')
+            result = [y] + result if result is not None else [y]
         print("result=", result)
     if result is None: result = r
     return result
