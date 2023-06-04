@@ -67,20 +67,22 @@ def generate_mapping_matrix(matrix, col_def):
     if len(col_def) < 1:
         return [[]]
     col_val = matrix.get(col_def.pop(0))
-    # Duplicate result according to filter param size
     r = generate_mapping_matrix(matrix, col_def)
     result = None
     for ri in r:
         if len(col_val) > 0:
             for i in col_val:
+                # Duplicate result according to filter param size
                 y = ri.copy()
+                # TODO - the column sequence has to be fixed as matrixstr is stored in list instead of object
                 y.insert(0, i)
                 result = [y] + result if result is not None else [y]
         else:
+            # Duplicate result according to filter param size
             y = ri.copy()
+            # TODO - the column sequence has to be fixed as matrixstr is stored in list instead of object
             y.insert(0, '')
             result = [y] + result if result is not None else [y]
-        print("result=", result)
     if result is None: result = r
     return result
 
@@ -198,18 +200,16 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                     count = 0
 
                 # Third insert/update mapping matrix
-                print(matrixobj)
                 matrixstr = generate_mapping_matrix(matrixobj, tbl_def)
-                print(matrixstr)
-                return
                 if len(matrixstr) > 0:
                     cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}")
                     conn.commit()
                     dcount = cur.rowcount
-                    
-                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingmatrix (gid, datecol, acctcol, amtcol, remarkscol, stmtdtlcol, lblcol, eaction, etarget) \
-                    VALUES ({id}, %s, %s, %s, %s, %s, %s, %s, %s)", matrixstr)
-                    # conn.commit()
+
+                    # TODO - the column sequence has to be fixed as matrixstr is stored in list instead of object
+                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
+                    VALUES ({id}, %s, %s, %s, %s, %s, %s)", matrixstr)
+                    conn.commit()
                     count = cur.rowcount
                     if count <= 0 or dcount < 0: raise psycopg2.OperationalError(f"Fail to save mapping matrix (Mapping name={name}).")
             else:
