@@ -30,8 +30,11 @@ def import_file(file, tablist, rules):
     new_xls = None
     for i in rules:
         date = convertCharToLoc(i["date"])
+        lbl = convertCharToLoc(i['lbl'])
+        amt = convertCharToLoc(i['amt'])
+        remarks = convertCharToLoc(i['remarks'])
         # iloc left one is row, right one is column
-        test1 = ef.iloc[:,[convertCharToLoc(filter["date"]), convertCharToLoc(filter["acct"]), convertCharToLoc(i), convertCharToLoc(filter["remarks"])]]
-        test1.rename(columns={test1.columns[0]: "Date", test1.columns[1]: "Lbl", test1.columns[2]: "Amt", test1.columns[3]: "Remarks"}, inplace=True)
+        test1 = xls.iloc[:,[date, lbl, amt, remarks]]
+        test1.rename(columns={test1.columns[0]: "C0", test1.columns[1]: "C1", test1.columns[2]: "C2", test1.columns[3]: "C3"}, inplace=True)
         new_xls = pd.concat([test1], ignore_index=True) if new_xls is None else pd.concat([new_xls, test1], ignore_index=True)
-    print(new_xls.dropna(subset=['Amt'], ignore_index=True))
+    print(new_xls.dropna(subset=['C2'], ignore_index=True))
