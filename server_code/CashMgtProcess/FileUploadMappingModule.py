@@ -146,18 +146,18 @@ def select_filter_labels_rules(fid):
 @anvil.server.callable
 # Save the mapping and rules
 # Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
-def save_mapping_rules(uid, id, mapping_obj, del_iid=None):
+def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
     conn = None
     count = None
     dcount = None
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if len(mapping_obj) > 0:
+            if len(mapping_rules) > 0:
                 # First insert/update mapping group
-                name = mapping_obj.get('name', None)
-                type_id = mapping_obj.get('filetype', None)
-                rules = mapping_obj.get('rules', [])
+                name = mapping_rules.get('name', None)
+                type_id = mapping_rules.get('filetype', None)
+                rules = mapping_rules.get('rules', [])
                 currenttime = datetime.now()
                 if id is not None:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \

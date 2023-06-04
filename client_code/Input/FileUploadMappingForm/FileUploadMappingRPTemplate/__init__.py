@@ -50,7 +50,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
                 # TODO to regenerate iid after saving
                 i.remove_from_parent()
         result = anvil.server.call('save_mapping_rules', uid=userid, id=id, \
-                                   mapping_obj={"name":name, "filetype":filetype, "rules":rules}, del_iid=del_iid)
+                                   mapping_rules={"name":name, "filetype":filetype, "rules":rules}, del_iid=del_iid)
 
         id = result['id']
         if id is not None and result['count'] is not None and result['dcount'] is not None:
