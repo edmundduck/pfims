@@ -18,5 +18,6 @@ def preview_file(file):
 @anvil.server.callable
 def import_file(file, tablist, rules):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    xls = pd.read_excel(ef, sheet_name=tablist, usecols=rules)
-    print(xls['Oct2006'].values.tolist())
+    # xls = pd.read_excel(ef, sheet_name=tablist, usecols=rules)
+    xls = pd.read_excel(ef, sheet_name=tablist)
+    print(xls.values.tolist())

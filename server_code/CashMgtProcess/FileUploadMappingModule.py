@@ -17,8 +17,8 @@ from ..System import SystemModule as sysmod
 def generate_mapping_dropdown(uid, ftype):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemafin()}.mappinggroup WHERE userid = %s AND type = %s ORDER BY fid ASC"
-        stmt = cur.mogrify(sql, (uid, type, ))
+        sql = f"SELECT * FROM {sysmod.schemafin()}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC"
+        stmt = cur.mogrify(sql, (uid, ftype, ))
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
