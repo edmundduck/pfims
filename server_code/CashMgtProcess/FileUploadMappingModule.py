@@ -133,17 +133,19 @@ def select_mapping_rules(uid, gid=None):
     return list(result.values())
 
 @anvil.server.callable
-# Select the filter and rules (labels only) belong to the logged on user
-def select_filter_labels_rules(fid):
+# Select the mapping matrix belong to the logged on user
+def select_mapping_matrix(id):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Filter group can have no rules so left join is required
-        sql = f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules" if fid is None else \
-        f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules WHERE fid = {fid}"
+        # sql = f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules" if fid is None else \
+        # f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules WHERE fid = {fid}"
+        sql = f"SELECT datecol AS date, acctcol AS acct, amtcol AS amt, remarkscol AS remarks, stmtdtlcol AS stmtdtl, lblcol AS lbl \
+        FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
         cur.execute(sql)
-        row = cur.fetchone()
+        rows = cur.fetchall()
         cur.close()
-    return row['col'] if row is not None else None
+    return rows
 
 @anvil.server.callable
 # Save the mapping and rules
