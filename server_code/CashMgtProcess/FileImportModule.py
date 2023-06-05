@@ -40,4 +40,4 @@ def import_file(file, tablist, rules):
         test1 = combined_df.iloc[:,[date, lbl, amt, remarks]]
         test1.rename(columns={test1.columns[0]: "C0", test1.columns[1]: "C1", test1.columns[2]: "C2", test1.columns[3]: "C3"}, inplace=True)
         new_xls = pd.concat([test1], ignore_index=True) if new_xls is None else pd.concat([new_xls, test1], ignore_index=True)
-    print(new_xls.dropna(subset=['C2'], ignore_index=True))
+    print(new_xls.dropna(subset=['C2']))
