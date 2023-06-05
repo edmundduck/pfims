@@ -40,4 +40,5 @@ def import_file(file, tablist, rules):
             new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
     # TODO - Error "TypeError: DataFrame.dropna() got an unexpected keyword argument 'ignore_index'", due to version issue?
     # return new_df.dropna(subset=['C2'], ignore_index=True)
-    return new_df.dropna(subset=['C2'])
+    print((new_df.dropna(subset=['C2'])).to_dict())
+    return (new_df.dropna(subset=['C2'])).to_dict()
