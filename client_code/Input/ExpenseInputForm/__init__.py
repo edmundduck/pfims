@@ -13,15 +13,18 @@ from ...App.Validation import Validator
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
-    def __init__(self, **properties):
+    def __init__(self, dataframe=None, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
 
-        # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-        self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
+        if dataframe is None:
+            # Initiate repeating panel items to an empty list otherwise will throw NoneType error
+            self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
+        else:
+            self.input_repeating_panel.items = dataframe
         glo.reset_deleted_row()
         #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 

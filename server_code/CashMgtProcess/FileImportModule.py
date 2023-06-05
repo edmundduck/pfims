@@ -24,20 +24,20 @@ def preview_file(file):
 @anvil.server.callable
 def import_file(file, tablist, rules):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    # xls = pd.read_excel(ef, sheet_name=tablist, usecols=rules)
-    xls = pd.read_excel(ef, sheet_name=tablist)
-    combined_df = None
-    for x in tablist:
-        combined_df = combined_df + xls[x] if combined_df is not None else xls[x]
+    # df = pd.read_excel(ef, sheet_name=tablist, usecols=rules)
+    df = pd.read_excel(ef, sheet_name=tablist)
 
-    new_xls = None
-    for i in rules:
-        date = convertCharToLoc(i["date"])
-        lbl = convertCharToLoc(i['lbl'])
-        amt = convertCharToLoc(i['amt'])
-        remarks = convertCharToLoc(i['remarks'])
-        # iloc left one is row, right one is column
-        test1 = combined_df.iloc[:,[date, lbl, amt, remarks]]
-        test1.rename(columns={test1.columns[0]: "C0", test1.columns[1]: "C1", test1.columns[2]: "C2", test1.columns[3]: "C3"}, inplace=True)
-        new_xls = pd.concat([test1], ignore_index=True) if new_xls is None else pd.concat([new_xls, test1], ignore_index=True)
-    print(new_xls.dropna(subset=['C2']))
+    new_df = None
+    for t in tablist:
+        for i in rules:
+            date = convertCharToLoc(i['date'])
+            lbl = convertCharToLoc(i['lbl'])
+            amt = convertCharToLoc(i['amt'])
+            remarks = convertCharToLoc(i['remarks'])
+            # iloc left one is row, right one is column
+            test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
+            test1.rename(columns={test1.columns[0]: "C0", test1.columns[1]: "C1", test1.columns[2]: "C2", test1.columns[3]: "C3"}, inplace=True)
+            new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
+    # TODO - Error "TypeError: DataFrame.dropna() got an unexpected keyword argument 'ignore_index'", due to version issue?
+    # return new_df.dropna(subset=['C2'], ignore_index=True)
+    return new_df.dropna(subset=['C2'])
