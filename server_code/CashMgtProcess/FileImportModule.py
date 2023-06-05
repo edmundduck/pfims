@@ -36,9 +36,6 @@ def import_file(file, tablist, rules):
             remarks = convertCharToLoc(i['remarks'])
             # iloc left one is row, right one is column
             test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
-            test1.rename(columns={test1.columns[0]: "C0", test1.columns[1]: "C1", test1.columns[2]: "C2", test1.columns[3]: "C3"}, inplace=True)
+            test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
             new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
-    # TODO - Error "TypeError: DataFrame.dropna() got an unexpected keyword argument 'ignore_index'", due to version issue?
-    # return new_df.dropna(subset=['C2'], ignore_index=True)
-    print((new_df.dropna(subset=['C2'])).to_dict())
-    return (new_df.dropna(subset=['C2'])).to_dict()
+    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()

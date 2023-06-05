@@ -1,4 +1,6 @@
 psycopg2
 xlrd
-pandas
 openpyxl
+tabulate
+requests==2.31.0
+pandas==2.0.2
