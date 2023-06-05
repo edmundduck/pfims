@@ -26,6 +26,9 @@ def import_file(file, tablist, rules):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     # xls = pd.read_excel(ef, sheet_name=tablist, usecols=rules)
     xls = pd.read_excel(ef, sheet_name=tablist)
+    combined_df = None
+    for x in tablist:
+        combined_df = combined_df + xls[x] if combined_df is not None else xls[x]
 
     new_xls = None
     for i in rules:
@@ -34,7 +37,7 @@ def import_file(file, tablist, rules):
         amt = convertCharToLoc(i['amt'])
         remarks = convertCharToLoc(i['remarks'])
         # iloc left one is row, right one is column
-        test1 = xls.iloc[:,[date, lbl, amt, remarks]]
+        test1 = combined_df.iloc[:,[date, lbl, amt, remarks]]
         test1.rename(columns={test1.columns[0]: "C0", test1.columns[1]: "C1", test1.columns[2]: "C2", test1.columns[3]: "C3"}, inplace=True)
         new_xls = pd.concat([test1], ignore_index=True) if new_xls is None else pd.concat([new_xls, test1], ignore_index=True)
     print(new_xls.dropna(subset=['C2'], ignore_index=True))
