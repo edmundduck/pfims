@@ -38,4 +38,12 @@ def import_file(file, tablist, rules):
             test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
             test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
             new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
-    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()
+    test = pd.DataFrame(
+        data={"date": ["2020-01-02"], 
+              "lbl": ["A"],
+              "amt": ["30"],
+              "remarks": ["TEST"]
+             }
+    )
+    # return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()
+    return test
