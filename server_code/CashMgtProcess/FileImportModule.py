@@ -39,11 +39,12 @@ def import_file(file, tablist, rules):
             test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
             new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
     test = pd.DataFrame(
-        data={"date": ["2020-01-02"], 
-              "lbl": ["A"],
-              "amt": ["30"],
-              "remarks": ["TEST"]
-             }
+        # data={"date": ["2020-01-02"], 
+        #       "lbl": ["A"],
+        #       "amt": ["30"],
+        #       "remarks": ["TEST"]
+        #      }
+        data = ["2020-01-02", "A", "30", "TEST"]
     )
     # return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()
-    return test
+    return test.to_markdown()
