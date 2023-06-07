@@ -46,4 +46,4 @@ def import_file(file, tablist, rules):
              }
     )
     # return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()
-    return test.to_dict(date)
+    return test.to_dict('amt')
