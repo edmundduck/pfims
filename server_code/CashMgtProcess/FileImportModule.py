@@ -38,12 +38,14 @@ def import_file(file, tablist, rules):
             test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
             test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
             new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
+    # Ref - how to transform Pandas Dataframe to Anvil datatable
+    # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     test = pd.DataFrame(
-        data={"date": ["2020-01-02"], 
-              "lbl": ["A"],
-              "amt": ["30"],
+        data={"trandate": ["2020-01-02"], 
+              "labels": ["801"],
+              "amount": ["30"],
               "remarks": ["TEST"]
              }
     )
     # return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()
-    return test.to_dict('amt')
+    return test.to_dict(orient='records')
