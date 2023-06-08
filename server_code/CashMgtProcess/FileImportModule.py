@@ -41,10 +41,10 @@ def import_file(file, tablist, rules):
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     test = pd.DataFrame(
-        data={"trandate": ["2020-01-02"], 
-              "labels": ["801"],
-              "amount": ["30"],
-              "remarks": ["TEST"]
+        data={"trandate": ["2020-01-02", "2022-05-09"], 
+              "labels": [801, 0],
+              "amount": [30, 100],
+              "remarks": ["TEST", "AAAG"]
              }
     )
     # return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()
