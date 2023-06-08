@@ -33,8 +33,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()
             for i in label_list[:-1].split(","):
+                # Don't generate label if the label ID is 0 (which is possible from file upload)
                 if int(i) != 0:
-                    print("xxx:", i)
                     lbl_name = None
                     for j in lbls:
                         if str(j.get("id")).strip() == i:

@@ -47,5 +47,5 @@ def import_file(file, tablist, rules):
               "remarks": ["TEST", "AAAG"]
              }
     )
-    # return (new_df.dropna(subset=['amount'], ignore_index=True)).to_markdown()
-    return test.to_dict(orient='records')
+    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records')
+    # return test.to_dict(orient='records')
