@@ -42,7 +42,7 @@ def import_file(file, tablist, rules):
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     test = pd.DataFrame(
         data={"trandate": ["2020-01-02", "2022-05-09"], 
-              "labels": [801, 0],
+              "labels": ["801,", "0,"],
               "amount": [30, 100],
               "remarks": ["TEST", "AAAG"]
              }

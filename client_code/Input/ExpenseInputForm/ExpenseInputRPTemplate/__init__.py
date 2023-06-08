@@ -33,23 +33,25 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()
             for i in label_list[:-1].split(","):
-                lbl_name = None
-                for j in lbls:
-                    if str(j.get("id")).strip() == i:
-                        lbl_name = j.get("name").strip()
-                b = Button(text=lbl_name,
-                        # icon='fa:minus',
-                        foreground="White",
-                        background="Blue",
-                        font_size=10,
-                        align="left",
-                        spacing_above="small",
-                        spacing_below="small",
-                        tag=i
-                        )
-                # self.row_panel_labels.add_component(b, False, name=lbl_name, expand=True)
-                self.row_panel_labels.add_component(b, False, name=lbl_name)
-                b.set_event_handler('click', self.label_button_minus_click)
+                if int(i) != 0:
+                    print("xxx:", i)
+                    lbl_name = None
+                    for j in lbls:
+                        if str(j.get("id")).strip() == i:
+                            lbl_name = j.get("name").strip()
+                    b = Button(text=lbl_name,
+                            # icon='fa:minus',
+                            foreground="White",
+                            background="Blue",
+                            font_size=10,
+                            align="left",
+                            spacing_above="small",
+                            spacing_below="small",
+                            tag=i
+                            )
+                    # self.row_panel_labels.add_component(b, False, name=lbl_name, expand=True)
+                    self.row_panel_labels.add_component(b, False, name=lbl_name)
+                    b.set_event_handler('click', self.label_button_minus_click)
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
