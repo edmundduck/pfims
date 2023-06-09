@@ -140,7 +140,7 @@ def select_mapping_matrix(id):
         # Filter group can have no rules so left join is required
         # sql = f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules" if fid is None else \
         # f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules WHERE fid = {fid}"
-        sql = f"SELECT datecol AS date, acctcol AS acct, amtcol AS amt, remarkscol AS remarks, stmtdtlcol AS stmtdtl, lblcol AS lbl \
+        sql = f"SELECT datecol AS trandate, acctcol AS account_id, amtcol AS amount, remarkscol AS remarks, stmtdtlcol AS stmt_dtl, lblcol AS labels \
         FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
         cur.execute(sql)
         rows = cur.fetchall()

@@ -30,13 +30,14 @@ def import_file(file, tablist, rules):
     new_df = None
     for t in tablist:
         for i in rules:
-            date = convertCharToLoc(i['date'])
-            lbl = convertCharToLoc(i['lbl'])
-            amt = convertCharToLoc(i['amt'])
+            date = convertCharToLoc(i['trandate'])
+            lbl = convertCharToLoc(i['labels'])
+            amt = convertCharToLoc(i['amount'])
             remarks = convertCharToLoc(i['remarks'])
             # iloc left one is row, right one is column
             # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
-            test1 = df[t].iloc[:,[date, None, amt, remarks, None, None]]
+            test1 = df[t].iloc[:,[date, amt, remarks]]
+            if 
             # test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
             # test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "amount", test1.columns[2]: "remarks"}, inplace=True)
             test1.rename(columns={test1.columns[0]: "trandate", \
