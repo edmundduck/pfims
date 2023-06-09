@@ -35,8 +35,17 @@ def import_file(file, tablist, rules):
             amt = convertCharToLoc(i['amt'])
             remarks = convertCharToLoc(i['remarks'])
             # iloc left one is row, right one is column
-            test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
-            test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
+            # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
+            test1 = df[t].iloc[:,[date, None, amt, remarks, None, None]]
+            # test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
+            # test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "amount", test1.columns[2]: "remarks"}, inplace=True)
+            test1.rename(columns={test1.columns[0]: "trandate", \
+                                  test1.columns[1]: "account_id", \
+                                  test1.columns[2]: "amount", \
+                                  test1.columns[3]: "remarks", \
+                                  test1.columns[4]: "stmt_dtl", \
+                                  test1.columns[5]: "labels"}, \
+                         inplace=True)
             new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
