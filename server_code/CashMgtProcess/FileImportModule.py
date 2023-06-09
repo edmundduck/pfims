@@ -16,6 +16,18 @@ def convertCharToLoc(char):
             return ord(char.lower()) - 97
     return None
 
+# Internal function to get the list of included column names in mapping matrix
+def divMappingColumnNameLists(matrix):
+    col_name = ['trandate', 'account_id', 'amount', 'remarks', 'stmt_dtl', 'labels']
+    nonNanList = []
+    nanList = []
+    for c in col_name:
+        if matrix[c] is None:
+            nanList.append(c)
+        else:
+            nonNanList.append(c)
+    return nonNanList, nanList
+
 @anvil.server.callable
 def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
@@ -29,22 +41,27 @@ def import_file(file, tablist, rules):
 
     new_df = None
     for i in rules:
-        req_col = filter(None, [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
-                        convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])])
+        col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
+               convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
+        nonNanList, nanList = divMappingColumnNameLists(i)
+        # test2 = pd.DataFrame(data=None, columns=nanList)
         for t in tablist:
             # iloc left one is row, right one is column
             # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
-            test1 = df[t].iloc[:,req_col]
+            test1 = df[t].iloc[:, filter(None, col)]
+            test2 = test1.reindex(labels=test1.columns.tolist(), columns=nanList, fill_value=None)
             # test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "labels", test1.columns[2]: "amount", test1.columns[3]: "remarks"}, inplace=True)
             # test1.rename(columns={test1.columns[0]: "trandate", test1.columns[1]: "amount", test1.columns[2]: "remarks"}, inplace=True)
-            test1.rename(columns={test1.columns[0]: "trandate", \
-                                  test1.columns[1]: "account_id", \
-                                  test1.columns[2]: "amount", \
-                                  test1.columns[3]: "remarks", \
-                                  test1.columns[4]: "stmt_dtl", \
-                                  test1.columns[5]: "labels"}, \
-                         inplace=True)
-            new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
+            # test1.rename(columns={test1.columns[0]: "trandate", \
+            #                       test1.columns[1]: "account_id", \
+            #                       test1.columns[2]: "amount", \
+            #                       test1.columns[3]: "remarks", \
+            #                       test1.columns[4]: "stmt_dtl", \
+            #                       test1.columns[5]: "labels"}, \
+            #              inplace=True)
+            test2.rename(columns=col, inplace=True)
+            # new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
+            new_df = pd.concat([test2], ignore_index=True) if new_df is None else pd.concat([new_df, test2], ignore_index=True)
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     test = pd.DataFrame(
@@ -54,5 +71,6 @@ def import_file(file, tablist, rules):
               "remarks": ["TEST", "AAAG"]
              }
     )
-    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records')
+    # return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records')
+    return (new_df.dropna(ignore_index=True)).to_dict(orient='records')
     # return test.to_dict(orient='records')
