@@ -28,10 +28,10 @@ def import_file(file, tablist, rules):
     df = pd.read_excel(ef, sheet_name=tablist)
 
     new_df = None
-    for t in tablist:
-        for i in rules:
-            req_col = filter(None, convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
-                            convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels']))
+    for i in rules:
+        req_col = filter(None, [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
+                        convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])])
+        for t in tablist:
             # iloc left one is row, right one is column
             # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
             test1 = df[t].iloc[:,req_col]
