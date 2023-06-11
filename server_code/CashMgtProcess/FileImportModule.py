@@ -48,6 +48,7 @@ def import_file(file, tablist, rules):
         # test2 = pd.DataFrame(data=None, columns=nanList)
         for t in tablist:
             # iloc left one is row, right one is column
+            max_size = df[t].shape[1]
             # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
             test1 = df[t].iloc[:, filter(None, col)]
             test2 = test1.reindex(columns=test1.columns.tolist() + nanList, fill_value=None)
