@@ -44,14 +44,20 @@ def import_file(file, tablist, rules):
     for i in rules:
         col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
+        print("col=", col)
         col_def, nonNanList, nanList = divMappingColumnNameLists(i)
         # test2 = pd.DataFrame(data=None, columns=nanList)
         for t in tablist:
             # iloc left one is row, right one is column
-            max_size = df[t].shape[1]
             # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
+            print("df=", df[t].to_string())
             test1 = df[t].iloc[:, filter(None, col)]
-            test2 = test1.reindex(columns=test1.columns.tolist() + nanList, fill_value=None)
+            test1.loc[:, nanList] = None
+            colobj = {}
+            for x in nonNanList:
+                colobj[f"Unnamed: {convertCharToLoc(i[x])}"] = x
+            print("colobj=", colobj)
+            # test2 = test1.reindex(columns=test1.columns.tolist() + nanList, fill_value=None)
             # test1.rename(columns={test1.columns[0]: "trandate", \
             #                       test1.columns[1]: "account_id", \
             #                       test1.columns[2]: "amount", \
@@ -59,9 +65,10 @@ def import_file(file, tablist, rules):
             #                       test1.columns[4]: "stmt_dtl", \
             #                       test1.columns[5]: "labels"}, \
             #              inplace=True)
-            test2.rename(columns=col_def, inplace=True)
-            print("TEST2")
-            print(test2)
+            test1.rename(columns=colobj, inplace=True)
+            print("TEST1", test1.to_string())
+            test2 = test1.loc[:, col_def]
+            print("TEST2", test2)
             # new_df = pd.concat([test1], ignore_index=True) if new_df is None else pd.concat([new_df, test1], ignore_index=True)
             new_df = pd.concat([test2], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, test2], ignore_index=True, join="outer")
     # Ref - how to transform Pandas Dataframe to Anvil datatable
