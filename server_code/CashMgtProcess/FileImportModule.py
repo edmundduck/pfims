@@ -63,7 +63,7 @@ def import_file(file, tablist, rules):
             #                       test1.columns[4]: "stmt_dtl", \
             #                       test1.columns[5]: "labels"}, \
             #              inplace=True)
-            test1.rename(columns=colobj, inplace=True)
+            test1 = test1.rename(columns=colobj)
             print("TEST1", test1.to_string())
             test2 = test1.loc[:, col_def]
             print("TEST2", test2)
