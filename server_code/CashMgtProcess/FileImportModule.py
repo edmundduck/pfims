@@ -6,6 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 from io import BytesIO
 import pandas as pd
+from builtins import eval
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -55,7 +56,8 @@ def import_file(file, tablist, rules):
             test1.loc[:, nanList] = None
             colobj = {}
             for x in nonNanList:
-                colobj[f"Unnamed: {convertCharToLoc(i[x])}"] = x
+                print(x , "/", eval(f"test1.columns[{convertCharToLoc(i[x])}]"))
+                colobj[eval(f"test1.columns[{convertCharToLoc(i[x])}]")] = x
             print("colobj=", colobj)
             # test2 = test1.reindex(columns=test1.columns.tolist() + nanList, fill_value=None)
             # test1.rename(columns={test1.columns[0]: "trandate", \
