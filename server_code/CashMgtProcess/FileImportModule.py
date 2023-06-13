@@ -51,7 +51,7 @@ def import_file(file, tablist, rules):
             # colobj = {}
             # for x in nonNanList:
                 # colobj[f"{convertCharToLoc(i[x])}"] = x
-            colobj = dict([(convertCharToLoc(i[x]), x) for x in nonNanList])                
+            colobj = dict([(convertCharToLoc(i[x]), x) for x in nonNanList])               
             print("colobj=", colobj)
             test1 = df[t].rename(colobj, axis='columns').iloc[:, [x for x in col if x is not None]]
             test1.loc[:, nanList] = None
