@@ -6,7 +6,6 @@ from anvil.tables import app_tables
 import anvil.server
 from io import BytesIO
 import pandas as pd
-from builtins import eval
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -45,19 +44,16 @@ def import_file(file, tablist, rules):
     for i in rules:
         col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
-        print("col=", col)
         col_def, nonNanList, nanList = divMappingColumnNameLists(i)
         # test2 = pd.DataFrame(data=None, columns=nanList)
         for t in tablist:
             # iloc left one is row, right one is column
             # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
-            print("df=", df[t].to_string())
-            test1 = df[t].iloc[:, filter(None, col)]
+            test1 = df[t].iloc[:, [x for x in col if x is not None]]
             test1.loc[:, nanList] = None
             colobj = {}
             for x in nonNanList:
-                print(x , "/", eval(f"test1.columns[{convertCharToLoc(i[x])}]"))
-                colobj[eval(f"test1.columns[{convertCharToLoc(i[x])}]")] = x
+                colobj[f"test1.columns[{convertCharToLoc(i[x])}]"] = x
             print("colobj=", colobj)
             # test2 = test1.reindex(columns=test1.columns.tolist() + nanList, fill_value=None)
             # test1.rename(columns={test1.columns[0]: "trandate", \
