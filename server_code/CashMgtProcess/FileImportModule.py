@@ -48,22 +48,13 @@ def import_file(file, tablist, rules):
         # test2 = pd.DataFrame(data=None, columns=nanList)
         for t in tablist:
             # iloc left one is row, right one is column
-            # test1 = df[t].iloc[:,[date, lbl, amt, remarks]]
-            test1 = df[t].iloc[:, [x for x in col if x is not None]]
-            test1.loc[:, nanList] = None
-            colobj = {}
-            for x in nonNanList:
-                colobj[f"test1.columns[{convertCharToLoc(i[x])}]"] = x
+            # colobj = {}
+            # for x in nonNanList:
+                # colobj[f"{convertCharToLoc(i[x])}"] = x
+            colobj = dict([(convertCharToLoc(i[x]), x) for x in nonNanList])                
             print("colobj=", colobj)
-            # test2 = test1.reindex(columns=test1.columns.tolist() + nanList, fill_value=None)
-            # test1.rename(columns={test1.columns[0]: "trandate", \
-            #                       test1.columns[1]: "account_id", \
-            #                       test1.columns[2]: "amount", \
-            #                       test1.columns[3]: "remarks", \
-            #                       test1.columns[4]: "stmt_dtl", \
-            #                       test1.columns[5]: "labels"}, \
-            #              inplace=True)
-            test1 = test1.rename(columns=colobj)
+            test1 = df[t].rename(colobj, axis='columns').iloc[:, [x for x in col if x is not None]]
+            test1.loc[:, nanList] = None
             print("TEST1", test1.to_string())
             test2 = test1.loc[:, col_def]
             print("TEST2", test2)
