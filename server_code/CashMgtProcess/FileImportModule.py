@@ -24,14 +24,12 @@ def divMappingColumnNameLists(matrix):
 @anvil.server.callable
 def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    # TODO - update labels mapping
     return list(ef.sheet_names)
 
 @anvil.server.callable
 def get_labels_list(file, lblcol):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     
-
 @anvil.server.callable
 def import_file(file, tablist, rules):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
@@ -54,4 +52,4 @@ def import_file(file, tablist, rules):
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
-    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records')
+    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records'), new_df['labels'].dropna().unique()

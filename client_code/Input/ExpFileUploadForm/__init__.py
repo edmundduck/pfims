@@ -61,7 +61,6 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                 )
                 self.sheet_tabs_panel.add_component(cb)
                 cb.set_event_handler('change', self.enable_import_button)
-            # TODO - update labels mapping
 
     def enable_import_button(self, **event_args):
         cb = event_args['sender']
@@ -81,5 +80,6 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
         matrix = anvil.server.call('select_mapping_matrix', self.dropdown_filter.selected_value)
-        df = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
-        Routing.open_exp_input_form(self, df)
+        df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
+        print(lbls)
+        # Routing.open_exp_input_form(self, df)
