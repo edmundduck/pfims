@@ -39,5 +39,5 @@ components:
   name: src_label
   layout_properties: {column: LFIIUE}
   data_bindings:
-  - {property: text, code: 'self.item[0]'}
+  - {property: text, code: self.item}
 is_package: true
