@@ -17,6 +17,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
         self.dropdown_filetype.items = cache.get_caching_mapping_type()
         self.file_loader_1.enabled = False
         self.button_import_tab.visible = False
+        self.labels_mapping_panel.items = []
 
     def button_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -81,5 +82,5 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                 tablist.append(i.text)
         matrix = anvil.server.call('select_mapping_matrix', self.dropdown_filter.selected_value)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
-        print(lbls)
+        self.labels_mapping_panel.items.src_label = lbls
         # Routing.open_exp_input_form(self, df)
