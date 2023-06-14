@@ -61,6 +61,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                 )
                 self.sheet_tabs_panel.add_component(cb)
                 cb.set_event_handler('change', self.enable_import_button)
+            # TODO - update labels mapping
 
     def enable_import_button(self, **event_args):
         cb = event_args['sender']

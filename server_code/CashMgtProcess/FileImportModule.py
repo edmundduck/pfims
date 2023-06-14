@@ -24,7 +24,13 @@ def divMappingColumnNameLists(matrix):
 @anvil.server.callable
 def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
+    # TODO - update labels mapping
     return list(ef.sheet_names)
+
+@anvil.server.callable
+def get_labels_list(file, lblcol):
+    ef = pd.ExcelFile(BytesIO(file.get_bytes()))
+    
 
 @anvil.server.callable
 def import_file(file, tablist, rules):
