@@ -82,5 +82,5 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                 tablist.append(i.text)
         matrix = anvil.server.call('select_mapping_matrix', self.dropdown_filter.selected_value)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
-        self.labels_mapping_panel.items.src_label = lbls
+        self.labels_mapping_panel.items = lbls
         # Routing.open_exp_input_form(self, df)

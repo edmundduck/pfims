@@ -52,4 +52,6 @@ def import_file(file, tablist, rules):
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
-    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records'), new_df['labels'].dropna().unique()
+    lbl_df = new_df.loc[:, ['labels']]
+    lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
+    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()

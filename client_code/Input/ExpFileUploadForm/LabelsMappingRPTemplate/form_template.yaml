@@ -3,6 +3,7 @@ container:
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
     visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none,
     italic: false, background: '', bold: false, underline: false}
+  data_bindings: []
 components:
 - type: DropDown
   properties:
@@ -24,13 +25,19 @@ components:
     bold: false
     underline: false
     include_placeholder: true
-  name: drop_down_1
+  name: tgt_label
   layout_properties: {column: DUOBFI}
 - type: TextBox
   properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New label name,
     border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
     font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
     background: '', bold: false, underline: false}
-  name: text_box_1
+  name: new_label
   layout_properties: {column: WIDMCS}
+- type: Label
+  properties: {}
+  name: src_label
+  layout_properties: {column: LFIIUE}
+  data_bindings:
+  - {property: text, code: 'self.item[0]'}
 is_package: true
