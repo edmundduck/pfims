@@ -26,7 +26,7 @@ components:
     underline: false
     include_placeholder: true
   name: tgt_label
-  layout_properties: {column: DUOBFI}
+  layout_properties: {column: WIDMCS}
 - type: TextBox
   properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New label name,
     border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -40,4 +40,26 @@ components:
   layout_properties: {column: LFIIUE}
   data_bindings:
   - {property: text, code: self.item}
+- type: DropDown
+  properties:
+    role: null
+    align: full
+    tooltip: ''
+    placeholder: Choose action
+    border: ''
+    enabled: true
+    foreground: ''
+    items: []
+    visible: true
+    font_size: 12
+    font: ''
+    spacing_above: small
+    spacing_below: small
+    italic: false
+    background: ''
+    bold: false
+    underline: false
+    include_placeholder: true
+  name: drop_down_1
+  layout_properties: {column: DUOBFI}
 is_package: true

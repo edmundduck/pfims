@@ -31,6 +31,7 @@ def get_caching_labels_dropdown():
     global labels
     if labels is None:
         labels = anvil.server.call('generate_labels_dropdown')
+    print(labels)
     return labels
 
 def to_dict_caching_labels():
@@ -56,9 +57,13 @@ def get_caching_labels_list():
 
 def get_caching_labels_mapping_dropdown():
     global labels_mapping
-    action_items = 
+    # action_items = [['RENAME TO', {'id': 'R', 'text': 'RENAME TO'}], ['SKIP', {'id': 'S', 'text': 'SKIP'}]]
+    action_items = ['RENAME TO', {'id': 'R', 'text': 'RENAME TO'}]
     if labels_mapping is None:
         labels_mapping = get_caching_labels_dropdown()
+    print(labels_mapping)
+    labels_mapping.insert(0, action_items)
+    return labels_mapping
 
 def get_caching_exp_tbl_def():
     global exp_tbl_def
