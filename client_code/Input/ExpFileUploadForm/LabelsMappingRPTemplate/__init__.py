@@ -13,4 +13,4 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.tgt_label.items = cache.get_caching_labels_mapping_dropdown()
+        self.dropdown_lbl_map_to.items = cache.get_caching_labels_mapping_dropdown()

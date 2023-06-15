@@ -11,6 +11,7 @@ mapping_type = None
 labels = None
 labels_dict = None
 labels_list = None
+labels_mapping_action = None
 labels_mapping = None
 exp_tbl_def = None
 exp_tbl_def_dict = None
@@ -31,7 +32,6 @@ def get_caching_labels_dropdown():
     global labels
     if labels is None:
         labels = anvil.server.call('generate_labels_dropdown')
-    print(labels)
     return labels
 
 def to_dict_caching_labels():
@@ -55,7 +55,17 @@ def get_caching_labels_list():
         labels_list = anvil.server.call('generate_labels_list')
     return labels_list
 
-def get_caching_labels_mapping_dropdown():
+def get_caching_labels_mapping_action_dropdown():
+    global labels_mapping_action
+    if labels_mapping_action is None:
+        labels_mapping_action = anvil.server.call('generate_labels_mapping_action_dropdown')
+    return labels_mapping_action
+
+def reset_caching_labels_mapping_action_dropdown():
+    global labels_mapping_action
+    labels_mapping_action = None
+
+def get_caching_labels_mapping_target_dropdown():
     global labels_mapping
     # action_items = [['RENAME TO', {'id': 'R', 'text': 'RENAME TO'}], ['SKIP', {'id': 'S', 'text': 'SKIP'}]]
     action_items = ['RENAME TO', {'id': 'R', 'text': 'RENAME TO'}]

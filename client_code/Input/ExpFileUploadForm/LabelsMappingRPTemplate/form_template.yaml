@@ -25,14 +25,14 @@ components:
     bold: false
     underline: false
     include_placeholder: true
-  name: tgt_label
+  name: dropdown_lbl_map_to
   layout_properties: {column: WIDMCS}
 - type: TextBox
   properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New label name,
     border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
     font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
     background: '', bold: false, underline: false}
-  name: new_label
+  name: input_label
   layout_properties: {column: WIDMCS}
 - type: Label
   properties: {}
@@ -60,6 +60,6 @@ components:
     bold: false
     underline: false
     include_placeholder: true
-  name: drop_down_1
+  name: dropdown_lbl_action
   layout_properties: {column: DUOBFI}
 is_package: true

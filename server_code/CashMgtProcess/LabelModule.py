@@ -54,6 +54,18 @@ def get_selected_label_attr(selected_lbl):
         return [row['id'], row['name'], row['keywords'], row['status']]
 
 @anvil.server.callable
+# Generate labels dropdown items
+def generate_labels_mapping_action_dropdown():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.label_mapping_action ORDER BY seq ASC".format(schema=sysmod.schemarefd())
+        cur.execute(sql)
+        rows = cur.fetchall()
+        cur.close()
+    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    return content
+
+@anvil.server.callable
 # Create label
 def create_label(name, keywords, status):
     try:
