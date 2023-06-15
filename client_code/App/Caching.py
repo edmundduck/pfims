@@ -11,6 +11,7 @@ mapping_type = None
 labels = None
 labels_dict = None
 labels_list = None
+labels_mapping = None
 exp_tbl_def = None
 exp_tbl_def_dict = None
 upload_action = None
@@ -45,12 +46,19 @@ def reset_caching_labels():
     labels = None
     labels_dict = None
     labels_list = None
+    labels_mapping = None
 
 def get_caching_labels_list():
     global labels_list
     if labels_list is None:
         labels_list = anvil.server.call('generate_labels_list')
     return labels_list
+
+def get_caching_labels_mapping_dropdown():
+    global labels_mapping
+    action_items = 
+    if labels_mapping is None:
+        labels_mapping = get_caching_labels_dropdown()
 
 def get_caching_exp_tbl_def():
     global exp_tbl_def
