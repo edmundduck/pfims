@@ -50,7 +50,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_file_import_click(self, **event_args):
         """This method is called when the button is clicked"""
-        Routing.open_file_import_form(self)
+        Routing.open_exp_file_upload_form(self)
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""

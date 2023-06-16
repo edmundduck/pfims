@@ -15,10 +15,15 @@ def open_exp_input_form(self, dataframe=None, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseInputForm(dataframe))
 
-def open_file_import_form(self, **event_args):
-    from ..Input.ExpFileUploadForm import ExpFileUploadForm
+def open_exp_file_upload_form(self, **event_args):
+    from ..Input.ExpenseFileUploadForm import ExpenseFileUploadForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(ExpFileUploadForm())
+    anvil.get_open_form().content_panel.add_component(ExpenseFileUploadForm())
+
+def open_exp_file_upload_form_p2(self, **event_args):
+    from ..Input.ExpenseFileUploadFormP2 import ExpenseFileUploadFormP2
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ExpenseFileUploadFormP2())
 
 def open_upload_mapping_form(self, **event_args):
     from ..Input.FileUploadMappingForm import FileUploadMappingForm

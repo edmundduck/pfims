@@ -19,12 +19,13 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
 
     def dropdown_lbl_action_change(self, **event_args):
         """This method is called when an item is selected"""
-        if self.dropdown_lbl_action.selected_value in (None, 'S'):
+        action = self.dropdown_lbl_action.selected_value.get('id') if isinstance(self.dropdown_lbl_action.selected_value, dict) else self.dropdown_lbl_action.selected_value
+        if action in (None, 'S'):
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = False
-        elif self.dropdown_lbl_action.selected_value is 'M':
+        elif action == 'M':
             self.dropdown_lbl_map_to.visible = True
             self.input_label.visible = False
-        elif self.dropdown_lbl_action.selected_value is 'C':
+        elif action == 'C':
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = True

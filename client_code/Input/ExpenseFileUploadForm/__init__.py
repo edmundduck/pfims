@@ -1,4 +1,4 @@
-from ._anvil_designer import ExpFileUploadFormTemplate
+from ._anvil_designer import ExpenseFileUploadFormTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ...App import Routing
 from ...App import Caching as cache
 
-class ExpFileUploadForm(ExpFileUploadFormTemplate):
+class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
@@ -74,7 +74,7 @@ class ExpFileUploadForm(ExpFileUploadFormTemplate):
                     vis = True
             self.button_import_tab.visible = vis
 
-    def button_import_tab_click(self, **event_args):
+    def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         tablist = []
         for i in self.sheet_tabs_panel.get_components():
