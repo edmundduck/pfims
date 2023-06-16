@@ -91,6 +91,13 @@ components:
     col_widths: {}
     grid_position: EAKVAM,NLXOAT
   components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: '0', font_size: null, font: '', spacing_above: small, icon_align: left,
+      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      icon: ''}
+    name: hidden_action_count
+    layout_properties: {grid_position: 'EAKVAM,UJELHX'}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: 'theme:White', visible: true, text: Proceed, font_size: 12, font: '',

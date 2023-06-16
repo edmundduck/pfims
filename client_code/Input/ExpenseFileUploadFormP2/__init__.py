@@ -16,6 +16,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         # Any code you write here will run when the form opens.
         self.button_next.visible = False
         self.labels_mapping_panel.items = labels
+        self.labels_mapping_panel.add_event_handler('x-handle-action-count', handle_action_count)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -45,3 +46,9 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         matrix = anvil.server.call('select_mapping_matrix', self.dropdown_filter.selected_value)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
         self.labels_mapping_panel.items = lbls
+
+    def handle_action_count(self, action, **event_args):
+        if action is None:
+            self.hidden_action_count.text = int(self.hidden_action_count.text) - 1 if int(self.hidden_action_count.text) > 0 else 0
+        else:
+            self.hidden_action_count.text = int(self.hidden_action_count.text) + 1
