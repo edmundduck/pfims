@@ -12,7 +12,6 @@ labels = None
 labels_dict = None
 labels_list = None
 labels_mapping_action = None
-labels_mapping = None
 exp_tbl_def = None
 exp_tbl_def_dict = None
 upload_action = None
@@ -47,7 +46,6 @@ def reset_caching_labels():
     labels = None
     labels_dict = None
     labels_list = None
-    labels_mapping = None
 
 def get_caching_labels_list():
     global labels_list
@@ -64,16 +62,6 @@ def get_caching_labels_mapping_action_dropdown():
 def reset_caching_labels_mapping_action_dropdown():
     global labels_mapping_action
     labels_mapping_action = None
-
-def get_caching_labels_mapping_target_dropdown():
-    global labels_mapping
-    # action_items = [['RENAME TO', {'id': 'R', 'text': 'RENAME TO'}], ['SKIP', {'id': 'S', 'text': 'SKIP'}]]
-    action_items = ['RENAME TO', {'id': 'R', 'text': 'RENAME TO'}]
-    if labels_mapping is None:
-        labels_mapping = get_caching_labels_dropdown()
-    print(labels_mapping)
-    labels_mapping.insert(0, action_items)
-    return labels_mapping
 
 def get_caching_exp_tbl_def():
     global exp_tbl_def

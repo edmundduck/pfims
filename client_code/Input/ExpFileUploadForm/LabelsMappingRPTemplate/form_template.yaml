@@ -62,4 +62,5 @@ components:
     include_placeholder: true
   name: dropdown_lbl_action
   layout_properties: {column: DUOBFI}
+  event_bindings: {change: dropdown_lbl_action_change}
 is_package: true
