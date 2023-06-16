@@ -12,11 +12,13 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
     def __init__(self, dataframe, labels, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
+        print(self)
+        print(self.get_components())
 
         # Any code you write here will run when the form opens.
         self.button_next.visible = False
         self.labels_mapping_panel.items = labels
-        self.labels_mapping_panel.add_event_handler('x-handle-action-count', handle_action_count)
+        self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""

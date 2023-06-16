@@ -11,6 +11,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
+        print(self.get_components())
 
         # Any code you write here will run before the form opens.
         self.dropdown_lbl_action.items = cache.get_caching_labels_mapping_action_dropdown()
@@ -29,5 +30,4 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         elif action == 'C':
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = True
-        print(self)
-        self.parent.raise_event('x-handle-action-count', action)
+        # self.parent.raise_event('x-handle-action-count', action)
