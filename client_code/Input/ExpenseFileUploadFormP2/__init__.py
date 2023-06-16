@@ -45,4 +45,3 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         matrix = anvil.server.call('select_mapping_matrix', self.dropdown_filter.selected_value)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
         self.labels_mapping_panel.items = lbls
-        # Routing.open_exp_input_form(self, df)
