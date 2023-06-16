@@ -14,8 +14,6 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.dropdown_filetype.items = cache.get_caching_mapping_type()
-        self.file_loader_1.enabled = False
         self.button_import_tab.visible = False
         self.labels_mapping_panel.items = []
 
@@ -26,42 +24,6 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
     def button_input_exp_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
-
-    def dropdown_filetype_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_filetype.items = cache.get_caching_mapping_type()
-
-    def dropdown_filetype_change(self, **event_args):
-        """This method is called when an item is selected"""
-        # TODO cache the filter dropdown
-        userid = anvil.server.call('get_current_userid')
-        if self.dropdown_filetype.selected_value is None:
-            self.dropdown_filter.items = []
-        else:
-            self.dropdown_filter.items = anvil.server.call('generate_mapping_dropdown', userid, self.dropdown_filetype.selected_value)
-
-    def dropdown_filter_change(self, **event_args):
-        """This method is called when an item is selected"""
-        if self.dropdown_filter.selected_value is None:
-            self.file_loader_1.enabled = False
-        else:
-            self.file_loader_1.enabled = True
-
-    def file_loader_1_change(self, file, **event_args):
-        """This method is called when a new file is loaded into this FileLoader"""
-        if file is not None:
-            self.label_filename.text = f"Uploaded filename: {file.name}"
-            xls = anvil.server.call('preview_file', file=file)
-            for i in xls:
-                cb = CheckBox(
-                    text=i,
-                    font_size=12,
-                    align="left",
-                    spacing_above="small",
-                    spacing_below="small"
-                )
-                self.sheet_tabs_panel.add_component(cb)
-                cb.set_event_handler('change', self.enable_import_button)
 
     def enable_import_button(self, **event_args):
         cb = event_args['sender']

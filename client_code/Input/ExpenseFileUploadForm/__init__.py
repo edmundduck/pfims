@@ -16,8 +16,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         # Any code you write here will run when the form opens.
         self.dropdown_filetype.items = cache.get_caching_mapping_type()
         self.file_loader_1.enabled = False
-        self.button_import_tab.visible = False
-        self.labels_mapping_panel.items = []
+        self.button_next.visible = False
 
     def button_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -36,13 +35,13 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         # TODO cache the filter dropdown
         userid = anvil.server.call('get_current_userid')
         if self.dropdown_filetype.selected_value is None:
-            self.dropdown_filter.items = []
+            self.dropdown_mapping_rule.items = []
         else:
-            self.dropdown_filter.items = anvil.server.call('generate_mapping_dropdown', userid, self.dropdown_filetype.selected_value)
+            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', userid, self.dropdown_filetype.selected_value)
 
-    def dropdown_filter_change(self, **event_args):
+    def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
-        if self.dropdown_filter.selected_value is None:
+        if self.dropdown_mapping_rule.selected_value is None:
             self.file_loader_1.enabled = False
         else:
             self.file_loader_1.enabled = True
@@ -61,18 +60,18 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     spacing_below="small"
                 )
                 self.sheet_tabs_panel.add_component(cb)
-                cb.set_event_handler('change', self.enable_import_button)
+                cb.set_event_handler('change', self.enable_next_button)
 
-    def enable_import_button(self, **event_args):
+    def enable_next_button(self, **event_args):
         cb = event_args['sender']
+        vis = False
         if cb.checked:
-            self.button_import_tab.visible = True
+            vis = True
         else:
-            vis = False
             for i in cb.parent.get_components():
                 if isinstance(i, CheckBox) and i.checked:
                     vis = True
-            self.button_import_tab.visible = vis
+        self.button_next.visible = vis
 
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -80,7 +79,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         for i in self.sheet_tabs_panel.get_components():
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
-        matrix = anvil.server.call('select_mapping_matrix', self.dropdown_filter.selected_value)
+        matrix = anvil.server.call('select_mapping_matrix', self.dropdown_mapping_rule.selected_value)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
         self.labels_mapping_panel.items = lbls
         # Routing.open_exp_input_form(self, df)
