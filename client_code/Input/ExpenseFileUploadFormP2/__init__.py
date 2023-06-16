@@ -9,34 +9,34 @@ from ...App import Routing
 from ...App import Caching as cache
 
 class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
-    def __init__(self, **properties):
+    def __init__(self, dataframe, labels, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.button_import_tab.visible = False
-        self.labels_mapping_panel.items = []
+        self.button_next.visible = False
+        self.labels_mapping_panel.items = labels
 
-    def button_upload_mapping_click(self, **event_args):
+    def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_upload_mapping_form(self)
 
-    def button_input_exp_click(self, **event_args):
+    def button_nav_input_exp_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
 
-    def enable_import_button(self, **event_args):
+    def enable_next_button(self, **event_args):
         cb = event_args['sender']
         if cb.checked:
-            self.button_import_tab.visible = True
+            self.button_next.visible = True
         else:
             vis = False
             for i in cb.parent.get_components():
                 if isinstance(i, CheckBox) and i.checked:
                     vis = True
-            self.button_import_tab.visible = vis
+            self.button_next.visible = vis
 
-    def button_import_tab_click(self, **event_args):
+    def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         tablist = []
         for i in self.sheet_tabs_panel.get_components():

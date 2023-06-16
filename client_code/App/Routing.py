@@ -20,10 +20,10 @@ def open_exp_file_upload_form(self, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseFileUploadForm())
 
-def open_exp_file_upload_form_p2(self, **event_args):
+def open_exp_file_upload_form_p2(self, dataframe, labels, **event_args):
     from ..Input.ExpenseFileUploadFormP2 import ExpenseFileUploadFormP2
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(ExpenseFileUploadFormP2())
+    anvil.get_open_form().content_panel.add_component(ExpenseFileUploadFormP2(dataframe, labels))
 
 def open_upload_mapping_form(self, **event_args):
     from ..Input.FileUploadMappingForm import FileUploadMappingForm

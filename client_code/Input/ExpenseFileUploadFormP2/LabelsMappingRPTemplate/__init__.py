@@ -29,3 +29,6 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         elif action == 'C':
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = True
+        for d in self.parent.get_components():
+            if isinstance(d, DropDown) and d.selected_value is not None:
+                print(d.selected_value)
