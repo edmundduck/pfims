@@ -11,15 +11,13 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
-        print(self.get_components())
 
         # Any code you write here will run before the form opens.
         self.dropdown_lbl_action.items = cache.get_caching_labels_mapping_action_dropdown()
         self.dropdown_lbl_map_to.items = cache.get_caching_labels_dropdown()
-        self.dropdown_lbl_action_change()
 
-    def dropdown_lbl_action_change(self, **event_args):
-        """This method is called when an item is selected"""
+    def dropdown_lbl_action_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
         action = self.dropdown_lbl_action.selected_value.get('id') if isinstance(self.dropdown_lbl_action.selected_value, dict) else self.dropdown_lbl_action.selected_value
         if action in (None, 'S'):
             self.dropdown_lbl_map_to.visible = False
@@ -30,4 +28,9 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         elif action == 'C':
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = True
-        # self.parent.raise_event('x-handle-action-count', action)
+
+    def dropdown_lbl_action_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.dropdown_lbl_action_show()
+        action = self.dropdown_lbl_action.selected_value.get('id') if isinstance(self.dropdown_lbl_action.selected_value, dict) else self.dropdown_lbl_action.selected_value
+        self.parent.raise_event('x-handle-action-count', action=action)
