@@ -63,4 +63,10 @@ components:
   name: dropdown_lbl_action
   layout_properties: {column: DUOBFI}
   event_bindings: {change: dropdown_lbl_action_change, show: dropdown_lbl_action_show}
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true,
+    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+    italic: false, background: '', bold: false, underline: false, icon: ''}
+  name: hidden_lbl_action
+  layout_properties: {column: DUOBFI}
 is_package: true

@@ -43,9 +43,12 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
         self.labels_mapping_panel.items = lbls
 
-    def handle_action_count(self, action, **event_args):
+    def handle_action_count(self, action, prev, **event_args):
+        print(action, ", ", prev)
         if action is None:
             self.hidden_action_count.text = int(self.hidden_action_count.text) + 1
-        else:
+        elif prev is None:
             self.hidden_action_count.text = int(self.hidden_action_count.text) - 1
+        else:
+            pass
         self.enable_next_button()
