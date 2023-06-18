@@ -27,6 +27,8 @@ components:
     include_placeholder: true
   name: dropdown_lbl_map_to
   layout_properties: {column: WIDMCS}
+  data_bindings:
+  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
 - type: TextBox
   properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New label name,
     border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -34,12 +36,14 @@ components:
     background: '', bold: false, underline: false}
   name: input_label
   layout_properties: {column: WIDMCS}
+  data_bindings:
+  - {property: text, code: 'self.item[''new'']', writeback: true}
 - type: Label
   properties: {}
   name: src_label
   layout_properties: {column: LFIIUE}
   data_bindings:
-  - {property: text, code: self.item}
+  - {property: text, code: 'self.item[''srclbl'']'}
 - type: DropDown
   properties:
     role: null
@@ -63,6 +67,8 @@ components:
   name: dropdown_lbl_action
   layout_properties: {column: DUOBFI}
   event_bindings: {change: dropdown_lbl_action_change, show: dropdown_lbl_action_show}
+  data_bindings:
+  - {property: selected_value, code: 'self.item[''action'']', writeback: true}
 - type: Label
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
     text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,

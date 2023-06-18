@@ -15,8 +15,15 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
 
         # Any code you write here will run when the form opens.
         self.button_next.visible = False
-        print("labels=", labels, "/", dict(labels))
-        self.labels_mapping_panel.items = labels
+        # List and dict transpose
+        # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
+        label_struct = {
+            'srclbl': labels,
+            'action': [ None for i in range(len(labels))],
+            'tgtlbl': [ None for i in range(len(labels))],
+            'new': labels
+        }
+        self.labels_mapping_panel.items = [dict(zip(label_struct, col)) for col in zip(*label_struct.values())]
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
 
