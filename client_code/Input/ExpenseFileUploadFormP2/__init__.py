@@ -35,16 +35,9 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
 
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
-        tablist = []
-        for i in self.sheet_tabs_panel.get_components():
-            if isinstance(i, CheckBox) and i.checked:
-                tablist.append(i.text)
-        matrix = anvil.server.call('select_mapping_matrix', self.dropdown_filter.selected_value)
-        df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
-        self.labels_mapping_panel.items = lbls
+        print(self.labels_mapping_panel.items)
 
     def handle_action_count(self, action, prev, **event_args):
-        print(action, ", ", prev)
         if action is None:
             self.hidden_action_count.text = int(self.hidden_action_count.text) + 1
         elif prev is None:
