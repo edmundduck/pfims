@@ -15,6 +15,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
 
         # Any code you write here will run when the form opens.
         self.button_next.visible = False
+        print("labels=", labels, "/", dict(labels))
         self.labels_mapping_panel.items = labels
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
