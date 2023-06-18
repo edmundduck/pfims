@@ -67,13 +67,13 @@ def generate_labels_mapping_action_dropdown():
 
 @anvil.server.callable
 # Create label
-def create_label(name, keywords, status):
+def create_label(labels):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "INSERT INTO {schema}.labels (name, keywords, status) VALUES (%s,%s,%s) RETURNING id".format(schema=sysmod.schemafin())
-            stmt = cur.mogrify(sql, (name, keywords, status))
-            cur.execute(stmt)
+            stmt = cur.mogrify(sql, (labels['name'], labels['keywords'], labels['status']))
+            cur.executemany(stmt)
             conn.commit()
             id = cur.fetchone()
             if id['id'] < 0:

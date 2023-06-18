@@ -43,7 +43,16 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
 
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
-        print(self.labels_mapping_panel.items)
+        # 1. Get all items with action = 'C', and grab new field to create new labels
+        DL = {k: [dic[k] for dic in self.labels_mapping_panel.items] for k in self.labels_mapping_panel.items[0]}
+        DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
+        pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
+        lbl_mogstr = {
+            lbl_create: [DL['new'][x] for x in pos],
+            kw_create: [ None for i in range(len(lbl_create)) ],
+            status_create: [ True for i in range(len(lbl_create)) ]
+        }
+        lbl_id = anvil.server.call('create_label', labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
 
     def handle_action_count(self, action, prev, **event_args):
         if action is None:
