@@ -48,11 +48,12 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
         lbl_mogstr = {
-            lbl_create: [DL['new'][x] for x in pos],
-            kw_create: [ None for i in range(len(lbl_create)) ],
-            status_create: [ True for i in range(len(lbl_create)) ]
+            'name': [DL['new'][x] for x in pos_create],
+            'keywords': [ None for i in range(len(pos_create)) ],
+            'status': [ True for i in range(len(pos_create)) ]
         }
         lbl_id = anvil.server.call('create_label', labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
+        print("XXX:", lbl_id)
 
     def handle_action_count(self, action, prev, **event_args):
         if action is None:

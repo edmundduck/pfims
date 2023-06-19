@@ -53,12 +53,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_name = self.text_lbl_name.text
-        lbl_id = anvil.server.call('create_label', labels={
-                                        name:lbl_name,
-                                        keywords:self.text_keywords.text,
-                                        status:True
-                                    }
-                                )
+        lbl_id = anvil.server.call('create_label', labels={name:lbl_name, keywords:self.text_keywords.text, status:True})
 
         if lbl_id is None or lbl_id <= 0:
             n = Notification("ERROR: Fail to create label {lbl_name}.".format(lbl_name=lbl_name))
