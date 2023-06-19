@@ -76,7 +76,7 @@ def create_label(labels):
                 mogstr = ', '.join("(%s, %s, %s)" % (label['name'], label['keywords'], label['status']) for label in labels)
                 print(mogstr)
                 sql = "INSERT INTO {schema}.labels (name, keywords, status) VALUES %s RETURNING id".format(schema=sysmod.schemafin())
-                stmt = cur.mogrify(sql, (mogstr, )).decode('utf-8')
+                stmt = cur.mogrify(sql, (mogstr, )).decode('utf-8').replace("'", '')
                 # stmt = cur.mogrify(sql, (labels['name'], labels['keywords'], labels['status']))
                 print(stmt)
                 cur.execute(stmt)
