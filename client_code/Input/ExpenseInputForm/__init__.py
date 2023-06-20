@@ -13,12 +13,15 @@ from ...App.Validation import Validator
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
-    def __init__(self, dataframe=None, **properties):
+    def __init__(self, tab_id=None, dataframe=None, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
+
+        if tab_id is not None:
+            self.dropdown_tabs.selected_value = tab_id
 
         if dataframe is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
@@ -26,7 +29,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             self.input_repeating_panel.items = dataframe
         glo.reset_deleted_row()
-        #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
     def _switch_to_submit_button(self, **event_args):
         self.button_save_exptab.text = "SUBMIT TAB"
@@ -74,10 +76,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if selected_lid is not None:
             self.input_repeating_panel.raise_event_on_children('x-create-lbl-button', selected_lid=selected_lid, selected_lname=selected_lname)
         
-    # def dropdown_acct_show(self, **event_args):
-    #     """This method is called when the DropDown is shown on the screen"""
-    #     self.dropdown_acct.items = anvil.server.call('generate_accounts_dropdown_only_id')
-
     def dropdown_tabs_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')

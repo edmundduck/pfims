@@ -14,6 +14,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.tag = {'dataframe': dataframe}
         self.button_next.visible = False
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
@@ -73,8 +74,8 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
             for lbl_mapping in DL:
                 if lbl_mapping['tgtlbl'] is not None: df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
             print(df.to_string())
-        
-        Routing.open_exp_input_form(self, df)
+
+        Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, dataframe=df)
 
     def handle_action_count(self, action, prev, **event_args):
         if action is None:

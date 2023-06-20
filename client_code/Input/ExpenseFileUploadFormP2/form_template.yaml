@@ -42,7 +42,7 @@ components:
   name: flow_panel_step5
   layout_properties:
     col_widths: {}
-    grid_position: SKIWMT,JIMGDR
+    grid_position: GSTUVZ,HFWNTV
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -53,10 +53,54 @@ components:
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Choose labels mapping                              ',
+      visible: true, text: 'Choose existing tab or create new             ', font_size: 16,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: true, underline: false, icon: ''}
+    name: label_step5a
+    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: Create new tab
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: true
+    name: dropdown_tabs
+    layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
+    event_bindings: {}
+- type: FlowPanel
+  properties: {}
+  name: flow_panel_step6
+  layout_properties:
+    col_widths: {}
+    grid_position: SKIWMT,JIMGDR
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Step 6, font_size: 16, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+      underline: false, icon: 'fa:long-arrow-right'}
+    name: label_step6
+    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Configure labels mapping                           ',
       font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small,
       italic: false, background: '', bold: true, underline: false, icon: ''}
-    name: label_step5a
+    name: label_step6a
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
   - type: DataGrid
     properties:
@@ -83,50 +127,6 @@ components:
       properties: {spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileUploadFormP2.LabelsMappingRPTemplate}
       name: labels_mapping_panel
       layout_properties: {}
-- type: FlowPanel
-  properties: {}
-  name: flow_panel_step2
-  layout_properties:
-    col_widths: {}
-    grid_position: ZRKQGB,ZNWMWR
-  components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Step 2, font_size: 16, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
-      underline: false, icon: 'fa:long-arrow-right'}
-    name: label_step5b
-    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Choose a mapping rule                             ', font_size: 16,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: true, underline: false, icon: ''}
-    name: label_step2a
-    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: Choose mapping rule
-      border: ''
-      enabled: true
-      foreground: ''
-      items: []
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: true
-    name: dropdown_mapping_rule
-    layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
-    event_bindings: {change: dropdown_mapping_rule_change}
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}

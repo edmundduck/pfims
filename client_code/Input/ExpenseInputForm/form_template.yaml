@@ -111,7 +111,7 @@ components:
       role: null
       align: full
       tooltip: ''
-      placeholder: Create a tab
+      placeholder: Create new tab
       border: ''
       enabled: true
       foreground: ''
