@@ -71,7 +71,6 @@ def create_label(labels):
     try:
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            print(labels)
             if len(labels) > 0:
                 mogstr = ', '.join(cur.mogrify("(%s, %s, %s)", (label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
                 stmt = "INSERT INTO {schema}.labels (name, keywords, status) VALUES %s RETURNING id".format(schema=sysmod.schemafin())
@@ -79,7 +78,7 @@ def create_label(labels):
                 conn.commit()
                 return [r['id'] for r in cur.fetchall()]
             else:
-                return None
+                return []
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + create_label.__name__, err)
         conn.rollback()

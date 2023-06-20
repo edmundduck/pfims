@@ -60,20 +60,23 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
 
         if lbl_id is None:
             n = Notification("ERROR: Fail to create new labels. Abort the labe mapping process.")
+            n.show()
             return
 
         # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-        print(lbl_id)
+        print("lbl_id=", lbl_id)
         for lbl_loc in range(len(lbl_id)):
             DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
-        print(DL)
+        print("DL=", DL)
     
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
         df = self.tag.get('dataframe')
-        if df is not None:
-            for lbl_mapping in DL:
-                if lbl_mapping['tgtlbl'] is not None: df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
-            print(df.to_string())
+        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        print("LD=", LD)
+        if df is not None and LD is not None:
+            for lbl_mapping in LD:
+                if lbl_mapping is not None: df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
+            print("df.to_string()=", df.to_string())
 
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, dataframe=df)
 
