@@ -44,6 +44,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         # 1. Get all items with action = 'C', and grab new field to create new labels
+        # DL = Dict of Lists
         DL = {k: [dic[k] for dic in self.labels_mapping_panel.items] for k in self.labels_mapping_panel.items[0]}
         DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
@@ -52,8 +53,21 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
             'keywords': [ None for i in range(len(pos_create)) ],
             'status': [ True for i in range(len(pos_create)) ]
         }
+        # labels param is transposed from DL to LD (List of Dicts)
         lbl_id = anvil.server.call('create_label', labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
-        print("XXX:", lbl_id)
+
+        if lbl_id is None:
+            n = Notification("ERROR: Fail to create new labels. Abort the labe mapping process.")
+            return
+
+        # 2. Replace labels with action = 'C' to the newly created label codes in step 1
+        print(lbl_id)
+        for lbl_loc in range(len(lbl_id)):
+            DL['tgtlbl'][pos_create[lbl_loc]] = lbl_id[lbl_loc]
+        print(DL)
+    
+        # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
+
 
     def handle_action_count(self, action, prev, **event_args):
         if action is None:

@@ -73,27 +73,20 @@ def create_label(labels):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             print(labels)
             if len(labels) > 0:
-                mogstr = ', '.join("(%s, %s, %s)" % (label['name'], label['keywords'], label['status']) for label in labels)
-                print(mogstr)
-                sql = "INSERT INTO {schema}.labels (name, keywords, status) VALUES %s RETURNING id".format(schema=sysmod.schemafin())
-                stmt = cur.mogrify(sql, (mogstr, )).decode('utf-8').replace("'", '')
-                # stmt = cur.mogrify(sql, (labels['name'], labels['keywords'], labels['status']))
-                print(stmt)
-                cur.execute(stmt)
+                mogstr = ', '.join(cur.mogrify("(%s, %s, %s)", (label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
+                stmt = "INSERT INTO {schema}.labels (name, keywords, status) VALUES %s RETURNING id".format(schema=sysmod.schemafin())
+                cur.execute(stmt % mogstr)
                 conn.commit()
-                id = cur.fetchall()
-                print(id)
-                if id['id'] < 0:
-                        raise psycopg2.OperationalError("Label ({0}) creation fail.".format(name))
                 cur.close()
-                return id['id']
+                return [r['id'] for r in cur.fetchall()]
             else:
                 return None
-    except psycopg2.OperationalError as err:
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + create_label.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Update label
@@ -110,11 +103,12 @@ def update_label(id, name, keywords, status):
                     raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
             cur.close()
         return count
-    except psycopg2.OperationalError as err:
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + update_label.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Delete label
@@ -131,8 +125,9 @@ def delete_label(id):
                     raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
             cur.close()
         return count
-    except psycopg2.OperationalError as err:
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_label.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if conn is not None: conn.close()
+    return None
