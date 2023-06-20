@@ -14,7 +14,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.tag['dataframe'] = dataframe
+        self.tag = {'dataframe': dataframe}
         self.button_next.visible = False
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
@@ -68,9 +68,13 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         print(DL)
     
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-        if self.tag.get('dataframe') is not None:
-            df = self.tag.get('dataframe')
-            df['labels'].replace()
+        df = self.tag.get('dataframe')
+        if df is not None:
+            for lbl_mapping in DL:
+                if lbl_mapping['tgtlbl'] is not None: df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
+            print(df.to_string())
+        
+        Routing.open_exp_input_form(self, df)
 
     def handle_action_count(self, action, prev, **event_args):
         if action is None:
