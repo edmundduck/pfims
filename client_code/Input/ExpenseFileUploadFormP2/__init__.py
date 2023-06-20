@@ -75,6 +75,9 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         print("LD=", LD)
         if df is not None and LD is not None:
             for lbl_mapping in LD:
+                print(lbl_mapping['srclbl'])
+                print(lbl_mapping['tgtlbl'])
+                print(df)
                 if lbl_mapping is not None: df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
             print("df.to_string()=", df.to_string())
 
