@@ -14,8 +14,9 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.tag['dataframe'] = dataframe
         self.button_next.visible = False
-        # Transpose Dict of List (DL) to List of Dict (LD)
+        # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
         DL = {
             'srclbl': labels,
@@ -63,11 +64,13 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         # 2. Replace labels with action = 'C' to the newly created label codes in step 1
         print(lbl_id)
         for lbl_loc in range(len(lbl_id)):
-            DL['tgtlbl'][pos_create[lbl_loc]] = lbl_id[lbl_loc]
+            DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
         print(DL)
     
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-
+        if self.tag.get('dataframe') is not None:
+            df = self.tag.get('dataframe')
+            df['labels'].replace()
 
     def handle_action_count(self, action, prev, **event_args):
         if action is None:
