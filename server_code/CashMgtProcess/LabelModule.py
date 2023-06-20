@@ -77,7 +77,6 @@ def create_label(labels):
                 stmt = "INSERT INTO {schema}.labels (name, keywords, status) VALUES %s RETURNING id".format(schema=sysmod.schemafin())
                 cur.execute(stmt % mogstr)
                 conn.commit()
-                cur.close()
                 return [r['id'] for r in cur.fetchall()]
             else:
                 return None
@@ -85,6 +84,7 @@ def create_label(labels):
         sysmod.print_data_debug("OperationalError in " + create_label.__name__, err)
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
