@@ -137,9 +137,6 @@ def select_mapping_rules(uid, gid=None):
 def select_mapping_matrix(id):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        # Filter group can have no rules so left join is required
-        # sql = f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules" if fid is None else \
-        # f"SELECT string_agg(SUBSTRING(action, POSITION(',' IN action)-1, 1), ',') AS col FROM fin.filterrules WHERE fid = {fid}"
         sql = f"SELECT datecol AS trandate, acctcol AS account_id, amtcol AS amount, remarkscol AS remarks, stmtdtlcol AS stmt_dtl, lblcol AS labels \
         FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
         cur.execute(sql)
@@ -220,7 +217,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
             # At last perform rules deletion (if any)a
             if del_iid not in (None, ''):
                 args = "({0})".format(",".join(str(i) for i in del_iid))
-                sql = f"DELETE FROM {sysmod.schemafin()}.filterrules WHERE fid = {fid} AND iid IN {args}"
+                sql = f"DELETE FROM {sysmod.schemafin()}.filterrules WHERE fid = {id} AND iid IN {args}"
                 cur.execute(sql)
                 conn.commit()
                 dcount = cur.rowcount
@@ -234,25 +231,3 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
     finally:
         if conn is not None: conn.close()        
     return {"id": id, "count": count, "dcount": dcount}
-
-@anvil.server.callable
-# Delete the filter
-def delete_filter(uid, fid):
-    conn = None
-    count = None
-    try:
-        conn = sysmod.psqldb_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = f"DELETE FROM {sysmod.schemafin()}.filtergrp WHERE userid = {uid} AND fid = {fid}"
-            cur.execute(sql)
-            conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                raise psycopg2.OperationalError(f"Filter (id:{fid}) deletion fail.")
-            cur.close()
-    except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug(f"OperationalError in {delete_filter.__name__}", err)
-        conn.rollback()
-    finally:
-        if conn is not None: conn.close()        
-    return count
