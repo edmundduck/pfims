@@ -70,16 +70,17 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         print("DL=", DL)
     
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-        df = self.tag.get('dataframe')
+        df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
         print("LD=", LD)
-        if df is not None and LD is not None:
+        if df_transpose is not None and LD is not None:
             for lbl_mapping in LD:
                 print(lbl_mapping['srclbl'])
                 print(lbl_mapping['tgtlbl'])
-                print(df)
-                if lbl_mapping is not None: df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
-            print("df.to_string()=", df.to_string())
+                print(df_transpose)
+                if lbl_mapping is not None: df_transpose['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
+        df = [dict(zip(df_transpose, col)) for col in zip(*df_transpose.values())]
+        print("df.to_string()=", df.to_string())
 
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, dataframe=df)
 
