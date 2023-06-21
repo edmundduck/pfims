@@ -58,7 +58,7 @@ def import_file(file, tablist, rules):
     return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()
 
 @anvil.server.callable
-def update_mapping(mapping):
+def update_mapping(data, mapping):
     # 1. Get all items with action = 'C', and grab new field to create new labels
     # DL = Dict of Lists
     DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
@@ -85,15 +85,16 @@ def update_mapping(mapping):
     print("DL=", DL)
 
     # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-    df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
+    # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
+    df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
     LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
     print("LD=", LD)
-    if df_transpose is not None and LD is not None:
+    if df is not None and LD is not None:
         for lbl_mapping in LD:
-            print(lbl_mapping['srclbl'])
-            print(lbl_mapping['tgtlbl'])
-            print(df_transpose)
-            if lbl_mapping is not None: df_transpose['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
-    df = [dict(zip(df_transpose, col)) for col in zip(*df_transpose.values())]
+            print(lbl_mapping['srclbl'], ", ", lbl_mapping['tgtlbl'])
+            if lbl_mapping is not None and lbl_mapping.get('tgtlbl') is not None: 
+                df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
+    # df = [dict(zip(df_transpose, col)) for col in zip(*df_transpose.values())]
     print("df.to_string()=", df.to_string())
+    return df.to_dict(orient='records')
     
