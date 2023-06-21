@@ -214,16 +214,17 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
             else:
                 count = 0
 
-            # At last perform rules deletion (if any)a
-            if del_iid not in (None, ''):
-                args = "({0})".format(",".join(str(i) for i in del_iid))
-                sql = f"DELETE FROM {sysmod.schemafin()}.filterrules WHERE fid = {id} AND iid IN {args}"
-                cur.execute(sql)
-                conn.commit()
-                dcount = cur.rowcount
-                if dcount <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
-            else:
-                dcount = 0
+            # At last perform rules deletion (if any)
+            print(del_iid)
+            # if del_iid not in (None, ''):
+            #     args = "({0})".format(",".join(str(i) for i in del_iid))
+            #     sql = f"DELETE FROM {sysmod.schemafin()}.mappingrules WHERE gid = {id} AND iid IN {args}"
+            #     cur.execute(sql)
+            #     conn.commit()
+            #     dcount = cur.rowcount
+            #     if dcount <= 0: raise psycopg2.OperationalError(f"Fail to save filter rules (filter name={name}).")
+            # else:
+            #     dcount = 0
             cur.close()            
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug(f"OperationalError in {save_mapping_rules.__name__}", err)
