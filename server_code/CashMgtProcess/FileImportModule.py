@@ -96,5 +96,5 @@ def update_mapping(data, mapping):
                 df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
     # df = [dict(zip(df_transpose, col)) for col in zip(*df_transpose.values())]
     print("df.to_string()=", df.to_string())
-    return df.to_dict(orient='records')
+    return df.sort_values(by=['trandate']).to_dict(orient='records')
     
