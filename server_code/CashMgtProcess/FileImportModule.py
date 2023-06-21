@@ -6,6 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 from io import BytesIO
 import pandas as pd
+from . import LabelModule as lbl_mod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -55,3 +56,44 @@ def import_file(file, tablist, rules):
     lbl_df = new_df.loc[:, ['labels']]
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
     return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()
+
+@anvil.server.callable
+def update_mapping(mapping):
+    # 1. Get all items with action = 'C', and grab new field to create new labels
+    # DL = Dict of Lists
+    DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
+    DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
+    pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
+    lbl_mogstr = {
+        'name': [DL['new'][x] for x in pos_create],
+        'keywords': [ None for i in range(len(pos_create)) ],
+        'status': [ True for i in range(len(pos_create)) ]
+    }
+    # labels param is transposed from DL to LD (List of Dicts)
+    lbl_id = lbl_mod.create_label(labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
+
+    # TODO no f/e logoc in b/e
+    if lbl_id is None:
+        n = Notification("ERROR: Fail to create new labels. Abort the labe mapping process.")
+        n.show()
+        return
+
+    # 2. Replace labels with action = 'C' to the newly created label codes in step 1
+    print("lbl_id=", lbl_id)
+    for lbl_loc in range(len(lbl_id)):
+        DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
+    print("DL=", DL)
+
+    # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
+    df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
+    LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    print("LD=", LD)
+    if df_transpose is not None and LD is not None:
+        for lbl_mapping in LD:
+            print(lbl_mapping['srclbl'])
+            print(lbl_mapping['tgtlbl'])
+            print(df_transpose)
+            if lbl_mapping is not None: df_transpose['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
+    df = [dict(zip(df_transpose, col)) for col in zip(*df_transpose.values())]
+    print("df.to_string()=", df.to_string())
+    
