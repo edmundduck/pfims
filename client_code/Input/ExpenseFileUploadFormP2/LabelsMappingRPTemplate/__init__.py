@@ -17,6 +17,10 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         self.dropdown_lbl_map_to.items = cache.get_caching_labels_dropdown()
         self.hidden_lbl_action.text = None
 
+        # Prototype - lbl mapping dropdown pre-selection
+        # pre_selected = self.properties.get('lbl_preselected')
+        # self.dropdown_lbl_map_to.selected_value = pre_selected[self.src_label.text]
+
     def dropdown_lbl_action_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         action = self.dropdown_lbl_action.selected_value.get('id') if isinstance(self.dropdown_lbl_action.selected_value, dict) else self.dropdown_lbl_action.selected_value

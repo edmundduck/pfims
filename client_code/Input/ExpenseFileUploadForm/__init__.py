@@ -81,4 +81,4 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                 tablist.append(i.text)
         matrix = anvil.server.call('select_mapping_matrix', self.dropdown_mapping_rule.selected_value)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
-        Routing.open_exp_file_upload_form_p2(self, df, lbls)
+        Routing.open_exp_file_upload_form_p2(self, data=df, labels=lbls)

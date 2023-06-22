@@ -9,13 +9,13 @@ from ...App import Routing
 from ...App import Caching as cache
 
 class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
-    def __init__(self, dataframe, labels, **properties):
+    def __init__(self, data, labels, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-        self.tag = {'dataframe': dataframe}
+        self.tag = {'data': data}
         self.button_next.visible = False
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
@@ -25,6 +25,8 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
             'tgtlbl': [ None for i in range(len(labels))],
             'new': labels
         }
+        # Prototype - lbl mapping dropdown pre-selection
+        # self.properties['lbl_preselected'] = anvil.server.call('')
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
@@ -45,7 +47,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
 
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
-        df = anvil.server.call('update_mapping', data=self.tag.get('dataframe'), mapping=self.labels_mapping_panel.items)
+        df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping=self.labels_mapping_panel.items)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def handle_action_count(self, action, prev, **event_args):
