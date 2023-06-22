@@ -138,14 +138,12 @@ def predict_relevant_labels(srclbl, curlbl):
     for s in srclbl:
         highscore = [0, None]
         for lbl in curlbl:
-            similarity = fuzz.ratio(s, lbl)
-            print("cmp=", highscore, ", ", similarity)
-            if similarity > highscore:
+            similarity = fuzz.ratio(s, curlbl[lbl])
+            if similarity > highscore[0]:
                 highscore = [similarity, lbl]
         score.append({
             'src': s,
             'proximity': highscore[1] if highscore[0] > 50 else None,
             'score': highscore[0] if highscore[0] > 50 else None
         })
-        print("score=", score)
     return score
