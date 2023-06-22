@@ -23,7 +23,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
 
-        print("data=", data)
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
             self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]

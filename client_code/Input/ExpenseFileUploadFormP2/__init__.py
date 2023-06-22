@@ -26,8 +26,10 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
             'new': labels
         }
         # Prototype - lbl mapping dropdown pre-selection
-        self.properties['lbl_preselected'] = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.to_dict_caching_labels())
-        print(self.properties['lbl_preselected'])
+        self.labels_mapping_panel.tag = {
+            'lbl_predict': anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.to_dict_caching_labels())
+        }
+        # print(self.properties['lbl_preselected'])        
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
