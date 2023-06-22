@@ -7,6 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from ..System import SystemModule as sysmod
+from fuzzywuzzy import fuzz
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -132,5 +133,19 @@ def delete_label(id):
     return None
 
 @anvil.server.callable
-def predict_relevant_labels(srclbl, score):
-    
+def predict_relevant_labels(srclbl, curlbl):
+    score = []
+    for s in srclbl:
+        highscore = [0, None]
+        for lbl in curlbl:
+            similarity = fuzz.ratio(s, lbl)
+            print("cmp=", highscore, ", ", similarity)
+            if similarity > highscore:
+                highscore = [similarity, lbl]
+        score.append({
+            'src': s,
+            'proximity': highscore[1] if highscore[0] > 50 else None,
+            'score': highscore[0] if highscore[0] > 50 else None
+        })
+        print("score=", score)
+    return score

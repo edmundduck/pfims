@@ -4,3 +4,4 @@ openpyxl
 tabulate
 requests==2.31.0
 pandas==2.0.2
+fuzzywuzzy==0.18.0
