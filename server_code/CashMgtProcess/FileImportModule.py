@@ -92,8 +92,11 @@ def update_mapping(data, mapping):
     if df is not None and LD is not None:
         for lbl_mapping in LD:
             print(lbl_mapping['srclbl'], ", ", lbl_mapping['tgtlbl'])
-            if lbl_mapping is not None and lbl_mapping.get('tgtlbl') is not None: 
-                df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
+            if lbl_mapping is not None:
+                if lbl_mapping.get('tgtlbl') is not None: 
+                    df['labels'].replace(lbl_mapping['srclbl'], lbl_mapping['tgtlbl']['id'], inplace=True)
+                elif lbl_mapping.get('action').get('id') == "S":
+                    df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
     # df = [dict(zip(df_transpose, col)) for col in zip(*df_transpose.values())]
     print("df.to_string()=", df.to_string())
     return df.sort_values(by=['trandate']).to_dict(orient='records')

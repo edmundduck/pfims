@@ -13,7 +13,7 @@ from ...App.Validation import Validator
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
-    def __init__(self, tab_id=None, dataframe=None, **properties):
+    def __init__(self, tab_id=None, data=None, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
@@ -23,11 +23,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
 
-        if dataframe is None:
+        print("data=", data)
+        if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
             self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
         else:
-            self.input_repeating_panel.items = dataframe
+            self.input_repeating_panel.items = data
         glo.reset_deleted_row()
 
     def _switch_to_submit_button(self, **event_args):
