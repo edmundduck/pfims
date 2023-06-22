@@ -130,3 +130,7 @@ def delete_label(id):
     finally:
         if conn is not None: conn.close()
     return None
+
+@anvil.server.callable
+def predict_relevant_labels(srclbl, score):
+    
