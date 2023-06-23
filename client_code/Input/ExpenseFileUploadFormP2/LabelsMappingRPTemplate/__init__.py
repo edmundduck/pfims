@@ -11,8 +11,6 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
-        print("XXXXXX", properties)
-        print("YYYYY", self.tag)
 
         # Any code you write here will run before the form opens.
         self.dropdown_lbl_action.items = cache.get_caching_labels_mapping_action_dropdown()
@@ -21,7 +19,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
 
         # Prototype - lbl mapping dropdown pre-selection
         # pre_selected = self.properties.get('lbl_preselected')
-        # self.dropdown_lbl_map_to.selected_value = pre_selected[self.src_label.text]
+        self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl']
 
     def dropdown_lbl_action_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

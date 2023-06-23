@@ -18,15 +18,14 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         self.tag = {'data': data}
         self.button_next.visible = False
         # Prefill "labels map to" dropdown by finding high proximity choices
-        preselected_lbl = {
-            'lbl_predict': anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.to_dict_caching_labels())
-        }
+        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.to_dict_caching_labels())
+        print("relevant_lbl=", relevant_lbls)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
         DL = {
             'srclbl': labels,
             'action': [ None for i in range(len(labels))],
-            'tgtlbl': [ None for i in range(len(labels))],
+            'tgtlbl': relevant_lbls,
             'new': labels
         }
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
