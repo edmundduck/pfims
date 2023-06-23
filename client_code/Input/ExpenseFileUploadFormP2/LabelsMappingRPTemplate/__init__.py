@@ -18,7 +18,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         self.hidden_lbl_action.text = None
 
         # Prototype - lbl mapping dropdown pre-selection
-        # pre_selected = self.properties.get('lbl_preselected')
+        print(self.item['tgtlbl'])
         self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl']
 
     def dropdown_lbl_action_show(self, **event_args):
