@@ -108,3 +108,9 @@ def get_caching_mapping_type():
 def reset_caching_mapping_type():
     global mapping_type
     filter_type = None
+
+# TODO - to implement a global cache access function
+def get_cache(key, obj):
+    global cache_dict
+    if cache_dict.get(key) is None:
+        pass
