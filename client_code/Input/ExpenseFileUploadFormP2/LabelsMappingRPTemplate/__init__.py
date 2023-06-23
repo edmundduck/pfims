@@ -19,7 +19,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
 
         # Prototype - lbl mapping dropdown pre-selection
         print(self.item['tgtlbl'])
-        self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl']
+        self.dropdown_lbl_map_to.selected_value = repr(self.item['tgtlbl'])
 
     def dropdown_lbl_action_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

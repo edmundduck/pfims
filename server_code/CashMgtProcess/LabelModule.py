@@ -21,7 +21,7 @@ def generate_labels_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", {"id": row['id'], "text": row['name']}) for row in rows)
+    content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
     print("content=", content)
     return content
 
@@ -141,6 +141,6 @@ def predict_relevant_labels(srclbl, curlbl):
         for lbl in curlbl:
             similarity = fuzz.ratio(s, curlbl[lbl])
             if similarity > highscore[0]:
-                highscore = [similarity, {'id': lbl, 'text': curlbl[lbl]}]
+                highscore = [similarity, {'id': int(lbl), 'text': curlbl[lbl]}]
         score.append(highscore[1] if highscore[0] > 50 else None)
     return score

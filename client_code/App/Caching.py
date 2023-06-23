@@ -38,7 +38,7 @@ def to_dict_caching_labels():
     if labels_dict is None:
         labels_dict = {}
         for i in get_caching_labels_dropdown():
-            labels_dict[str(i[1]['id'])] = i[1]['text']
+            labels_dict[str(eval(i[1])['id'])] = eval(i[1])['text']
     return labels_dict
 
 def reset_caching_labels():
