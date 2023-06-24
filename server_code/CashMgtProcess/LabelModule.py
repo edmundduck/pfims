@@ -22,7 +22,6 @@ def generate_labels_dropdown():
         rows = cur.fetchall()
         cur.close()
     content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
-    print("content=", content)
     return content
 
 @anvil.server.callable
@@ -135,6 +134,8 @@ def delete_label(id):
 
 @anvil.server.callable
 def predict_relevant_labels(srclbl, curlbl):
+    # Max 100, min 0
+    min_proximity = 40
     score = []
     for s in srclbl:
         highscore = [0, None]
@@ -142,5 +143,5 @@ def predict_relevant_labels(srclbl, curlbl):
             similarity = fuzz.ratio(s, curlbl[lbl])
             if similarity > highscore[0]:
                 highscore = [similarity, {'id': int(lbl), 'text': curlbl[lbl]}]
-        score.append(highscore[1] if highscore[0] > 50 else None)
+        score.append(highscore[1] if highscore[0] > min_proximity else None)
     return score
