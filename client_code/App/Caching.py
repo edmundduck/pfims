@@ -38,6 +38,7 @@ def to_dict_caching_labels():
     if labels_dict is None:
         labels_dict = {}
         for i in get_caching_labels_dropdown():
+            # Case 001 - string dict key handling review
             labels_dict[str(eval(i[1])['id'])] = eval(i[1])['text']
     return labels_dict
 

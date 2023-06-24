@@ -91,7 +91,8 @@ def update_mapping(data, mapping):
             if lbl_mapping is not None:
                 if lbl_mapping.get('action').get('id') == "S":
                     df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
-                elif lbl_mapping.get('tgtlbl') is not None: 
+                elif lbl_mapping.get('tgtlbl') is not None:
+                    # Case 001 - string dict key handling review
                     id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
                     df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
     return df.sort_values(by=['trandate']).to_dict(orient='records')

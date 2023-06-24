@@ -21,6 +21,7 @@ def generate_labels_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
+    # Case 001 - string dict key handling review
     content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
     return content
 
