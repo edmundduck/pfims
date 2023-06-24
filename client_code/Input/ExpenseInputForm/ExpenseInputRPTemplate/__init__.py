@@ -39,6 +39,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 # 1. label ID is 0 (which is possible from file upload)
                 # 2. label ID is not integer
                 # 3. label ID is NaN
+                print("for gen=", i, ", ", isinstance(i, int))
                 if isinstance(i, int):
                     if not math.isnan(i) and int(i) != 0:
                         lbl_name = None
