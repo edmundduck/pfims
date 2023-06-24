@@ -17,8 +17,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         self.dropdown_lbl_map_to.items = cache.get_caching_labels_dropdown()
         self.hidden_lbl_action.text = None
 
-        # Prototype - lbl mapping dropdown pre-selection
-        print(self.item['tgtlbl'])
+        # Prefill "labels map to" dropdown by finding high proximity choices
         self.dropdown_lbl_map_to.selected_value = repr(self.item['tgtlbl'])
 
     def dropdown_lbl_action_show(self, **event_args):
