@@ -18,6 +18,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         self.hidden_lbl_action.text = None
 
         # Prefill "labels map to" dropdown by finding high proximity choices
+        print("X=", self.dropdown_lbl_map_to.items)
         self.dropdown_lbl_map_to.selected_value = repr(self.item['tgtlbl']) if self.item['tgtlbl'] is not None else None
 
     def dropdown_lbl_action_show(self, **event_args):
