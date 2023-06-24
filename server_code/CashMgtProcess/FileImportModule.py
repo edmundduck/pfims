@@ -86,15 +86,13 @@ def update_mapping(data, mapping):
     # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
     df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
     LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
-    print("LD=", LD)
     if df is not None and LD is not None:
         for lbl_mapping in LD:
             if lbl_mapping is not None:
                 if lbl_mapping.get('action').get('id') == "S":
                     df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
                 elif lbl_mapping.get('tgtlbl') is not None: 
-                    print(lbl_mapping.get('tgtlbl'))
-                    # print("=", eval(lbl_mapping.get('tgtlbl')).get('id'))
-                    df['labels'].replace(lbl_mapping['srclbl'], str(lbl_mapping['tgtlbl']['id']), inplace=True)
+                    id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
+                    df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
     return df.sort_values(by=['trandate']).to_dict(orient='records')
     
