@@ -43,7 +43,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     lbl_name = None
                     for j in lbls:
                         if str(j.get("id")).strip() == i:
-                            print(f"j={j.get('id')}+{j.get('name')}/i={i}")
                             lbl_name = j.get("name").strip()
                     b = Button(text=lbl_name,
                             # icon='fa:minus',

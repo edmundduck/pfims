@@ -59,41 +59,45 @@ def import_file(file, tablist, rules):
 
 @anvil.server.callable
 def update_mapping(data, mapping):
-    # 1. Get all items with action = 'C', and grab new field to create new labels
-    # DL = Dict of Lists
-    DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
-    DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
-    pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
-    lbl_mogstr = {
-        'name': [DL['new'][x] for x in pos_create],
-        'keywords': [ None for i in range(len(pos_create)) ],
-        'status': [ True for i in range(len(pos_create)) ]
-    }
-    # labels param is transposed from DL to LD (List of Dicts)
-    lbl_id = lbl_mod.create_label(labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
-
-    # TODO no f/e logoc in b/e
-    if lbl_id is None:
-        n = Notification("ERROR: Fail to create new labels. Abort the labe mapping process.")
-        n.show()
-        return
-
-    # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-    for lbl_loc in range(len(lbl_id)):
-        DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
-
-    # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-    # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
-    df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
-    LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
-    if df is not None and LD is not None:
-        for lbl_mapping in LD:
-            if lbl_mapping is not None:
-                if lbl_mapping.get('action').get('id') == "S":
-                    df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
-                elif lbl_mapping.get('tgtlbl') is not None:
-                    # Case 001 - string dict key handling review
-                    id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
-                    df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
-    return df.sort_values(by=['trandate']).to_dict(orient='records')
+    try:
+        # 1. Get all items with action = 'C', and grab new field to create new labels
+        # DL = Dict of Lists
+        DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
+        DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
+        pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
+        lbl_mogstr = {
+            'name': [DL['new'][x] for x in pos_create],
+            'keywords': [ None for i in range(len(pos_create)) ],
+            'status': [ True for i in range(len(pos_create)) ]
+        }
+        # labels param is transposed from DL to LD (List of Dicts)
+        lbl_id = lbl_mod.create_label(labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
     
+        # TODO no f/e logoc in b/e
+        if lbl_id is None:
+            raise Exception("Fail to create label.")
+    
+        # 2. Replace labels with action = 'C' to the newly created label codes in step 1
+        for lbl_loc in range(len(lbl_id)):
+            DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
+    
+        # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
+        # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
+        df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
+        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        if df is not None and LD is not None:
+            for lbl_mapping in LD:
+                if lbl_mapping is not None:
+                    if lbl_mapping.get('action').get('id') == "S":
+                        df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
+                    elif lbl_mapping.get('tgtlbl') is not None:
+                        # Case 001 - string dict key handling review
+                        id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
+                        df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
+        # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
+        return df.sort_values(by=['trandate']).to_dict(orient='records')
+    except (Exception) as err:
+        sysmod.print_data_debug("OperationalError in " + update_mapping.__name__, err)
+    finally:
+        pass
+    return None
