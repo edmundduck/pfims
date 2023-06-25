@@ -17,7 +17,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = cache.get_caching_accounts()
-        print("hidden=", self.hidden_lbls_id.text)
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
@@ -34,14 +33,17 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()
-            for i in label_list[:-1].split(","):
+            trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            for k in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
                 # 2. label ID is not integer
                 # 3. label ID is NaN
-                print("for gen=", i, ", ", isinstance(i, int))
-                if isinstance(i, int):
+                i = k.strip()
+                try:
+                    print("1.='", i, "'")
                     if not math.isnan(i) and int(i) != 0:
+                        print("2.='", i, "'")
                         lbl_name = None
                         for j in lbls:
                             if str(j.get("id")).strip() == i:
@@ -59,6 +61,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                         # self.row_panel_labels.add_component(b, False, name=lbl_name, expand=True)
                         self.row_panel_labels.add_component(b, False, name=lbl_name)
                         b.set_event_handler('click', self.label_button_minus_click)
+                except (TypeError) as err:
+                    pass 
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
