@@ -7,6 +7,7 @@ import anvil.server
 from io import BytesIO
 import pandas as pd
 from . import LabelModule as lbl_mod
+from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -95,9 +96,7 @@ def update_mapping(data, mapping):
                         id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
                         df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
         # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
-        return df.sort_values(by=['trandate']).to_dict(orient='records')
+        return df.sort_values(by='trandate', ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         sysmod.print_data_debug("OperationalError in " + update_mapping.__name__, err)
-    finally:
-        pass
     return None
