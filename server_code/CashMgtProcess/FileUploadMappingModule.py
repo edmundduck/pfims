@@ -233,35 +233,13 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
     return {"id": id, "count": count, "dcount": dcount}
 
 @anvil.server.callable
-def select_mapping_extra_actions(uid):
+def select_mapping_extra_actions(id):
     conn = sysmod.psqldb_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         # TODO in progress
-        sql = f"SELECT gid, col, col_code, eaction, etarget FROM fin.mappingrules WHERE a.userid = {uid} ORDER BY a.id ASC, b.col ASC" \
-        if gid is None else \
-        f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
-        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
+        sql = f"SELECT col, col_code, eaction, etarget FROM fin.mappingrules WHERE gid = {id} AND eaction is not NULL"
         cur.execute(sql)
         rows = cur.fetchall()
-
-        # Group all filter rules under corresponding filter group
-        result = {}
-        for row in rows:
-            action1 = row['col']
-            action2 = row['col_code']
-            extra1 = row['eaction']
-            extra2 = row['etarget']
-            if result.get(row['id'], None) is None:
-                result[row['id']] = {
-                    'id': row['id'],
-                    'name': row['name'],
-                    'filetype': row['filetype'],
-                    'lastsave': row['lastsave'],
-                    'rule': [[action1, action2, extra1, extra2]] if action1 is not None and action2 is not None else None
-                }
-            else:
-                r = result.get(row['id'], None)['rule']
-                r.append([action1, action2, extra1, extra2]) if action1 is not None and action2 is not None else r.append(None)
         cur.close()
-    return list(result.values())
+    return list(rows)

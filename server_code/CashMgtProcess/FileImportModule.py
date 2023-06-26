@@ -33,7 +33,7 @@ def get_labels_list(file, lblcol):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     
 @anvil.server.callable
-def import_file(file, tablist, rules):
+def import_file(file, tablist, rules, extra):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
 

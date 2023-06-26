@@ -79,6 +79,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         for i in self.sheet_tabs_panel.get_components():
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
-        matrix = anvil.server.call('select_mapping_matrix', self.dropdown_mapping_rule.selected_value)
-        df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix)
+        matrix = anvil.server.call('select_mapping_matrix', id=self.dropdown_mapping_rule.selected_value)
+        extra = anvil.server.call('select_mapping_extra_actions', id=self.dropdown_mapping_rule.selected_value)
+        df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
         Routing.open_exp_file_upload_form_p2(self, data=df, labels=lbls)
