@@ -231,6 +231,28 @@ components:
       include_placeholder: true
     name: row_dropdown_lbl
     layout_properties: {}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: ''
+      border: ''
+      enabled: true
+      foreground: ''
+      items: [Choose account]
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: false
+    name: row_dropdown_acct
+    layout_properties: {}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,

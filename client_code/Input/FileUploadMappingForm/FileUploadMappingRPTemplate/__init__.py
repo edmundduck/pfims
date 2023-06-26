@@ -18,6 +18,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
+        self.row_dropdown_acct.items = cache.get_caching_accounts()
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:
@@ -29,7 +30,8 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
         lbl_id, lbl = self.row_dropdown_lbl.selected_value.values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
-        self._generate_mapping_rule(excelcol, datacol_id, extraact_id, lbl_id)
+        acct_id, acct = self.row_dropdown_acct.selected_value.values() if self.row_dropdown_acct.selected_value is not None else [None, None]
+        self._generate_mapping_rule(excelcol, datacol_id, extraact_id, lbl_id, acct_id)
 
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
@@ -94,13 +96,15 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
 
     def row_dropdown_extraact_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.row_dropdown_lbl.visible = False if self.row_dropdown_extraact.selected_value is None else True
+        self.row_dropdown_lbl.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value['id'] == "L" else False
+        self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value['id'] == "A" else False
 
     def row_dropdown_extraact_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.row_dropdown_lbl.visible = False if self.row_dropdown_extraact.selected_value is None else True
+        self.row_dropdown_lbl.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value['id'] == "L" else False
+        self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value['id'] == "A" else False
 
-    def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, lbl_id, **event_args):
+    def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, lbl_id, acct_id, **event_args):
         dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
         dict_extraact = cache.to_dict_caching_upload_action()
         dict_lbl = cache.to_dict_caching_labels()
