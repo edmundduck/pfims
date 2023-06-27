@@ -28,10 +28,11 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         """This method is called when the button is clicked"""
         excelcol = self.row_dropdown_excelcol.selected_value
         # Remove the column from to be deleted list (row_hidden_del_fid) if it's updated (removed and added back)
-        filter(not excelcol, self.row_hidden_del_fid.text.split(","))
+        self.row_hidden_del_fid.text = ",".join([x for x in self.row_hidden_del_fid.text.split(",") if x != excelcol])
         datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
-        lbl_id, lbl = self.row_dropdown_lbl.selected_value.values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
+        # Case 001 - string dict key handling review
+        lbl_id, lbl = eval(self.row_dropdown_lbl.selected_value).values() if eval(self.row_dropdown_lbl.selected_value) is not None else [None, None]
         acct_id = self.row_dropdown_acct.selected_value if self.row_dropdown_acct.selected_value is not None else None
         extratgt_id = lbl_id if extraact_id == "L" else acct_id
         self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id)
