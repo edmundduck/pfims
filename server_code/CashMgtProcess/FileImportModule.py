@@ -37,6 +37,7 @@ def import_file(file, tablist, rules, extra):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = {k: [dic[k] for dic in extra] for k in extra[0]}
+    print(f"extra_dl={extra_dl}")
 
     new_df = None
     for i in rules:
