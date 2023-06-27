@@ -115,7 +115,9 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         dict_acct = cache.to_dict_caching_accounts()
         datacol = dict_exp_tbl_def.get(datacol_id, None)
         extraact = dict_extraact.get(extraact_id, None)
-        extratgt = dict_lbl.get(extratgt_id, None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
+        # Case 001 - string dict key handling review
+        # extratgt = dict_lbl.get(extratgt_id, None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
+        extratgt = dict_lbl.get(str(extratgt_id), None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
         rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
         rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
         
