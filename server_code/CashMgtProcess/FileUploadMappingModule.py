@@ -130,6 +130,7 @@ def select_mapping_rules(uid, gid=None):
                 r = result.get(row['id'], None)['rule']
                 r.append([action1, action2, extra1, extra2]) if action1 is not None and action2 is not None else r.append(None)
         cur.close()
+    print(list(result.values()))
     return list(result.values())
 
 @anvil.server.callable

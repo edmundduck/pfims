@@ -7,6 +7,7 @@ from anvil.tables import app_tables
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 accounts = None
+accounts_dict = None
 mapping_type = None
 labels = None
 labels_dict = None
@@ -26,6 +27,14 @@ def get_caching_accounts():
 def reset_caching_accounts():
     global accounts
     accounts = None
+
+def to_dict_caching_accounts():
+    global accounts_dict
+    if accounts_dict is None:
+        accounts_dict = {}
+        for i in get_caching_accounts():
+            accounts_dict[i[1]] = i[0]
+    return accounts_dict
 
 def get_caching_labels_dropdown():
     global labels
