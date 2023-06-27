@@ -45,17 +45,17 @@ def import_file(file, tablist, rules, extra):
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
         nonNanList, nanList = divMappingColumnNameLists(i)
         for t in tablist:
-            # iloc left one is row, right one is column
-            # 1) Filter required columns
-            tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
-
             # TODO
-            d
+            extra_dl_pointer = ??
             if eaction is A:
                 add etarget to i['account_id']
             elif eaction is L:
                 add etarget to i['labels']
-            tmp_df = tmp_df[]
+            df[t][col[???]] = extra_dl.get('etarget')[extra_dl_pointer] 
+
+            # iloc left one is row, right one is column
+            # 1) Filter required columns
+            tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
             # 3) Add 'not in rule' fields to the end
