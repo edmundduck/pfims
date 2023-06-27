@@ -50,7 +50,11 @@ def import_file(file, tablist, rules, extra):
             tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
 
             # TODO
-            # Amount scenario
+            d
+            if eaction is A:
+                add etarget to i['account_id']
+            elif eaction is L:
+                add etarget to i['labels']
             tmp_df = tmp_df[]
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
