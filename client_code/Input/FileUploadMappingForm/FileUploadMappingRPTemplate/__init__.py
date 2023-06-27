@@ -28,7 +28,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         """This method is called when the button is clicked"""
         excelcol = self.row_dropdown_excelcol.selected_value
         # Remove the column from to be deleted list (row_hidden_del_fid) if it's updated (removed and added back)
-        
+        filter(not excelcol, self.row_hidden_del_fid.text.split(","))
         datacol_id, datacol = self.row_dropdown_datacol.selected_value.values() if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value.values() if self.row_dropdown_extraact.selected_value is not None else [None, None]
         lbl_id, lbl = self.row_dropdown_lbl.selected_value.values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
