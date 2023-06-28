@@ -47,14 +47,28 @@ def import_file(file, tablist, rules, extra):
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
         col_dict = zip(col_code, col)
         common_col = set(i).intersection(extra_dl.get('col'))
-        for c in common_col:
-            pos = extra_dl.get('col').index(c)
-            if extra_dl.get('col_code')[pos] == 'D':
                 
         nonNanList, nanList = divMappingColumnNameLists(i)
         for t in tablist:
             # TODO
-            extra_dl_pointer = ??
+            for c in common_col:
+                extra_dl_pointer = extra_dl.get('col').index(c)
+                col_pointer = -1
+                if ** WRONG BELOW **
+                if extra_dl.get('col_code')[pos] == 'D':
+                    col_pointer = 0
+                elif extra_dl.get('col_code')[pos] == 'AC':
+                    col_pointer = 1
+                elif extra_dl.get('col_code')[pos] == 'AM':
+                    col_pointer = 2
+                elif extra_dl.get('col_code')[pos] == 'L':
+                    col_pointer = 3
+                elif extra_dl.get('col_code')[pos] == 'R':
+                    col_pointer = 4
+                elif extra_dl.get('col_code')[pos] == 'SD':
+                    col_pointer = 5
+                df[t][col[col_pointer]] = extra_dl.get('etarget')[extra_dl_pointer] 
+                    
             if eaction is A:
                 add etarget to i['account_id']
             elif eaction is L:
