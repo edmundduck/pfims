@@ -45,6 +45,10 @@ def import_file(file, tablist, rules, extra):
     for i in rules:
         col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
+        col_dict = zip(col_code, col)
+        common_col = set(col).intersection(extra_dl.get('col'))
+        for i in common_col:
+            
         nonNanList, nanList = divMappingColumnNameLists(i)
         for t in tablist:
             # TODO
