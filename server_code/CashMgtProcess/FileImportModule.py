@@ -7,6 +7,7 @@ import anvil.server
 from io import BytesIO
 import pandas as pd
 from . import LabelModule as lbl_mod
+from . import FileUploadMappingModule as mapping_mod
 from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
@@ -37,6 +38,7 @@ def import_file(file, tablist, rules, extra):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = {k: [dic[k] for dic in extra] for k in extra[0]}
+    col_code = [i[1]['id'] for i in mapping_mod.generate_expense_tbl_def_dropdown()]
     print(f"extra_dl={extra_dl}")
 
     new_df = None
