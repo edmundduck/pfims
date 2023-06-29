@@ -53,7 +53,7 @@ def import_file(file, tablist, rules, extra):
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    print(f"xx={extra_dl.get('etarget')[extra_dl_pointer]}")
+                    print(f"xx={col[1]}")
                     df[t][col[1]] = extra_dl.get('etarget')[extra_dl_pointer]
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
                     df[t][col[5]] = extra_dl.get('etarget')[extra_dl_pointer] if df[t][col[5]] in (None, '') else df[t][col[5]] + extra_dl.get('etarget')[extra_dl_pointer]
