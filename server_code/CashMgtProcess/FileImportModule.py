@@ -49,16 +49,6 @@ def import_file(file, tablist, rules, extra):
                 
         nonNanList, nanList = divMappingColumnNameLists(i)
         for t in tablist:
-            # Extra action mapping logic
-            for c in common_col:
-                extra_dl_pointer = extra_dl.get('col').index(c)
-                if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    print(f"xx={col[1]}")
-                    df[t][col[1]] = extra_dl.get('etarget')[extra_dl_pointer]
-                elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
-                    df[t][col[5]] = extra_dl.get('etarget')[extra_dl_pointer] if df[t][col[5]] in (None, '') else df[t][col[5]] + extra_dl.get('etarget')[extra_dl_pointer]
-            print(f"df[{t}]={df[t].to_string()}")
-            
             # iloc left one is row, right one is column
             # 1) Filter required columns
             tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
@@ -66,6 +56,17 @@ def import_file(file, tablist, rules, extra):
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
             # 3) Add 'not in rule' fields to the end
             tmp_df.loc[:, nanList] = None
+
+            # 4) Extra action mapping logic
+            for c in common_col:
+                extra_dl_pointer = extra_dl.get('col').index(c)
+                if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
+                    print(f"xx={col[1]}")
+                    df[t]['account_id'] = extra_dl.get('etarget')[extra_dl_pointer]
+                elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
+                    df[t]['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if df[t][col[5]] in (None, '') else df[t]['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
+            print(f"df[{t}]={df[t].to_string()}")
+            
             # 4) Concat temp DF to the resultant DF
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
     # Ref - how to transform Pandas Dataframe to Anvil datatable
