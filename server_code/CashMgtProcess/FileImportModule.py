@@ -61,7 +61,7 @@ def import_file(file, tablist, rules, extra):
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    tmp_df['account_id'] = extra_dl.get('etarget')[extra_dl_pointer]
+                    tmp_df['account_id'] = int(extra_dl.get('etarget')[extra_dl_pointer])
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
                     tmp_df['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df['labels'] in (None, '') else tmp_df['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
             
