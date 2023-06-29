@@ -29,6 +29,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             print(f"data={data}")
             self.input_repeating_panel.items = data
+            # self.input_repeating_panel.items = data.sort(key=lambda item: item["trandate"])
         glo.reset_deleted_row()
 
     def _switch_to_submit_button(self, **event_args):
