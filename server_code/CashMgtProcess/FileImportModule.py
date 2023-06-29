@@ -44,7 +44,8 @@ def import_file(file, tablist, rules, extra):
     for i in rules:
         col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
-        common_col = set(i).intersection(extra_dl.get('col'))
+        common_col = set(i.values()).intersection(extra_dl.get('col'))
+        print(f"i={i}, extra_dl.get('col')={extra_dl.get('col')}, common_col={common_col}")
                 
         nonNanList, nanList = divMappingColumnNameLists(i)
         for t in tablist:
@@ -52,12 +53,10 @@ def import_file(file, tablist, rules, extra):
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    print(f"1.{extra_dl.get('etarget')[extra_dl_pointer]}")
+                    print(f"xx={extra_dl.get('etarget')[extra_dl_pointer]}")
                     df[t][col[1]] = extra_dl.get('etarget')[extra_dl_pointer]
-                    print(f"2.{df[t][col[1]]}")
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
-                    df[t][col[5]] = extra_dl.get('etarget')[extra_dl_pointer] \
-                        if df[t][col[5]] in (None, '') else df[t][col[5]] + extra_dl.get('etarget')[extra_dl_pointer]
+                    df[t][col[5]] = extra_dl.get('etarget')[extra_dl_pointer] if df[t][col[5]] in (None, '') else df[t][col[5]] + extra_dl.get('etarget')[extra_dl_pointer]
             print(f"df[{t}]={df[t].to_string()}")
             
             # iloc left one is row, right one is column
