@@ -57,7 +57,7 @@ def import_file(file, tablist, rules, extra):
             # 3) Add 'not in rule' fields to the end
             tmp_df.loc[:, nanList] = None
 
-            # 4) Extra action mapping logic
+            # 4) Map extra action logic
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
@@ -72,7 +72,7 @@ def import_file(file, tablist, rules, extra):
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     lbl_df = new_df.loc[:, ['labels']]
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
-    return (new_df.dropna(subset=['amount'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()
+    return (new_df.dropna(subset=['amount', 'trandate'], ignore_index=True)).sort_values(by='trandate').to_dict(orient='records'), lbl_df['labels'].dropna().unique()
 
 @anvil.server.callable
 def update_mapping(data, mapping):
