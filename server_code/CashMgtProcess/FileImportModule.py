@@ -38,22 +38,22 @@ def import_file(file, tablist, rules, extra):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = {k: [dic[k] for dic in extra] for k in extra[0]}
-    # print(f"extra_dl={extra_dl}")
 
     new_df = None
     for i in rules:
         col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
         common_col = set(i.values()).intersection(extra_dl.get('col'))
-        print(f"i={i}, extra_dl.get('col')={extra_dl.get('col')}, common_col={common_col}")
                 
         nonNanList, nanList = divMappingColumnNameLists(i)
         for t in tablist:
             # iloc left one is row, right one is column
             # 1) Filter required columns
             tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
+            
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
+            
             # 3) Add 'not in rule' fields to the end
             tmp_df.loc[:, nanList] = None
 
@@ -61,14 +61,13 @@ def import_file(file, tablist, rules, extra):
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    print(f"xx={col[1]}")
-                    df[t]['account_id'] = extra_dl.get('etarget')[extra_dl_pointer]
+                    tmp_df['account_id'] = extra_dl.get('etarget')[extra_dl_pointer]
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
-                    df[t]['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if df[t][col[5]] in (None, '') else df[t]['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
-            print(f"df[{t}]={df[t].to_string()}")
+                    tmp_df['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df['labels'] in (None, '') else tmp_df['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
             
-            # 4) Concat temp DF to the resultant DF
+            # 5) Concat temp DF to the resultant DF
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
+
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     lbl_df = new_df.loc[:, ['labels']]
