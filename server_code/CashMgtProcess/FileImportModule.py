@@ -38,43 +38,28 @@ def import_file(file, tablist, rules, extra):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = {k: [dic[k] for dic in extra] for k in extra[0]}
-    col_code = [i[1]['id'] for i in mapping_mod.generate_expense_tbl_def_dropdown()]
-    print(f"extra_dl={extra_dl}")
+    # print(f"extra_dl={extra_dl}")
 
     new_df = None
     for i in rules:
         col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
-        col_dict = zip(col_code, col)
         common_col = set(i).intersection(extra_dl.get('col'))
                 
         nonNanList, nanList = divMappingColumnNameLists(i)
         for t in tablist:
-            # TODO
+            # Extra action mapping logic
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
-                col_pointer = -1
-                if ** WRONG BELOW **
-                if extra_dl.get('col_code')[pos] == 'D':
-                    col_pointer = 0
-                elif extra_dl.get('col_code')[pos] == 'AC':
-                    col_pointer = 1
-                elif extra_dl.get('col_code')[pos] == 'AM':
-                    col_pointer = 2
-                elif extra_dl.get('col_code')[pos] == 'L':
-                    col_pointer = 3
-                elif extra_dl.get('col_code')[pos] == 'R':
-                    col_pointer = 4
-                elif extra_dl.get('col_code')[pos] == 'SD':
-                    col_pointer = 5
-                df[t][col[col_pointer]] = extra_dl.get('etarget')[extra_dl_pointer] 
-                    
-            if eaction is A:
-                add etarget to i['account_id']
-            elif eaction is L:
-                add etarget to i['labels']
-            df[t][col[???]] = extra_dl.get('etarget')[extra_dl_pointer] 
-
+                if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
+                    print(f"1.{extra_dl.get('etarget')[extra_dl_pointer]}")
+                    df[t][col[1]] = extra_dl.get('etarget')[extra_dl_pointer]
+                    print(f"2.{df[t][col[1]]}")
+                elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
+                    df[t][col[5]] = extra_dl.get('etarget')[extra_dl_pointer] \
+                        if df[t][col[5]] in (None, '') else df[t][col[5]] + extra_dl.get('etarget')[extra_dl_pointer]
+            print(f"df[{t}]={df[t].to_string()}")
+            
             # iloc left one is row, right one is column
             # 1) Filter required columns
             tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
