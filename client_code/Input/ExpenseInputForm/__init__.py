@@ -72,7 +72,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
-        selected_lid, selected_lname = self.dropdown_labels.selected_value.values() if self.dropdown_labels.selected_value is not None else [None, None]
+        # Case 001 - string dict key handling review
+        # selected_lid, selected_lname = self.dropdown_labels.selected_value.values() if self.dropdown_labels.selected_value is not None else [None, None]
+        selected_lid, selected_lname = eval(self.dropdown_labels.selected_value).values() if self.dropdown_labels.selected_value is not None else [None, None]
         if selected_lid is not None:
             self.input_repeating_panel.raise_event_on_children('x-create-lbl-button', selected_lid=selected_lid, selected_lname=selected_lname)
         
