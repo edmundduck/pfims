@@ -82,7 +82,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     spacing_below="small",
                     tag=selected_lid
                     )
-            self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ","
+            # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
+            if self.hidden_lbls_id.text not in (None, '') and self.hidden_lbls_id.text[-1] != ',':
+                self.hidden_lbls_id.text = self.hidden_lbls_id.text + ','
+            self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ','
             # Without self.item['labels'] assignment the data binding won't work
             self.item['labels'] = self.hidden_lbls_id.text
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
