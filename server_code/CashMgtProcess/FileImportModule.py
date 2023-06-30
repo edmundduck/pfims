@@ -65,7 +65,7 @@ def import_file(file, tablist, rules, extra):
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
                     tmp_df['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df['labels'] in (None, '') else tmp_df['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
 
-            tmp_df['trandate'] = pd.to_datetime(tmp_df.trandate)
+            tmp_df['trandate'] = pd.to_datetime(tmp_df.trandate, exact=False, unit='D')
             # 5) Concat temp DF to the resultant DF
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
 
