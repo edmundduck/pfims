@@ -48,8 +48,6 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping=self.labels_mapping_panel.items)
-        print(f"df2={df}")
-        print("")
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def handle_action_count(self, action, prev, **event_args):

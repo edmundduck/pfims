@@ -82,6 +82,4 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         matrix = anvil.server.call('select_mapping_matrix', id=self.dropdown_mapping_rule.selected_value)
         extra = anvil.server.call('select_mapping_extra_actions', id=self.dropdown_mapping_rule.selected_value)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
-        print(f"df1={df}")
-        print("")
         Routing.open_exp_file_upload_form_p2(self, data=df, labels=lbls)

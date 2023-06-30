@@ -65,7 +65,6 @@ def import_file(file, tablist, rules, extra):
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
                     tmp_df['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df['labels'] in (None, '') else tmp_df['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
 
-            tmp_df['trandate'] = pd.to_datetime(tmp_df.trandate, exact=False, unit='D')
             # 5) Concat temp DF to the resultant DF
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
 
@@ -73,7 +72,7 @@ def import_file(file, tablist, rules, extra):
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     lbl_df = new_df.loc[:, ['labels']]
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
-    return (new_df.dropna(subset=['amount', 'trandate'], ignore_index=True)).sort_values(by='trandate').to_dict(orient='records'), lbl_df['labels'].dropna().unique()
+    return (new_df.dropna(subset=['amount', 'trandate'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()
 
 @anvil.server.callable
 def update_mapping(data, mapping):
@@ -113,7 +112,8 @@ def update_mapping(data, mapping):
                         id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
                         df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
         # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
-        return df.sort_values(by='trandate', ascending=False, ignore_index=True).to_dict(orient='records')
+        # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
+        return df.sort_values(by='trandate', key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         sysmod.print_data_debug("OperationalError in " + update_mapping.__name__, err)
     return None

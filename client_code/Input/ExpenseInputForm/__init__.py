@@ -27,9 +27,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
             self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
         else:
-            print(f"data={data}")
             self.input_repeating_panel.items = data
-            # self.input_repeating_panel.items = data.sort(key=lambda item: item["trandate"])
         glo.reset_deleted_row()
 
     def _switch_to_submit_button(self, **event_args):
