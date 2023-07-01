@@ -6,6 +6,7 @@ from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+cache_dict = None
 accounts = None
 accounts_dict = None
 mapping_type = None
@@ -121,7 +122,25 @@ def reset_caching_mapping_type():
     filter_type = None
 
 # TODO - to implement a global cache access function
-def get_cache(key, obj):
+def get_cache_dropdown(key, func):
     global cache_dict
-    if cache_dict.get(key) is None:
-        pass
+    if cache_dict is None: cache_dict = {}
+    result = cache_dict.get(key, None)
+    if result is None:
+        result = func()
+        cache_dict[key] = result
+    return result
+
+def get_cache_dict(key, func):
+    result = {}
+    for i in get_cache_dropdown(key, func):
+        result[i[1]['id']] = i[1]['text']
+    return result
+
+def clear_cache(key):
+    global cache_dict
+    cache_dict.get(key).clear()
+
+def clearall_cache():
+    global cache_dict
+    cache_dict.clear()
