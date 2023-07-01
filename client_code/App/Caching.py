@@ -6,9 +6,7 @@ from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-cache_dict = None
-accounts = None
-accounts_dict = None
+cache_dict = {}
 mapping_type = None
 labels = None
 labels_dict = None
@@ -19,25 +17,16 @@ exp_tbl_def_dict = None
 upload_action = None
 upload_action_dict = None
 
-def get_caching_accounts():
-    # global accounts
-    # if accounts is None:
-    #     accounts = anvil.server.call('generate_accounts_dropdown_only_id')
-    # return accounts
-    return get_cache_dict('accounts', anvil.server.call('generate_accounts_dropdown_only_id'))
+def accounts_dropdown():
+    # return get_cache_dropdown(key='accounts', func='generate_accounts_dropdown_only_id')
+    return get_cache_dropdown(key='accounts', func='generate_accounts_dropdown')
 
-def reset_caching_accounts():
-    global accounts
-    accounts = None
-    accounts_dict = None
+def accounts_dict():
+    # return get_cache_dict(key='accounts', func='generate_accounts_dropdown_only_id')
+    return get_cache_dict(key='accounts', func='generate_accounts_dropdown')
 
-def to_dict_caching_accounts():
-    global accounts_dict
-    if accounts_dict is None:
-        accounts_dict = {}
-        for i in get_caching_accounts():
-            accounts_dict[i[1]] = i[0]
-    return accounts_dict
+def accounts_reset():
+    clear_cache(key='accounts')
 
 def get_caching_labels_dropdown():
     global labels
@@ -126,23 +115,24 @@ def reset_caching_mapping_type():
 def get_cache_dropdown(key, func):
     global cache_dict
     if cache_dict is None: cache_dict = {}
-    print(f"cache_dict={cache_dict}")
     result = cache_dict.get(key, None)
     if result is None:
-        result = func
+        result = anvil.server.call(func)
         cache_dict[key] = result
-    print(f"result={result}")
     return result
 
 def get_cache_dict(key, func):
     result = {}
     for i in get_cache_dropdown(key, func):
-        result[i[1]['id']] = i[1]['text']
+        if isinstance(i[1], dict):
+            result[i[1]['id']] = i[1]['text']
+        else:
+            result[i[1]] = i[0]
     return result
 
 def clear_cache(key):
     global cache_dict
-    cache_dict.get(key).clear()
+    cache_dict[key] = None
 
 def clearall_cache():
     global cache_dict

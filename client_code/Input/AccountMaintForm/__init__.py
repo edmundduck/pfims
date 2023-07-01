@@ -63,7 +63,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
             n = Notification("ERROR: Fail to create account {acct_name}.".format(acct_name=acct_name))
         else:
             """ Reflect the change in accounts dropdown """
-            cache.reset_caching_accounts()
+            cache.accounts_reset()
             self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             n = Notification("Account {acct_name} has been created successfully.".format(acct_name=acct_name))
@@ -72,6 +72,8 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
     def button_accounts_update_click(self, **event_args):
         """This method is called when the button is clicked"""
+        acct_name = self.text_acct_name.text
+        acct_id = self.hidden_acct_id.text
         result = anvil.server.call('update_account',
                                    id=self.hidden_acct_id.text,
                                    name=self.text_acct_name.text,
@@ -85,8 +87,9 @@ class AccountMaintForm(AccountMaintFormTemplate):
             n = Notification("ERROR: Fail to update account {acct_name}.".format(acct_name=self.text_acct_name.text))
         else:
             """ Reflect the change in accounts dropdown """
-            cache.reset_caching_accounts()
+            cache.accounts_reset()
             self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+            self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             n = Notification("Account {acct_name} has been updated successfully.".format(acct_name=self.text_acct_name.text))
         n.show()
         return
@@ -103,7 +106,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
                         ])
     
         if userconf == "Y":
-            cache.reset_caching_accounts()
+            cache.accounts_reset()
             result = anvil.server.call('delete_account', selected_acct_id)
             if result is not None and result > 0:
                 """ Reflect the change in account dropdown """

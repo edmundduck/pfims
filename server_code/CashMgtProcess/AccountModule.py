@@ -20,8 +20,7 @@ def generate_accounts_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
-    return content
+    return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
 
 @anvil.server.callable
 # Generate accounts dropdown items for expense input form
@@ -32,8 +31,7 @@ def generate_accounts_dropdown_only_id():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
-    return content
+    return list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
 
 @anvil.server.callable
 # Generate currency dropdown items

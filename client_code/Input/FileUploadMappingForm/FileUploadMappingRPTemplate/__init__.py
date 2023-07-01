@@ -18,7 +18,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         self.row_dropdown_datacol.items = cache.get_caching_exp_tbl_def()
         self.row_dropdown_extraact.items = cache.get_caching_upload_action()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
-        self.row_dropdown_acct.items = cache.get_caching_accounts()
+        self.row_dropdown_acct.items = cache.accounts_dropdown()
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:
@@ -112,7 +112,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         dict_exp_tbl_def = cache.to_dict_caching_exp_tbl_def()
         dict_extraact = cache.to_dict_caching_upload_action()
         dict_lbl = cache.to_dict_caching_labels()
-        dict_acct = cache.to_dict_caching_accounts()
+        dict_acct = cache.accounts_dict()
         datacol = dict_exp_tbl_def.get(datacol_id, None)
         extraact = dict_extraact.get(extraact_id, None)
         # Case 001 - string dict key handling review
