@@ -20,10 +20,11 @@ upload_action = None
 upload_action_dict = None
 
 def get_caching_accounts():
-    global accounts
-    if accounts is None:
-        accounts = anvil.server.call('generate_accounts_dropdown_only_id')
-    return accounts
+    # global accounts
+    # if accounts is None:
+    #     accounts = anvil.server.call('generate_accounts_dropdown_only_id')
+    # return accounts
+    return get_cache_dict('accounts', anvil.server.call('generate_accounts_dropdown_only_id'))
 
 def reset_caching_accounts():
     global accounts
@@ -125,10 +126,12 @@ def reset_caching_mapping_type():
 def get_cache_dropdown(key, func):
     global cache_dict
     if cache_dict is None: cache_dict = {}
+    print(f"cache_dict={cache_dict}")
     result = cache_dict.get(key, None)
     if result is None:
-        result = func()
+        result = func
         cache_dict[key] = result
+    print(f"result={result}")
     return result
 
 def get_cache_dict(key, func):
