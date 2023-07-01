@@ -26,6 +26,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
         self.dropdown_lbl_list.selected_value = None
         self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
+        self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
 
     def dropdown_moveto_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -36,12 +37,18 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def dropdown_lbl_list_change(self, **event_args):
         """This method is called when an item is selected"""
-        lbl_id, lbl_name = self.dropdown_lbl_list.selected_value if self.dropdown_lbl_list.selected_value is not None else [None, None]
+        # Case 001 - string dict key handling review
+        # lbl_id, lbl_name = self.dropdown_lbl_list.selected_value.values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
+        lbl_id, lbl_name = eval(self.dropdown_lbl_list.selected_value).values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
         self.hidden_lbl_id.text, \
         self.text_lbl_name.text, \
         self.text_keywords.text, \
         self.dropdown_status.selected_value = anvil.server.call('get_selected_label_attr', lbl_id)
-        self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
+        # Case 001 - string dict key handling review
+        # self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
+        # self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
+        self.button_labels_update.enabled = False if eval(self.dropdown_lbl_list.selected_value) in ('', None) else True
+        self.button_labels_delete.enabled = False if eval(self.dropdown_lbl_list.selected_value) in ('', None) else True
 
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -51,19 +58,17 @@ class LabelMaintForm(LabelMaintFormTemplate):
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_name = self.text_lbl_name.text
-        lbl_id = anvil.server.call('create_label',
-                                    name=lbl_name,
-                                    keywords=self.text_keywords.text,
-                                    status=True
-                                )
+        lbl_id = anvil.server.call('create_label', labels={'name':lbl_name, 'keywords':self.text_keywords.text, 'status':True})
 
-        if lbl_id is None or lbl_id <= 0:
+        if lbl_id is None or lbl_id[0] <= 0:
             n = Notification("ERROR: Fail to create label {lbl_name}.".format(lbl_name=lbl_name))
         else:
             """ Reflect the change in labels dropdown """
             cache.reset_caching_labels()
             self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
-            self.dropdown_lbl_list.selected_value = [lbl_id, lbl_name]
+            # Case 001 - string dict key handling review
+            # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
+            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
             self.button_labels_update.enabled = True
             n = Notification("Label {lbl_name} has been created successfully.".format(lbl_name=lbl_name))
@@ -72,7 +77,9 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
-        lbl_id, lbl_name = self.dropdown_lbl_list.selected_value
+        # Case 001 - string dict key handling review
+        # lbl_id, lbl_name = self.dropdown_lbl_list.selected_value.values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
+        lbl_id, lbl_name = eval(self.dropdown_lbl_list.selected_value).values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
         # lbl_name retrieved should be replaced by text field value
         lbl_name = self.text_lbl_name.text
         result = anvil.server.call('update_label',
@@ -88,7 +95,9 @@ class LabelMaintForm(LabelMaintFormTemplate):
             """ Reflect the change in labels dropdown """
             cache.reset_caching_labels()
             self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
-            self.dropdown_lbl_list.selected_value = [lbl_id, lbl_name]
+            # Case 001 - string dict key handling review
+            # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
+            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
             n = Notification("Label {lbl_name} has been updated successfully.".format(lbl_name=lbl_name))
         n.show()
         return
@@ -99,8 +108,9 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def button_labels_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        # TODO
-        selected_lbl_id, selected_lbl_name = self.dropdown_lbl_list.selected_value
+        # Case 001 - string dict key handling review
+        # selected_lbl_id, selected_lbl_name = self.dropdown_lbl_list.selected_value.values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
+        selected_lbl_id, selected_lbl_name = eval(self.dropdown_lbl_list.selected_value).values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
         msg = Label(text="Proceed label <{lbl_name}> ({lbl_id}) deletion by clicking DELETE.".format(lbl_name=selected_lbl_name, lbl_id=selected_lbl_id))
         userconf = alert(content=msg,
                         title=f"Alert - Label Deletion",

@@ -5,11 +5,6 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
-#
-#    from . import Module1
-#
-#    Module1.say_hello()
-#
 
 del_iid = []
 input_stock_templ_chg = False
@@ -90,6 +85,15 @@ def reset_input_stock_change():
 """ === Input expense functions === """
 def input_expense_row_size():
     return 10
+
+def input_expense_col_def():
+    col_def = [('Date', 'D'), 
+                ('Account', 'AC'), 
+                ('Amount', 'AM'),
+                ('Labels', 'L'),
+                ('Remarks', 'R'),
+                ('Statement Detail', 'SD')]
+    return col_def
 
 """ === PNL report functions === """
 def pnl_list_day_mode():

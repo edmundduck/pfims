@@ -13,17 +13,22 @@ from ...App.Validation import Validator
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
-    def __init__(self, **properties):
+    def __init__(self, tab_id=None, data=None, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
 
-        # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-        self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
+        if tab_id is not None:
+            self.dropdown_tabs.selected_value = tab_id
+
+        if data is None:
+            # Initiate repeating panel items to an empty list otherwise will throw NoneType error
+            self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
+        else:
+            self.input_repeating_panel.items = data
         glo.reset_deleted_row()
-        #self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
     def _switch_to_submit_button(self, **event_args):
         self.button_save_exptab.text = "SUBMIT TAB"
@@ -45,6 +50,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                     label_list += [i.tag]
         return label_list
 
+    def button_file_import_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        Routing.open_exp_file_upload_form(self)
+        
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())] + self.input_repeating_panel.items
@@ -63,15 +72,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
-        selected_lid = self.dropdown_labels.selected_value[0] if self.dropdown_labels.selected_value is not None else None
-        selected_lname = self.dropdown_labels.selected_value[1] if self.dropdown_labels.selected_value is not None else None
+        # Case 001 - string dict key handling review
+        # selected_lid, selected_lname = self.dropdown_labels.selected_value.values() if self.dropdown_labels.selected_value is not None else [None, None]
+        selected_lid, selected_lname = eval(self.dropdown_labels.selected_value).values() if self.dropdown_labels.selected_value is not None else [None, None]
         if selected_lid is not None:
             self.input_repeating_panel.raise_event_on_children('x-create-lbl-button', selected_lid=selected_lid, selected_lname=selected_lname)
         
-    # def dropdown_acct_show(self, **event_args):
-    #     """This method is called when the DropDown is shown on the screen"""
-    #     self.dropdown_acct.items = anvil.server.call('generate_accounts_dropdown_only_id')
-
     def dropdown_tabs_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')

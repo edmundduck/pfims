@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from ....App import Global as glo
 from ....App import Caching as cache
 from ....App.Validation import Validator
+import math
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -32,24 +33,30 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()
-            for i in label_list[:-1].split(","):
-                lbl_name = None
-                for j in lbls:
-                    if str(j.get("id")).strip() == i:
-                        lbl_name = j.get("name").strip()
-                b = Button(text=lbl_name,
-                        # icon='fa:minus',
-                        foreground="White",
-                        background="Blue",
-                        font_size=10,
-                        align="left",
-                        spacing_above="small",
-                        spacing_below="small",
-                        tag=i
-                        )
-                # self.row_panel_labels.add_component(b, False, name=lbl_name, expand=True)
-                self.row_panel_labels.add_component(b, False, name=lbl_name)
-                b.set_event_handler('click', self.label_button_minus_click)
+            trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            for i in trimmed_list:
+                # Don't generate label if following conditions are met -
+                # 1. label ID is 0 (which is possible from file upload)
+                # 2. label ID is not integer
+                # 3. label ID is NaN
+                if i.isdigit() and int(i) != 0:
+                    lbl_name = None
+                    for j in lbls:
+                        if str(j.get("id")).strip() == i:
+                            lbl_name = j.get("name").strip()
+                    b = Button(text=lbl_name,
+                            # icon='fa:minus',
+                            foreground="White",
+                            background="Blue",
+                            font_size=10,
+                            align="left",
+                            spacing_above="small",
+                            spacing_below="small",
+                            tag=i
+                            )
+                    # self.row_panel_labels.add_component(b, False, name=lbl_name, expand=True)
+                    self.row_panel_labels.add_component(b, False, name=lbl_name)
+                    b.set_event_handler('click', self.label_button_minus_click)
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
@@ -75,7 +82,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     spacing_below="small",
                     tag=selected_lid
                     )
-            self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ","
+            # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
+            if self.hidden_lbls_id.text not in (None, '') and self.hidden_lbls_id.text[-1] != ',':
+                self.hidden_lbls_id.text = self.hidden_lbls_id.text + ','
+            self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ','
             # Without self.item['labels'] assignment the data binding won't work
             self.item['labels'] = self.hidden_lbls_id.text
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
