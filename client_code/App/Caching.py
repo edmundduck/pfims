@@ -27,6 +27,7 @@ def get_caching_accounts():
 def reset_caching_accounts():
     global accounts
     accounts = None
+    accounts_dict = None
 
 def to_dict_caching_accounts():
     global accounts_dict

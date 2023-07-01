@@ -85,6 +85,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
             n = Notification("ERROR: Fail to update account {acct_name}.".format(acct_name=self.text_acct_name.text))
         else:
             """ Reflect the change in accounts dropdown """
+            cache.reset_caching_accounts()
             self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
             n = Notification("Account {acct_name} has been updated successfully.".format(acct_name=self.text_acct_name.text))
         n.show()
