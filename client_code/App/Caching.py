@@ -127,7 +127,7 @@ def get_cache_dict(key, func):
         if isinstance(i[1], dict):
             result[i[1]['id']] = i[1]['text']
         else:
-            result[i[1]] = i[0]
+            result[i[1][0]] = i[1][1]
     return result
 
 def clear_cache(key):
