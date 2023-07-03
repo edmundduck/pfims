@@ -17,7 +17,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = cache.accounts_dropdown()
-        self.row_acct.
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
