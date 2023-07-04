@@ -79,8 +79,14 @@ def update_mapping(data, mapping):
     try:
         # 1. Get all items with action = 'C', and grab new field to create new labels
         # DL = Dict of Lists
+        print(f"mapping={mapping}")
         DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
+        print(f"DL={DL}")
+        print(f"DL['action']={DL['action']}")
         DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
+        print(f"DL_action={DL_action}")
+        print(f"")
+        print(f"DL_action['id']={DL_action['id']}")
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
         lbl_mogstr = {
             'name': [DL['new'][x] for x in pos_create],
