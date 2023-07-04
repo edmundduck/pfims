@@ -32,7 +32,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
-            lbls = cache.get_caching_labels_list()
+            lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -

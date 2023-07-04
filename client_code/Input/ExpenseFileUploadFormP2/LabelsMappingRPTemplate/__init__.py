@@ -14,7 +14,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
 
         # Any code you write here will run before the form opens.
         self.dropdown_lbl_action.items = cache.labels_mapping_action_dropdown()
-        self.dropdown_lbl_map_to.items = cache.get_caching_labels_dropdown()
+        self.dropdown_lbl_map_to.items = cache.labels_dropdown()
         self.hidden_lbl_action.text = None
 
         # Prefill "labels map to" dropdown by finding high proximity choices

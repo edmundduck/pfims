@@ -7,9 +7,6 @@ from anvil.tables import app_tables
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 cache_dict = {}
-labels = None
-labels_dict = None
-labels_list = None
 
 def accounts_dropdown():
     return get_cache_dropdown(key='accounts', func='generate_accounts_dropdown')
@@ -20,32 +17,28 @@ def accounts_dict():
 def accounts_reset():
     clear_cache(key='accounts')
 
-def get_caching_labels_dropdown():
-    global labels
-    if labels is None:
-        labels = anvil.server.call('generate_labels_dropdown')
-    return labels
+def labels_dropdown():
+    return get_cache_dropdown(key='labels', func='generate_labels_dropdown')
 
-def to_dict_caching_labels():
-    global labels_dict
-    if labels_dict is None:
-        labels_dict = {}
-        for i in get_caching_labels_dropdown():
+def labels_dict():
+    global cache_dict
+    key='labels_dict'
+    if cache_dict is None: cache_dict = {}
+    result = cache_dict.get(key, {})
+    if not result:
+        for i in labels_dropdown():
             # Case 001 - string dict key handling review
-            labels_dict[str(eval(i[1])['id'])] = eval(i[1])['text']
-    return labels_dict
+            result[str(eval(i[1])['id'])] = eval(i[1])['text']
+        cache_dict[key] = result
+    return result
 
-def reset_caching_labels():
-    global labels
-    labels = None
-    labels_dict = None
-    labels_list = None
+def labels_list():
+    return get_cache_dropdown(key='labels_list', func='generate_labels_list')
 
-def get_caching_labels_list():
-    global labels_list
-    if labels_list is None:
-        labels_list = anvil.server.call('generate_labels_list')
-    return labels_list
+def labels_reset():
+    clear_cache(key='labels_list')
+    clear_cache(key='labels_dict')
+    clear_cache(key='labels')
 
 def labels_mapping_action_dropdown():
     return get_cache_dropdown(key='labels_mapping_action', func='generate_labels_mapping_action_dropdown')
