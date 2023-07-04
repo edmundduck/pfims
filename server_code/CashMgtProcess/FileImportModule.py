@@ -89,14 +89,10 @@ def update_mapping(data, mapping):
         }
         # labels param is transposed from DL to LD (List of Dicts)
         lbl_id = lbl_mod.create_label(labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
-    
-        # TODO no f/e logoc in b/e
-        if lbl_id is None:
-            raise Exception("Fail to create label.")
+        if lbl_id is None: raise Exception("Fail to create label.")
     
         # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-        for lbl_loc in range(len(lbl_id)):
-            DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
+        for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
     
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
@@ -105,6 +101,7 @@ def update_mapping(data, mapping):
         if df is not None and LD is not None:
             for lbl_mapping in LD:
                 if lbl_mapping is not None:
+                    print(f"lbl_mapping.get('action')={lbl_mapping.get('action')}")
                     if lbl_mapping.get('action').get('id') == "S":
                         df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
                     elif lbl_mapping.get('tgtlbl') is not None:
