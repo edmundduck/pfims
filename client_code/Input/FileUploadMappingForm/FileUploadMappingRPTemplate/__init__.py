@@ -80,10 +80,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
         msg = Label(text=f"Proceed mapping <{to_be_del_fname}> deletion by clicking DELETE.")
         userconf = alert(content=msg,
                         title=f"Alert - mapping Deletion",
-                        buttons=[
-                        ("DELETE", "Y"),
-                        ("CANCEL", "N")
-                        ])
+                        buttons=[("DELETE", "Y"), ("CANCEL", "N")])
 
         if userconf == "Y":
             if to_be_del_fid not in (None, ''):

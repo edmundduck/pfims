@@ -162,7 +162,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                 currenttime = datetime.now()
                 if id is not None:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
-                    ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
+                    ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
                     stmt = cur.mogrify(sql, (int(uid), id, name, type_id, currenttime))
                 else:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
