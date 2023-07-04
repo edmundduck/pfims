@@ -217,7 +217,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
 
             # At last perform rules deletion (if any)
             if del_iid not in (None, ''):
-                args = "('{0}')".format(",".join(str(i) for i in del_iid))
+                args = "({0})".format(",".join(f"'{i}'" for i in del_iid))
                 sql = f"DELETE FROM {sysmod.schemafin()}.mappingrules WHERE gid = {id} AND col IN {args}"
                 cur.execute(sql)
                 conn.commit()
