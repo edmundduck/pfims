@@ -83,7 +83,8 @@ def update_mapping(data, mapping):
         DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
         print(f"DL={DL}")
         print(f"DL['action']={DL['action']}")
-        DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
+        # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}
+        DL_action = {'id': [dic[0] for dic in DL['action']]}
         print(f"DL_action={DL_action}")
         print(f"")
         print(f"DL_action['id']={DL_action['id']}")
