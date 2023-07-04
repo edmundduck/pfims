@@ -17,7 +17,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_dropdown_type.items = cache.mapping_rules_filetype_dropdown()
         self.row_dropdown_datacol.items = cache.expense_tbl_def_dropdown()
         self.row_dropdown_extraact.items = cache.mapping_rules_extra_action_dropdown()
-        self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
+        self.row_dropdown_lbl.items = cache.labels_dropdown()
         self.row_dropdown_acct.items = cache.accounts_dropdown()
 
         # Generate all rules in a mapping
@@ -108,7 +108,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, **event_args):
         dict_exp_tbl_def = cache.expense_tbl_def_dict()
         dict_extraact = cache.mapping_rules_extra_action_dict()
-        dict_lbl = cache.to_dict_caching_labels()
+        dict_lbl = cache.labels_dict()
         dict_acct = cache.accounts_dict()
         datacol = dict_exp_tbl_def.get(datacol_id, None)
         extraact = dict_extraact.get(extraact_id, None)

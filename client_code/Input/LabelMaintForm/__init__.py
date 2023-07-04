@@ -23,14 +23,14 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def dropdown_lbl_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+        self.dropdown_lbl_list.items = cache.labels_dropdown()
         self.dropdown_lbl_list.selected_value = None
         self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
         self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
 
     def dropdown_moveto_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_moveto.items = cache.get_caching_labels_dropdown()
+        self.dropdown_moveto.items = cache.labels_dropdown()
         self.dropdown_moveto.selected_value = None
         # TODO - Enable after Move to logic is implemented
         self.dropdown_moveto.enabled = False
@@ -64,8 +64,8 @@ class LabelMaintForm(LabelMaintFormTemplate):
             n = Notification("ERROR: Fail to create label {lbl_name}.".format(lbl_name=lbl_name))
         else:
             """ Reflect the change in labels dropdown """
-            cache.reset_caching_labels()
-            self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+            cache.labels_reset()
+            self.dropdown_lbl_list.items = cache.labels_dropdown()
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
             self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
@@ -93,8 +93,8 @@ class LabelMaintForm(LabelMaintFormTemplate):
             n = Notification("ERROR: Fail to update label {lbl_name}.".format(lbl_name=lbl_name))
         else:
             """ Reflect the change in labels dropdown """
-            cache.reset_caching_labels()
-            self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+            cache.labels_reset()
+            self.dropdown_lbl_list.items = cache.labels_dropdown()
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
             self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
@@ -120,7 +120,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
                         ])
 
         if userconf == "Y":
-            cache.reset_caching_labels()
+            cache.labels_reset()
             result = anvil.server.call('delete_label', selected_lbl_id)
             if result is not None and result > 0:
                 """ Reflect the change in label dropdown """
