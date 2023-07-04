@@ -152,7 +152,6 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
     count = None
     dcount = None
     try:
-        print(f"mapping_rules={mapping_rules}")
         conn = sysmod.psqldb_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(mapping_rules) > 0:
