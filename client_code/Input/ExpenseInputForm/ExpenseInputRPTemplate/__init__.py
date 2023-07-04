@@ -17,6 +17,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = cache.accounts_dropdown()
+        # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
+        acct_dict = cache.accounts_dict()
+        if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
+            self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
+        
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
@@ -25,11 +30,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
-        # if self.item['amt'] < 0:
-        #     self.foreground = 'Black'
-        # else:
-        #     self.foreground = 'Green'
-
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.get_caching_labels_list()

@@ -35,7 +35,7 @@ def generate_mapping_type_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'], row['id']) for row in rows)
+    content = list((row['name'], [row['id'], row['name']]) for row in rows)
     return content
 
 @anvil.server.callable
@@ -47,7 +47,7 @@ def generate_expense_tbl_def_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['col_name'], {"id": row['col_code'], "text": row['col_name']}) for row in rows)
+    content = list((row['col_name'], [row['col_code'], row['col_name']]) for row in rows)
     return content
 
 @anvil.server.callable
@@ -59,7 +59,7 @@ def generate_upload_action_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
