@@ -34,11 +34,7 @@ def generate_labels_list():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list({
-        "id": row['id'], 
-        "name": row['name'], 
-        "status": row['status']} for row in rows)
-    return content
+    return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
 
 @anvil.server.callable
 # Get selected label attributes
@@ -64,7 +60,7 @@ def generate_labels_mapping_action_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
 @anvil.server.callable

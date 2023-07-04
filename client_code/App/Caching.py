@@ -7,15 +7,9 @@ from anvil.tables import app_tables
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 cache_dict = {}
-mapping_type = None
 labels = None
 labels_dict = None
 labels_list = None
-labels_mapping_action = None
-exp_tbl_def = None
-exp_tbl_def_dict = None
-upload_action = None
-upload_action_dict = None
 
 def accounts_dropdown():
     return get_cache_dropdown(key='accounts', func='generate_accounts_dropdown')
@@ -53,15 +47,11 @@ def get_caching_labels_list():
         labels_list = anvil.server.call('generate_labels_list')
     return labels_list
 
-def get_caching_labels_mapping_action_dropdown():
-    global labels_mapping_action
-    if labels_mapping_action is None:
-        labels_mapping_action = anvil.server.call('generate_labels_mapping_action_dropdown')
-    return labels_mapping_action
+def labels_mapping_action_dropdown():
+    return get_cache_dropdown(key='labels_mapping_action', func='generate_labels_mapping_action_dropdown')
 
-def reset_caching_labels_mapping_action_dropdown():
-    global labels_mapping_action
-    labels_mapping_action = None
+def labels_mapping_action_reset():
+    clear_cache(key='labels_mapping_action')
 
 def expense_tbl_def_dropdown():
     return get_cache_dropdown(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
@@ -72,22 +62,24 @@ def expense_tbl_def_dict():
 def expense_tbl_def_reset():
     clear_cache(key='expense_tbl_def')
 
-def upload_action_dropdown():
-    return get_cache_dropdown(key='upload_action', func='generate_upload_action_dropdown')
+def mapping_rules_extra_action_dropdown():
+    return get_cache_dropdown(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
 
-def upload_action_dict():
-    return get_cache_dict(key='upload_action', func='generate_upload_action_dropdown')
+def mapping_rules_extra_action_dict():
+    return get_cache_dict(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
     
-def upload_action_reset():
-    clear_cache(key='upload_action')
+def mapping_rules_extra_action_reset():
+    clear_cache(key='mapping_rules_extra_action')
 
-def rule_mapping_filetype_dropdown():
-    return get_cache_dropdown(key='rule_mapping_filetype', func='generate_mapping_type_dropdown')
+def mapping_rules_filetype_dropdown():
+    return get_cache_dropdown(key='mapping_rules_filetype', func='generate_mapping_type_dropdown')
 
-def rule_mapping_filetype_reset():
-    clear_cache(key='rule_mapping_filetype')
+def mapping_rules_filetype_reset():
+    clear_cache(key='mapping_rules_filetype')
 
-# TODO - to implement a global cache access function
+# Generic get and store database data as cache in a form of dropdown items
+# @key = Key in string to access particular cache data
+# @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
 def get_cache_dropdown(key, func):
     global cache_dict
     if cache_dict is None: cache_dict = {}
@@ -97,19 +89,22 @@ def get_cache_dropdown(key, func):
         cache_dict[key] = result
     return result
 
+# Generic get and store database data as cache in a form of dictionary
+# @key = Key in string to access particular cache data
+# @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
 def get_cache_dict(key, func):
     result = {}
     for i in get_cache_dropdown(key, func):
-        if isinstance(i[1], dict):
-            result[i[1]['id']] = i[1]['text']
-        else:
-            result[i[1][0]] = i[1][1]
+        result[i[1][0]] = i[1][1]
     return result
 
+# Generic clear cache
+# @key = Key in string to access particular cache data
 def clear_cache(key):
     global cache_dict
     cache_dict[key] = None
 
+# Generic clear all cache (all keys)
 def clearall_cache():
     global cache_dict
     cache_dict.clear()

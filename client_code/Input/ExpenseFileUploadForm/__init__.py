@@ -27,7 +27,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def dropdown_filetype_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_filetype.items = cache.rule_mapping_filetype_dropdown()
+        self.dropdown_filetype.items = cache.mapping_rules_filetype_dropdown()
 
     def dropdown_filetype_change(self, **event_args):
         """This method is called when an item is selected"""

@@ -1,4 +1,4 @@
-from ._anvil_designer import FileUploadMappingRPTemplateTemplate
+from ._anvil_designer import UploadMappingRulesRPTemplateTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -8,15 +8,15 @@ from anvil.tables import app_tables
 from ....App import Caching as cache
 from ....App import Global as glo
 
-class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
+class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.row_dropdown_type.items = cache.rule_mapping_filetype_dropdown()
+        self.row_dropdown_type.items = cache.mapping_rules_filetype_dropdown()
         self.row_dropdown_datacol.items = cache.expense_tbl_def_dropdown()
-        self.row_dropdown_extraact.items = cache.upload_action_dropdown()
+        self.row_dropdown_extraact.items = cache.mapping_rules_extra_action_dropdown()
         self.row_dropdown_lbl.items = cache.get_caching_labels_dropdown()
         self.row_dropdown_acct.items = cache.accounts_dropdown()
 
@@ -107,7 +107,7 @@ class FileUploadMappingRPTemplate(FileUploadMappingRPTemplateTemplate):
 
     def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, **event_args):
         dict_exp_tbl_def = cache.expense_tbl_def_dict()
-        dict_extraact = cache.upload_action_dict()
+        dict_extraact = cache.mapping_rules_extra_action_dict()
         dict_lbl = cache.to_dict_caching_labels()
         dict_acct = cache.accounts_dict()
         datacol = dict_exp_tbl_def.get(datacol_id, None)
