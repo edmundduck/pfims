@@ -20,20 +20,7 @@ def generate_accounts_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
-    return content
-
-@anvil.server.callable
-# Generate accounts dropdown items for expense input form
-def generate_accounts_dropdown_only_id():
-    conn = sysmod.psqldb_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
-        rows = cur.fetchall()
-        cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", row['id']) for row in rows)
-    return content
+    return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
 
 @anvil.server.callable
 # Generate currency dropdown items

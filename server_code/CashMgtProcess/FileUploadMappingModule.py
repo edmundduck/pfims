@@ -35,7 +35,7 @@ def generate_mapping_type_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'], row['id']) for row in rows)
+    content = list((row['name'], [row['id'], row['name']]) for row in rows)
     return content
 
 @anvil.server.callable
@@ -47,7 +47,7 @@ def generate_expense_tbl_def_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['col_name'], {"id": row['col_code'], "text": row['col_name']}) for row in rows)
+    content = list((row['col_name'], [row['col_code'], row['col_name']]) for row in rows)
     return content
 
 @anvil.server.callable
@@ -59,7 +59,7 @@ def generate_upload_action_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
@@ -162,7 +162,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                 currenttime = datetime.now()
                 if id is not None:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
-                    ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
+                    ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
                     stmt = cur.mogrify(sql, (int(uid), id, name, type_id, currenttime))
                 else:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
@@ -216,7 +216,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
 
             # At last perform rules deletion (if any)
             if del_iid not in (None, ''):
-                args = "('{0}')".format(",".join(str(i) for i in del_iid))
+                args = "({0})".format(",".join(f"'{i}'" for i in del_iid))
                 sql = f"DELETE FROM {sysmod.schemafin()}.mappingrules WHERE gid = {id} AND col IN {args}"
                 cur.execute(sql)
                 conn.commit()

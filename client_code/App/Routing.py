@@ -26,9 +26,9 @@ def open_exp_file_upload_form_p2(self, data, labels, **event_args):
     anvil.get_open_form().content_panel.add_component(ExpenseFileUploadFormP2(data, labels))
 
 def open_upload_mapping_form(self, **event_args):
-    from ..Input.FileUploadMappingForm import FileUploadMappingForm
+    from ..Input.UploadMappingRulesForm import UploadMappingRulesForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(FileUploadMappingForm())
+    anvil.get_open_form().content_panel.add_component(UploadMappingRulesForm())
 
 def open_lbl_maint_form(self, **event_args):
     from ..Input.LabelMaintForm import LabelMaintForm

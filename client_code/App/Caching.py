@@ -6,36 +6,19 @@ from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-accounts = None
-accounts_dict = None
-mapping_type = None
+cache_dict = {}
 labels = None
 labels_dict = None
 labels_list = None
-labels_mapping_action = None
-exp_tbl_def = None
-exp_tbl_def_dict = None
-upload_action = None
-upload_action_dict = None
 
-def get_caching_accounts():
-    global accounts
-    if accounts is None:
-        accounts = anvil.server.call('generate_accounts_dropdown_only_id')
-    return accounts
+def accounts_dropdown():
+    return get_cache_dropdown(key='accounts', func='generate_accounts_dropdown')
 
-def reset_caching_accounts():
-    global accounts
-    accounts = None
-    accounts_dict = None
+def accounts_dict():
+    return get_cache_dict(key='accounts', func='generate_accounts_dropdown')
 
-def to_dict_caching_accounts():
-    global accounts_dict
-    if accounts_dict is None:
-        accounts_dict = {}
-        for i in get_caching_accounts():
-            accounts_dict[i[1]] = i[0]
-    return accounts_dict
+def accounts_reset():
+    clear_cache(key='accounts')
 
 def get_caching_labels_dropdown():
     global labels
@@ -64,64 +47,64 @@ def get_caching_labels_list():
         labels_list = anvil.server.call('generate_labels_list')
     return labels_list
 
-def get_caching_labels_mapping_action_dropdown():
-    global labels_mapping_action
-    if labels_mapping_action is None:
-        labels_mapping_action = anvil.server.call('generate_labels_mapping_action_dropdown')
-    return labels_mapping_action
+def labels_mapping_action_dropdown():
+    return get_cache_dropdown(key='labels_mapping_action', func='generate_labels_mapping_action_dropdown')
 
-def reset_caching_labels_mapping_action_dropdown():
-    global labels_mapping_action
-    labels_mapping_action = None
+def labels_mapping_action_reset():
+    clear_cache(key='labels_mapping_action')
 
-def get_caching_exp_tbl_def():
-    global exp_tbl_def
-    if exp_tbl_def is None:
-        exp_tbl_def = anvil.server.call('generate_expense_tbl_def_dropdown')
-    return exp_tbl_def
+def expense_tbl_def_dropdown():
+    return get_cache_dropdown(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
 
-def to_dict_caching_exp_tbl_def():
-    global exp_tbl_def_dict
-    if exp_tbl_def_dict is None:
-        exp_tbl_def_dict = {}
-        for i in get_caching_exp_tbl_def():
-            exp_tbl_def_dict[i[1]['id']] = i[1]['text']
-    return exp_tbl_def_dict
+def expense_tbl_def_dict():
+    return get_cache_dict(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
 
-def reset_caching_exp_tbl_def():
-    global exp_tbl_def
-    exp_tbl_def = None
+def expense_tbl_def_reset():
+    clear_cache(key='expense_tbl_def')
 
-def get_caching_upload_action():
-    global upload_action
-    if upload_action is None:
-        upload_action = anvil.server.call('generate_upload_action_dropdown')
-    return upload_action
+def mapping_rules_extra_action_dropdown():
+    return get_cache_dropdown(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
 
-def to_dict_caching_upload_action():
-    global upload_action_dict
-    if upload_action_dict is None:
-        upload_action_dict = {}
-        for i in get_caching_upload_action():
-            upload_action_dict[i[1]['id']] = i[1]['text']
-    return upload_action_dict
+def mapping_rules_extra_action_dict():
+    return get_cache_dict(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
     
-def reset_caching_upload_action():
-    global upload_action
-    upload_action = None
+def mapping_rules_extra_action_reset():
+    clear_cache(key='mapping_rules_extra_action')
 
-def get_caching_mapping_type():
-    global mapping_type
-    if mapping_type is None:
-        mapping_type = anvil.server.call('generate_mapping_type_dropdown')
-    return mapping_type
+def mapping_rules_filetype_dropdown():
+    return get_cache_dropdown(key='mapping_rules_filetype', func='generate_mapping_type_dropdown')
 
-def reset_caching_mapping_type():
-    global mapping_type
-    filter_type = None
+def mapping_rules_filetype_reset():
+    clear_cache(key='mapping_rules_filetype')
 
-# TODO - to implement a global cache access function
-def get_cache(key, obj):
+# Generic get and store database data as cache in a form of dropdown items
+# @key = Key in string to access particular cache data
+# @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
+def get_cache_dropdown(key, func):
     global cache_dict
-    if cache_dict.get(key) is None:
-        pass
+    if cache_dict is None: cache_dict = {}
+    result = cache_dict.get(key, None)
+    if result is None:
+        result = anvil.server.call(func)
+        cache_dict[key] = result
+    return result
+
+# Generic get and store database data as cache in a form of dictionary
+# @key = Key in string to access particular cache data
+# @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
+def get_cache_dict(key, func):
+    result = {}
+    for i in get_cache_dropdown(key, func):
+        result[i[1][0]] = i[1][1]
+    return result
+
+# Generic clear cache
+# @key = Key in string to access particular cache data
+def clear_cache(key):
+    global cache_dict
+    cache_dict[key] = None
+
+# Generic clear all cache (all keys)
+def clearall_cache():
+    global cache_dict
+    cache_dict.clear()

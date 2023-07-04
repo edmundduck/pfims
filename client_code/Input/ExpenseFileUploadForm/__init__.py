@@ -14,7 +14,6 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.dropdown_filetype.items = cache.get_caching_mapping_type()
         self.file_loader_1.enabled = False
         self.button_next.visible = False
 
@@ -28,16 +27,16 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def dropdown_filetype_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_filetype.items = cache.get_caching_mapping_type()
+        self.dropdown_filetype.items = cache.mapping_rules_filetype_dropdown()
 
     def dropdown_filetype_change(self, **event_args):
         """This method is called when an item is selected"""
-        # TODO cache the filter dropdown
         userid = anvil.server.call('get_current_userid')
-        if self.dropdown_filetype.selected_value is None:
+        filetype_id, filetype = self.dropdown_filetype.selected_value
+        if filetype_id is None:
             self.dropdown_mapping_rule.items = []
         else:
-            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', userid, self.dropdown_filetype.selected_value)
+            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', userid, filetype_id)
 
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""

@@ -21,7 +21,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
     def dropdown_acct_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+        self.dropdown_acct_list.items = cache.accounts_dropdown()
         self.dropdown_acct_list.selected_value = None
         self.button_accounts_update.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
         self.button_accounts_delete.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
@@ -60,21 +60,23 @@ class AccountMaintForm(AccountMaintFormTemplate):
                                 )
 
         if acct_id is None or acct_id <= 0:
-            n = Notification("ERROR: Fail to create account {acct_name}.".format(acct_name=acct_name))
+            n = Notification(f"ERROR: Fail to create account {acct_name} ({acct_id}).")
         else:
             """ Reflect the change in accounts dropdown """
-            cache.reset_caching_accounts()
-            self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
+            cache.accounts_reset()
+            self.dropdown_acct_list.items = cache.accounts_dropdown()
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
-            n = Notification("Account {acct_name} has been created successfully.".format(acct_name=acct_name))
+            n = Notification(f"Account {acct_name} ({acct_id}) has been created successfully.")
         n.show()
         return
 
     def button_accounts_update_click(self, **event_args):
         """This method is called when the button is clicked"""
+        acct_name = self.text_acct_name.text
+        acct_id = self.hidden_acct_id.text
         result = anvil.server.call('update_account',
-                                   id=self.hidden_acct_id.text,
-                                   name=self.text_acct_name.text,
+                                   id=acct_id,
+                                   name=acct_name,
                                    ccy=self.dropdown_ccy.selected_value, 
                                    valid_from=self.date_valid_from.date,
                                    valid_to=self.date_valid_to.date,
@@ -82,36 +84,33 @@ class AccountMaintForm(AccountMaintFormTemplate):
                                 )
 
         if result is None or result <= 0:
-            n = Notification("ERROR: Fail to update account {acct_name}.".format(acct_name=self.text_acct_name.text))
+            n = Notification(f"ERROR: Fail to update account {acct_name} ({acct_id}).")
         else:
             """ Reflect the change in accounts dropdown """
-            cache.reset_caching_accounts()
-            self.dropdown_acct_list.items = anvil.server.call('generate_accounts_dropdown')
-            n = Notification("Account {acct_name} has been updated successfully.".format(acct_name=self.text_acct_name.text))
+            cache.accounts_reset()
+            self.dropdown_acct_list.items = cache.accounts_dropdown()
+            self.dropdown_acct_list.selected_value = [acct_id, acct_name]
+            n = Notification(f"Account {acct_name} ({acct_id}) has been updated successfully.")
         n.show()
         return
 
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        selected_acct_id, selected_acct_name = self.dropdown_acct_list.selected_value if self.dropdown_acct_list.selected_value is not None else [None, None]
-        msg = Label(text="Proceed account <{acct_name}> ({acct_id}) deletion by clicking DELETE.".format(acct_name=selected_acct_name, acct_id=selected_acct_id))
+        acct_id, acct_name = self.dropdown_acct_list.selected_value if self.dropdown_acct_list.selected_value is not None else [None, None]
+        msg = Label(text=f"Proceed account <{acct_name}> ({acct_id}) deletion by clicking DELETE.")
         userconf = alert(content=msg, 
                         title=f"Alert - Account Deletion",
-                        buttons=[
-                        ("DELETE", "Y"),
-                        ("CANCEL", "N")
-                        ])
+                        buttons=[("DELETE", "Y"), ("CANCEL", "N")])
     
         if userconf == "Y":
-            cache.reset_caching_accounts()
-            result = anvil.server.call('delete_account', selected_acct_id)
+            cache.accounts_reset()
+            result = anvil.server.call('delete_account', acct_id)
             if result is not None and result > 0:
                 """ Reflect the change in account dropdown """
                 self.clear()
-                
-                n = Notification("Account {acct_name} has been deleted.".format(acct_name=selected_acct_name))
+                n = Notification(f"Account {acct_name} ({acct_id}) has been deleted.")
             else:
-                n = Notification("ERROR: Fail to delete account {acct_name}.".format(acct_name=selected_acct_name))
+                n = Notification(f"ERROR: Fail to delete account {acct_name} ({acct_id}).")
             n.show()
 
     def clear(self, **event_args):
