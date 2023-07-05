@@ -86,9 +86,15 @@ def get_cache_dropdown(key, func):
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
 def get_cache_dict(key, func):
+    global cache_dict
     result = {}
-    for i in get_cache_dropdown(key, func):
-        result[i[1][0]] = i[1][1]
+    dict_key = "".join((key, '_dict'))
+    print(f"cache_dict.get(dict_key, None)={cache_dict.get(dict_key, None)}")
+    if cache_dict.get(dict_key, None) is None:
+        for i in get_cache_dropdown(key, func):
+            result[i[1][0]] = i[1][1]
+        cache_dict[dict_key] = result
+        print(f"cache_dict[dict_key]={cache_dict[dict_key]}")
     return result
 
 # Generic clear cache
@@ -96,6 +102,7 @@ def get_cache_dict(key, func):
 def clear_cache(key):
     global cache_dict
     cache_dict[key] = None
+    cache_dict["".join((key, '_dict'))] = None
 
 # Generic clear all cache (all keys)
 def clearall_cache():
