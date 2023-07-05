@@ -76,26 +76,29 @@ def mapping_rules_filetype_reset():
 def get_cache_dropdown(key, func):
     global cache_dict
     if cache_dict is None: cache_dict = {}
-    result = cache_dict.get(key, None)
-    if result is None:
-        result = anvil.server.call(func)
-        cache_dict[key] = result
-    return result
+    if cache_dict.get(key, None) is None:
+        cache_dict[key] = anvil.server.call(func)
+    return cache_dict.get(key, None)
 
 # Generic get and store database data as cache in a form of dictionary
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
 def get_cache_dict(key, func):
-    result = {}
-    for i in get_cache_dropdown(key, func):
-        result[i[1][0]] = i[1][1]
-    return result
+    global cache_dict
+    dict_key = "".join((key, '_dict'))
+    if cache_dict.get(dict_key, None) is None:
+        result = {}
+        for i in get_cache_dropdown(key, func):
+            result[i[1][0]] = i[1][1]
+        cache_dict[dict_key] = result
+    return cache_dict.get(dict_key, None)
 
 # Generic clear cache
 # @key = Key in string to access particular cache data
 def clear_cache(key):
     global cache_dict
     cache_dict[key] = None
+    cache_dict["".join((key, '_dict'))] = None
 
 # Generic clear all cache (all keys)
 def clearall_cache():
