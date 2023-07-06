@@ -32,6 +32,9 @@ class MainForm(MainFormTemplate):
         self.colpanel_rpt2.visible = False
         self.colpanel_rpt3.visible = False
         self.app_welcome_msg.text = "Welcome {username}".format(username=username)
+
+        self.logger = anvil.server.call('logger', __name__)
+        self.logger.info('TEST')
   
     def reset_link_status(self, **event_args):
         self.colpanel_link_dashb.role = ''
