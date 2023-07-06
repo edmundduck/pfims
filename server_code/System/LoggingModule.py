@@ -29,4 +29,4 @@ def logger(name):
     
     # logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
-    return logger
+    return stream_handler
