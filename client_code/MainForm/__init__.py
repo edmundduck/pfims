@@ -15,6 +15,8 @@ from ..Report.TransactionReportForm import TransactionReportForm
 from ..Report.PnLReportForm import PnLReportForm
 from ..Report.ExpenseReportForm import ExpenseReportForm
 from ..Debug.form_poc_main import form_poc_main
+import logging
+import logging.config
 
 class MainForm(MainFormTemplate):
     def __init__(self, **properties):
@@ -33,7 +35,8 @@ class MainForm(MainFormTemplate):
         self.colpanel_rpt3.visible = False
         self.app_welcome_msg.text = "Welcome {username}".format(username=username)
 
-        self.logger = anvil.server.call('logger', __name__)
+        self.logger = logging.getLogger(__name__)
+        self.logger.
         self.logger.info('TEST')
   
     def reset_link_status(self, **event_args):
