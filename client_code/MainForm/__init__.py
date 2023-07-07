@@ -33,13 +33,6 @@ class MainForm(MainFormTemplate):
         self.colpanel_rpt2.visible = False
         self.colpanel_rpt3.visible = False
         self.app_welcome_msg.text = "Welcome {username}".format(username=username)
-
-        # Include in each module:
-        debug.log('TEST')
-        info.log('TESTING')
-        warning.log('TESTING2')
-        error.log('TESTING3')
-        critical.log('TESTING4')
   
     def reset_link_status(self, **event_args):
         self.colpanel_link_dashb.role = ''

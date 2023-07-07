@@ -10,6 +10,7 @@ from ...App import Global as glo
 from ...App import Routing
 from ...App import Caching as cache
 from ...App.Validation import Validator
+from ...App.Logging import debug, info, warning, error, critical
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
@@ -22,11 +23,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
+            debug.log("?", self.dropdown_tabs.selected_value)
 
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
             self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
         else:
+            info.log(f"Tab {tab_id} is imported to {__name__}")
             self.input_repeating_panel.items = data
         glo.reset_deleted_row()
 

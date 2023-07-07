@@ -7,32 +7,45 @@ import datetime
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+import datetime
+
 # Constants
 DEBUG = 'DEBUG'
 INFO = 'INFO'
 WARNING = 'WARNING'
 ERROR = 'ERROR'
 CRITICAL = 'CRITICAL'
+loglevel = {
+    DEBUG: 0,
+    INFO: 1,
+    WARNING: 2,
+    ERROR: 3,
+    CRITICAL: 4
+}
 
 class Logger():
-    def __init__(self, config, level=INFO, enabled=True):
+    def __init__(self, config, level):
         self.datefmt = config.datefmt
+        self.default = config.default
         self.level = level
-        self.enabled = enabled
 
-    def log(self, message):
-        if self.enabled:
+    def log(self, msg=None, *args, **kwargs):
+        if loglevel.get(self.level) >= loglevel.get(self.default):
             current = datetime.datetime.now()
-            print(f"{current.strftime(self.datefmt)} - {self.level} - {message}")
+            output = f"{current.strftime(self.datefmt)} - {self.level} - {msg} "
+            if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
+            if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
+            print(output)
 
 class LoggerConfig():
-    def __init__(self, datefmt='%Y-%m-%d %H:%M:%S'):
+    def __init__(self, datefmt='%Y-%m-%d %H:%M:%S', default=INFO):
         self.datefmt = datefmt
+        self.default = default
 
-config = LoggerConfig()
+config = LoggerConfig(default=DEBUG)
 
-debug = Logger(config=config, level=DEBUG, enabled=False)
-info = Logger(config=config)
+debug = Logger(config=config, level=DEBUG)
+info = Logger(config=config, level=INFO)
 warning = Logger(config=config, level=WARNING)
 error = Logger(config=config, level=ERROR)
 critical = Logger(config=config, level=CRITICAL)
