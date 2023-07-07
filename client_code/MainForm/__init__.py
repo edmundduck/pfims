@@ -15,6 +15,7 @@ from ..Report.TransactionReportForm import TransactionReportForm
 from ..Report.PnLReportForm import PnLReportForm
 from ..Report.ExpenseReportForm import ExpenseReportForm
 from ..Debug.form_poc_main import form_poc_main
+from ..App.Logging import debug, info, warning, error, critical
 
 class MainForm(MainFormTemplate):
     def __init__(self, **properties):
@@ -34,8 +35,11 @@ class MainForm(MainFormTemplate):
         self.app_welcome_msg.text = "Welcome {username}".format(username=username)
 
         # Include in each module:
-        anvil.server.call('log', __name__, "TESTING")
-        anvil.server.call('log', __name__, "TESTING2", 'DEBUG')
+        debug.log('TEST')
+        info.log('TESTING')
+        warning.log('TESTING2')
+        error.log('TESTING3')
+        critical.log('TESTING4')
   
     def reset_link_status(self, **event_args):
         self.colpanel_link_dashb.role = ''
