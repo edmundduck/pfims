@@ -7,8 +7,6 @@ import datetime
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-import datetime
-
 # Constants
 DEBUG = 'DEBUG'
 INFO = 'INFO'
@@ -32,7 +30,7 @@ class Logger():
     def log(self, msg=None, *args, **kwargs):
         if loglevel.get(self.level) >= loglevel.get(self.default):
             current = datetime.datetime.now()
-            output = f"{current.strftime(self.datefmt)} - {self.level} - {msg} "
+            output = f"{current.strftime(self.datefmt)} [{self.level}] {msg} "
             if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
             if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
             print(output)

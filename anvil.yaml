@@ -10,7 +10,7 @@ services:
   client_config: {}
   server_config: {}
 startup: {type: form, module: MainForm}
-package_name: Personal_Finance_and_Inventory_Management_System
+package_name: PFIMS
 allow_embedding: false
 name: Personal Finance and Inventory Management System
 runtime_options:
