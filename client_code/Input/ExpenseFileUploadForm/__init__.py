@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...App import Routing
 from ...App import Caching as cache
+from ...App.Logging import debug, info, warning, error, critical
 
 class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def __init__(self, **properties):
@@ -33,6 +34,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         """This method is called when an item is selected"""
         userid = anvil.server.call('get_current_userid')
         filetype_id, filetype = self.dropdown_filetype.selected_value
+        debug.log(f"filetype_id={filetype_id}, filetype={filetype}")
         if filetype_id is None:
             self.dropdown_mapping_rule.items = []
         else:
