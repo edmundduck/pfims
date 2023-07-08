@@ -29,7 +29,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
             self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
         else:
-            info.log(f"{len(data)} rows are imported to {__name__}")
+            info.log(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
         glo.reset_deleted_row()
 
