@@ -10,7 +10,7 @@ from ...App import Global as glo
 from ...App import Routing
 from ...App import Caching as cache
 from ...App.Validation import Validator
-from ...App.Logging import debug, info, warning, error, critical
+from ...App.Logging import dump, debug, info, warning, error, critical
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):

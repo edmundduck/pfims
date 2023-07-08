@@ -8,18 +8,12 @@ import datetime
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 # Constants
-DEBUG = 'DEBUG'
-INFO = 'INFO'
-WARNING = 'WARNING'
-ERROR = 'ERROR'
-CRITICAL = 'CRITICAL'
-loglevel = {
-    DEBUG: 0,
-    INFO: 1,
-    WARNING: 2,
-    ERROR: 3,
-    CRITICAL: 4
-}
+DEBUG_LARGEDATA = { 'val':5, 'desc':'DUMP' }
+DEBUG = { 'val':10, 'desc':'DEBUG' }
+INFO = { 'val':20, 'desc':'INFO' }
+WARNING = { 'val':30, 'desc':'WARNING' }
+ERROR = { 'val':40, 'desc':'ERROR' }
+CRITICAL = { 'val':50, 'desc':'CRITICAL' }
 
 class Logger():
     def __init__(self, config, level):
@@ -28,9 +22,9 @@ class Logger():
         self.level = level
 
     def log(self, msg=None, *args, **kwargs):
-        if loglevel.get(self.level) >= loglevel.get(self.default):
+        if self.level.get('val') >= self.default.get('val'):
             current = datetime.datetime.now()
-            output = f"{current.strftime(self.datefmt)} [{self.level}] {msg} "
+            output = f" {current.strftime(self.datefmt)} [{self.level.get('desc')}] {msg} "
             if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
             if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
             print(output)
@@ -42,6 +36,7 @@ class LoggerConfig():
 
 config = LoggerConfig(default=DEBUG)
 
+dump = Logger(config=config, level=DEBUG_LARGEDATA)
 debug = Logger(config=config, level=DEBUG)
 info = Logger(config=config, level=INFO)
 warning = Logger(config=config, level=WARNING)

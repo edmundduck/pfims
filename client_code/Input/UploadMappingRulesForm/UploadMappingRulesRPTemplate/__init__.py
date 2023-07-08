@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....App import Caching as cache
 from ....App import Global as glo
+from ....App.Logging import dump, debug, info, warning, error, critical
 
 class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def __init__(self, **properties):
@@ -62,23 +63,25 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         if id is not None and result['count'] is not None and result['dcount'] is not None:
             self.row_hidden_id.text = id
             self.row_hidden_del_fid.text = ''
-            n = Notification(f"mapping {name} has been saved successfully.")
+            msg = f"Mapping {name} has been saved successfully."
+            info.log(msg)
         else:
-            n = Notification(f"WARNING: Problem occurs when saving mapping {name}.")
+            msg = f"WARNING: Problem occurs when saving mapping {name}."
+            warning.log(msg)
         # TODO to regenerate iid after saving
         self.item = (anvil.server.call('select_mapping_rules', userid, id))[0]
         self.row_dropdown_type.selected_value = [filetype_id, filetype]
         if self.item.get('rule', None) is not None:
             self._generate_all_mapping_rules(self.item['rule'])
-        n.show()
+        Notification(msg).show()
 
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         userid = anvil.server.call('get_current_userid')
         to_be_del_fid = self.row_hidden_id.text
         to_be_del_fname = self.row_mapping_name.text
-        msg = Label(text=f"Proceed mapping <{to_be_del_fname}> deletion by clicking DELETE.")
-        userconf = alert(content=msg,
+        confirm = Label(text=f"Proceed mapping <{to_be_del_fname}> deletion by clicking DELETE.")
+        userconf = alert(content=confirm,
                         title=f"Alert - mapping Deletion",
                         buttons=[("DELETE", "Y"), ("CANCEL", "N")])
 
@@ -88,10 +91,12 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
                 if result is not None and result > 0:
                     """ Reflect the change in tab dropdown """
                     self.remove_from_parent()
-                    n = Notification(f"mapping {to_be_del_fname} has been deleted.")
+                    msg = f"Mapping {to_be_del_fname} has been deleted."
+                    info.log(msg)
                 else:
-                    n = Notification(f"ERROR: Fail to delete mapping {to_be_del_fname}.")
-                n.show()
+                    msg = f"ERROR: Fail to delete mapping {to_be_del_fname}."
+                    error.log(msg)
+                Notification(msg).show()
             else:
                 self.remove_from_parent()
 
@@ -106,6 +111,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "A" else False
 
     def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, **event_args):
+        debug.log(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
         dict_exp_tbl_def = cache.expense_tbl_def_dict()
         dict_extraact = cache.mapping_rules_extra_action_dict()
         dict_lbl = cache.labels_dict()

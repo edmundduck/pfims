@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from datetime import date
 from ...App import Global as glo
 from ...App.Validation import Validator
+from ...App.Logging import dump, debug, info, warning, error, critical
 
 class StockInputForm(StockInputFormTemplate):
     def __init__(self, **properties):
@@ -106,8 +107,9 @@ class StockInputForm(StockInputFormTemplate):
                                     )
 
         if templ_id is None or templ_id <= 0:
-            n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
-            n.show()
+            msg = f"ERROR: Fail to save template {templ_name}."
+            error.log(msg)
+            Notification(msg).show()
             return
         
         """ Trigger save_row_change if del_iid is not empty """
@@ -124,10 +126,12 @@ class StockInputForm(StockInputFormTemplate):
             self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, templ_name)
             self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
             self.button_submit.enabled = True
-            n = Notification("Template {templ_name} has been saved successfully.".format(templ_name=templ_name))
+            msg = f"Template {templ_name} has been saved successfully."
+            info.log(msg)
         else:
-            n = Notification("ERROR: Fail to save template {templ_name}.".format(templ_name=templ_name))
-        n.show()
+            msg = f"ERROR: Fail to save template {templ_name}."
+            error.log(msg)
+        Notification(msg).show()
             
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -147,13 +151,10 @@ class StockInputForm(StockInputFormTemplate):
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_templ_name = self.dropdown_templ.selected_value
-        msg = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
-        userconf = alert(content=msg, 
+        confirm = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
+        userconf = alert(content=confirm, 
                         title=f"Alert - Template Deletion",
-                        buttons=[
-                        ("DELETE", "Y"),
-                        ("CANCEL", "N")
-                        ])
+                        buttons=[("DELETE", "Y"), ("CANCEL", "N")])
     
         if userconf == "Y":
             templ_id = anvil.server.call('get_template_id', to_be_del_templ_name)
@@ -167,11 +168,12 @@ class StockInputForm(StockInputFormTemplate):
                 self.dropdown_broker_show()
                 self.input_repeating_panel.items = []
                 
-                n = Notification("Template {templ_name} has been deleted.".format(templ_name=to_be_del_templ_name))
-                n.show()
+                msg = f"Template {to_be_del_templ_name} has been deleted."
+                info.log(msg)
             else:
-                n = Notification("ERROR: Fail to delete template {templ_name}.".format(templ_name=to_be_del_templ_name))
-                n.show()                
+                msg = f"ERROR: Fail to delete template {to_be_del_templ_name}."
+                error.log(msg)
+            Notification(msg).show()                
 
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -186,11 +188,12 @@ class StockInputForm(StockInputFormTemplate):
             self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
             self.dropdown_templ.raise_event('change')
         
-            n = Notification("Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only.".format(templ_name=to_be_submitted_templ_name))
-            n.show()
+            msg = f"Template {to_be_submitted_templ_name} has been submitted.\n It can be viewed in the transaction list report only."
+            info.log(msg)
         else:
-            n = Notification("ERROR: Fail to submit template {templ_name}.".format(templ_name=to_be_submitted_templ_name))
-            n.show()
+            msg = f"ERROR: Fail to submit template {to_be_submitted_templ_name}."
+            error.log(msg)
+        Notification(msg).show()
 
     def templ_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""

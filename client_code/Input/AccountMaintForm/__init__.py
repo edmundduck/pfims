@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...App import Routing
 from ...App import Caching as cache
+from ...App.Logging import dump, debug, info, warning, error, critical
 
 class AccountMaintForm(AccountMaintFormTemplate):
     def __init__(self, **properties):
@@ -60,14 +61,16 @@ class AccountMaintForm(AccountMaintFormTemplate):
                                 )
 
         if acct_id is None or acct_id <= 0:
-            n = Notification(f"ERROR: Fail to create account {acct_name} ({acct_id}).")
+            msg = f"ERROR: Fail to create account {acct_name} ({acct_id})."
+            error.log(msg)
         else:
             """ Reflect the change in accounts dropdown """
             cache.accounts_reset()
             self.dropdown_acct_list.items = cache.accounts_dropdown()
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
-            n = Notification(f"Account {acct_name} ({acct_id}) has been created successfully.")
-        n.show()
+            msg = f"Account {acct_name} ({acct_id}) has been created successfully."
+            info.log(msg)
+        Notification(msg).show()
         return
 
     def button_accounts_update_click(self, **event_args):
@@ -84,21 +87,23 @@ class AccountMaintForm(AccountMaintFormTemplate):
                                 )
 
         if result is None or result <= 0:
-            n = Notification(f"ERROR: Fail to update account {acct_name} ({acct_id}).")
+            msg = f"ERROR: Fail to update account {acct_name} ({acct_id})."
+            error.log(msg)
         else:
             """ Reflect the change in accounts dropdown """
             cache.accounts_reset()
             self.dropdown_acct_list.items = cache.accounts_dropdown()
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
-            n = Notification(f"Account {acct_name} ({acct_id}) has been updated successfully.")
-        n.show()
+            msg = f"Account {acct_name} ({acct_id}) has been updated successfully."
+            info.log(msg)
+        Notification(msg).show()
         return
 
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_id, acct_name = self.dropdown_acct_list.selected_value if self.dropdown_acct_list.selected_value is not None else [None, None]
-        msg = Label(text=f"Proceed account <{acct_name}> ({acct_id}) deletion by clicking DELETE.")
-        userconf = alert(content=msg, 
+        confirm = Label(text=f"Proceed account <{acct_name}> ({acct_id}) deletion by clicking DELETE.")
+        userconf = alert(content=confirm, 
                         title=f"Alert - Account Deletion",
                         buttons=[("DELETE", "Y"), ("CANCEL", "N")])
     
@@ -108,10 +113,12 @@ class AccountMaintForm(AccountMaintFormTemplate):
             if result is not None and result > 0:
                 """ Reflect the change in account dropdown """
                 self.clear()
-                n = Notification(f"Account {acct_name} ({acct_id}) has been deleted.")
+                msg = f"Account {acct_name} ({acct_id}) has been deleted."
+                info.log(msg)
             else:
-                n = Notification(f"ERROR: Fail to delete account {acct_name} ({acct_id}).")
-            n.show()
+                msg = f"ERROR: Fail to delete account {acct_name} ({acct_id})."
+                error.log(msg)
+            Notification(msg).show()
 
     def clear(self, **event_args):
         self.dropdown_acct_list_show()
