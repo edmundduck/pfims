@@ -10,6 +10,7 @@ from ...App import Global as glo
 from ...App import Routing
 from ...App import Caching as cache
 from ...App.Validation import Validator
+from ...App.Logging import dump, debug, info, warning, error, critical
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
@@ -22,11 +23,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
+            debug.log("self.dropdown_tabs.selected_value=", self.dropdown_tabs.selected_value)
 
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
             self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
         else:
+            info.log(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
         glo.reset_deleted_row()
 
@@ -144,8 +147,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
         if tab_id is None or tab_id <= 0:
-            n = Notification("ERROR: Fail to save expense tab {tab_name}.".format(tab_name=tab_name))
-            n.show()
+            msg = f"ERROR: Fail to save expense tab {tab_name}."
+            error.log(msg)
+            Notification(msg).show()
             return
 
         """ Reflect the change in template dropdown """
@@ -159,15 +163,18 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if result_d is not None and result_u is not None:
             glo.reset_deleted_row()
             self._switch_to_submit_button()
-            n = Notification("Expense tab {tab_name} has been saved successfully.".format(tab_name=tab_name))
-        elif result_d is not None:
-            glo.reset_deleted_row()
-            n = Notification("WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again.".format(tab_name=tab_name))
-        elif result_u is not None:
-            n = Notification("WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again.".format(tab_name=tab_name))
+            msg2 = f"Expense tab {tab_name} has been saved successfully."
+            info.log(msg2)
         else:
-            n = Notification("WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again.".format(tab_name=tab_name))
-        n.show()
+            if result_d is not None:
+                glo.reset_deleted_row()
+                msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
+            elif result_u is not None:
+                msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
+            else:
+                msg2 = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
+            warning.log(msg2)
+        Notification(msg2).show()
 
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -179,22 +186,19 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             """ Reflect the change in template dropdown """
             self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
             self.dropdown_tabs.raise_event('change')
-            n = Notification("Expense tab {tab_name} has been submitted.".format(tab_name=tab_name))
+            msg = f"Expense tab {tab_name} has been submitted."
+            info.log(msg)
         else:
-            n = Notification("ERROR: Fail to submit expense tab {tab_name}.".format(tab_name=tab_name))
-        n.show()
+            msg = f"ERROR: Fail to submit expense tab {tab_name}."
+            error.log(msg)
+        Notification(msg).show()
 
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         to_be_del_tab_name = self.dropdown_tabs.selected_value[1] if self.dropdown_tabs.selected_value is not None else None
-        msg = Label(text="Proceed expense tab <{tab_name}> deletion by clicking DELETE.".format(tab_name=to_be_del_tab_name))
-        userconf = alert(content=msg,
-                        title=f"Alert - Expense Tab Deletion",
-                        buttons=[
-                        ("DELETE", "Y"),
-                        ("CANCEL", "N")
-                        ])
+        msg = Label(text=f"Proceed expense tab <{to_be_del_tab_name}> deletion by clicking DELETE.")
+        userconf = alert(content=msg, title="Confirm Expense Tab Deletion", buttons=[("DELETE", "Y"), ("CANCEL", "N")])
 
         if userconf == "Y":
             result = anvil.server.call('delete_expensetab', tab_id=to_be_del_tab_id)
@@ -203,7 +207,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 self.dropdown_tabs_show()
                 self.dropdown_tabs.raise_event('change')
                 glo.reset_deleted_row()
-                n = Notification("Expense tab {tab_name} has been deleted.".format(tab_name=to_be_del_tab_name))
+                msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
+                info.log(msg2)
             else:
-                n = Notification("ERROR: Fail to delete expense tab {tab_name}.".format(tab_name=to_be_del_tab_name))
-            n.show()
+                msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
+                error.log(msg2)
+            Notification(msg2).show()

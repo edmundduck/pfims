@@ -3,6 +3,8 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from .Logging import dump, debug, info, warning, error, critical
+
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
@@ -78,6 +80,7 @@ def get_cache(key, func):
     if cache_dict is None: cache_dict = {}
     if cache_dict.get(key, None) is None:
         cache_dict[key] = anvil.server.call(func)
+        debug.log(f"get_cache cache loaded (key={key}, func={func})")
     return cache_dict.get(key, None)
 
 # Generic get and store database data as cache in a form of dictionary
@@ -91,6 +94,7 @@ def get_cache_dict(key, func):
         for i in get_cache(key, func):
             result[i[1][0]] = i[1][1]
         cache_dict[dict_key] = result
+        debug.log(f"get_cache_dict cache loaded (dict_key={dict_key}, func={func})")
     return cache_dict.get(dict_key, None)
 
 # Generic clear cache
@@ -99,6 +103,7 @@ def clear_cache(key):
     global cache_dict
     cache_dict[key] = None
     cache_dict["".join((key, '_dict'))] = None
+    debug.log(f"Cache clear (key={key})")
 
 # Generic clear all cache (all keys)
 def clearall_cache():
