@@ -64,6 +64,7 @@ class CashTransaction:
         param_list = ('iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl')
         tuple_list = []
         for item in param_list:
+            print(f"self.attr.get(item)={self.attr.get(item)}")
             tuple_list.append(self.attr.get(item)) 
         return tuple_list
 
