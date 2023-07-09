@@ -26,7 +26,6 @@ class StockInputForm(StockInputFormTemplate):
         self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
 
         # Reset on screen change status
-        glo.reset_input_stock_change()
         self.disable_submit_button()
         
     def save_row_change(self, **event_args):
@@ -75,15 +74,12 @@ class StockInputForm(StockInputFormTemplate):
                     "iid": None}
       
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
-        glo.track_input_stock_journals_change()
         self.disable_submit_button()
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
         self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
-        # Reset on screen change status
-        glo.reset_input_stock_change()
         if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
             self.button_submit.enabled = True
 
@@ -198,12 +194,10 @@ class StockInputForm(StockInputFormTemplate):
 
     def templ_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""
-        glo.track_input_stock_template_change()
         self.disable_submit_button()
 
     def dropdown_broker_change(self, **event_args):
         """This method is called when an item is selected"""
-        glo.track_input_stock_template_change()
         self.disable_submit_button()
 
     def disable_submit_button(self, **event_args):

@@ -105,10 +105,6 @@ def get_deleted_row():
 def deleted_row_reset():
     clear_cache(key='delete_row_iid')
 
-def input_stock_change_reset():
-    clear_cache(key='input_stock_templ_chg')
-    clear_cache(key='input_stock_jour_chg')
-    
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found

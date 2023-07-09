@@ -6,9 +6,6 @@ from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-input_stock_templ_chg = False
-input_stock_jour_chg = False
-
 """ === Validation functions === """
 def validation_errfield_colour():
     return 'rgb(245,135,200)'
@@ -54,22 +51,6 @@ def input_stock_default_templ_dropdown():
 
 def input_stock_default_templ_name():
     return "NewTemplate"
-
-# Track template fields change
-def track_input_stock_template_change():
-    global input_stock_templ_chg
-    input_stock_templ_chg = True
-
-# Track journals fields change
-def track_input_stock_journals_change():
-    global input_stock_jour_chg
-    input_stock_jour_chg = True
-
-# Reset template and journals fields change
-def reset_input_stock_change():
-    global input_stock_templ_chg, input_stock_jour_chg
-    input_stock_templ_chg = False
-    input_stock_jour_chg = False
 
 """ === Input expense functions === """
 def input_expense_row_size():

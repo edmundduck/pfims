@@ -37,8 +37,6 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
 
-        glo.track_input_stock_journals_change()
-
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         v = Validator()
@@ -87,17 +85,13 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
                         "iid": self.row_iid.text}
       
             self.input_data_panel_readonly.visible = True
-            self.input_data_panel_editable.visible = False
-            
-            glo.track_input_stock_journals_change()
+            self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
-
             #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
             self.parent.raise_event('x-save-change')
       
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item['iid'] is not None: cache.add_deleted_row(self.item['iid'])
-        glo.track_input_stock_journals_change()
-        self.parent.raise_event('x-disable-submit-button')
+        glo.trarent.raise_event('x-disable-submit-button')
         self.remove_from_parent()
