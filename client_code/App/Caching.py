@@ -84,7 +84,7 @@ def mapping_rules_filetype_reset():
     clear_cache(key='mapping_rules_filetype')
 
 # Add IID into the deletion list for delete journals / delete transactions function to process
-def deleted_row(iid):
+def add_deleted_row(iid):
     global cache_dict
     key = 'delete_row_iid'
     if cache_dict is None: cache_dict = {}
@@ -92,11 +92,22 @@ def deleted_row(iid):
         cache_dict[key] = [iid]
     else:
         cache_dict[key].append(iid)
-    debug.log(f"add_delete_row (key={key})={cache_dict[key]}")
-    return cache_dict.get(key, None)
+    debug.log(f"add_deleted_row (key={key})={cache_dict[key]}")
+    return cache_dict.get(key, [])
 
+# Return IID of the deletion list for delete journals / delete transactions function to process
+def get_deleted_row():
+    global cache_dict
+    key = 'delete_row_iid'
+    if cache_dict is None: cache_dict = {}
+    return cache_dict.get(key, [])
+    
 def deleted_row_reset():
     clear_cache(key='delete_row_iid')
+
+def input_stock_change_reset():
+    clear_cache(key='input_stock_templ_chg')
+    clear_cache(key='input_stock_jour_chg')
     
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data

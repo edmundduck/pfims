@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ...App import Global as glo
+from ...App import Caching as cache
 from ...App.Validation import Validator
 from ...App.Logging import dump, debug, info, warning, error, critical
 
@@ -103,7 +104,7 @@ class StockInputForm(StockInputFormTemplate):
                                      template_id=templ_id,
                                      template_name=templ_name, 
                                      broker_id=broker_id,
-                                     del_iid=glo.del_iid
+                                     del_iid=cache.get_deleted_row()
                                     )
 
         if templ_id is None or templ_id <= 0:
@@ -113,9 +114,9 @@ class StockInputForm(StockInputFormTemplate):
             return
         
         """ Trigger save_row_change if del_iid is not empty """
-        if len(glo.del_iid) > 0:
+        if len(cache.get_deleted_row()) > 0:
             self.save_row_change()
-            glo.reset_deleted_row()
+            cache.deleted_row_reset()
         
         """ Add/Update """
         result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
@@ -146,7 +147,7 @@ class StockInputForm(StockInputFormTemplate):
         self.input_buy_price.text = ""
         self.input_pnl.text = ""
         """ Reset row delete flag """
-        glo.reset_deleted_row()
+        cache.deleted_row_reset()
     
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -161,7 +162,7 @@ class StockInputForm(StockInputFormTemplate):
             result = anvil.server.call('delete_templates', template_id=templ_id)
             if result is not None and result > 0:
                 """ Reset row delete flag """
-                glo.reset_deleted_row()
+                cache.deleted_row_reset()
             
                 """ Reflect the change in template dropdown """
                 self.dropdown_templ_show()

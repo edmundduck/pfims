@@ -64,8 +64,8 @@ class CashTransaction:
         param_list = ('iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl')
         tuple_list = []
         for item in param_list:
-            print(f"self.attr.get(item)={self.attr.get(item)}")
-            tuple_list.append(self.attr.get(item)) 
+            i = self.attr.get(item)[0] if isinstance(self.attr.get(item), list) else self.attr.get(item)
+            tuple_list.append(i)
         return tuple_list
 
     def assignFromDict(self, dict):
