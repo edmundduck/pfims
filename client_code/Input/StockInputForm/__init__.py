@@ -80,7 +80,7 @@ class StockInputForm(StockInputFormTemplate):
         """This method is called when an item is selected"""
         self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
-        if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
+        if self.dropdown_templ.selected_value is not None:
             self.button_submit.enabled = True
 
     def dropdown_templ_show(self, **event_args):

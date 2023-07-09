@@ -45,13 +45,6 @@ def search_symbol_dropdown():
 def form_poc1():
     return 'form_poc1'
 
-""" === Input stock functions === """
-def input_stock_default_templ_dropdown():
-    return "[NEW]"
-
-def input_stock_default_templ_name():
-    return "NewTemplate"
-
 """ === Input expense functions === """
 def input_expense_row_size():
     return 10
