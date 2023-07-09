@@ -15,6 +15,7 @@ from ..Report.TransactionReportForm import TransactionReportForm
 from ..Report.PnLReportForm import PnLReportForm
 from ..Report.ExpenseReportForm import ExpenseReportForm
 from ..Debug.form_poc_main import form_poc_main
+from ..App.Logging import debug, info, warning, error, critical
 
 class MainForm(MainFormTemplate):
     def __init__(self, **properties):

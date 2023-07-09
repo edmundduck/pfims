@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ....App import Global as glo
 from ....App import Caching as cache
 from ....App.Validation import Validator
-import math
+from ....App.Logging import dump, debug, info, warning, error, critical
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -19,6 +19,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.accounts_dropdown()
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
         acct_dict = cache.accounts_dict()
+        debug.log("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
         
@@ -34,6 +35,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            debug.log("trimmed_list=", trimmed_list)
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
