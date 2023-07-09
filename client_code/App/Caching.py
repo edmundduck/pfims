@@ -10,18 +10,23 @@ from .Logging import dump, debug, info, warning, error, critical
 
 cache_dict = {}
 
+# Return a list for accounts dropdown for Expense Input and Upload
 def accounts_dropdown():
     return get_cache(key='accounts', func='generate_accounts_dropdown')
 
+# Return a dict for accounts for Expense Input and Upload
 def accounts_dict():
     return get_cache_dict(key='accounts', func='generate_accounts_dropdown')
 
 def accounts_reset():
     clear_cache(key='accounts')
 
+# Return a list for labels dropdown for Expense Input and Upload
 def labels_dropdown():
     return get_cache(key='labels', func='generate_labels_dropdown')
 
+# Return a dict for labels for Expense Input and Upload
+# Not using generic get_cache_dict function as it involves eval() issue requiring special handling
 def labels_dict():
     global cache_dict
     key='labels_dict'
@@ -42,35 +47,63 @@ def labels_reset():
     clear_cache(key='labels_dict')
     clear_cache(key='labels')
 
+# Return a list for labels mapping action dropdown for Expense Input and Upload
 def labels_mapping_action_dropdown():
     return get_cache(key='labels_mapping_action', func='generate_labels_mapping_action_dropdown')
 
 def labels_mapping_action_reset():
     clear_cache(key='labels_mapping_action')
 
+# Return a list for expense table definition dropdown for Expense Input and Upload
 def expense_tbl_def_dropdown():
     return get_cache(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
 
+# Return a dict for expense table definition for Expense Input and Upload
 def expense_tbl_def_dict():
     return get_cache_dict(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
 
 def expense_tbl_def_reset():
     clear_cache(key='expense_tbl_def')
 
+# Return a list for extra action dropdown for Expense Input and Upload
 def mapping_rules_extra_action_dropdown():
     return get_cache(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
 
+# Return a dict for extra action for Expense Input and Upload
 def mapping_rules_extra_action_dict():
     return get_cache_dict(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
     
 def mapping_rules_extra_action_reset():
     clear_cache(key='mapping_rules_extra_action')
 
+# Return a list for file type dropdown for Expense Input and Upload
 def mapping_rules_filetype_dropdown():
     return get_cache(key='mapping_rules_filetype', func='generate_mapping_type_dropdown')
 
 def mapping_rules_filetype_reset():
     clear_cache(key='mapping_rules_filetype')
+
+# Add IID into the deletion list for delete journals / delete transactions function to process
+def add_deleted_row(iid):
+    global cache_dict
+    key = 'delete_row_iid'
+    if cache_dict is None: cache_dict = {}
+    if cache_dict.get(key, None) is None:
+        cache_dict[key] = [iid]
+    else:
+        cache_dict[key].append(iid)
+    debug.log(f"add_deleted_row (key={key})={cache_dict[key]}")
+    return cache_dict.get(key, [])
+
+# Return IID of the deletion list for delete journals / delete transactions function to process
+def get_deleted_row():
+    global cache_dict
+    key = 'delete_row_iid'
+    if cache_dict is None: cache_dict = {}
+    return cache_dict.get(key, [])
+    
+def deleted_row_reset():
+    clear_cache(key='delete_row_iid')
 
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data

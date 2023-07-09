@@ -31,7 +31,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             info.log(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
-        glo.reset_deleted_row()
+        cache.deleted_row_reset()
 
     def _switch_to_submit_button(self, **event_args):
         self.button_save_exptab.text = "SUBMIT TAB"
@@ -158,16 +158,16 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
         # """ Delete """
-        result_d = anvil.server.call('delete_transactions', tab_id, glo.del_iid)
+        result_d = anvil.server.call('delete_transactions', tab_id, cache.get_deleted_row())
 
         if result_d is not None and result_u is not None:
-            glo.reset_deleted_row()
+            cache.deleted_row_reset()
             self._switch_to_submit_button()
             msg2 = f"Expense tab {tab_name} has been saved successfully."
             info.log(msg2)
         else:
             if result_d is not None:
-                glo.reset_deleted_row()
+                cache.deleted_row_reset()
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
             elif result_u is not None:
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
@@ -206,7 +206,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs_show()
                 self.dropdown_tabs.raise_event('change')
-                glo.reset_deleted_row()
+                cache.deleted_row_reset()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 info.log(msg2)
             else:
