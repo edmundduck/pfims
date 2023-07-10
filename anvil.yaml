@@ -173,10 +173,19 @@ db_schema:
       admin_ui: {width: 200}
       type: string
 secrets:
-  yugadb_app_pw:
+  proddb_app_pw:
     value: {? '' : lAFyIGItVqKuLMguFqtAkkqzSJysV6Kj5vdoOElYE/RqJF+9ndJrdO1VBFQ9x5b786C0UW3azwbRQl6WqRcOU1VzDpN8/+OehGMFxrj8Wjhnngma1Dm0DZPCn2t97/YJd9D79oeSD/RXZCxrdV+JuH5W8bwe60s=}
     type: secret
-  yugadb_app_usr:
+  proddb_app_usr:
     value: {? '' : 06OkM5JtvSNrZffpWvhR2lqOTl4jH5W/Qib3e7tSZpNI5ONHC4xQtsNsc2c0Ug1OVY3syV8k6YLPaMCmnERbk8OBTnfp1WbvKIb20F0g86jnu7yTH3MyFh8lv5u1ed+kqRb+/9oDVBk=}
+    type: secret
+  proddb_port:
+    value: {? '' : 65JRzuouoOX6monqteVGtI1K5dkVX4I6NSgYdR9R7xtav7H6kp1L+a0EZCGCjZU2Cq8ggzTSyuvWXhfSsHvHA8SY4khskpY9YI4g+57Yz6fSyO4on5ikJAa59LCwl4OkHJNZ}
+    type: secret
+  proddb_host:
+    value: {? '' : hFFP2sbXodXdz/XX8wfAToV1Cvgn/bJLW0hCDuLlB6sI5Oplwnj9kK/pAkMVmG2KFKHWlRqaex38RPFxLLxKTbqns6bIf5mfQM/1j0ObV1k6vUuXN8LPu3bBaVxok6fo74tTd2aTu++PCb6hUh/nq1YirDim5FY9rkAjSZ8K4Aq3A9ArM3J9GFCkrmpr3q4vrpODyY0PYexoaA9s}
+    type: secret
+  proddb_name:
+    value: {? '' : x4DQzIPabQxuQ1HKJtc6TrJ+Z6Lla6CntadZ3xPXDyR5uvKVXGz7pNJqZRUCrK2gZVXTDWvb/gdAtJxSZQcehAAKfl/wCsq27Q/fp9joi6aH8WD7N4ZwyjXYgWsvziH1x5yTNOVX}
     type: secret
 renamed: true

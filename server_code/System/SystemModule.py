@@ -26,11 +26,11 @@ def get_current_userid():
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
     connection = psycopg2.connect(
-        dbname='pfimsdb',
-        host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
-        port='5433',
-        user=anvil.secrets.get_secret('yugadb_app_usr'),
-        password=anvil.secrets.get_secret('yugadb_app_pw'))
+        dbname=anvil.secrets.get_secret('proddb_name'),
+        host=anvil.secrets.get_secret('proddb_host'),
+        port=anvil.secrets.get_secret('proddb_port'),
+        user=anvil.secrets.get_secret('proddb_app_usr'),
+        password=anvil.secrets.get_secret('proddb_app_pw'))
     return connection
 
 # Return the DB FIN schema name
