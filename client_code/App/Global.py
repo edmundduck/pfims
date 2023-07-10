@@ -46,3 +46,7 @@ def pnl_list_expand_icon():
 
 def pnl_list_shrink_icon():
     return 'fa:minus-square'
+
+class Icons:
+    EXPAND = 'fa:plus-square'
+    SHRINK = 'fa:minus-square'
