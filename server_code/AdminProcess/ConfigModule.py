@@ -164,6 +164,15 @@ def psgldb_get_submitted_templ_list():
     result.insert(0, '')
     return result
         
+# Return search interval dropdown by querying DB table "search_interval" from Postgres DB
+def psgldb_select_search_interval():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
+        rows = cur.fetchall()
+        cur.close()
+    return list((row['name'], [row['id'], row['name']]) for row in rows)
+
 # Postgres impl END
 
 @anvil.server.callable
@@ -205,6 +214,11 @@ def get_broker_ccy(choice):
 # Generate SUBMITTED template selection dropdown items
 def get_submitted_templ_list():
     return psgldb_get_submitted_templ_list()
+
+@anvil.server.callable
+# DB table "search_interval" select method callable by client modules
+def select_search_interval():
+    return psgldb_select_search_interval()
 
 ###################################################################
 # AnvilDB access methods - Archival START

@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ...App import Global as glo
+from ...App import Caching as cache
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
 from ..ExpenseReportForm import ExpenseReportForm
@@ -19,7 +20,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.dropdown_interval.items = glo.search_interval_dropdown()
+        self.dropdown_interval.items = cache.search_interval_dropdown()
         self.dropdown_symbol.items = []
     
         settings = anvil.server.call('select_settings')
@@ -79,15 +80,16 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                     i.remove_from_parent()
 
     def _upd_scr_enablement(self):
-        if self.dropdown_interval.selected_value == '' or self.dropdown_interval.selected_value is None:
+        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
+        if interval in (None, ''):
             self._reset_search()
         else:
-            if self.dropdown_interval.selected_value != "SDR":
+            if interval != "SDR":
                 self.time_datefrom.enabled = False
                 self.time_dateto.enabled = False
                 self.label_timetotime.enabled = False
                 self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', date.today(), 
-                            anvil.server.call('get_start_date', date.today(), self.dropdown_interval.selected_value))
+                            anvil.server.call('get_start_date', date.today(), interval))
             else:
                 self.time_datefrom.enabled = True
                 self.time_dateto.enabled = True
@@ -101,8 +103,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def _reset_search(self):
         self.time_datefrom.date = ""
         self.time_dateto.date = ""
-        self.dropdown_interval.items = []
-        self.dropdown_interval.items = glo.search_interval_dropdown()
+        self.dropdown_interval.items = cache.search_interval_dropdown()
         self.dropdown_symbol.items = []
         self._rmvall_selected_symbols()
         self.subform.rpt_panel.items = []
@@ -112,14 +113,16 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.button_exp_search.enabled = False
     
     def _find_enddate(self):
-        if self.dropdown_interval.selected_value != "SDR" or self.time_dateto.date is None:
+        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
+        if interval != "SDR" or self.time_dateto.date is None:
             return date.today()
         else:
             return self.time_dateto.date
   
     def _find_startdate(self):
-        if self.dropdown_interval.selected_value != "SDR" or self.time_datefrom.date is None:
-            return anvil.server.call('get_start_date', date.today(), self.dropdown_interval.selected_value)      
+        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
+        if interval != "SDR" or self.time_datefrom.date is None:
+            return anvil.server.call('get_start_date', date.today(), interval)      
         else:
             return self.time_datefrom.date 
   

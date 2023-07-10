@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...App import Global as glo
+from ...App import Caching as cache
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
@@ -19,8 +20,9 @@ class SettingForm(SettingFormTemplate):
             self.dropdown_interval.selected_value = settings.get('default_interval')
             self.time_datefrom.date = settings.get('default_datefrom')
             self.time_dateto.date = settings.get('default_dateto')
-      
-        if self.dropdown_interval.selected_value != "SDR":
+
+        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
+        if interval != "SDR":
             self.time_datefrom.enabled = False
             self.time_dateto.enabled = False
     
@@ -34,7 +36,7 @@ class SettingForm(SettingFormTemplate):
 
     def dropdown_interval_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_interval.items = glo.search_interval_dropdown()
+        self.dropdown_interval.items = cache.search_interval_dropdown()
 
     def dropdown_ccy_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -42,8 +44,9 @@ class SettingForm(SettingFormTemplate):
 
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
-        if self.dropdown_interval.selected_value != "SDR":
-            if self.dropdown_interval.selected_value == '' or self.dropdown_interval.selected_value is None:
+        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
+        if interval != "SDR":
+            if interval in (None, ''):
                 self.time_datefrom.date = ''
                 self.time_dateto.date = ''
         
@@ -55,9 +58,10 @@ class SettingForm(SettingFormTemplate):
 
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
+        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         count = anvil.server.call('upsert_settings', 
                                 self.dropdown_default_broker.selected_value, 
-                                self.dropdown_interval.selected_value, 
+                                interval, 
                                 self.time_datefrom.date, 
                                 self.time_dateto.date)
         if (count > 0):

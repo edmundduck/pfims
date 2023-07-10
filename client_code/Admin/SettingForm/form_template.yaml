@@ -73,7 +73,7 @@ components:
         role: null
         align: left
         tooltip: ''
-        placeholder: ''
+        placeholder: Choose one below
         border: ''
         enabled: true
         foreground: ''
@@ -87,7 +87,7 @@ components:
         background: ''
         bold: false
         underline: false
-        include_placeholder: false
+        include_placeholder: true
       name: dropdown_interval
       layout_properties:
         col_widths: {}

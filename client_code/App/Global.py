@@ -24,16 +24,6 @@ def setting_broker_id_prefix():
 def setting_broker_suffix_len():
     return 5
 
-def search_interval_dropdown():
-    interval_list = [('[Interval]', ''), 
-                    ('Last 1 Month', 'L1M'), 
-                    ('Last 3 Month', 'L3M'),
-                    ('Last 6 Month', 'L6M'),
-                    ('Last 1 Year', 'L1Y'),
-                    ('Year to Date', 'YTD'),
-                    ('Self Defined Range', 'SDR')]
-    return interval_list
-
 def form_poc1():
     return 'form_poc1'
 
