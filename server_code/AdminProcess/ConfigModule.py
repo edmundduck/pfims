@@ -224,9 +224,6 @@ def anvildb_select_settings():
 
 # DB table "brokers" select method from Anvil DB
 def anvildb_select_brokers():
-    #broker_list = glo.setting_broker_dropdown() + \
-    #              list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
-    #return broker_list
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
 
 # DB table "settings" update/insert method into Anvil DB

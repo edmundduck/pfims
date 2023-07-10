@@ -73,9 +73,6 @@ class SettingForm(SettingFormTemplate):
                         '', 
                         self.text_broker_name.text, 
                         self.dropdown_ccy.selected_value)
-        #self.dropdown_broker_list.items = glo.setting_broker_dropdown() + \
-        #                                  anvil.server.call('select_brokers')
-        #self.dropdown_broker_list.raise_event('change')
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
         self.dropdown_default_broker_show()
@@ -95,8 +92,6 @@ class SettingForm(SettingFormTemplate):
                         self.hidden_b_id.text, 
                         self.text_broker_name.text, 
                         self.dropdown_ccy.selected_value)
-        #self.dropdown_broker_list.items = glo.setting_broker_dropdown() + \
-        #                                  anvil.server.call('select_brokers')
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
         self.dropdown_default_broker_show()
@@ -117,7 +112,7 @@ class SettingForm(SettingFormTemplate):
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
         self.hidden_b_id.text = self.dropdown_broker_list.selected_value
-        if self.dropdown_broker_list.selected_value == '':
+        if self.dropdown_broker_list.selected_value in (None, ''):
             self.button_broker_update.enabled = False
             self.button_broker_delete.enabled = False
             self.button_broker_create.enabled = False
@@ -127,17 +122,12 @@ class SettingForm(SettingFormTemplate):
             self.button_broker_delete.enabled = True
             self.button_broker_create.enabled = True
             # TODO -- caching offline is required
-            self.text_broker_name.text = \
-            anvil.server.call('get_broker_name', 
-                            self.dropdown_broker_list.selected_value)
-            self.dropdown_ccy.selected_value = \
-            anvil.server.call('get_broker_ccy', 
-                            self.dropdown_broker_list.selected_value)
+            self.text_broker_name.text = anvil.server.call('get_broker_name', self.dropdown_broker_list.selected_value)
+            self.dropdown_ccy.selected_value = anvil.server.call('get_broker_ccy', elf.dropdown_broker_list.selected_value)
   
     def dropdown_broker_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker_list.items = glo.setting_broker_dropdown() + \
-                                          anvil.server.call('select_brokers')
+        self.dropdown_broker_list.items = anvil.server.call('select_brokers')
         self.dropdown_broker_list.raise_event('change')
 
     def dropdown_sub_templ_list_change(self, **event_args):
