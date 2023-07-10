@@ -38,25 +38,12 @@ def search_interval_dropdown():
                     ('Self Defined Range', 'SDR')]
     return interval_list
 
-def search_symbol_dropdown():
-    symbol_list = [('[Symbol]', '')]
-    return symbol_list
-
 def form_poc1():
     return 'form_poc1'
 
 """ === Input expense functions === """
 def input_expense_row_size():
     return 10
-
-def input_expense_col_def():
-    col_def = [('Date', 'D'), 
-                ('Account', 'AC'), 
-                ('Amount', 'AM'),
-                ('Labels', 'L'),
-                ('Remarks', 'R'),
-                ('Statement Detail', 'SD')]
-    return col_def
 
 """ === PNL report functions === """
 def pnl_list_day_mode():

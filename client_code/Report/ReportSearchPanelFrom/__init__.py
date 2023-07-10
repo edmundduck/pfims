@@ -20,7 +20,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     
         # Any code you write here will run when the form opens.
         self.dropdown_interval.items = glo.search_interval_dropdown()
-        self.dropdown_symbol.items = glo.search_symbol_dropdown()
+        self.dropdown_symbol.items = []
     
         settings = anvil.server.call('select_settings')
         self.dropdown_interval.selected_value = settings.get('default_interval')
@@ -56,7 +56,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_exp_list.visible = False
    
         # Prevent from adding default value "[Symbol]" by registering to the dictionary
-        self.tag = {'added_symbols': {glo.search_symbol_dropdown()[0][1]: 1}}
+        self.tag = {'added_symbols': {None: 1}}
         self._upd_scr_enablement()
       
     # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
@@ -86,15 +86,13 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                 self.time_datefrom.enabled = False
                 self.time_dateto.enabled = False
                 self.label_timetotime.enabled = False
-                self.dropdown_symbol.items = glo.search_symbol_dropdown() + \
-                    anvil.server.call('get_symbol_dropdown_items', date.today(), 
+                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', date.today(), 
                             anvil.server.call('get_start_date', date.today(), self.dropdown_interval.selected_value))
             else:
                 self.time_datefrom.enabled = True
                 self.time_dateto.enabled = True
                 self.label_timetotime.enabled = True
-                self.dropdown_symbol.items = glo.search_symbol_dropdown() + \
-                    anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
+                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
             self.button_tranx_gen_csv.enabled = True
             self.button_tranx_search.enabled = True
             self.button_pnl_search.enabled = True
@@ -105,7 +103,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.time_dateto.date = ""
         self.dropdown_interval.items = []
         self.dropdown_interval.items = glo.search_interval_dropdown()
-        self.dropdown_symbol.items = glo.search_symbol_dropdown()
+        self.dropdown_symbol.items = []
         self._rmvall_selected_symbols()
         self.subform.rpt_panel.items = []
         self.button_tranx_gen_csv.enabled = False
@@ -132,13 +130,11 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
 
     def time_datefrom_change(self, **event_args):
         """This method is called when the selected date changes"""
-        self.dropdown_symbol.items = glo.search_symbol_dropdown() + \
-            anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
+        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
 
     def time_dateto_change(self, **event_args):
         """This method is called when the selected date changes"""
-        self.dropdown_symbol.items = glo.search_symbol_dropdown() + \
-            anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
+        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
 
     def tranx_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
