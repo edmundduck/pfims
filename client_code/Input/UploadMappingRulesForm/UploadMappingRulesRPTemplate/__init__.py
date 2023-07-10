@@ -128,7 +128,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule])
         b = Button(
             icon=const.Icons.REMOVE,
-            foreground="Blue",
+            foreground=const.ColorSchemes.BUTTON_BG,
             font_size=12,
             align="left",
             spacing_above="small",

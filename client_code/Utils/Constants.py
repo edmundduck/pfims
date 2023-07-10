@@ -39,6 +39,10 @@ class Icons:
 
 class ColorSchemes:
     VALID_ERROR = 'rgb(245,135,200)'
+    BUTTON_FG = 'White'
+    BUTTON_BG = 'Blue'
+    AMT_NEG = 'Red'
+    AMT_POS = 'Green'
     THEME_PRIM = 'theme:Primary 500'
     THEME_SEC = 'theme:Secondary 500'
     THEME_WHITE = 'theme:White'

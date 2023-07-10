@@ -48,8 +48,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                             lbl_name = j.get("name").strip()
                     b = Button(text=lbl_name,
                             # icon=const.Icons.REMOVE,
-                            foreground="White",
-                            background="Blue",
+                            foreground=const.ColorSchemes.BUTTON_FG,
+                            background=const.ColorSchemes.BUTTON_BG,
                             font_size=10,
                             align="left",
                             spacing_above="small",
@@ -76,8 +76,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
                     # icon=const.Icons.REMOVE,
-                    foreground="White",
-                    background="Blue",
+                    foreground=const.ColorSchemes.BUTTON_FG,
+                    background=const.ColorSchemes.BUTTON_BG,
                     font_size=10,
                     align="left",
                     spacing_above="small",

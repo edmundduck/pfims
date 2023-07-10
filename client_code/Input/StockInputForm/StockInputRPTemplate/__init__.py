@@ -16,9 +16,9 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
     
         # Any code you write here will run when the form opens.
         if self.item['pnl'] < 0:
-            self.foreground = 'Red'
+            self.foreground = const.ColorSchemes.AMT_NEG
         else:
-            self.foreground = 'Green'
+            self.foreground = const.ColorSchemes.AMT_POS
 
     def button_edit_click(self, **event_args):
         """This method is called when the button is clicked"""

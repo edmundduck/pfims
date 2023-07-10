@@ -144,8 +144,8 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         if self.tag['added_symbols'].get(self.dropdown_symbol.selected_value, None) is None:
             b = Button(text=self.dropdown_symbol.selected_value,
                     icon=const.Icons.REMOVE,
-                    foreground="White",
-                    background="Blue")
+                    foreground=const.ColorSchemes.BUTTON_FG,
+                    background=const.ColorSchemes.BUTTON_BG)
             self.panel_symbol.add_component(b, name=self.dropdown_symbol.selected_value)
             b.set_event_handler('click', self.tranx_rpt_button_minus_click)
 
