@@ -5,9 +5,9 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...App import Routing
-from ...App import Caching as cache
-from ...App.Logging import dump, debug, info, warning, error, critical
+from ...Utils import Routing
+from ...Utils import Caching as cache
+from ...Utils.Logging import dump, debug, info, warning, error, critical
 
 class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
     def __init__(self, data, labels, **properties):

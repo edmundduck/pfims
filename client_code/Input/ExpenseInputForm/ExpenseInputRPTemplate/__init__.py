@@ -5,10 +5,10 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....App import Global as glo
-from ....App import Caching as cache
-from ....App.Validation import Validator
-from ....App.Logging import dump, debug, info, warning, error, critical
+from ....Utils import Constants as const
+from ....Utils import Caching as cache
+from ....Utils.Validation import Validator
+from ....Utils.Logging import dump, debug, info, warning, error, critical
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -47,9 +47,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                         if str(j.get("id")).strip() == i:
                             lbl_name = j.get("name").strip()
                     b = Button(text=lbl_name,
-                            # icon='fa:minus',
-                            foreground="White",
-                            background="Blue",
+                            # icon=const.Icons.REMOVE,
+                            foreground=const.ColorSchemes.BUTTON_FG,
+                            background=const.ColorSchemes.BUTTON_BG,
                             font_size=10,
                             align="left",
                             spacing_above="small",
@@ -75,9 +75,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
-                    # icon='fa:minus',
-                    foreground="White",
-                    background="Blue",
+                    # icon=const.Icons.REMOVE,
+                    foreground=const.ColorSchemes.BUTTON_FG,
+                    background=const.ColorSchemes.BUTTON_BG,
                     font_size=10,
                     align="left",
                     spacing_above="small",
@@ -110,9 +110,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
         v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
-        v.highlight_when_invalid(self.row_date, glo.validation_errfield_colour(), self.row_date.background)
-        v.highlight_when_invalid(self.row_acct, glo.validation_errfield_colour(), self.row_acct.background)
-        v.highlight_when_invalid(self.row_amt, glo.validation_errfield_colour(), self.row_amt.background)
+        v.highlight_when_invalid(self.row_date, const.ColorSchemes.VALID_ERROR, self.row_date.background)
+        v.highlight_when_invalid(self.row_acct, const.ColorSchemes.VALID_ERROR, self.row_acct.background)
+        v.highlight_when_invalid(self.row_amt, const.ColorSchemes.VALID_ERROR, self.row_amt.background)
 
         return v.is_valid()
 

@@ -16,7 +16,7 @@ components:
     name: label_1
     layout_properties: {grid_position: 'LEHWLY,HRMOYO'}
   - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New Template,
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
@@ -75,7 +75,7 @@ components:
       role: null
       align: full
       tooltip: ''
-      placeholder: ''
+      placeholder: Create New
       border: ''
       enabled: true
       foreground: ''
@@ -89,7 +89,7 @@ components:
       background: ''
       bold: false
       underline: false
-      include_placeholder: false
+      include_placeholder: true
     name: dropdown_templ
     layout_properties: {grid_position: 'IUMTEJ,FPTCAC'}
     event_bindings: {change: dropdown_templ_change, show: dropdown_templ_show}

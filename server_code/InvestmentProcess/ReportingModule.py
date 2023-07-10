@@ -7,7 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
-from ..App import Global as glo
+from ..Utils import Constants as const
 from ..System import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
@@ -144,11 +144,11 @@ def build_pnl_data(end_date, start_date, symbols):
         #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
         
         # Handling of Day
-        format_pnl_dict(i, dictstruct_day, sell_date_str, glo.pnl_list_day_mode())
+        format_pnl_dict(i, dictstruct_day, sell_date_str, const.PNLDrillMode.DAY)
         # Handling of Month
-        format_pnl_dict(i, dictstruct_mth, sell_mth_str, glo.pnl_list_mth_mode())
+        format_pnl_dict(i, dictstruct_mth, sell_mth_str, const.PNLDrillMode.MONTH)
         # Handling of Year
-        format_pnl_dict(i, dictstruct_yr, sell_yr_str, glo.pnl_list_yr_mode())
+        format_pnl_dict(i, dictstruct_yr, sell_yr_str, const.PNLDrillMode.YEAR)
         # Handling parent:child relationship dict
         format_pnl_child(dictstruct_child, sell_mth_str, sell_date_str)
         format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
@@ -180,7 +180,7 @@ def generate_init_pnl_list(end_date, start_date, symbols):
             'fee': fee,
             'pnl': pnl,
             'mode': mode, 
-            'action': glo.pnl_list_expand_icon()
+            'action': const.Icons.DATA_DRILLDOWN
         }
         rowstruct += [dictitem]
     
@@ -201,22 +201,22 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
     #sysmod.print_data_debug('dictstruct_child', dictstruct_child)
     #sysmod.print_data_debug('dictstruct_gchild', dictstruct_gchild)
     
-    if action == glo.pnl_list_expand_icon():
+    if action == const.Icons.DATA_DRILLDOWN:
         dictstruct = None
         childaction = ''
         rowstruct = pnl_list
         
-        if mode == glo.pnl_list_yr_mode():
+        if mode == const.PNLDrillMode.YEAR:
             dictstruct = dictstruct_mth
-            childaction = glo.pnl_list_expand_icon()
-        elif mode == glo.pnl_list_mth_mode():
+            childaction = const.Icons.DATA_DRILLDOWN
+        elif mode == const.PNLDrillMode.MONTH:
             dictstruct = dictstruct_day
       
         # Update action from plus to minus
         for rowitem in rowstruct:
             if rowitem['sell_date'] == date_value:
                 rowstruct.remove(rowitem)
-                rowitem['action'] = glo.pnl_list_shrink_icon()
+                rowitem['action'] = const.Icons.DATA_SUMMARIZE
                 rowstruct = rowstruct + [rowitem]
       
         for j in dictstruct_child.get(date_value):
@@ -235,7 +235,7 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
             rowstruct += [dictitem]
       
         #rowstruct = rowstruct + pnl_list
-    elif action == glo.pnl_list_shrink_icon():
+    elif action == const.Icons.DATA_SUMMARIZE:
         # Make a copy of P&L list into rowstruct
         rowstruct = list(pnl_list)
         childlist = dictstruct_child.get(date_value, {})
@@ -250,7 +250,7 @@ def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, a
             # Update action from minus to plus
             if rowitem['sell_date'] == date_value:
                 rowstruct.remove(rowitem)
-                rowitem['action'] = glo.pnl_list_expand_icon()
+                rowitem['action'] = const.Icons.DATA_DRILLDOWN
                 rowstruct = rowstruct + [rowitem]
     else:
         pass

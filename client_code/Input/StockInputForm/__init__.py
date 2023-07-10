@@ -6,10 +6,10 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
-from ...App import Global as glo
-from ...App import Caching as cache
-from ...App.Validation import Validator
-from ...App.Logging import dump, debug, info, warning, error, critical
+from ...Utils import Constants as const
+from ...Utils import Caching as cache
+from ...Utils.Validation import Validator
+from ...Utils.Logging import dump, debug, info, warning, error, critical
 
 class StockInputForm(StockInputFormTemplate):
     def __init__(self, **properties):
@@ -80,7 +80,7 @@ class StockInputForm(StockInputFormTemplate):
         """This method is called when an item is selected"""
         self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
-        if self.dropdown_templ.selected_value != glo.input_stock_default_templ_dropdown():
+        if self.dropdown_templ.selected_value is not None:
             self.button_submit.enabled = True
 
     def dropdown_templ_show(self, **event_args):
@@ -151,9 +151,9 @@ class StockInputForm(StockInputFormTemplate):
         confirm = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
         userconf = alert(content=confirm, 
                         title=f"Alert - Template Deletion",
-                        buttons=[("DELETE", "Y"), ("CANCEL", "N")])
+                        buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
     
-        if userconf == "Y":
+        if userconf == const.Alerts.CONFIRM:
             templ_id = anvil.server.call('get_template_id', to_be_del_templ_name)
             result = anvil.server.call('delete_templates', template_id=templ_id)
             if result is not None and result > 0:

@@ -83,6 +83,18 @@ def mapping_rules_filetype_dropdown():
 def mapping_rules_filetype_reset():
     clear_cache(key='mapping_rules_filetype')
 
+def search_interval_dropdown():
+    return get_cache(key='search_interval', func='select_search_interval')
+
+def search_interval_reset():
+    clear_cache(key='search_interval')
+
+def ccy_dropdown():
+    return get_cache(key='ccy', func='generate_ccy_dropdown')
+
+def ccy_reset():
+    clear_cache(key='ccy')
+    
 # Add IID into the deletion list for delete journals / delete transactions function to process
 def add_deleted_row(iid):
     global cache_dict

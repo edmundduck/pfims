@@ -6,7 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from ..App import Global as glo
+from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
 
@@ -164,6 +164,15 @@ def psgldb_get_submitted_templ_list():
     result.insert(0, '')
     return result
         
+# Return search interval dropdown by querying DB table "search_interval" from Postgres DB
+def psgldb_select_search_interval():
+    conn = sysmod.psqldb_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
+        rows = cur.fetchall()
+        cur.close()
+    return list((row['name'], row['id']) for row in rows)
+
 # Postgres impl END
 
 @anvil.server.callable
@@ -184,7 +193,7 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
 def upsert_brokers(b_id, name, ccy):
-    return psgldb_upsert_brokers(b_id, glo.setting_broker_id_prefix(), name, ccy)
+    return psgldb_upsert_brokers(b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method callable by client modules
@@ -206,6 +215,11 @@ def get_broker_ccy(choice):
 def get_submitted_templ_list():
     return psgldb_get_submitted_templ_list()
 
+@anvil.server.callable
+# DB table "search_interval" select method callable by client modules
+def select_search_interval():
+    return psgldb_select_search_interval()
+
 ###################################################################
 # AnvilDB access methods - Archival START
 
@@ -224,9 +238,6 @@ def anvildb_select_settings():
 
 # DB table "brokers" select method from Anvil DB
 def anvildb_select_brokers():
-    #broker_list = glo.setting_broker_dropdown() + \
-    #              list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
-    #return broker_list
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
 
 # DB table "settings" update/insert method into Anvil DB
@@ -249,9 +260,9 @@ def anvildb_upsert_brokers(b_id, name, ccy):
         # Generate new broker ID
         id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
         if len(id_list) == 0:
-            b_id = glo.setting_broker_id_prefix() +  '1'.zfill(glo.setting_broker_suffix_len())
+            b_id = const.SettingConfig.BROKER_ID_PREFIX +  '1'.zfill(const.SettingConfig.BROKER_SUFFIX_LEN)
         else:
-            b_id = glo.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(glo.setting_broker_suffix_len())
+            b_id = const.SettingConfig.BROKER_ID_PREFIX + str(int((id_list[:1][0])[2:]) + 1).zfill(const.SettingConfig.BROKER_SUFFIX_LEN)
         app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
     else:
         rows = app_tables.brokers.search(id=b_id)

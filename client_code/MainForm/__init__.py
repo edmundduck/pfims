@@ -5,7 +5,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ..App import Global as glo
+from ..Utils import Constants as const
 from ..Admin.SettingForm import SettingForm
 from ..Input.StockInputForm import StockInputForm
 from ..Input.ExpenseInputForm import ExpenseInputForm
@@ -15,7 +15,7 @@ from ..Report.TransactionReportForm import TransactionReportForm
 from ..Report.PnLReportForm import PnLReportForm
 from ..Report.ExpenseReportForm import ExpenseReportForm
 from ..Debug.form_poc_main import form_poc_main
-from ..App.Logging import debug, info, warning, error, critical
+from ..Utils.Logging import debug, info, warning, error, critical
 
 class MainForm(MainFormTemplate):
     def __init__(self, **properties):
@@ -54,27 +54,27 @@ class MainForm(MainFormTemplate):
 
     def colpanel_link_input_click(self, **event_args):
         """This method is called when the link is clicked"""
-        if self.colpanel_link_input.icon == 'fa:caret-right':
+        if self.colpanel_link_input.icon == const.Icons.MENU_SHRINK:
             self.colpanel_input1.visible = True
             self.colpanel_input2.visible = True
-            self.colpanel_link_input.icon = 'fa:caret-down'
-        elif self.colpanel_link_input.icon == 'fa:caret-down':
+            self.colpanel_link_input.icon = const.Icons.MENU_EXPAND
+        elif self.colpanel_link_input.icon == const.Icons.MENU_EXPAND:
             self.colpanel_input1.visible = False
             self.colpanel_input2.visible = False
-            self.colpanel_link_input.icon = 'fa:caret-right'
+            self.colpanel_link_input.icon = const.Icons.MENU_SHRINK
 
     def colpanel_link_reports_click(self, **event_args):
         """This method is called when the link is clicked"""
-        if self.colpanel_link_reports.icon == 'fa:caret-right':
+        if self.colpanel_link_reports.icon == const.Icons.MENU_SHRINK:
             self.colpanel_rpt1.visible = True
             self.colpanel_rpt2.visible = True
             self.colpanel_rpt3.visible = True
-            self.colpanel_link_reports.icon = 'fa:caret-down'
-        elif self.colpanel_link_reports.icon == 'fa:caret-down':
+            self.colpanel_link_reports.icon = const.Icons.MENU_EXPAND
+        elif self.colpanel_link_reports.icon == const.Icons.MENU_EXPAND:
             self.colpanel_rpt1.visible = False
             self.colpanel_rpt2.visible = False
             self.colpanel_rpt3.visible = False
-            self.colpanel_link_reports.icon = 'fa:caret-right'
+            self.colpanel_link_reports.icon = const.Icons.MENU_SHRINK
 
     def colpanel_link_settings_click(self, **event_args):
         """This method is called when the link is clicked"""

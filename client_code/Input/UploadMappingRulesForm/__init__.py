@@ -5,7 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...App import Routing
+from ...Utils import Routing
 
 class UploadMappingRulesForm(UploadMappingRulesFormTemplate):
     def __init__(self, **properties):

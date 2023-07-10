@@ -5,6 +5,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ...Utils import Constants as const
 
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
@@ -16,9 +17,9 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
     
         # Any code you write here will run when the form opens.
         if self.item['pnl'] < 0:
-            self.foreground = 'Red'
+            self.foreground = const.ColorSchemes.AMT_NEG
         else:
-            self.foreground = 'Green'
+            self.foreground = const.ColorSchemes.AMT_POS
 
     def row_link_symbol_click(self, **event_args):
         """This method is called when the link is clicked"""
