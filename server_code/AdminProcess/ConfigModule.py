@@ -171,7 +171,7 @@ def psgldb_select_search_interval():
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
         rows = cur.fetchall()
         cur.close()
-    return list((row['name'], [row['id'], row['name']]) for row in rows)
+    return list((row['name'], row['id']) for row in rows)
 
 # Postgres impl END
 
