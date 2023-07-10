@@ -5,14 +5,14 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...App import Global as glo
-from ...App import Caching as cache
+from ...Utils import Constants as const
+from ...Utils import Caching as cache
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
-    
+        
         # Any code you write here will run when the form opens.
         settings = anvil.server.call('select_settings')
         if len(settings) > 0:
@@ -40,7 +40,7 @@ class SettingForm(SettingFormTemplate):
 
     def dropdown_ccy_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_ccy.items = glo.setting_ccy_dropdown()
+        self.dropdown_ccy.items = cache.ccy_dropdown()
 
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -127,7 +127,7 @@ class SettingForm(SettingFormTemplate):
             self.button_broker_create.enabled = True
             # TODO -- caching offline is required
             self.text_broker_name.text = anvil.server.call('get_broker_name', self.dropdown_broker_list.selected_value)
-            self.dropdown_ccy.selected_value = anvil.server.call('get_broker_ccy', elf.dropdown_broker_list.selected_value)
+            self.dropdown_ccy.selected_value = anvil.server.call('get_broker_ccy', self.dropdown_broker_list.selected_value)
   
     def dropdown_broker_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

@@ -6,7 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from ..App import Global as glo
+from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
 
@@ -193,7 +193,7 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
 def upsert_brokers(b_id, name, ccy):
-    return psgldb_upsert_brokers(b_id, glo.setting_broker_id_prefix(), name, ccy)
+    return psgldb_upsert_brokers(b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method callable by client modules
@@ -260,9 +260,9 @@ def anvildb_upsert_brokers(b_id, name, ccy):
         # Generate new broker ID
         id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
         if len(id_list) == 0:
-            b_id = glo.setting_broker_id_prefix() +  '1'.zfill(glo.setting_broker_suffix_len())
+            b_id = const.SettingConfig.BROKER_ID_PREFIX +  '1'.zfill(const.SettingConfig.BROKER_SUFFIX_LEN)
         else:
-            b_id = glo.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(glo.setting_broker_suffix_len())
+            b_id = const.SettingConfig.BROKER_ID_PREFIX + str(int((id_list[:1][0])[2:]) + 1).zfill(const.SettingConfig.BROKER_SUFFIX_LEN)
         app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
     else:
         rows = app_tables.brokers.search(id=b_id)

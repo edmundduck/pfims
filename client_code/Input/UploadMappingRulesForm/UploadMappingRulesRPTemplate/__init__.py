@@ -5,9 +5,9 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....App import Caching as cache
-from ....App import Global as glo
-from ....App.Logging import dump, debug, info, warning, error, critical
+from ....Utils import Caching as cache
+from ....Utils import Constants as const
+from ....Utils.Logging import dump, debug, info, warning, error, critical
 
 class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def __init__(self, **properties):
@@ -83,9 +83,9 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         confirm = Label(text=f"Proceed mapping <{to_be_del_fname}> deletion by clicking DELETE.")
         userconf = alert(content=confirm,
                         title=f"Alert - mapping Deletion",
-                        buttons=[("DELETE", "Y"), ("CANCEL", "N")])
+                        buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
 
-        if userconf == "Y":
+        if userconf == const.Alerts.CONFIRM:
             if to_be_del_fid not in (None, ''):
                 result = anvil.server.call('delete_mapping', uid=userid, fid=to_be_del_fid)
                 if result is not None and result > 0:
@@ -124,10 +124,10 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
         rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
         
-        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon='fa:info')
+        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=const.Icons.BULLETPOINT)
         fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule])
         b = Button(
-            icon='fa:minus',
+            icon=const.Icons.REMOVE,
             foreground="Blue",
             font_size=12,
             align="left",

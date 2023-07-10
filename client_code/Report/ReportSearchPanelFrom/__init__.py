@@ -6,8 +6,8 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
-from ...App import Global as glo
-from ...App import Caching as cache
+from ...Utils import Constants as const
+from ...Utils import Caching as cache
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
 from ..ExpenseReportForm import ExpenseReportForm
@@ -66,7 +66,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         symbol_list = []
         for i in self.panel_symbol.get_components():
             if isinstance(i, Button):
-                if i.icon == 'fa:minus':
+                if i.icon == const.Icons.REMOVE:
                     symbol_list += [i.text]
         return symbol_list
 
@@ -74,7 +74,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def _rmvall_selected_symbols(self):
         for i in self.panel_symbol.get_components():
             if isinstance(i, Button):
-                if i.icon == 'fa:minus':
+                if i.icon == const.Icons.REMOVE:
                     # Deregister the added symbol from the dictionary in self.tag
                     self.tag['added_symbols'].pop(i.text)
                     i.remove_from_parent()
@@ -143,7 +143,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         """This method is called when the button is clicked"""
         if self.tag['added_symbols'].get(self.dropdown_symbol.selected_value, None) is None:
             b = Button(text=self.dropdown_symbol.selected_value,
-                    icon='fa:minus',
+                    icon=const.Icons.REMOVE,
                     foreground="White",
                     background="Blue")
             self.panel_symbol.add_component(b, name=self.dropdown_symbol.selected_value)

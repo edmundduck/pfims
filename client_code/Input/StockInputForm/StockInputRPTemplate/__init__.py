@@ -5,9 +5,9 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....App import Global as glo
-from ....App import Caching as cache
-from ....App.Validation import Validator
+from ....Utils import Constants as const
+from ....Utils import Caching as cache
+from ....Utils.Validation import Validator
 
 class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -93,5 +93,5 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item['iid'] is not None: cache.add_deleted_row(self.item['iid'])
-        glo.trarent.raise_event('x-disable-submit-button')
+        const.trarent.raise_event('x-disable-submit-button')
         self.remove_from_parent()
