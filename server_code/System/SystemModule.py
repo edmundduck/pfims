@@ -23,6 +23,11 @@ def get_current_userid():
     userid = anvil.users.get_user().get_id()
     return userid[userid.find(",")+1:len(userid)-1] if type(userid) is str else None
 
+# Establish DB connection and determine which env DB to conntact to 
+def db_connect():
+    # TODO
+    pass
+    
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
     connection = psycopg2.connect(
