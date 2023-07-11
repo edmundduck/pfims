@@ -68,7 +68,7 @@ def get_start_date(end_date, interval):
 @anvil.server.callable
 # Return journals for repeating panel to display based on sell and buy date criteria
 def select_journals(end_date, start_date, symbols=[]):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sell_sql = "sell_date <= '{0}'".format(end_date) if end_date is not None else ""
         buy_sql = "buy_date >= '{0}'".format(start_date) if start_date is not None else ""

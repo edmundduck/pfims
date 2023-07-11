@@ -15,7 +15,7 @@ from ..System import SystemModule as sysmod
 @anvil.server.callable
 # Generate mapping dropdown items
 def generate_mapping_dropdown(uid, ftype):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemafin()}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC"
         stmt = cur.mogrify(sql, (uid, ftype, ))
@@ -28,7 +28,7 @@ def generate_mapping_dropdown(uid, ftype):
 @anvil.server.callable
 # Generate mapping file type dropdown items
 def generate_mapping_type_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # TODO change filter_type to mapping_file_type
         sql = f"SELECT * FROM {sysmod.schemarefd()}.filter_type ORDER BY seq ASC"
@@ -41,7 +41,7 @@ def generate_mapping_type_dropdown():
 @anvil.server.callable
 # Generate input expense table definition dropdown items
 def generate_expense_tbl_def_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
@@ -53,7 +53,7 @@ def generate_expense_tbl_def_dropdown():
 @anvil.server.callable
 # Generate input expense table definition dropdown items
 def generate_upload_action_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.upload_action ORDER BY seq ASC"
         cur.execute(sql)
@@ -88,7 +88,7 @@ def generate_mapping_matrix(matrix, col_def):
 
 # Select input expense table definition column ID
 def select_expense_tbl_def_id():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
@@ -100,7 +100,7 @@ def select_expense_tbl_def_id():
 @anvil.server.callable
 # Select the mapping and rules belong to the logged on user, it can be all or particular one only
 def select_mapping_rules(uid, gid=None):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
@@ -135,7 +135,7 @@ def select_mapping_rules(uid, gid=None):
 @anvil.server.callable
 # Select the mapping matrix belong to the logged on user
 def select_mapping_matrix(id):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT datecol AS trandate, acctcol AS account_id, amtcol AS amount, remarkscol AS remarks, stmtdtlcol AS stmt_dtl, lblcol AS labels \
         FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
@@ -152,7 +152,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
     count = None
     dcount = None
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(mapping_rules) > 0:
                 # First insert/update mapping group
@@ -234,7 +234,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
 
 @anvil.server.callable
 def select_mapping_extra_actions(id):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         # TODO in progress
