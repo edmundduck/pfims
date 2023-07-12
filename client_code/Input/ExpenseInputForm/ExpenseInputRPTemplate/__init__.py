@@ -5,10 +5,10 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....App import Global as glo
-from ....App import Caching as cache
-from ....App.Validation import Validator
-from ....App.Logging import dump, debug, info, warning, error, critical
+from ....Utils import Constants as const
+from ....Utils import Caching as cache
+from ....Utils.Validation import Validator
+from ....Utils.Logging import dump, debug, info, warning, error, critical
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -19,7 +19,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.accounts_dropdown()
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
         acct_dict = cache.accounts_dict()
-        debug.log("self.row_acct.selected_value=", self.row_acct.selected_value)
+        dump.log("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
         
@@ -35,7 +35,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
-            debug.log("trimmed_list=", trimmed_list)
+            dump.log("trimmed_list=", trimmed_list)
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
@@ -47,9 +47,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                         if str(j.get("id")).strip() == i:
                             lbl_name = j.get("name").strip()
                     b = Button(text=lbl_name,
-                            # icon='fa:minus',
-                            foreground="White",
-                            background="Blue",
+                            # icon=const.Icons.REMOVE,
+                            foreground=const.ColorSchemes.BUTTON_FG,
+                            background=const.ColorSchemes.BUTTON_BG,
                             font_size=10,
                             align="left",
                             spacing_above="small",
@@ -75,9 +75,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
-                    # icon='fa:minus',
-                    foreground="White",
-                    background="Blue",
+                    # icon=const.Icons.REMOVE,
+                    foreground=const.ColorSchemes.BUTTON_FG,
+                    background=const.ColorSchemes.BUTTON_BG,
                     font_size=10,
                     align="left",
                     spacing_above="small",
@@ -110,9 +110,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
         v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
-        v.highlight_when_invalid(self.row_date, glo.validation_errfield_colour(), self.row_date.background)
-        v.highlight_when_invalid(self.row_acct, glo.validation_errfield_colour(), self.row_acct.background)
-        v.highlight_when_invalid(self.row_amt, glo.validation_errfield_colour(), self.row_amt.background)
+        v.highlight_when_invalid(self.row_date, const.ColorSchemes.VALID_ERROR, self.row_date.background)
+        v.highlight_when_invalid(self.row_acct, const.ColorSchemes.VALID_ERROR, self.row_acct.background)
+        v.highlight_when_invalid(self.row_amt, const.ColorSchemes.VALID_ERROR, self.row_amt.background)
 
         return v.is_valid()
 
@@ -125,7 +125,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.parent.raise_event('x-switch-to-save-button')
-        if self.item.get('iid') is not None: glo.add_deleted_row(self.item['iid'])
+        if self.item.get('iid') is not None: cache.add_deleted_row(self.item['iid'])
         self.remove_from_parent()
 
     def row_date_change(self, **event_args):

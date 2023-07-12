@@ -23,14 +23,26 @@ def get_current_userid():
     userid = anvil.users.get_user().get_id()
     return userid[userid.find(",")+1:len(userid)-1] if type(userid) is str else None
 
+# Establish DB connection and determine which env DB to conntact to 
+def db_connect():
+    return psqldb_connect()
+    
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
-    connection = psycopg2.connect(
-        dbname='pfimsdb',
-        host='europe-west2.793f25ab-3df2-4832-b84a-af6bdc81f2c7.gcp.ybdb.io',
-        port='5433',
-        user=anvil.secrets.get_secret('yugadb_app_usr'),
-        password=anvil.secrets.get_secret('yugadb_app_pw'))
+    if anvil.app.environment.name in 'Dev':
+        connection = psycopg2.connect(
+            dbname=anvil.secrets.get_secret('devdb_name'),
+            host=anvil.secrets.get_secret('devdb_host'),
+            port=anvil.secrets.get_secret('devdb_port'),
+            user=anvil.secrets.get_secret('devdb_app_usr'),
+            password=anvil.secrets.get_secret('devdb_app_pw'))
+    else:
+        connection = psycopg2.connect(
+            dbname=anvil.secrets.get_secret('proddb_name'),
+            host=anvil.secrets.get_secret('proddb_host'),
+            port=anvil.secrets.get_secret('proddb_port'),
+            user=anvil.secrets.get_secret('proddb_app_usr'),
+            password=anvil.secrets.get_secret('proddb_app_pw'))
     return connection
 
 # Return the DB FIN schema name

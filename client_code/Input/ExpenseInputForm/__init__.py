@@ -6,11 +6,11 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
-from ...App import Global as glo
-from ...App import Routing
-from ...App import Caching as cache
-from ...App.Validation import Validator
-from ...App.Logging import dump, debug, info, warning, error, critical
+from ...Utils import Constants as const
+from ...Utils import Routing
+from ...Utils import Caching as cache
+from ...Utils.Validation import Validator
+from ...Utils.Logging import dump, debug, info, warning, error, critical
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
@@ -19,6 +19,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
 
         if tab_id is not None:
@@ -27,21 +28,21 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-            self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())]
+            self.input_repeating_panel.items = [{} for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
         else:
             info.log(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
-        glo.reset_deleted_row()
+        cache.deleted_row_reset()
 
     def _switch_to_submit_button(self, **event_args):
-        self.button_save_exptab.text = "SUBMIT TAB"
-        self.button_save_exptab.background = 'theme:Primary 500'
+        self.button_save_exptab.text = const.ExpenseConfig.BUTTON_SUBMIT_TEXT
+        self.button_save_exptab.background = const.ColorSchemes.THEME_PRIM
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_submit_click)
 
     def _switch_to_save_button(self, **event_args):
-        self.button_save_exptab.text = "SAVE DRAFT"
-        self.button_save_exptab.background = 'theme:Secondary 500'
+        self.button_save_exptab.text = const.ExpenseConfig.BUTTON_DRAFT_TEXT
+        self.button_save_exptab.background = const.ColorSchemes.THEME_SEC
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_save_click)
         
@@ -49,7 +50,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         label_list = []
         for i in self.panel_labels.get_components():
             if isinstance(i, Button):
-                if i.icon == 'fa:minus':
+                if i.icon == const.Icons.REMOVE:
                     label_list += [i.tag]
         return label_list
 
@@ -59,7 +60,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = [{} for i in range(glo.input_expense_row_size())] + self.input_repeating_panel.items
+        self.input_repeating_panel.items = [{} for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -91,8 +92,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', selected_tid)
         self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
-        if len(self.input_repeating_panel.items) < glo.input_expense_row_size():
-            diff = glo.input_expense_row_size() - len(self.input_repeating_panel.items)
+        if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
+            diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
 
@@ -158,16 +159,16 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
         # """ Delete """
-        result_d = anvil.server.call('delete_transactions', tab_id, glo.del_iid)
+        result_d = anvil.server.call('delete_transactions', tab_id, cache.get_deleted_row())
 
         if result_d is not None and result_u is not None:
-            glo.reset_deleted_row()
+            cache.deleted_row_reset()
             self._switch_to_submit_button()
             msg2 = f"Expense tab {tab_name} has been saved successfully."
             info.log(msg2)
         else:
             if result_d is not None:
-                glo.reset_deleted_row()
+                cache.deleted_row_reset()
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
             elif result_u is not None:
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
@@ -198,15 +199,15 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         to_be_del_tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         to_be_del_tab_name = self.dropdown_tabs.selected_value[1] if self.dropdown_tabs.selected_value is not None else None
         msg = Label(text=f"Proceed expense tab <{to_be_del_tab_name}> deletion by clicking DELETE.")
-        userconf = alert(content=msg, title="Confirm Expense Tab Deletion", buttons=[("DELETE", "Y"), ("CANCEL", "N")])
+        userconf = alert(content=msg, title="Confirm Expense Tab Deletion", buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
 
-        if userconf == "Y":
+        if userconf == const.Alerts.CONFIRM:
             result = anvil.server.call('delete_expensetab', tab_id=to_be_del_tab_id)
             if result is not None and result > 0:
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs_show()
                 self.dropdown_tabs.raise_event('change')
-                glo.reset_deleted_row()
+                cache.deleted_row_reset()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 info.log(msg2)
             else:

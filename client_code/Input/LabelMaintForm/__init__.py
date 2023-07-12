@@ -5,9 +5,10 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...App import Routing
-from ...App import Caching as cache
-from ...App.Logging import dump, debug, info, warning, error, critical
+from ...Utils import Routing
+from ...Utils import Caching as cache
+from ...Utils import Constants as const
+from ...Utils.Logging import dump, debug, info, warning, error, critical
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):
@@ -119,9 +120,9 @@ class LabelMaintForm(LabelMaintFormTemplate):
         confirm = Label(text="Proceed label <{lbl_name}> ({lbl_id}) deletion by clicking DELETE.".format(lbl_name=selected_lbl_name, lbl_id=selected_lbl_id))
         userconf = alert(content=confirm,
                         title=f"Alert - Label Deletion",
-                        buttons=[("DELETE", "Y"), ("CANCEL", "N")])
+                        buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
 
-        if userconf == "Y":
+        if userconf == const.Alerts.CONFIRM:
             cache.labels_reset()
             result = anvil.server.call('delete_label', selected_lbl_id)
             if result is not None and result > 0:

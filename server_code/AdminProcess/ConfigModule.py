@@ -6,7 +6,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from ..App import Global as glo
+from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
 
@@ -15,7 +15,7 @@ from ..System import SystemModule as sysmod
 
 # DB table "settings" select method from Postgres DB
 def psqldb_select_settings():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     settings = {}
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM  " + sysmod.schemafin() + ".settings")
@@ -31,7 +31,7 @@ def psqldb_select_settings():
 
 # DB table "brokers" select method from Postgres DB
 def psgldb_select_brokers():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT broker_id, name, ccy FROM  " + sysmod.schemafin() + ".brokers ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
@@ -40,7 +40,7 @@ def psgldb_select_brokers():
 
 # DB table "settings" update/insert method into Postgres DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "INSERT INTO {schema}.settings (app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
         VALUES ('{p1}','{p2}','{p3}'{p4}{p5}) \
@@ -81,7 +81,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 # DB table "brokers" update/insert method into Postgres DB
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
   
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if b_id is None or b_id == '':
@@ -120,7 +120,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
       
 # Return selected broker name by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_name(choice):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT name FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
         result = cur.fetchone()
@@ -128,7 +128,7 @@ def psgldb_get_broker_name(choice):
 
 # Return selected broker CCY by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_ccy(choice):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT ccy FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
         result = cur.fetchone()
@@ -137,7 +137,7 @@ def psgldb_get_broker_ccy(choice):
 # DB table "brokers" delete method in Postgres DB
 def psgldb_delete_brokers(b_id):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("DELETE FROM " + sysmod.schemafin() + ".brokers WHERE broker_id = '" + b_id + "'")
             conn.commit()
@@ -156,7 +156,7 @@ def psgldb_delete_brokers(b_id):
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Postgres DB
 def psgldb_get_submitted_templ_list():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT template_id, template_name FROM " + sysmod.schemafin() + ".templates WHERE submitted=true")
         result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
@@ -164,6 +164,15 @@ def psgldb_get_submitted_templ_list():
     result.insert(0, '')
     return result
         
+# Return search interval dropdown by querying DB table "search_interval" from Postgres DB
+def psgldb_select_search_interval():
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
+        rows = cur.fetchall()
+        cur.close()
+    return list((row['name'], row['id']) for row in rows)
+
 # Postgres impl END
 
 @anvil.server.callable
@@ -184,7 +193,7 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
 def upsert_brokers(b_id, name, ccy):
-    return psgldb_upsert_brokers(b_id, glo.setting_broker_id_prefix(), name, ccy)
+    return psgldb_upsert_brokers(b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method callable by client modules
@@ -206,6 +215,11 @@ def get_broker_ccy(choice):
 def get_submitted_templ_list():
     return psgldb_get_submitted_templ_list()
 
+@anvil.server.callable
+# DB table "search_interval" select method callable by client modules
+def select_search_interval():
+    return psgldb_select_search_interval()
+
 ###################################################################
 # AnvilDB access methods - Archival START
 
@@ -224,9 +238,6 @@ def anvildb_select_settings():
 
 # DB table "brokers" select method from Anvil DB
 def anvildb_select_brokers():
-    #broker_list = glo.setting_broker_dropdown() + \
-    #              list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
-    #return broker_list
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
 
 # DB table "settings" update/insert method into Anvil DB
@@ -249,9 +260,9 @@ def anvildb_upsert_brokers(b_id, name, ccy):
         # Generate new broker ID
         id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
         if len(id_list) == 0:
-            b_id = glo.setting_broker_id_prefix() +  '1'.zfill(glo.setting_broker_suffix_len())
+            b_id = const.SettingConfig.BROKER_ID_PREFIX +  '1'.zfill(const.SettingConfig.BROKER_SUFFIX_LEN)
         else:
-            b_id = glo.setting_broker_id_prefix() + str(int((id_list[:1][0])[2:]) + 1).zfill(glo.setting_broker_suffix_len())
+            b_id = const.SettingConfig.BROKER_ID_PREFIX + str(int((id_list[:1][0])[2:]) + 1).zfill(const.SettingConfig.BROKER_SUFFIX_LEN)
         app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
     else:
         rows = app_tables.brokers.search(id=b_id)

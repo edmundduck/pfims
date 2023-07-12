@@ -7,7 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from ..App import Global as glo
+from ..Utils import Constants as const
 from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod
@@ -28,8 +28,8 @@ def generate_template_dropdown_item(templ_id, templ_name):
 @anvil.server.callable
 # Return template journals for repeating panel to display based on template selection dropdown
 def select_template_journals(templ_choice_str):
-    if not (templ_choice_str is None or templ_choice_str == glo.input_stock_default_templ_dropdown()):
-        conn = sysmod.psqldb_connect()
+    if templ_choice_str is not None:
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.templ_journals WHERE template_id = {p1} ORDER BY sell_date DESC, buy_date DESC, symbol ASC"
             stmt = sql.format(
@@ -47,7 +47,7 @@ def select_template_journals(templ_choice_str):
 # Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 def upsert_journals(tid, rows):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
@@ -94,7 +94,7 @@ def upsert_journals(tid, rows):
 def delete_journals(template_id, iid_list):
     try:
         if len(iid_list) > 0:
-            conn = sysmod.psqldb_connect()
+            conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
                 cur.execute("DELETE FROM " + sysmod.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid IN " + args)
@@ -116,11 +116,11 @@ def delete_journals(template_id, iid_list):
 def save_templates(template_id, template_name, broker_id, del_iid = []):
     try:
         currenttime = datetime.now()
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(del_iid) > 0:
                 delete_journals(template_id, del_iid)
-            if template_id is None or template_id == '' or template_id == glo.input_stock_default_templ_dropdown():
+            if template_id in (None, ''):
                 sql = "INSERT INTO {schema}.templates (template_name, broker_id, submitted, template_create, template_lastsave) \
                 VALUES ('{p1}','{p2}',{p3},'{p4}','{p5}') RETURNING template_id"
                 stmt = sql.format(
@@ -167,7 +167,7 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
 def submit_templates(template_id, submitted):
     try:
         currenttime = datetime.now()
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
                 sql = "INSERT INTO {schema}.templates (template_id, submitted, template_submitted) \
@@ -208,7 +208,7 @@ def submit_templates(template_id, submitted):
 # Delete cascade is implemented in "templ_journals" DB table "template_id" column, hence journals under particular template will be deleted automatically
 def delete_templates(template_id):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("DELETE FROM " + sysmod.schemafin() + ".templates WHERE template_id = " + template_id)
             conn.commit()
@@ -220,18 +220,18 @@ def delete_templates(template_id):
     except psycopg2.OperationalError as err:
         sysmod.print_data_debug("OperationalError in " + delete_templates.__name__, err)
         conn.rollback()
-        # TODO - cur can be referenced before assignment if psqldb_connect fails before cur declared
+        # TODO - cur can be referenced before assignment if db_connect fails before cur declared
         cur.close()
         return None
 
 @anvil.server.callable
 # Return selected template name and selected broker based on template dropdown selection
 def get_selected_template_attr(templ_choice_str):
-    if templ_choice_str is None or templ_choice_str == '' or templ_choice_str == glo.input_stock_default_templ_dropdown():
+    if templ_choice_str in (None, ''):
         row = cfmod.select_settings()
-        return [glo.input_stock_default_templ_name(), row['default_broker'] if row is not None else '']
+        return [None, row['default_broker'] if row is not None else '']
     else:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.templates WHERE template_id='{p1}'"   
             stmt = sql.format(
@@ -241,12 +241,12 @@ def get_selected_template_attr(templ_choice_str):
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
-        return [row['template_name'] if row is not None else glo.input_stock_default_templ_name(), row['broker_id'] if row is not None else '']
+        return [row['template_name'] if row is not None else None, row['broker_id'] if row is not None else '']
   
 @anvil.server.callable
 # Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items
 def generate_template_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.templates WHERE submitted=false ORDER BY template_id ASC"
         stmt = sql.format(
@@ -256,7 +256,6 @@ def generate_template_dropdown():
         rows = cur.fetchall()
         cur.close()
     content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
-    content.insert(0, glo.input_stock_default_templ_dropdown())
     return content
 
 @anvil.server.callable
