@@ -15,14 +15,10 @@ from ..System import SystemModule as sysmod
 
 @anvil.server.callable
 # Generate expense tabs dropdown items
-def generate_expensetabs_dropdown():
+def generate_expensetabs_dropdown(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.expensetab WHERE submitted=FALSE ORDER BY tab_id ASC, tab_name ASC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['tab_name'] + " (" + str(row['tab_id']) + ")", [row['tab_id'], row['tab_name']]) for row in rows)
@@ -36,12 +32,7 @@ def get_selected_expensetab_attr(selected_tab):
     else:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.expensetab WHERE tab_id={p1}"   
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=selected_tab
-            )
-            cur.execute(stmt)
+            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.expensetab WHERE tab_id={selected_tab}")
             row = cur.fetchone()
             cur.close()
         return [row['tab_id'], row['tab_name']]
