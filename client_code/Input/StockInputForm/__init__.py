@@ -17,13 +17,17 @@ class StockInputForm(StockInputFormTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
+        self.userid = anvil.server.call('get_current_userid')
         self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
-        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
+        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', \
+                                                                                      templ_choice_str=self.dropdown_templ.selected_value, \
+                                                                                      userid=self.userid
+                                                                                     )
 
         # Reset on screen change status
         self.disable_submit_button()
@@ -78,7 +82,10 @@ class StockInputForm(StockInputFormTemplate):
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
+        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', \
+                                                                                      templ_choice_str=self.dropdown_templ.selected_value, \
+                                                                                      userid=self.userid
+                                                                                     )
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
         if self.dropdown_templ.selected_value is not None:
             self.button_submit.enabled = True
@@ -89,7 +96,7 @@ class StockInputForm(StockInputFormTemplate):
     
     def dropdown_broker_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker.items = [''] + anvil.server.call('select_brokers')
+        self.dropdown_broker.items = anvil.server.call('select_brokers', self.userid)
 
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""

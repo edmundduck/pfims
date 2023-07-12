@@ -20,10 +20,11 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
+        self.userid = anvil.server.call('get_current_userid')
         self.dropdown_interval.items = cache.search_interval_dropdown()
         self.dropdown_symbol.items = []
     
-        settings = anvil.server.call('select_settings')
+        settings = anvil.server.call('select_settings', self.userid)
         self.dropdown_interval.selected_value = settings.get('default_interval')
         self.time_datefrom.date = settings.get('default_datefrom')
         self.time_dateto.date = settings.get('default_dateto')

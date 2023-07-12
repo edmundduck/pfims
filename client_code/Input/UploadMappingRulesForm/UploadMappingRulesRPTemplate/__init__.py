@@ -15,11 +15,12 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
+        self.userid = anvil.server.call('get_current_userid')
         self.row_dropdown_type.items = cache.mapping_rules_filetype_dropdown()
         self.row_dropdown_datacol.items = cache.expense_tbl_def_dropdown()
         self.row_dropdown_extraact.items = cache.mapping_rules_extra_action_dropdown()
         self.row_dropdown_lbl.items = cache.labels_dropdown()
-        self.row_dropdown_acct.items = cache.accounts_dropdown()
+        self.row_dropdown_acct.items = cache.accounts_dropdown(userid=self.userid)
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:

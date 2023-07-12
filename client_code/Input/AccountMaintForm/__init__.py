@@ -24,7 +24,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
     def dropdown_acct_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_acct_list.items = cache.accounts_dropdown()
+        self.dropdown_acct_list.items = cache.accounts_dropdown(userid=self.userid)
         self.dropdown_acct_list.selected_value = None
         self.button_accounts_update.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
         self.button_accounts_delete.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
@@ -55,6 +55,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         """This method is called when the button is clicked"""
         acct_name = self.text_acct_name.text
         acct_id = anvil.server.call('create_account',
+                                    userid=self.userid,
                                     name=acct_name,
                                     ccy=self.dropdown_ccy.selected_value, 
                                     valid_from=self.date_valid_from.date,
@@ -68,7 +69,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         else:
             """ Reflect the change in accounts dropdown """
             cache.accounts_reset()
-            self.dropdown_acct_list.items = cache.accounts_dropdown()
+            self.dropdown_acct_list.items = cache.accounts_dropdown(userid=self.userid)
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             msg = f"Account {acct_name} ({acct_id}) has been created successfully."
             info.log(msg)
@@ -94,7 +95,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         else:
             """ Reflect the change in accounts dropdown """
             cache.accounts_reset()
-            self.dropdown_acct_list.items = cache.accounts_dropdown()
+            self.dropdown_acct_list.items = cache.accounts_dropdown(userid=self.userid)
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             msg = f"Account {acct_name} ({acct_id}) has been updated successfully."
             info.log(msg)

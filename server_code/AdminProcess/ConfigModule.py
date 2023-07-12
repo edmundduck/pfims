@@ -30,10 +30,10 @@ def psqldb_select_settings(userid):
     return settings
 
 # DB table "brokers" select method from Postgres DB
-def psgldb_select_brokers():
+def psgldb_select_brokers(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers ORDER BY broker_id ASC")
+        cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
         cur.close()
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
@@ -157,8 +157,8 @@ def select_settings(userid):
 
 @anvil.server.callable
 # DB table "brokers" select method callable by client modules
-def select_brokers():
-    return psgldb_select_brokers()
+def select_brokers(userid):
+    return psgldb_select_brokers(userid)
 
 @anvil.server.callable
 # DB table "settings" update/insert method callable by client modules

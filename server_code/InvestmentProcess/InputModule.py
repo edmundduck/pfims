@@ -226,9 +226,9 @@ def delete_templates(template_id):
 
 @anvil.server.callable
 # Return selected template name and selected broker based on template dropdown selection
-def get_selected_template_attr(templ_choice_str):
+def get_selected_template_attr(templ_choice_str, userid):
     if templ_choice_str in (None, ''):
-        row = cfmod.select_settings()
+        row = cfmod.select_settings(userid)
         return [None, row['default_broker'] if row is not None else '']
     else:
         conn = sysmod.db_connect()

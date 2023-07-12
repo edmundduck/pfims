@@ -16,9 +16,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.row_acct.items = cache.accounts_dropdown()
+        self.userid = anvil.server.call('get_current_userid')
+        self.row_acct.items = cache.accounts_dropdown(userid=self.userid)
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
-        acct_dict = cache.accounts_dict()
+        acct_dict = cache.accounts_dict(self.userid)
         dump.log("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]

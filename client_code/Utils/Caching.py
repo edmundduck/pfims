@@ -11,15 +11,15 @@ from .Logging import dump, debug, info, warning, error, critical
 cache_dict = {}
 
 # Return a list for accounts dropdown for Expense Input and Upload
-def accounts_dropdown():
-    return get_cache(key='accounts', func='generate_accounts_dropdown')
+def accounts_dropdown(userid):
+    return get_cache('accounts', 'generate_accounts_dropdown', userid)
 
 # Return a dict for accounts for Expense Input and Upload
-def accounts_dict():
-    return get_cache_dict(key='accounts', func='generate_accounts_dropdown')
+def accounts_dict(userid):
+    return get_cache_dict('accounts', 'generate_accounts_dropdown', userid)
 
 def accounts_reset():
-    clear_cache(key='accounts')
+    clear_cache('accounts')
 
 # Return a list for labels dropdown for Expense Input and Upload
 def labels_dropdown():
@@ -120,23 +120,23 @@ def deleted_row_reset():
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
-def get_cache(key, func):
+def get_cache(key, func, *args):
     global cache_dict
     if cache_dict is None: cache_dict = {}
     if cache_dict.get(key, None) is None:
-        cache_dict[key] = anvil.server.call(func)
+        cache_dict[key] = anvil.server.call(func, *args)
         debug.log(f"get_cache cache loaded (key={key}, func={func})")
     return cache_dict.get(key, None)
 
 # Generic get and store database data as cache in a form of dictionary
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
-def get_cache_dict(key, func):
+def get_cache_dict(key, func, *args):
     global cache_dict
     dict_key = "".join((key, '_dict'))
     if cache_dict.get(dict_key, None) is None:
         result = {}
-        for i in get_cache(key, func):
+        for i in get_cache(key, func, *args):
             result[i[1][0]] = i[1][1]
         cache_dict[dict_key] = result
         debug.log(f"get_cache_dict cache loaded (dict_key={dict_key}, func={func})")
