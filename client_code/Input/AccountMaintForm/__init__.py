@@ -16,6 +16,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
+        self.userid = anvil.server.call('get_current_userid')
     
     def button_exp_input_click(self, **event_args):
         """This method is called when the button is clicked"""

@@ -13,11 +13,10 @@ from ..System import SystemModule as sysmod
 
 @anvil.server.callable
 # Generate accounts dropdown items for account maintenance form
-def generate_accounts_dropdown():
+def generate_accounts_dropdown(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
         rows = cur.fetchall()
         cur.close()
     return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
