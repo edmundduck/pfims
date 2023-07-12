@@ -15,7 +15,7 @@ from ..System import SystemModule as sysmod
 
 # DB table "settings" select method from Postgres DB
 def psqldb_select_settings():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     settings = {}
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM  " + sysmod.schemafin() + ".settings")
@@ -31,7 +31,7 @@ def psqldb_select_settings():
 
 # DB table "brokers" select method from Postgres DB
 def psgldb_select_brokers():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT broker_id, name, ccy FROM  " + sysmod.schemafin() + ".brokers ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
@@ -40,7 +40,7 @@ def psgldb_select_brokers():
 
 # DB table "settings" update/insert method into Postgres DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "INSERT INTO {schema}.settings (app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
         VALUES ('{p1}','{p2}','{p3}'{p4}{p5}) \
@@ -81,7 +81,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 # DB table "brokers" update/insert method into Postgres DB
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
   
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if b_id is None or b_id == '':
@@ -120,7 +120,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
       
 # Return selected broker name by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_name(choice):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT name FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
         result = cur.fetchone()
@@ -128,7 +128,7 @@ def psgldb_get_broker_name(choice):
 
 # Return selected broker CCY by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_ccy(choice):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT ccy FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
         result = cur.fetchone()
@@ -137,7 +137,7 @@ def psgldb_get_broker_ccy(choice):
 # DB table "brokers" delete method in Postgres DB
 def psgldb_delete_brokers(b_id):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("DELETE FROM " + sysmod.schemafin() + ".brokers WHERE broker_id = '" + b_id + "'")
             conn.commit()
@@ -156,7 +156,7 @@ def psgldb_delete_brokers(b_id):
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Postgres DB
 def psgldb_get_submitted_templ_list():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute("SELECT template_id, template_name FROM " + sysmod.schemafin() + ".templates WHERE submitted=true")
         result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
@@ -166,7 +166,7 @@ def psgldb_get_submitted_templ_list():
         
 # Return search interval dropdown by querying DB table "search_interval" from Postgres DB
 def psgldb_select_search_interval():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
         rows = cur.fetchall()

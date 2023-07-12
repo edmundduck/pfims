@@ -16,7 +16,7 @@ from ..System import SystemModule as sysmod
 @anvil.server.callable
 # Generate expense tabs dropdown items
 def generate_expensetabs_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.expensetab WHERE submitted=FALSE ORDER BY tab_id ASC, tab_name ASC"
         stmt = sql.format(
@@ -34,7 +34,7 @@ def get_selected_expensetab_attr(selected_tab):
     if selected_tab is None or selected_tab == '':
         return [None, None]
     else:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.expensetab WHERE tab_id={p1}"   
             stmt = sql.format(
@@ -50,7 +50,7 @@ def get_selected_expensetab_attr(selected_tab):
 # Return transactions for repeating panel to display based on expense tab selection dropdown
 def select_transactions(tid):
     if tid is not None:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.exp_transactions WHERE tab_id = {p1} ORDER BY trandate DESC, iid DESC"
             stmt = sql.format(
@@ -70,7 +70,7 @@ def upsert_transactions(tid, rows):
     conn = None
     count = None
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
@@ -119,7 +119,7 @@ def delete_transactions(tid, iid_list):
     count = None
     try:
         if len(iid_list) > 0:
-            conn = sysmod.psqldb_connect()
+            conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
                 sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {p1} AND iid IN {p2}"
@@ -148,7 +148,7 @@ def delete_transactions(tid, iid_list):
 def save_expensetab(id, name):
     try:
         currenttime = datetime.now()
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if id is None or id == '':
                 sql = "INSERT INTO {schema}.expensetab (tab_name, submitted, tab_create, tab_lastsave) \
@@ -189,7 +189,7 @@ def save_expensetab(id, name):
 def submit_expensetab(id, submitted):
     try:
         currenttime = datetime.now()
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
                 sql = "UPDATE {schema}.expensetab SET submitted={p2}, tab_submitted='{p3}' \
@@ -227,7 +227,7 @@ def submit_expensetab(id, submitted):
 # Delete cascade is implemented in "exp_transactions" DB table "tab_id" column, hence transactions under particular tab will be deleted automatically
 def delete_expensetab(tab_id):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute("DELETE FROM {schema}.expensetab WHERE tab_id = {p1}".format(schema=sysmod.schemafin(), p1=tab_id))
             conn.commit()

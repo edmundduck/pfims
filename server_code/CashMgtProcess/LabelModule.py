@@ -15,7 +15,7 @@ from fuzzywuzzy import fuzz
 @anvil.server.callable
 # Generate labels dropdown items
 def generate_labels_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
         cur.execute(sql)
@@ -28,7 +28,7 @@ def generate_labels_dropdown():
 @anvil.server.callable
 # Generate labels into list
 def generate_labels_list():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
         cur.execute(sql)
@@ -42,7 +42,7 @@ def get_selected_label_attr(selected_lbl):
     if selected_lbl is None or selected_lbl == '':
         return [None, None, None, True]
     else:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT * FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())   
             stmt = cur.mogrify(sql, (selected_lbl, ))
@@ -54,7 +54,7 @@ def get_selected_label_attr(selected_lbl):
 @anvil.server.callable
 # Generate labels dropdown items
 def generate_labels_mapping_action_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.label_mapping_action ORDER BY seq ASC".format(schema=sysmod.schemarefd())
         cur.execute(sql)
@@ -67,7 +67,7 @@ def generate_labels_mapping_action_dropdown():
 # Create label
 def create_label(labels):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(labels) > 0:
                 mogstr = ', '.join(cur.mogrify("(%s, %s, %s)", (label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
@@ -89,7 +89,7 @@ def create_label(labels):
 # Update label
 def update_label(id, name, keywords, status):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "UPDATE {schema}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s".format(schema=sysmod.schemafin())
             stmt = cur.mogrify(sql, (name, keywords, status, id))
@@ -111,7 +111,7 @@ def update_label(id, name, keywords, status):
 # Delete label
 def delete_label(id):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "DELETE FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())
             stmt = cur.mogrify(sql, (id, ))
