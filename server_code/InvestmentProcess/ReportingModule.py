@@ -72,7 +72,9 @@ def select_journals(userid, start_date, end_date, symbols=[]):
         conn_sql1 = " AND " if sell_sql or buy_sql or symbol_sql else ""
         conn_sql2 = " AND " if sell_sql and (buy_sql or symbol_sql) else ""
         conn_sql3 = " AND " if (sell_sql or buy_sql) and symbol_sql else ""
-        sql = f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE userid = {userid} {conn_sql1} {sell_sql} {conn_sql2} {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
+        sql = f"SELECT * FROM {sysmod.schemafin()}.templ_journals j, {sysmod.schemafin()}.templates t \
+        WHERE t.userid = {userid} AND t.template_id = j.template_id \
+        {conn_sql1} {sell_sql} {conn_sql2} {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
