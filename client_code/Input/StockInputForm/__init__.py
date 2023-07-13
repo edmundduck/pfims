@@ -92,7 +92,7 @@ class StockInputForm(StockInputFormTemplate):
 
     def dropdown_templ_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+        self.dropdown_templ.items = anvil.server.call('generate_template_dropdown', userid=self.userid)
     
     def dropdown_broker_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -127,7 +127,7 @@ class StockInputForm(StockInputFormTemplate):
 
         if result is not None:
             """ Reflect the change in template dropdown """
-            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown', userid=self.userid)
             self.dropdown_templ.selected_value = anvil.server.call('generate_template_dropdown_item', templ_id, templ_name)
             self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
             self.button_submit.enabled = True
@@ -190,7 +190,7 @@ class StockInputForm(StockInputFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown', userid=self.userid)
             self.dropdown_templ.raise_event('change')
         
             msg = f"Template {to_be_submitted_templ_name} has been submitted.\n It can be viewed in the transaction list report only."

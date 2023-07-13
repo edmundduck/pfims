@@ -193,10 +193,10 @@ def get_selected_template_attr(templ_choice_str, userid):
   
 @anvil.server.callable
 # Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items
-def generate_template_dropdown():
+def generate_template_dropdown(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE submitted=false ORDER BY template_id ASC")
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
         rows = cur.fetchall()
         cur.close()
     return list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
