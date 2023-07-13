@@ -130,10 +130,10 @@ def psgldb_delete_brokers(b_id):
 
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Postgres DB
-def psgldb_get_submitted_templ_list():
+def psgldb_get_submitted_templ_list(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE submitted=true")
+        cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
         result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
         cur.close()
     result.insert(0, '')
@@ -187,8 +187,8 @@ def get_broker_ccy(choice):
 
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items
-def get_submitted_templ_list():
-    return psgldb_get_submitted_templ_list()
+def get_submitted_templ_list(userid):
+    return psgldb_get_submitted_templ_list(userid)
 
 @anvil.server.callable
 # DB table "search_interval" select method callable by client modules

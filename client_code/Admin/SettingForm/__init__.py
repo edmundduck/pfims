@@ -138,7 +138,7 @@ class SettingForm(SettingFormTemplate):
 
     def dropdown_sub_templ_list_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+        self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list', userid=self.userid)
 
     def dropdown_sub_templ_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -152,7 +152,7 @@ class SettingForm(SettingFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+            self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list', userid=self.userid)
             n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
         else:
             n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=to_be_enabled_templ_name))
