@@ -104,6 +104,7 @@ class StockInputForm(StockInputFormTemplate):
         templ_name = self.templ_name.text
         broker_id = self.dropdown_broker.selected_value
         templ_id = anvil.server.call('save_templates',
+                                     userid=self.userid,
                                      template_id=templ_id,
                                      template_name=templ_name, 
                                      broker_id=broker_id,

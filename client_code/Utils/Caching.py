@@ -22,30 +22,30 @@ def accounts_reset():
     clear_cache('accounts')
 
 # Return a list for labels dropdown for Expense Input and Upload
-def labels_dropdown():
-    return get_cache(key='labels', func='generate_labels_dropdown')
+def labels_dropdown(userid):
+    return get_cache('labels', 'generate_labels_dropdown', userid)
 
 # Return a dict for labels for Expense Input and Upload
 # Not using generic get_cache_dict function as it involves eval() issue requiring special handling
-def labels_dict():
+def labels_dict(userid):
     global cache_dict
     key='labels_dict'
     if cache_dict is None: cache_dict = {}
     result = cache_dict.get(key, {})
     if not result:
-        for i in labels_dropdown():
+        for i in labels_dropdown(userid):
             # Case 001 - string dict key handling review
             result[str(eval(i[1])['id'])] = eval(i[1])['text']
         cache_dict[key] = result
     return result
 
-def labels_list():
-    return get_cache(key='labels_list', func='generate_labels_list')
+def labels_list(userid):
+    return get_cache('labels_list', 'generate_labels_list', userid)
 
 def labels_reset():
-    clear_cache(key='labels_list')
-    clear_cache(key='labels_dict')
-    clear_cache(key='labels')
+    clear_cache('labels_list')
+    clear_cache('labels_dict')
+    clear_cache('labels')
 
 # Return a list for labels mapping action dropdown for Expense Input and Upload
 def labels_mapping_action_dropdown():

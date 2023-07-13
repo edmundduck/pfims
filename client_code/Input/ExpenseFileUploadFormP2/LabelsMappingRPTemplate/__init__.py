@@ -14,8 +14,9 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
+        self.userid = anvil.server.call('get_current_userid')
         self.dropdown_lbl_action.items = cache.labels_mapping_action_dropdown()
-        self.dropdown_lbl_map_to.items = cache.labels_dropdown()
+        self.dropdown_lbl_map_to.items = cache.labels_dropdown(self.userid)
         self.hidden_lbl_action.text = None
 
         # Prefill "labels map to" dropdown by finding high proximity choices

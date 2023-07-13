@@ -19,6 +19,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.userid = anvil.server.call('get_current_userid')
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
 
@@ -72,7 +73,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_labels.items = cache.labels_dropdown()
+        self.dropdown_labels.items = cache.labels_dropdown(self.userid)
 
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -84,7 +85,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def dropdown_tabs_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown', self.userid)
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
 
     def dropdown_tabs_change(self, **event_args):
@@ -146,7 +147,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
+        tab_id = anvil.server.call('save_expensetab', userid=self.userid, id=tab_id, name=tab_name)
         if tab_id is None or tab_id <= 0:
             msg = f"ERROR: Fail to save expense tab {tab_name}."
             error.log(msg)
@@ -154,7 +155,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """ Reflect the change in template dropdown """
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown', self.userid)
         self.dropdown_tabs.selected_value = [tab_id, tab_name]
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
@@ -185,7 +186,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+            self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown', self.userid)
             self.dropdown_tabs.raise_event('change')
             msg = f"Expense tab {tab_name} has been submitted."
             info.log(msg)
