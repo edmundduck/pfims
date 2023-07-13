@@ -16,7 +16,7 @@ from ..System import SystemModule as sysmod
 # DB table "settings" select method from Postgres DB
 def psqldb_select_settings(userid):
     conn = sysmod.db_connect()
-    settings = {}
+    settings = None
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto FROM {sysmod.schemafin()}.settings")
         for i in cur.fetchall():

@@ -16,7 +16,7 @@ class SettingForm(SettingFormTemplate):
         # Any code you write here will run when the form opens.
         self.userid = anvil.server.call('get_current_userid')
         settings = anvil.server.call('select_settings', self.userid)
-        if len(settings) > 0:
+        if settings is not None and len(settings) > 0:
             self.dropdown_default_broker.selected_value = settings.get('default_broker')
             self.dropdown_interval.selected_value = settings.get('default_interval')
             self.time_datefrom.date = settings.get('default_datefrom')

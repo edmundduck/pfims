@@ -182,7 +182,7 @@ def delete_templates(template_id):
 def get_selected_template_attr(templ_choice_str, userid):
     if templ_choice_str in (None, ''):
         row = cfmod.select_settings(userid)
-        print(f"row={row}, row['default_brokers']={row['default_broker']}")
+        print(f"row={row}")
         return [None, row['default_broker'] if row is not None else '']
     else:
         conn = sysmod.db_connect()
