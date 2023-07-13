@@ -111,21 +111,15 @@ def save_templates(userid, template_id, template_name, broker_id, del_iid = []):
         currenttime = datetime.now()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            print(del_iid)
             if len(del_iid) > 0:
                 delete_journals(template_id, del_iid)
             if template_id in (None, ''):
                 sql = f"INSERT INTO {sysmod.schemafin()}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
                 VALUES ({userid},'{template_name}','{broker_id}',False,'{currenttime}','{currenttime}') RETURNING template_id"
             else:
-                sql = f"INSERT INTO {sysmod.schemafin()}.templates (template_id, template_name, broker_id, submitted, template_create, template_lastsave) \
-                VALUES ('{template_id}','{template_name}','{broker_id}',False,'{currenttime}','{currenttime}') ON CONFLICT (template_id) DO UPDATE SET \
-                template_name='{template_name}', \
-                broker_id='{broker_id}', \
-                submitted=False, \
-                template_create='{currenttime}', \
-                template_lastsave='{currenttime}' \
-                RETURNING template_id"
+                sql = f"UPDATE {sysmod.schemafin()}.templates SET template_name = '{template_name}', broker_id = '{broker_id}', \
+                submitted = False, template_create = '{currenttime}', template_lastsave = '{currenttime}' \
+                WHERE template_id = '{template_id}' RETURNING template_id"
             cur.execute(sql)
             conn.commit()
             tid = cur.fetchone()
@@ -147,14 +141,12 @@ def submit_templates(template_id, submitted):
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
-                sql = f"INSERT INTO {sysmod.schemafin()}.templates (template_id, submitted, template_submitted) \
-                VALUES ('{template_id}',{submitted},'{currenttime}') ON CONFLICT (template_id) DO UPDATE SET \
-                submitted={submitted}, template_submitted='{currenttime}'"
+                sql = f"UPDATE {sysmod.schemafin()}.templates SET submitted = {submitted}, \
+                template_submitted = '{currenttime}' WHERE template_id = '{template_id}'"
             else:
-                sql = f"INSERT INTO {sysmod.schemafin()}.templates (template_id, submitted) \
-                VALUES ('{template_id}',{submitted}) ON CONFLICT (template_id) DO UPDATE SET \
-                submitted={submitted}"
-            cur.execute(stmt)
+                sql = f"UPDATE {sysmod.schemafin()}.templates SET submitted = {submitted} \
+                WHERE template_id = '{template_id}'"
+            cur.execute(sql)
             conn.commit()
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Templates (id:{0}) submission or reversal fail.".format(template_id))
             return cur.rowcount
