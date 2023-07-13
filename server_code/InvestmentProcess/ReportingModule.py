@@ -66,15 +66,16 @@ def get_start_date(end_date, interval):
 def select_journals(userid, start_date, end_date, symbols=[]):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sell_sql = "sell_date <= '{0}'".format(end_date) if end_date is not None else ""
-        buy_sql = "buy_date >= '{0}'".format(start_date) if start_date is not None else ""
-        symbol_sql = "symbol IN ({0})".format(",".join("'" + i + "'" for i in symbols)) if len(symbols) > 0 else ""
+        sell_sql = "j.sell_date <= '{0}'".format(end_date) if end_date is not None else ""
+        buy_sql = "j.buy_date >= '{0}'".format(start_date) if start_date is not None else ""
+        symbol_sql = "j.symbol IN ({0})".format(",".join("'" + i + "'" for i in symbols)) if len(symbols) > 0 else ""
         conn_sql1 = " AND " if sell_sql or buy_sql or symbol_sql else ""
         conn_sql2 = " AND " if sell_sql and (buy_sql or symbol_sql) else ""
         conn_sql3 = " AND " if (sell_sql or buy_sql) and symbol_sql else ""
-        sql = f"SELECT * FROM {sysmod.schemafin()}.templ_journals j, {sysmod.schemafin()}.templates t \
-        WHERE t.userid = {userid} AND t.template_id = j.template_id \
-        {conn_sql1} {sell_sql} {conn_sql2} {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
+        sql = f"SELECT j.iid, j.template_id, j.sell_date, j.buy_date, j.symbol, j.qty, j.sales, j.cost, j.fee, \
+        j.sell_price, j.buy_price, j.pnl FROM {sysmod.schemafin()}.templ_journals j, {sysmod.schemafin()}.templates t \
+        WHERE t.userid = {userid} AND t.template_id = j.template_id {conn_sql1} {sell_sql} {conn_sql2} \
+        {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
