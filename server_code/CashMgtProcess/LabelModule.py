@@ -14,11 +14,10 @@ from fuzzywuzzy import fuzz
 
 @anvil.server.callable
 # Generate labels dropdown items
-def generate_labels_dropdown():
+def generate_labels_dropdown(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
     # Case 001 - string dict key handling review
@@ -27,24 +26,23 @@ def generate_labels_dropdown():
 
 @anvil.server.callable
 # Generate labels into list
-def generate_labels_list():
+def generate_labels_list(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
     return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
 
 @anvil.server.callable
 # Get selected label attributes
-def get_selected_label_attr(selected_lbl):
+def get_selected_label_attr(userid, selected_lbl):
     if selected_lbl is None or selected_lbl == '':
         return [None, None, None, True]
     else:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())   
+            sql = f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} AND id=%s"  
             stmt = cur.mogrify(sql, (selected_lbl, ))
             cur.execute(stmt)
             row = cur.fetchone()
@@ -56,8 +54,7 @@ def get_selected_label_attr(selected_lbl):
 def generate_labels_mapping_action_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.label_mapping_action ORDER BY seq ASC".format(schema=sysmod.schemarefd())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.label_mapping_action ORDER BY seq ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['action'], [row['id'], row['action']]) for row in rows)
@@ -65,13 +62,13 @@ def generate_labels_mapping_action_dropdown():
 
 @anvil.server.callable
 # Create label
-def create_label(labels):
+def create_label(userid, labels):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(labels) > 0:
-                mogstr = ', '.join(cur.mogrify("(%s, %s, %s)", (label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
-                stmt = "INSERT INTO {schema}.labels (name, keywords, status) VALUES %s RETURNING id".format(schema=sysmod.schemafin())
+                mogstr = ', '.join(cur.mogrify("(%s, %s, %s, %s)", (userid, label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
+                stmt = f"INSERT INTO {sysmod.schemafin()}.labels (userid, name, keywords, status) VALUES %s RETURNING id"
                 cur.execute(stmt % mogstr)
                 conn.commit()
                 return [r['id'] for r in cur.fetchall()]
@@ -91,19 +88,17 @@ def update_label(id, name, keywords, status):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s".format(schema=sysmod.schemafin())
+            sql = f"UPDATE {sysmod.schemafin()}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s"
             stmt = cur.mogrify(sql, (name, keywords, status, id))
             cur.execute(stmt)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
-            cur.close()
-        return count
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
+            return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + update_label.__name__, err)
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
@@ -113,19 +108,17 @@ def delete_label(id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())
+            sql = f"DELETE FROM {sysmod.schemafin()}.labels WHERE id=%s"
             stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
-            cur.close()
-        return count
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
+            return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_label.__name__, err)
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 

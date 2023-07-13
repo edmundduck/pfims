@@ -13,11 +13,10 @@ from ..System import SystemModule as sysmod
 
 @anvil.server.callable
 # Generate accounts dropdown items for account maintenance form
-def generate_accounts_dropdown():
+def generate_accounts_dropdown(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.accounts ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
         rows = cur.fetchall()
         cur.close()
     return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
@@ -27,8 +26,7 @@ def generate_accounts_dropdown():
 def generate_ccy_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.ccy ORDER BY common_seq ASC, abbv ASC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.ccy ORDER BY common_seq ASC, abbv ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
@@ -37,7 +35,7 @@ def generate_ccy_dropdown():
 @anvil.server.callable
 # Get selected account attributes
 def get_selected_account_attr(selected_acct):
-    if selected_acct is None or selected_acct == '':
+    if selected_acct in (None, ''):
         return [None, None, None, None, None, True]
     else:
         conn = sysmod.db_connect()
@@ -51,25 +49,25 @@ def get_selected_account_attr(selected_acct):
 
 @anvil.server.callable
 # Create account
-def create_account(name, ccy, valid_from, valid_to, status):
+def create_account(userid, name, ccy, valid_from, valid_to, status):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.accounts (name, ccy, valid_from, valid_to, status) \
-            VALUES (%s,%s,%s,%s,%s) RETURNING id".format(schema=sysmod.schemafin())
-            stmt = cur.mogrify(sql, (name, ccy, valid_from, valid_to, status))
+            sql = "INSERT INTO {schema}.accounts (userid, name, ccy, valid_from, valid_to, status) \
+            VALUES (%s,%s,%s,%s,%s,%s) RETURNING id".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (userid, name, ccy, valid_from, valid_to, status))
             cur.execute(stmt)
             conn.commit()
             id = cur.fetchone()
-            if id['id'] < 0:
-                    raise psycopg2.OperationalError("Account ({0}) creation fail.".format(name))
-            cur.close()
-        return id['id']
-    except psycopg2.OperationalError as err:
+            if id['id'] < 0: raise psycopg2.OperationalError("Account ({0}) creation fail.".format(name))
+            return id['id']
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + create_accounts.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Update account
@@ -81,16 +79,15 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
             stmt = cur.mogrify(sql, (name, ccy, valid_from, valid_to, status, id))
             cur.execute(stmt)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Account ({0}) update fail.".format(name))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) update fail.".format(name))
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + update_account.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Delete account
@@ -102,13 +99,12 @@ def delete_account(id):
             stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(name))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(name))
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_account.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None

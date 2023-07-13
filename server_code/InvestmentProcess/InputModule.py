@@ -31,15 +31,10 @@ def select_template_journals(templ_choice_str):
     if templ_choice_str is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.templ_journals WHERE template_id = {p1} ORDER BY sell_date DESC, buy_date DESC, symbol ASC"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=get_template_id(templ_choice_str)
-            )
-            cur.execute(stmt)
+            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {get_template_id(templ_choice_str)} ORDER BY sell_date DESC, buy_date DESC, symbol ASC")
             rows = cur.fetchall()
             cur.close()
-        return list(rows)
+            return list(rows)
     return None
 
 @anvil.server.callable
@@ -77,17 +72,16 @@ def upsert_journals(tid, rows):
                         p1=args
                     ))
                 conn.commit()
-                count = cur.rowcount
-                if count <= 0:
-                    raise psycopg2.OperationalError("Journals (template id:{0}) creation or update fail.".format(tid))
-                cur.close()
-                return count
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Journals (template id:{0}) creation or update fail.".format(tid))
+                return cur.rowcount
             return 0
-    except psycopg2.OperationalError as err:
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + upsert_journals.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
     
 @anvil.server.callable
 # Delete journals from "templ_journals" DB table
@@ -97,23 +91,22 @@ def delete_journals(template_id, iid_list):
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
-                cur.execute("DELETE FROM " + sysmod.schemafin() + ".templ_journals WHERE template_id = " + template_id + " AND iid IN " + args)
+                cur.execute(f"DELETE FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {template_id} AND iid IN {args}")
                 conn.commit()
-                count = cur.rowcount
-                if count <= 0:
-                    raise psycopg2.OperationalError("Journals (template id:{0}) deletion fail.".format(template_id))
-                cur.close()
-            return count
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Journals (template id:{0}) deletion fail.".format(template_id))
+                return cur.rowcount
         return 0
-    except psycopg2.OperationalError as err:
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_journals.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Insert or update templates into "templates" DB table with time handling logic
-def save_templates(template_id, template_name, broker_id, del_iid = []):
+def save_templates(userid, template_id, template_name, broker_id, del_iid = []):
     try:
         currenttime = datetime.now()
         conn = sysmod.db_connect()
@@ -121,46 +114,24 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
             if len(del_iid) > 0:
                 delete_journals(template_id, del_iid)
             if template_id in (None, ''):
-                sql = "INSERT INTO {schema}.templates (template_name, broker_id, submitted, template_create, template_lastsave) \
-                VALUES ('{p1}','{p2}',{p3},'{p4}','{p5}') RETURNING template_id"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=template_name,
-                    p2=broker_id,
-                    p3=False,
-                    p4=currenttime,
-                    p5=currenttimer
-                )
+                sql = f"INSERT INTO {sysmod.schemafin()}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
+                VALUES ({userid},'{template_name}','{broker_id}',False,'{currenttime}','{currenttime}') RETURNING template_id"
             else:
-                sql = "INSERT INTO {schema}.templates (template_id, template_name, broker_id, submitted, template_create, template_lastsave) \
-                VALUES ('{p1}','{p2}','{p3}',{p4},'{p5}','{p6}') ON CONFLICT (template_id) DO UPDATE SET \
-                template_name='{p2}', \
-                broker_id='{p3}', \
-                submitted={p4}, \
-                template_create='{p5}', \
-                template_lastsave='{p6}' \
-                RETURNING template_id"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=template_id,
-                    p2=template_name,
-                    p3=broker_id, 
-                    p4=False,
-                    p5=currenttime,
-                    p6=currenttime,
-                )
-            cur.execute(stmt)
+                sql = f"UPDATE {sysmod.schemafin()}.templates SET template_name = '{template_name}', broker_id = '{broker_id}', \
+                submitted = False, template_create = '{currenttime}', template_lastsave = '{currenttime}' \
+                WHERE template_id = '{template_id}' RETURNING template_id"
+            cur.execute(sql)
             conn.commit()
             tid = cur.fetchone()
-            if tid['template_id'] < 0:
-                    raise psycopg2.OperationalError("Template (id:{0}) creation or update fail.".format(template_id))
-            cur.close()
-        return tid['template_id']
-    except psycopg2.OperationalError as err:
+            if tid['template_id'] < 0: raise psycopg2.OperationalError("Template (id:{0}) creation or update fail.".format(template_id))
+            return tid['template_id']
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + save_templates.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Update journals into "templ_journals" DB table to change template submitted/unsubmitted status and timestamp
@@ -170,38 +141,22 @@ def submit_templates(template_id, submitted):
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
-                sql = "INSERT INTO {schema}.templates (template_id, submitted, template_submitted) \
-                VALUES ('{p1}',{p2},'{p3}') ON CONFLICT (template_id) DO UPDATE SET \
-                submitted={p2}, template_submitted='{p3}' \
-                "
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=template_id,
-                    p2=submitted,
-                    p3=currenttime
-                )
+                sql = f"UPDATE {sysmod.schemafin()}.templates SET submitted = {submitted}, \
+                template_submitted = '{currenttime}' WHERE template_id = '{template_id}'"
             else:
-                sql = "INSERT INTO {schema}.templates (template_id, submitted) \
-                VALUES ('{p1}',{p2}) ON CONFLICT (template_id) DO UPDATE SET \
-                submitted={p2} \
-                "
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=template_id,
-                    p2=submitted
-                )
-            cur.execute(stmt)
+                sql = f"UPDATE {sysmod.schemafin()}.templates SET submitted = {submitted} \
+                WHERE template_id = '{template_id}'"
+            cur.execute(sql)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                raise psycopg2.OperationalError("Templates (id:{0}) submission or reversal fail.".format(template_id))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Templates (id:{0}) submission or reversal fail.".format(template_id))
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + submit_templates.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
   
 @anvil.server.callable
 # Delete templates from "templates" DB table
@@ -210,53 +165,41 @@ def delete_templates(template_id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("DELETE FROM " + sysmod.schemafin() + ".templates WHERE template_id = " + template_id)
+            cur.execute(f"DELETE FROM {sysmod.schemafin()}.templates WHERE template_id = {template_id}")
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                raise psycopg2.OperationalError("Template (id:{0}) deletion fail.".format(template_id))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Template (id:{0}) deletion fail.".format(template_id))
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_templates.__name__, err)
         conn.rollback()
-        # TODO - cur can be referenced before assignment if db_connect fails before cur declared
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Return selected template name and selected broker based on template dropdown selection
-def get_selected_template_attr(templ_choice_str):
+def get_selected_template_attr(templ_choice_str, userid):
     if templ_choice_str in (None, ''):
-        row = cfmod.select_settings()
+        row = cfmod.select_settings(userid)
         return [None, row['default_broker'] if row is not None else '']
     else:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.templates WHERE template_id='{p1}'"   
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=get_template_id(templ_choice_str)
-            )
-            cur.execute(stmt)
+            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id='{get_template_id(templ_choice_str)}'")
             row = cur.fetchone()
             cur.close()
         return [row['template_name'] if row is not None else None, row['broker_id'] if row is not None else '']
   
 @anvil.server.callable
 # Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items
-def generate_template_dropdown():
+def generate_template_dropdown(userid):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.templates WHERE submitted=false ORDER BY template_id ASC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
         rows = cur.fetchall()
         cur.close()
-    content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
-    return content
+    return list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
 
 @anvil.server.callable
 # Set precision

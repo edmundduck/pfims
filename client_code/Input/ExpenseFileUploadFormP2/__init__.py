@@ -15,7 +15,8 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        self.userid = anvil.server.call('get_current_userid')
+        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown', self.userid)
         self.tag = {'data': data}
         dump.log("self.tag=", self.tag)
         self.button_next.visible = False

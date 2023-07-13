@@ -13,11 +13,9 @@ class form_poc2(form_poc2Template):
     self.init_components(**properties)
 
     # Any code you write here will run when the form opens.
+    self.userid = anvil.server.call('get_current_userid')
     symbol_list = []
-    self.rpt_panel.items = anvil.server.call('select_journals', 
-                                               date.today(), 
-                                               date(2000,1,1), 
-                                               symbol_list)
+    self.rpt_panel.items = anvil.server.call('select_journals', self.userid, date(2000,1,1), date.today(), symbol_list)
 
     self.rpt_panel.add_event_handler('x-vis', self.setvisibility)
     self.rpt_panel.get_event_handlers('x-vis')

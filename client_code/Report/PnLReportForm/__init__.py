@@ -12,6 +12,7 @@ class PnLReportForm(PnLReportFormTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
+        self.userid = anvil.server.call('get_current_userid')
         self.data_grid.rows_per_page = self.dropdown_displayrow.selected_value
         self.rpt_panel.add_event_handler('x-update', self.update_pnl_list)
 
@@ -20,5 +21,12 @@ class PnLReportForm(PnLReportFormTemplate):
         self.data_grid.rows_per_page = self.dropdown_displayrow.selected_value
 
     def update_pnl_list(self, date, mode, action, **event_args):
-        self.rpt_panel.items = anvil.server.call('update_pnl_list', self.hidden_time_dateto.date, self.hidden_time_datefrom.date, 
-                                                list(self.hidden_symbol.text), self.rpt_panel.items, date, mode, action)
+        self.rpt_panel.items = anvil.server.call('update_pnl_list', 
+                                                 userid=self.userid, 
+                                                 start_date=self.hidden_time_datefrom.date, 
+                                                 end_date=self.hidden_time_dateto.date,  
+                                                 symbols=list(self.hidden_symbol.text), 
+                                                 pnl_list=self.rpt_panel.items, 
+                                                 date_value=date, 
+                                                 mode=mode, 
+                                                 action=action)

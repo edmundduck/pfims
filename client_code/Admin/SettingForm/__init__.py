@@ -14,7 +14,8 @@ class SettingForm(SettingFormTemplate):
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
-        settings = anvil.server.call('select_settings')
+        self.userid = anvil.server.call('get_current_userid')
+        settings = anvil.server.call('select_settings', self.userid)
         if len(settings) > 0:
             self.dropdown_default_broker.selected_value = settings.get('default_broker')
             self.dropdown_interval.selected_value = settings.get('default_interval')
@@ -32,7 +33,7 @@ class SettingForm(SettingFormTemplate):
     
     def dropdown_default_broker_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_default_broker.items = [''] + anvil.server.call('select_brokers')
+        self.dropdown_default_broker.items = anvil.server.call('select_brokers', self.userid)
 
     def dropdown_interval_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -60,10 +61,11 @@ class SettingForm(SettingFormTemplate):
         """This method is called when the button is clicked"""
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         count = anvil.server.call('upsert_settings', 
-                                self.dropdown_default_broker.selected_value, 
-                                interval, 
-                                self.time_datefrom.date, 
-                                self.time_dateto.date)
+                                  userid=self.userid,
+                                  def_broker=self.dropdown_default_broker.selected_value, 
+                                  def_interval=interval, 
+                                  def_datefrom=self.time_datefrom.date, 
+                                  def_dateto=self.time_dateto.date)
         if (count > 0):
             n = Notification("{count} row updated successfully.".format(count=count))
         else:
@@ -80,7 +82,7 @@ class SettingForm(SettingFormTemplate):
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
         self.dropdown_default_broker_show()
-        self.dropdown_default_broker.selected_value = anvil.server.call('select_settings').get('default_broker')
+        self.dropdown_default_broker.selected_value = anvil.server.call('select_settings', self.userid).get('default_broker')
 
     def text_broker_name_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
@@ -99,7 +101,7 @@ class SettingForm(SettingFormTemplate):
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
         self.dropdown_default_broker_show()
-        self.dropdown_default_broker.selected_value = anvil.server.call('select_settings').get('default_broker')
+        self.dropdown_default_broker.selected_value = anvil.server.call('select_settings', self.userid).get('default_broker')
 
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -131,12 +133,12 @@ class SettingForm(SettingFormTemplate):
   
     def dropdown_broker_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker_list.items = anvil.server.call('select_brokers')
+        self.dropdown_broker_list.items = anvil.server.call('select_brokers', self.userid)
         self.dropdown_broker_list.raise_event('change')
 
     def dropdown_sub_templ_list_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+        self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list', userid=self.userid)
 
     def dropdown_sub_templ_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -150,7 +152,7 @@ class SettingForm(SettingFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
+            self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list', userid=self.userid)
             n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
         else:
             n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=to_be_enabled_templ_name))

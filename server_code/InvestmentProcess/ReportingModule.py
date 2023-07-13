@@ -46,12 +46,8 @@ def interval_default(end_date):
 
 @anvil.server.callable
 # Get all symbols which were transacted between start and end date into the dropdown
-def get_symbol_dropdown_items(end_date, start_date):
-    # if end_date is not None and start_date is not None:
-    #     return list(sorted(set(row['symbol'] for row in app_tables.templ_journals.search(sell_date=q.less_than(end_date), buy_date=q.greater_than(start_date)))))
-    # else:
-    #     return []
-    return list(sorted(set(row['symbol'] for row in select_journals(end_date, start_date))))
+def get_symbol_dropdown_items(userid, start_date, end_date=date.today()):
+    return list(sorted(set(row['symbol'] for row in select_journals(userid, start_date, end_date))))
 
 @anvil.server.callable
 # Get start date based on end date and time interval dropdown value
@@ -67,35 +63,28 @@ def get_start_date(end_date, interval):
 
 @anvil.server.callable
 # Return journals for repeating panel to display based on sell and buy date criteria
-def select_journals(end_date, start_date, symbols=[]):
+def select_journals(userid, start_date, end_date, symbols=[]):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sell_sql = "sell_date <= '{0}'".format(end_date) if end_date is not None else ""
-        buy_sql = "buy_date >= '{0}'".format(start_date) if start_date is not None else ""
-        symbol_sql = "symbol IN ({0})".format(",".join("'" + i + "'" for i in symbols)) if len(symbols) > 0 else ""
-        conn_sql1 = " WHERE " if sell_sql or buy_sql or symbol_sql else ""
+        sell_sql = "j.sell_date <= '{0}'".format(end_date) if end_date is not None else ""
+        buy_sql = "j.buy_date >= '{0}'".format(start_date) if start_date is not None else ""
+        symbol_sql = "j.symbol IN ({0})".format(",".join("'" + i + "'" for i in symbols)) if len(symbols) > 0 else ""
+        conn_sql1 = " AND " if sell_sql or buy_sql or symbol_sql else ""
         conn_sql2 = " AND " if sell_sql and (buy_sql or symbol_sql) else ""
         conn_sql3 = " AND " if (sell_sql or buy_sql) and symbol_sql else ""
-        sql = "SELECT * FROM {schema}.templ_journals {p1} {p2} {p3} {p4} {p5} {p6} ORDER BY sell_date DESC, symbol ASC"
-        
-        stmt = sql.format(
-            schema=sysmod.schemafin(),
-            p1=conn_sql1,
-            p2=sell_sql,
-            p3=conn_sql2,
-            p4=buy_sql,
-            p5=conn_sql3,
-            p6=symbol_sql
-        )
-        cur.execute(stmt)
+        sql = f"SELECT j.iid, j.template_id, j.sell_date, j.buy_date, j.symbol, j.qty, j.sales, j.cost, j.fee, \
+        j.sell_price, j.buy_price, j.pnl FROM {sysmod.schemafin()}.templ_journals j, {sysmod.schemafin()}.templates t \
+        WHERE t.userid = {userid} AND t.template_id = j.template_id {conn_sql1} {sell_sql} {conn_sql2} \
+        {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
+        cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
     return list(rows)
 
 @anvil.server.callable
 # Return template journals for csv generation
-def generate_csv(end_date, start_date, symbols):
-    return select_journals(end_date, start_date, symbols).to_csv()
+def generate_csv(userid, start_date, end_date, symbols):
+    return select_journals(userid, start_date, end_date, symbols).to_csv()
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
@@ -118,7 +107,7 @@ def format_pnl_child(dictupdate, parent, child):
     dictupdate.update({parent: childset})
   
 # Internal function - Load DB table 'templ_journals' to build 3 P&L data dictionaries - day, month, year
-def build_pnl_data(end_date, start_date, symbols):
+def build_pnl_data(userid, start_date, end_date, symbols):
     # rows = None
     # if len(symbols) > 0:
     #     rows = app_tables.templ_journals.search(
@@ -127,7 +116,7 @@ def build_pnl_data(end_date, start_date, symbols):
     #         symbol=q.any_of(*symbols))
     # else:
     #     rows = app_tables.templ_journals.search(sell_date=q.between(start_date, end_date, max_inclusive=True))
-    rows = select_journals(end_date, start_date, symbols)
+    rows = select_journals(userid, start_date, end_date, symbols)
     
     # Prepare the data in dictionary structure
     dictstruct_day = {}
@@ -164,10 +153,10 @@ def build_pnl_data(end_date, start_date, symbols):
 
 @anvil.server.callable
 # Generate initial P&L list (year only)
-def generate_init_pnl_list(end_date, start_date, symbols):
+def generate_init_pnl_list(userid, start_date, end_date, symbols):
     rowstruct = []
     
-    dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(end_date, start_date, symbols)
+    dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(userid, start_date, end_date, symbols)
     
     for j in dictstruct_yr.keys():
         numtrade, numdaytrade, sales, cost, fee, pnl, mode = dictstruct_yr.get(j)
@@ -188,12 +177,12 @@ def generate_init_pnl_list(end_date, start_date, symbols):
 
 @anvil.server.callable
 # Update P&L data according to expand/shrink action and reformat into repeatingpanel compatible data (dict in list)
-def update_pnl_list(end_date, start_date, symbols, pnl_list, date_value, mode, action):
+def update_pnl_list(userid, start_date, end_date, symbols, pnl_list, date_value, mode, action):
     # Debug
-    #print("param list={} / {} / {} / {} / {} / {} / {}".format(end_date, start_date, symbols, pnl_list, date_value, mode, action))
+    #print("param list={} / {} / {} / {} / {} / {} / {}".format(start_date, end_date, symbols, pnl_list, date_value, mode, action))
     
     rowstruct = []
-    dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(end_date, start_date, symbols)
+    dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(userid, start_date, end_date, symbols)
     # Debug
     #sysmod.print_data_debug('dictstruct_day', dictstruct_day)
     #sysmod.print_data_debug('dictstruct_mth', dictstruct_mth)
