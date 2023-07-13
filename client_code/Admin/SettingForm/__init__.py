@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
+from ...Utils.Logging import dump, debug, info, warning, error, critical
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
@@ -74,34 +75,26 @@ class SettingForm(SettingFormTemplate):
 
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
-        b_id = \
-        anvil.server.call('upsert_brokers', 
-                        '', 
-                        self.text_broker_name.text, 
-                        self.dropdown_ccy.selected_value)
+        b_id = anvil.server.call('upsert_brokers', self.userid, None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        debug.log("b_id=", b_id)
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
         self.dropdown_default_broker_show()
-        self.dropdown_default_broker.selected_value = anvil.server.call('select_settings', self.userid).get('default_broker')
+        settings = anvil.server.call('select_settings', self.userid)
+        self.dropdown_default_broker.selected_value = settings.get('default_broker') if settings is not None else None
 
     def text_broker_name_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
-        if self.text_broker_name.text == '':
-            self.button_broker_create.enabled = False
-        else:
-            self.button_broker_create.enabled = True
+        self.button_broker_create.enabled = False if self.text_broker_name.text == '' else True
 
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
-        b_id = \
-        anvil.server.call('upsert_brokers', 
-                        self.hidden_b_id.text, 
-                        self.text_broker_name.text, 
-                        self.dropdown_ccy.selected_value)
+        b_id = anvil.server.call('upsert_brokers', self.userid, self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
         self.dropdown_default_broker_show()
-        self.dropdown_default_broker.selected_value = anvil.server.call('select_settings', self.userid).get('default_broker')
+        settings = anvil.server.call('select_settings', self.userid)
+        self.dropdown_default_broker.selected_value = settings.get('default_broker') if settings is not None else None
 
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""

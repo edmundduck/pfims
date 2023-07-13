@@ -71,12 +71,12 @@ def psgldb_upsert_settings(userid, def_broker, def_interval, def_datefrom, def_d
     return None
 
 # DB table "brokers" update/insert method into Postgres DB
-def psgldb_upsert_brokers(b_id, prefix, name, ccy):
+def psgldb_upsert_brokers(userid, b_id, prefix, name, ccy):
     try:
         conn = sysmod.db_connect()  
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if b_id in (None, ''):
-                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (prefix, name, ccy) VALUES ('{prefix}','{name}','{ccy}') RETURNING id")
+                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
                 id = cur.fetchone()['id']
                 conn.commit()
@@ -167,8 +167,8 @@ def upsert_settings(userid, def_broker, def_interval, def_datefrom, def_dateto):
 
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
-def upsert_brokers(b_id, name, ccy):
-    return psgldb_upsert_brokers(b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
+def upsert_brokers(userid, b_id, name, ccy):
+    return psgldb_upsert_brokers(userid, b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method callable by client modules
