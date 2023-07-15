@@ -11,36 +11,36 @@ from .Logging import dump, debug, info, warning, error, critical
 cache_dict = {}
 
 # Return a list for accounts dropdown for Expense Input and Upload
-def accounts_dropdown(userid):
-    return get_cache('accounts', 'generate_accounts_dropdown', userid)
+def accounts_dropdown():
+    return get_cache('accounts', 'generate_accounts_dropdown')
 
 # Return a dict for accounts for Expense Input and Upload
-def accounts_dict(userid):
-    return get_cache_dict('accounts', 'generate_accounts_dropdown', userid)
+def accounts_dict():
+    return get_cache_dict('accounts', 'generate_accounts_dropdown')
 
 def accounts_reset():
     clear_cache('accounts')
 
 # Return a list for labels dropdown for Expense Input and Upload
-def labels_dropdown(userid):
-    return get_cache('labels', 'generate_labels_dropdown', userid)
+def labels_dropdown():
+    return get_cache('labels', 'generate_labels_dropdown')
 
 # Return a dict for labels for Expense Input and Upload
 # Not using generic get_cache_dict function as it involves eval() issue requiring special handling
-def labels_dict(userid):
+def labels_dict():
     global cache_dict
     key='labels_dict'
     if cache_dict is None: cache_dict = {}
     result = cache_dict.get(key, {})
     if not result:
-        for i in labels_dropdown(userid):
+        for i in labels_dropdown():
             # Case 001 - string dict key handling review
             result[str(eval(i[1])['id'])] = eval(i[1])['text']
         cache_dict[key] = result
     return result
 
-def labels_list(userid):
-    return get_cache('labels_list', 'generate_labels_list', userid)
+def labels_list():
+    return get_cache('labels_list', 'generate_labels_list')
 
 def labels_reset():
     clear_cache('labels_list')

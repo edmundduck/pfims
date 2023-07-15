@@ -13,8 +13,7 @@ class UploadMappingRulesForm(UploadMappingRulesFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        userid = anvil.server.call('get_current_userid')
-        mappings = anvil.server.call('select_mapping_rules', userid)
+        mappings = anvil.server.call('select_mapping_rules')
         self.repeating_panel_1.items = mappings if mappings not in (None, '', []) else [{} for i in range(1)]
 
     def button_create_mapping_click(self, **event_args):

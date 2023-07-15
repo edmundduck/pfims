@@ -14,7 +14,8 @@ from fuzzywuzzy import fuzz
 
 @anvil.server.callable
 # Generate labels dropdown items
-def generate_labels_dropdown(userid):
+def generate_labels_dropdown():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
@@ -26,7 +27,8 @@ def generate_labels_dropdown(userid):
 
 @anvil.server.callable
 # Generate labels into list
-def generate_labels_list(userid):
+def generate_labels_list():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
@@ -36,7 +38,8 @@ def generate_labels_list(userid):
 
 @anvil.server.callable
 # Get selected label attributes
-def get_selected_label_attr(userid, selected_lbl):
+def get_selected_label_attr(selected_lbl):
+    userid = sysmod.get_current_userid()
     if selected_lbl is None or selected_lbl == '':
         return [None, None, None, True]
     else:
@@ -62,7 +65,8 @@ def generate_labels_mapping_action_dropdown():
 
 @anvil.server.callable
 # Create label
-def create_label(userid, labels):
+def create_label(labels):
+    userid = sysmod.get_current_userid()
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:

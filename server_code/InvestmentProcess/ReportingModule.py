@@ -46,8 +46,8 @@ def interval_default(end_date):
 
 @anvil.server.callable
 # Get all symbols which were transacted between start and end date into the dropdown
-def get_symbol_dropdown_items(userid, start_date, end_date=date.today()):
-    return list(sorted(set(row['symbol'] for row in select_journals(userid, start_date, end_date))))
+def get_symbol_dropdown_items(start_date, end_date=date.today()):
+    return list(sorted(set(row['symbol'] for row in select_journals(start_date, end_date))))
 
 @anvil.server.callable
 # Get start date based on end date and time interval dropdown value
@@ -63,7 +63,8 @@ def get_start_date(end_date, interval):
 
 @anvil.server.callable
 # Return journals for repeating panel to display based on sell and buy date criteria
-def select_journals(userid, start_date, end_date, symbols=[]):
+def select_journals(start_date, end_date, symbols=[]):
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sell_sql = "j.sell_date <= '{0}'".format(end_date) if end_date is not None else ""
@@ -83,8 +84,8 @@ def select_journals(userid, start_date, end_date, symbols=[]):
 
 @anvil.server.callable
 # Return template journals for csv generation
-def generate_csv(userid, start_date, end_date, symbols):
-    return select_journals(userid, start_date, end_date, symbols).to_csv()
+def generate_csv(start_date, end_date, symbols):
+    return select_journals(start_date, end_date, symbols).to_csv()
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
@@ -107,7 +108,8 @@ def format_pnl_child(dictupdate, parent, child):
     dictupdate.update({parent: childset})
   
 # Internal function - Load DB table 'templ_journals' to build 3 P&L data dictionaries - day, month, year
-def build_pnl_data(userid, start_date, end_date, symbols):
+def build_pnl_data(start_date, end_date, symbols):
+    userid = sysmod.get_current_userid()
     # rows = None
     # if len(symbols) > 0:
     #     rows = app_tables.templ_journals.search(
@@ -153,7 +155,8 @@ def build_pnl_data(userid, start_date, end_date, symbols):
 
 @anvil.server.callable
 # Generate initial P&L list (year only)
-def generate_init_pnl_list(userid, start_date, end_date, symbols):
+def generate_init_pnl_list(start_date, end_date, symbols):
+    userid = sysmod.get_current_userid()
     rowstruct = []
     
     dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(userid, start_date, end_date, symbols)
@@ -177,7 +180,8 @@ def generate_init_pnl_list(userid, start_date, end_date, symbols):
 
 @anvil.server.callable
 # Update P&L data according to expand/shrink action and reformat into repeatingpanel compatible data (dict in list)
-def update_pnl_list(userid, start_date, end_date, symbols, pnl_list, date_value, mode, action):
+def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, action):
+    userid = sysmod.get_current_userid()
     # Debug
     #print("param list={} / {} / {} / {} / {} / {} / {}".format(start_date, end_date, symbols, pnl_list, date_value, mode, action))
     

@@ -106,7 +106,8 @@ def delete_journals(template_id, iid_list):
 
 @anvil.server.callable
 # Insert or update templates into "templates" DB table with time handling logic
-def save_templates(userid, template_id, template_name, broker_id, del_iid = []):
+def save_templates(template_id, template_name, broker_id, del_iid = []):
+    userid = sysmod.get_current_userid()
     try:
         currenttime = datetime.now()
         conn = sysmod.db_connect()
@@ -179,7 +180,8 @@ def delete_templates(template_id):
 
 @anvil.server.callable
 # Return selected template name and selected broker based on template dropdown selection
-def get_selected_template_attr(templ_choice_str, userid):
+def get_selected_template_attr(templ_choice_str):
+    userid = sysmod.get_current_userid()
     if templ_choice_str in (None, ''):
         row = cfmod.select_settings(userid)
         return [None, row['default_broker'] if row is not None else '']
@@ -193,7 +195,8 @@ def get_selected_template_attr(templ_choice_str, userid):
   
 @anvil.server.callable
 # Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items
-def generate_template_dropdown(userid):
+def generate_template_dropdown():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")

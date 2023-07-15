@@ -15,12 +15,11 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.userid = anvil.server.call('get_current_userid')
         self.row_dropdown_type.items = cache.mapping_rules_filetype_dropdown()
         self.row_dropdown_datacol.items = cache.expense_tbl_def_dropdown()
         self.row_dropdown_extraact.items = cache.mapping_rules_extra_action_dropdown()
-        self.row_dropdown_lbl.items = cache.labels_dropdown(self.userid)
-        self.row_dropdown_acct.items = cache.accounts_dropdown(userid=self.userid)
+        self.row_dropdown_lbl.items = cache.labels_dropdown()
+        self.row_dropdown_acct.items = cache.accounts_dropdown()
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:
@@ -46,7 +45,6 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
-        userid = anvil.server.call('get_current_userid')
         id = self.row_hidden_id.text if self.row_hidden_id.text not in (None, '') else None
         name = self.row_mapping_name.text
         filetype_id, filetype = self.row_dropdown_type.selected_value
@@ -57,8 +55,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
                 rules.append(i.tag)
                 # TODO to regenerate iid after saving
                 i.remove_from_parent()
-        result = anvil.server.call('save_mapping_rules', uid=userid, id=id, \
-                                   mapping_rules={"name":name, "filetype":filetype_id, "rules":rules}, del_iid=del_iid)
+        result = anvil.server.call('save_mapping_rules', id=id, mapping_rules={"name":name, "filetype":filetype_id, "rules":rules}, del_iid=del_iid)
 
         id = result['id']
         if id is not None and result['count'] is not None and result['dcount'] is not None:
@@ -70,7 +67,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
             msg = f"WARNING: Problem occurs when saving mapping {name}."
             warning.log(msg)
         # TODO to regenerate iid after saving
-        self.item = (anvil.server.call('select_mapping_rules', userid, id))[0]
+        self.item = (anvil.server.call('select_mapping_rules', id))[0]
         self.row_dropdown_type.selected_value = [filetype_id, filetype]
         if self.item.get('rule', None) is not None:
             self._generate_all_mapping_rules(self.item['rule'])
@@ -78,7 +75,6 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        userid = anvil.server.call('get_current_userid')
         to_be_del_fid = self.row_hidden_id.text
         to_be_del_fname = self.row_mapping_name.text
         confirm = Label(text=f"Proceed mapping <{to_be_del_fname}> deletion by clicking DELETE.")
@@ -88,7 +84,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
         if userconf == const.Alerts.CONFIRM:
             if to_be_del_fid not in (None, ''):
-                result = anvil.server.call('delete_mapping', uid=userid, fid=to_be_del_fid)
+                result = anvil.server.call('delete_mapping', fid=to_be_del_fid)
                 if result is not None and result > 0:
                     """ Reflect the change in tab dropdown """
                     self.remove_from_parent()

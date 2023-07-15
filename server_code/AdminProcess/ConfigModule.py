@@ -14,7 +14,8 @@ from ..System import SystemModule as sysmod
 # rather than in the user's browser.
 
 # DB table "settings" select method from Postgres DB
-def psqldb_select_settings(userid):
+def psqldb_select_settings():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     settings = {}
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -30,7 +31,8 @@ def psqldb_select_settings(userid):
     return settings
 
 # DB table "brokers" select method from Postgres DB
-def psgldb_select_brokers(userid):
+def psgldb_select_brokers():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
@@ -39,7 +41,8 @@ def psgldb_select_brokers(userid):
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
 # DB table "settings" update/insert method into Postgres DB
-def psgldb_upsert_settings(userid, def_broker, def_interval, def_datefrom, def_dateto):
+def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
+    userid = sysmod.get_current_userid()
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -130,7 +133,8 @@ def psgldb_delete_brokers(b_id):
 
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Postgres DB
-def psgldb_get_submitted_templ_list(userid):
+def psgldb_get_submitted_templ_list():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
@@ -152,18 +156,18 @@ def psgldb_select_search_interval():
 
 @anvil.server.callable
 # DB table "settings" select method callable by client modules
-def select_settings(userid):
-    return psqldb_select_settings(userid)
+def select_settings():
+    return psqldb_select_settings()
 
 @anvil.server.callable
 # DB table "brokers" select method callable by client modules
-def select_brokers(userid):
-    return psgldb_select_brokers(userid)
+def select_brokers():
+    return psgldb_select_brokers()
 
 @anvil.server.callable
 # DB table "settings" update/insert method callable by client modules
-def upsert_settings(userid, def_broker, def_interval, def_datefrom, def_dateto):
-    return psgldb_upsert_settings(userid, def_broker, def_interval, def_datefrom, def_dateto)
+def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
+    return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto)
 
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
@@ -187,8 +191,8 @@ def get_broker_ccy(choice):
 
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items
-def get_submitted_templ_list(userid):
-    return psgldb_get_submitted_templ_list(userid)
+def get_submitted_templ_list():
+    return psgldb_get_submitted_templ_list()
 
 @anvil.server.callable
 # DB table "search_interval" select method callable by client modules
