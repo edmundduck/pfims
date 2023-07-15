@@ -11,7 +11,7 @@ from ..System import SystemModule as sysmod
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-@anvil.server.callable
+@anvil.server.callable(require_user=lambda u: print(f"xx={u}"))
 # Generate accounts dropdown items for account maintenance form
 def generate_accounts_dropdown(userid):
     conn = sysmod.db_connect()
