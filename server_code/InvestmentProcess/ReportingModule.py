@@ -14,11 +14,6 @@ from ..System import SystemModule as sysmod
 # rather than in the user's browser.
 
 # Static variables
-INTERVAL_LAST_1_MTH = "L1M"
-INTERVAL_LAST_3_MTH = "L3M"
-INTERVAL_LAST_6_MTH = "L6M"
-INTERVAL_LAST_1_YR = "L1Y"
-INTERVAL_YEAR_TO_DATE = "YTD"
 
 # Internal function - Return start date of last 1 month
 def get_L1M_start_date(end_date):
@@ -53,11 +48,11 @@ def get_symbol_dropdown_items(start_date, end_date=date.today()):
 # Get start date based on end date and time interval dropdown value
 def get_start_date(end_date, interval):
     switcher = {
-        INTERVAL_LAST_1_MTH: get_L1M_start_date,
-        INTERVAL_LAST_3_MTH: get_L3M_start_date,
-        INTERVAL_LAST_6_MTH: get_L6M_start_date,
-        INTERVAL_LAST_1_YR: get_L1Y_start_date,
-        INTERVAL_YEAR_TO_DATE: get_YTD_start_date,
+        const.SearchInterval.INTERVAL_LAST_1_MTH: get_L1M_start_date,
+        const.SearchInterval.INTERVAL_LAST_3_MTH: get_L3M_start_date,
+        const.SearchInterval.INTERVAL_LAST_6_MTH: get_L6M_start_date,
+        const.SearchInterval.INTERVAL_LAST_1_YR: get_L1Y_start_date,
+        const.SearchInterval.INTERVAL_YEAR_TO_DATE: get_YTD_start_date,
     }
     return switcher.get(interval, interval_default)(end_date)
 

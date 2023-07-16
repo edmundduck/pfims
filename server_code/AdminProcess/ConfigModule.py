@@ -17,7 +17,7 @@ from ..System import SystemModule as sysmod
 def psqldb_select_settings():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
-    settings = {}
+    settings = None
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto FROM {sysmod.schemafin()}.settings")
         for i in cur.fetchall():
@@ -43,24 +43,13 @@ def psgldb_select_brokers():
 # DB table "settings" update/insert method into Postgres DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     userid = sysmod.get_current_userid()
+    if def_interval != const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.settings (userid, default_broker, default_interval, default_datefrom, default_dateto) \
-            VALUES ({p1},'{p2}','{p3}'{p4}{p5}) ON CONFLICT (userid) DO UPDATE SET default_broker='{p2}',default_interval='{p3}'{p6}{p7}"
-            datefrom1 = ",'" + str(def_datefrom) + "'" if def_datefrom is not None else ",NULL"
-            datefrom2 = ",default_datefrom='" + str(def_datefrom) + "'" if def_datefrom is not None else ",default_datefrom=NULL"
-            dateto1 = ",'" + str(def_dateto) + "'" if def_dateto is not None else ",NULL"
-            dateto2 = ",default_dateto='" + str(def_dateto) + "'" if def_dateto is not None else ",default_dateto=NULL"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=userid,
-                p2=def_broker,
-                p3=def_interval,
-                p4=datefrom1,
-                p5=dateto1,
-                p6=datefrom2,
-                p7=dateto2)
+            sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, default_dateto) \
+            VALUES (%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, default_interval=%s, default_datefrom=%s, default_dateto=%s"
+            stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, def_broker, def_interval, def_datefrom, def_dateto))
             cur.execute(stmt)
             conn.commit()
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
@@ -74,12 +63,12 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     return None
 
 # DB table "brokers" update/insert method into Postgres DB
-def psgldb_upsert_brokers(b_id, prefix, name, ccy):
+def psgldb_upsert_brokers(userid, b_id, prefix, name, ccy):
     try:
         conn = sysmod.db_connect()  
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if b_id in (None, ''):
-                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (prefix, name, ccy) VALUES ('{prefix}','{name}','{ccy}') RETURNING id")
+                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
                 id = cur.fetchone()['id']
                 conn.commit()
@@ -171,8 +160,8 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
-def upsert_brokers(b_id, name, ccy):
-    return psgldb_upsert_brokers(b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
+def upsert_brokers(userid, b_id, name, ccy):
+    return psgldb_upsert_brokers(userid, b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method callable by client modules

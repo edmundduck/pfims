@@ -184,6 +184,7 @@ def get_selected_template_attr(templ_choice_str):
     userid = sysmod.get_current_userid()
     if templ_choice_str in (None, ''):
         row = cfmod.select_settings(userid)
+        print(f"row={row}")
         return [None, row['default_broker'] if row is not None else '']
     else:
         conn = sysmod.db_connect()
