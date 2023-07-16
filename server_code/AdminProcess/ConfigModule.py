@@ -40,26 +40,13 @@ def psgldb_select_brokers(userid):
 
 # DB table "settings" update/insert method into Postgres DB
 def psgldb_upsert_settings(userid, def_broker, def_interval, def_datefrom, def_dateto):
+    if def_interval != const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, default_dateto) \
-            # VALUES ({p1},'{p2}','{p3}'{p4}{p5}) ON CONFLICT (userid) DO UPDATE SET default_broker='{p2}',default_interval='{p3}'{p6}{p7}"
-            # sql = "INSERT INTO {schema}.settings (userid, default_broker, default_interval, default_datefrom, default_dateto) \
-            # VALUES ({p1},'{p2}','{p3}'{p4}{p5}) ON CONFLICT (userid) DO UPDATE SET default_broker='{p2}',default_interval='{p3}'{p6}{p7}"
-            # datefrom1 = ",'" + str(def_datefrom) + "'" if def_datefrom is not None else ",NULL"
-            # datefrom2 = ",default_datefrom='" + str(def_datefrom) + "'" if def_datefrom is not None else ",default_datefrom=NULL"
-            # dateto1 = ",'" + str(def_dateto) + "'" if def_dateto is not None else ",NULL"
-            # dateto2 = ",default_dateto='" + str(def_dateto) + "'" if def_dateto is not None else ",default_dateto=NULL"
-            # stmt = sql.format(
-            #     schema=sysmod.schemafin(),
-            #     p1=userid,
-            #     p2=def_broker,
-            #     p3=def_interval,
-            #     p4=datefrom1,
-            #     p5=dateto1,
-            #     p6=datefrom2,
-            #     p7=dateto2)
+            VALUES (%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, default_interval=%s, default_datefrom=%s, default_dateto=%s"
+            stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, def_broker, def_interval, def_datefrom, def_dateto))
             cur.execute(stmt)
             conn.commit()
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
