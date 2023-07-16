@@ -73,7 +73,7 @@ class SettingForm(SettingFormTemplate):
 
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
-        b_id = anvil.server.call('upsert_brokers', self.userid, None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        b_id = anvil.server.call('upsert_brokers', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         debug.log("b_id=", b_id)
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
@@ -87,7 +87,7 @@ class SettingForm(SettingFormTemplate):
 
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
-        b_id = anvil.server.call('upsert_brokers', self.userid, self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        b_id = anvil.server.call('upsert_brokers', self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         self.dropdown_broker_list_show()
         self.dropdown_broker_list.selected_value = b_id
         self.dropdown_default_broker_show()

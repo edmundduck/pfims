@@ -63,7 +63,8 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     return None
 
 # DB table "brokers" update/insert method into Postgres DB
-def psgldb_upsert_brokers(userid, b_id, prefix, name, ccy):
+def psgldb_upsert_brokers(b_id, prefix, name, ccy):
+    userid = sysmod.get_current_userid()
     try:
         conn = sysmod.db_connect()  
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -160,8 +161,8 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
 
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules
-def upsert_brokers(userid, b_id, name, ccy):
-    return psgldb_upsert_brokers(userid, b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
+def upsert_brokers(b_id, name, ccy):
+    return psgldb_upsert_brokers(b_id, const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
       
 @anvil.server.callable
 # DB table "brokers" delete method callable by client modules
