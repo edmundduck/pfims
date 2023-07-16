@@ -112,7 +112,7 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
         currenttime = datetime.now()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if len(del_iid) > 0:
+            if del_iid is not None and len(del_iid) > 0:
                 delete_journals(template_id, del_iid)
             if template_id in (None, ''):
                 sql = f"INSERT INTO {sysmod.schemafin()}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
