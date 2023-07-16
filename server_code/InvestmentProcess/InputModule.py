@@ -18,7 +18,7 @@ from ..System import SystemModule as sysmod
 @anvil.server.callable
 # Retrieve template ID by splitting template dropdown value
 def get_template_id(selected_template):
-    return selected_template[:selected_template.find("-")].strip() if selected_template.find("-") >= 0 else None
+    return selected_template[:selected_template.find("-")].strip() if selected_template is not None and selected_template.find("-") >= 0 else None
   
 @anvil.server.callable
 # Generate template dropdown text for display
@@ -181,10 +181,8 @@ def delete_templates(template_id):
 @anvil.server.callable
 # Return selected template name and selected broker based on template dropdown selection
 def get_selected_template_attr(templ_choice_str):
-    userid = sysmod.get_current_userid()
     if templ_choice_str in (None, ''):
-        row = cfmod.select_settings(userid)
-        print(f"row={row}")
+        row = cfmod.select_settings()
         return [None, row['default_broker'] if row is not None else '']
     else:
         conn = sysmod.db_connect()
