@@ -62,18 +62,22 @@ class LabelMaintForm(LabelMaintFormTemplate):
         lbl_name = self.text_lbl_name.text
         lbl_id = anvil.server.call('create_label', labels=[{'name':lbl_name, 'keywords':self.text_keywords.text, 'status':True}])
 
-        if lbl_id is None or lbl_id[0] <= 0:
+        if lbl_id is None:
             msg = f"ERROR: Fail to create label {lbl_name}."
             error.log(msg)
+        elif len(lbl_id) == 0:
+            msg = f"INFO: No label has been created."
+            info.log(msg)
         else:
             """ Reflect the change in labels dropdown """
             cache.labels_reset()
             self.dropdown_lbl_list.items = cache.labels_dropdown()
+            dump.log("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
             debug.log("lbl_id=", lbl_id)
             # *** TODO handle the lbl_id in list scenario ***
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
-            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
+            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id[0], "text": lbl_name})
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
             self.button_labels_update.enabled = True
             msg = f"Label {lbl_name} has been created successfully."
