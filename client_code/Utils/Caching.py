@@ -34,6 +34,9 @@ def labels_dict():
     result = cache_dict.get(key, {})
     if not result:
         for i in labels_dropdown():
+            dump.log("item (i) in labels_dropdown=", i)
+            dump.log("eval(i[1])['id']=", eval(i[1])['id'])
+            dump.log("eval(i[1])['text']=", eval(i[1])['text'])
             # Case 001 - string dict key handling review
             result[str(eval(i[1])['id'])] = eval(i[1])['text']
         cache_dict[key] = result

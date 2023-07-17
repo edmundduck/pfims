@@ -102,10 +102,9 @@ def upsert_transactions(tid, rows):
 @anvil.server.callable
 # Delete transactions from "exp_transactions" DB table
 def delete_transactions(tid, iid_list):
-    conn = None
-    count = None
+    conn, cur, count = [None, None, None]
     try:
-        if len(iid_list) > 0:
+        if iid_list is not None and len(iid_list) > 0:
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
