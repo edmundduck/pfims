@@ -74,7 +74,6 @@ class LabelMaintForm(LabelMaintFormTemplate):
             self.dropdown_lbl_list.items = cache.labels_dropdown()
             dump.log("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
             debug.log("lbl_id=", lbl_id)
-            # *** TODO handle the lbl_id in list scenario ***
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
             self.dropdown_lbl_list.selected_value = repr({"id": lbl_id[0], "text": lbl_name})
