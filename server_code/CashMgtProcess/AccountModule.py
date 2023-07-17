@@ -13,7 +13,8 @@ from ..System import SystemModule as sysmod
 
 @anvil.server.callable
 # Generate accounts dropdown items for account maintenance form
-def generate_accounts_dropdown(userid):
+def generate_accounts_dropdown():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
@@ -49,8 +50,9 @@ def get_selected_account_attr(selected_acct):
 
 @anvil.server.callable
 # Create account
-def create_account(userid, name, ccy, valid_from, valid_to, status):
+def create_account(name, ccy, valid_from, valid_to, status):
     try:
+        userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "INSERT INTO {schema}.accounts (userid, name, ccy, valid_from, valid_to, status) \

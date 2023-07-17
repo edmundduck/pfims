@@ -15,7 +15,8 @@ from ..System import SystemModule as sysmod
 
 @anvil.server.callable
 # Generate expense tabs dropdown items
-def generate_expensetabs_dropdown(userid):
+def generate_expensetabs_dropdown():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC")
@@ -101,10 +102,9 @@ def upsert_transactions(tid, rows):
 @anvil.server.callable
 # Delete transactions from "exp_transactions" DB table
 def delete_transactions(tid, iid_list):
-    conn = None
-    count = None
+    conn, cur, count = [None, None, None]
     try:
-        if len(iid_list) > 0:
+        if iid_list is not None and len(iid_list) > 0:
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
@@ -124,7 +124,8 @@ def delete_transactions(tid, iid_list):
 
 @anvil.server.callable
 # Save expense tab
-def save_expensetab(userid, id, name):
+def save_expensetab(id, name):
+    userid = sysmod.get_current_userid()
     try:
         currenttime = datetime.now()
         conn = sysmod.db_connect()

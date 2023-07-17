@@ -18,7 +18,7 @@ from ..System import SystemModule as sysmod
 @anvil.server.callable
 # Retrieve template ID by splitting template dropdown value
 def get_template_id(selected_template):
-    return selected_template[:selected_template.find("-")].strip() if selected_template.find("-") >= 0 else None
+    return selected_template[:selected_template.find("-")].strip() if selected_template is not None and selected_template.find("-") >= 0 else None
   
 @anvil.server.callable
 # Generate template dropdown text for display
@@ -106,12 +106,13 @@ def delete_journals(template_id, iid_list):
 
 @anvil.server.callable
 # Insert or update templates into "templates" DB table with time handling logic
-def save_templates(userid, template_id, template_name, broker_id, del_iid = []):
+def save_templates(template_id, template_name, broker_id, del_iid = []):
+    userid = sysmod.get_current_userid()
     try:
         currenttime = datetime.now()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if len(del_iid) > 0:
+            if del_iid is not None and len(del_iid) > 0:
                 delete_journals(template_id, del_iid)
             if template_id in (None, ''):
                 sql = f"INSERT INTO {sysmod.schemafin()}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
@@ -179,10 +180,9 @@ def delete_templates(template_id):
 
 @anvil.server.callable
 # Return selected template name and selected broker based on template dropdown selection
-def get_selected_template_attr(templ_choice_str, userid):
+def get_selected_template_attr(templ_choice_str):
     if templ_choice_str in (None, ''):
-        row = cfmod.select_settings(userid)
-        print(f"row={row}")
+        row = cfmod.select_settings()
         return [None, row['default_broker'] if row is not None else '']
     else:
         conn = sysmod.db_connect()
@@ -194,7 +194,8 @@ def get_selected_template_attr(templ_choice_str, userid):
   
 @anvil.server.callable
 # Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items
-def generate_template_dropdown(userid):
+def generate_template_dropdown():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
