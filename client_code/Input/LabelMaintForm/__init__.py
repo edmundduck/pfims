@@ -5,8 +5,10 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...App import Routing
-from ...App import Caching as cache
+from ...Utils import Routing
+from ...Utils import Caching as cache
+from ...Utils import Constants as const
+from ...Utils.Logging import dump, debug, info, warning, error, critical
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):
@@ -23,14 +25,14 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
     def dropdown_lbl_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+        self.dropdown_lbl_list.items = cache.labels_dropdown()
         self.dropdown_lbl_list.selected_value = None
         self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
         self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
 
     def dropdown_moveto_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_moveto.items = cache.get_caching_labels_dropdown()
+        self.dropdown_moveto.items = cache.labels_dropdown()
         self.dropdown_moveto.selected_value = None
         # TODO - Enable after Move to logic is implemented
         self.dropdown_moveto.enabled = False
@@ -58,21 +60,28 @@ class LabelMaintForm(LabelMaintFormTemplate):
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_name = self.text_lbl_name.text
-        lbl_id = anvil.server.call('create_label', labels={'name':lbl_name, 'keywords':self.text_keywords.text, 'status':True})
+        lbl_id = anvil.server.call('create_label', labels=[{'name':lbl_name, 'keywords':self.text_keywords.text, 'status':True}])
 
-        if lbl_id is None or lbl_id[0] <= 0:
-            n = Notification("ERROR: Fail to create label {lbl_name}.".format(lbl_name=lbl_name))
+        if lbl_id is None:
+            msg = f"ERROR: Fail to create label {lbl_name}."
+            error.log(msg)
+        elif len(lbl_id) == 0:
+            msg = f"INFO: No label has been created."
+            info.log(msg)
         else:
             """ Reflect the change in labels dropdown """
-            cache.reset_caching_labels()
-            self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+            cache.labels_reset()
+            self.dropdown_lbl_list.items = cache.labels_dropdown()
+            dump.log("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
+            debug.log("lbl_id=", lbl_id)
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
-            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
+            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id[0], "text": lbl_name})
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
             self.button_labels_update.enabled = True
-            n = Notification("Label {lbl_name} has been created successfully.".format(lbl_name=lbl_name))
-        n.show()
+            msg = f"Label {lbl_name} has been created successfully."
+            info.log(msg)
+        Notification(msg).show()
         return
 
     def button_labels_update_click(self, **event_args):
@@ -90,16 +99,18 @@ class LabelMaintForm(LabelMaintFormTemplate):
                                 )
 
         if result is None or result <= 0:
-            n = Notification("ERROR: Fail to update label {lbl_name}.".format(lbl_name=lbl_name))
+            msg = f"ERROR: Fail to update label {lbl_name}."
+            error.log(msg)
         else:
             """ Reflect the change in labels dropdown """
-            cache.reset_caching_labels()
-            self.dropdown_lbl_list.items = cache.get_caching_labels_dropdown()
+            cache.labels_reset()
+            self.dropdown_lbl_list.items = cache.labels_dropdown()
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
             self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
-            n = Notification("Label {lbl_name} has been updated successfully.".format(lbl_name=lbl_name))
-        n.show()
+            msg = f"Label {lbl_name} has been updated successfully."
+            info.log(msg)
+        Notification(msg).show()
         return
 
     def button_labels_move_click(self, **event_args):
@@ -111,25 +122,23 @@ class LabelMaintForm(LabelMaintFormTemplate):
         # Case 001 - string dict key handling review
         # selected_lbl_id, selected_lbl_name = self.dropdown_lbl_list.selected_value.values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
         selected_lbl_id, selected_lbl_name = eval(self.dropdown_lbl_list.selected_value).values() if self.dropdown_lbl_list.selected_value is not None else [None, None]
-        msg = Label(text="Proceed label <{lbl_name}> ({lbl_id}) deletion by clicking DELETE.".format(lbl_name=selected_lbl_name, lbl_id=selected_lbl_id))
-        userconf = alert(content=msg,
+        confirm = Label(text="Proceed label <{lbl_name}> ({lbl_id}) deletion by clicking DELETE.".format(lbl_name=selected_lbl_name, lbl_id=selected_lbl_id))
+        userconf = alert(content=confirm,
                         title=f"Alert - Label Deletion",
-                        buttons=[
-                        ("DELETE", "Y"),
-                        ("CANCEL", "N")
-                        ])
+                        buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
 
-        if userconf == "Y":
-            cache.reset_caching_labels()
+        if userconf == const.Alerts.CONFIRM:
+            cache.labels_reset()
             result = anvil.server.call('delete_label', selected_lbl_id)
             if result is not None and result > 0:
                 """ Reflect the change in label dropdown """
                 self.clear()
-
-                n = Notification("Label {lbl_name} has been deleted.".format(lbl_name=selected_lbl_name))
+                msg = f"Label {selected_lbl_name} has been deleted."
+                info.log(msg)
             else:
-                n = Notification("ERROR: Fail to delete label {lbl_name}.".format(lbl_name=selected_lbl_name))
-            n.show()
+                msg = f"ERROR: Fail to delete label {selected_lbl_name}."
+                error.log(msg)
+            Notification(msg).show()
 
     def clear(self, **event_args):
         self.dropdown_lbl_list_show()

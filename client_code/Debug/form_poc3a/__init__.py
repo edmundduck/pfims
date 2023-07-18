@@ -5,7 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...App.Validation import Validator
+from ...Utils.Validation import Validator
 
 class form_poc3a(form_poc3aTemplate):
     def __init__(self, **properties):

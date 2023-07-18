@@ -14,11 +14,12 @@ from ..System import SystemModule as sysmod
 
 @anvil.server.callable
 # Generate mapping dropdown items
-def generate_mapping_dropdown(uid, ftype):
-    conn = sysmod.psqldb_connect()
+def generate_mapping_dropdown(ftype):
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemafin()}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC"
-        stmt = cur.mogrify(sql, (uid, ftype, ))
+        stmt = cur.mogrify(sql, (userid, ftype, ))
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
@@ -28,38 +29,38 @@ def generate_mapping_dropdown(uid, ftype):
 @anvil.server.callable
 # Generate mapping file type dropdown items
 def generate_mapping_type_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # TODO change filter_type to mapping_file_type
         sql = f"SELECT * FROM {sysmod.schemarefd()}.filter_type ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'], row['id']) for row in rows)
+    content = list((row['name'], [row['id'], row['name']]) for row in rows)
     return content
 
 @anvil.server.callable
 # Generate input expense table definition dropdown items
 def generate_expense_tbl_def_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['col_name'], {"id": row['col_code'], "text": row['col_name']}) for row in rows)
+    content = list((row['col_name'], [row['col_code'], row['col_name']]) for row in rows)
     return content
 
 @anvil.server.callable
 # Generate input expense table definition dropdown items
 def generate_upload_action_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.upload_action ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['action'], {"id": row['id'], "text": row['action']}) for row in rows)
+    content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
@@ -88,7 +89,7 @@ def generate_mapping_matrix(matrix, col_def):
 
 # Select input expense table definition column ID
 def select_expense_tbl_def_id():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
@@ -99,15 +100,16 @@ def select_expense_tbl_def_id():
 
 @anvil.server.callable
 # Select the mapping and rules belong to the logged on user, it can be all or particular one only
-def select_mapping_rules(uid, gid=None):
-    conn = sysmod.psqldb_connect()
+def select_mapping_rules(gid=None):
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
-        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.col ASC" \
+        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} ORDER BY a.id ASC, b.col ASC" \
         if gid is None else \
         f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
-        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
+        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
 
@@ -135,7 +137,7 @@ def select_mapping_rules(uid, gid=None):
 @anvil.server.callable
 # Select the mapping matrix belong to the logged on user
 def select_mapping_matrix(id):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT datecol AS trandate, acctcol AS account_id, amtcol AS amount, remarkscol AS remarks, stmtdtlcol AS stmt_dtl, lblcol AS labels \
         FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
@@ -147,12 +149,13 @@ def select_mapping_matrix(id):
 @anvil.server.callable
 # Save the mapping and rules
 # Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
-def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
+def save_mapping_rules(id, mapping_rules, del_iid=None):
     conn = None
     count = None
     dcount = None
+    userid = sysmod.get_current_userid()
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(mapping_rules) > 0:
                 # First insert/update mapping group
@@ -162,11 +165,11 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                 currenttime = datetime.now()
                 if id is not None:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
-                    ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
-                    stmt = cur.mogrify(sql, (int(uid), id, name, type_id, currenttime))
+                    ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
+                    stmt = cur.mogrify(sql, (int(userid), id, name, type_id, currenttime))
                 else:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
-                    stmt = cur.mogrify(sql, (int(uid), name, type_id, currenttime))
+                    stmt = cur.mogrify(sql, (int(userid), name, type_id, currenttime))
                 cur.execute(stmt)
                 conn.commit()
                 id = (cur.fetchone())['id']
@@ -216,7 +219,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
 
             # At last perform rules deletion (if any)
             if del_iid not in (None, ''):
-                args = "('{0}')".format(",".join(str(i) for i in del_iid))
+                args = "({0})".format(",".join(f"'{i}'" for i in del_iid))
                 sql = f"DELETE FROM {sysmod.schemafin()}.mappingrules WHERE gid = {id} AND col IN {args}"
                 cur.execute(sql)
                 conn.commit()
@@ -234,7 +237,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
 
 @anvil.server.callable
 def select_mapping_extra_actions(id):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         # TODO in progress

@@ -10,15 +10,15 @@ services:
   client_config: {}
   server_config: {}
 startup: {type: form, module: MainForm}
-package_name: IPES__Investment_Performance_Evaluation_System_
+package_name: PFIMS
 allow_embedding: false
-name: IPES (Investment Performance Evaluation System)
+name: Personal Finance and Inventory Management System
 runtime_options:
   version: 2
   client_version: '3'
   server_version: python3-full
   server_spec: {base: python310-standard}
-metadata: {title: IPES}
+metadata: {title: PFIMS, description: One integrated system for your own finance and inventory management}
 startup_form: null
 native_deps: {head_html: ''}
 db_schema:
@@ -173,10 +173,34 @@ db_schema:
       admin_ui: {width: 200}
       type: string
 secrets:
-  yugadb_app_pw:
+  proddb_name:
+    value: {? '' : x4DQzIPabQxuQ1HKJtc6TrJ+Z6Lla6CntadZ3xPXDyR5uvKVXGz7pNJqZRUCrK2gZVXTDWvb/gdAtJxSZQcehAAKfl/wCsq27Q/fp9joi6aH8WD7N4ZwyjXYgWsvziH1x5yTNOVX}
+    type: secret
+  proddb_port:
+    value: {? '' : 65JRzuouoOX6monqteVGtI1K5dkVX4I6NSgYdR9R7xtav7H6kp1L+a0EZCGCjZU2Cq8ggzTSyuvWXhfSsHvHA8SY4khskpY9YI4g+57Yz6fSyO4on5ikJAa59LCwl4OkHJNZ}
+    type: secret
+  proddb_host:
+    value: {? '' : hFFP2sbXodXdz/XX8wfAToV1Cvgn/bJLW0hCDuLlB6sI5Oplwnj9kK/pAkMVmG2KFKHWlRqaex38RPFxLLxKTbqns6bIf5mfQM/1j0ObV1k6vUuXN8LPu3bBaVxok6fo74tTd2aTu++PCb6hUh/nq1YirDim5FY9rkAjSZ8K4Aq3A9ArM3J9GFCkrmpr3q4vrpODyY0PYexoaA9s}
+    type: secret
+  devdb_app_pw:
+    value: {? '' : XPj7+97OiQ/9vxj1UdbMN4LqpYZcZlxFiMhDt8ss1ZUMMfhxQ7eURaBHnX9AVwElw0l44UzTObG1aeVXKSZL9E2/OWxsnRQVLQmTqgWxF1Pj7whwfhslH3cigEowliLo8U/VAj6B9eehKKfuKke54FRBr9Z0y4U=}
+    type: secret
+  devdb_app_usr:
+    value: {? '' : Cbsr3Rmm1diM3gZFjOswOqnIbvWZwJKEW8jOx2moUSAMpworznxvaGcYawpM6S3C1oNkNSkAJhGfva03thDKJgRTkKSdkMooM7/s52LoK0cLsZKRBNm/JImjfAtnf0vS+RJDjbIHENU=}
+    type: secret
+  devdb_host:
+    value: {? '' : z2YcSeManfJBLoKT1wmot56U15f+Ki06QkofK1BJSbPJShZTTmM+hQxMwKn7c9H2ZWlb8NFuX8UWvpKquw4r+YiH0jJyJeJ3k5FuULRl7IR1HMy095z9eHhHR6pIDl84UT0fnMKEIMkRVkJWeiSH874hsECOMH3L2dfTqqXCMMKkLxUGVGDdVwCveKyzaVkO1A1aabcOnZqsUMuJ}
+    type: secret
+  devdb_port:
+    value: {? '' : KAGN3euax2sJrjc8NlKYMI9rz9gUkkKaFgJGInjmtnr0Evbj0Yr39XVE/RSfMi6P10cRHcCLXamrNNxXVWAlxXHENg62TA7hzrXqQHj98bJ8DvD2w5HDM0CC4l625iisq2p2}
+    type: secret
+  proddb_app_usr:
+    value: {? '' : 06OkM5JtvSNrZffpWvhR2lqOTl4jH5W/Qib3e7tSZpNI5ONHC4xQtsNsc2c0Ug1OVY3syV8k6YLPaMCmnERbk8OBTnfp1WbvKIb20F0g86jnu7yTH3MyFh8lv5u1ed+kqRb+/9oDVBk=}
+    type: secret
+  proddb_app_pw:
     value: {? '' : lAFyIGItVqKuLMguFqtAkkqzSJysV6Kj5vdoOElYE/RqJF+9ndJrdO1VBFQ9x5b786C0UW3azwbRQl6WqRcOU1VzDpN8/+OehGMFxrj8Wjhnngma1Dm0DZPCn2t97/YJd9D79oeSD/RXZCxrdV+JuH5W8bwe60s=}
     type: secret
-  yugadb_app_usr:
-    value: {? '' : 06OkM5JtvSNrZffpWvhR2lqOTl4jH5W/Qib3e7tSZpNI5ONHC4xQtsNsc2c0Ug1OVY3syV8k6YLPaMCmnERbk8OBTnfp1WbvKIb20F0g86jnu7yTH3MyFh8lv5u1ed+kqRb+/9oDVBk=}
+  devdb_name:
+    value: {? '' : qA5Z/8K/54VGE8vDF1Djx2XHKwRaNKT9bO3CGWqxlQyLX5Q5tOQ61xHQOs/uOf2+KKVZ8rWJCTFZAzA5kAdECai/6JXb0FDk8j+FDXyaZ2uPIw8mNLdUsyoRFQi1KFKHmVk1D/Zc9Tbd}
     type: secret
 renamed: true

@@ -18,42 +18,60 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer1
       layout_properties: {}
     - type: Label
       properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-        visible: true, text: 'Interval ', font_size: null, font: '', spacing_above: small,
+        visible: true, text: 'Interval ', font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_2
       layout_properties: {grid_position: 'SVNURG,LMOPUE'}
     - type: DropDown
-      properties: {}
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: Choose one below
+        border: ''
+        enabled: true
+        foreground: ''
+        items: []
+        visible: true
+        font_size: 12
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: true
       name: dropdown_interval
       layout_properties: {grid_position: 'SVNURG,CGSFIB'}
       event_bindings: {change: dropdown_interval_change}
     - type: DatePicker
       properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
         placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
         date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
       name: time_datefrom
       layout_properties: {grid_position: 'SVNURG,FOCPNB', width: 174.4}
       event_bindings: {change: time_datefrom_change}
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: to, font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: true, text: to, font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: label_timetotime
       layout_properties: {grid_position: 'SVNURG,FHFBEI'}
     - type: DatePicker
       properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
         placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: null, font: '', spacing_above: small, spacing_below: small, italic: false,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
         date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
       name: time_dateto
       layout_properties: {grid_position: 'SVNURG,SPAIGB', width: 175.4}
@@ -65,25 +83,43 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer2
       layout_properties: {}
     - type: Label
       properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-        visible: true, text: Symbol, font_size: null, font: '', spacing_above: small,
+        visible: true, text: Symbol, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_3
       layout_properties: {grid_position: 'FLAWCB,BQECIK'}
     - type: DropDown
-      properties: {}
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: '[Symbol]'
+        border: ''
+        enabled: true
+        foreground: ''
+        items: []
+        visible: true
+        font_size: 12
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: true
       name: dropdown_symbol
       layout_properties: {grid_position: 'FLAWCB,NVJSHO'}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: 'fa:plus'}
       name: tranx_rpt_button_plus
@@ -97,15 +133,15 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: PANEL FOR TRANSACTION LIST, font_size: null, font: '',
+        visible: false, text: PANEL FOR TRANSACTION LIST, font_size: 12, font: '',
         spacing_above: small, icon_align: left, spacing_below: small, italic: false,
         background: '', bold: false, underline: false, icon: ''}
       name: label_1
       layout_properties: {}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Generate CSV (ALL), font_size: null,
-        font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+        foreground: '', visible: true, text: Generate CSV (ALL), font_size: 12, font: '',
+        spacing_above: small, icon_align: left, spacing_below: small, italic: false,
         background: '', bold: false, underline: false, icon: ''}
       name: button_tranx_gen_csv
       layout_properties:
@@ -114,7 +150,7 @@ components:
       event_bindings: {click: button_tranx_gen_csv_click}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Search, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_tranx_search
@@ -122,7 +158,7 @@ components:
       event_bindings: {click: button_tranx_search_click}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Reset, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Reset, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_tranx_reset
@@ -130,9 +166,9 @@ components:
       event_bindings: {click: button_tranx_reset_click}
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer3
       layout_properties: {}
   - type: FlowPanel
@@ -143,14 +179,14 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: PANEL FOR PNL REPORT, font_size: null, font: '', spacing_above: small,
+        visible: false, text: PANEL FOR PNL REPORT, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_4
       layout_properties: {}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Search, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_pnl_search
@@ -158,7 +194,7 @@ components:
       event_bindings: {click: button_pnl_search_click}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Reset, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Reset, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_pnl_reset
@@ -166,9 +202,9 @@ components:
       event_bindings: {click: button_pnl_reset_click}
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer4
       layout_properties: {}
   - type: FlowPanel
@@ -181,14 +217,14 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: PANEL FOR EXP LIST, font_size: null, font: '', spacing_above: small,
+        visible: false, text: PANEL FOR EXP LIST, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_5
       layout_properties: {}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Search, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_exp_search
@@ -196,7 +232,7 @@ components:
       event_bindings: {click: button_exp_search_click}
     - type: Button
       properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: Reset, font_size: null, font: '', spacing_above: small,
+        foreground: '', visible: true, text: Reset, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_exp_reset
@@ -204,9 +240,9 @@ components:
       event_bindings: {click: button_exp_reset_click}
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: null, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: ''}
       name: spacer5
       layout_properties: {}
 - type: ColumnPanel

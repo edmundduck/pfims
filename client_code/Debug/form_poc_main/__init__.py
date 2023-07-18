@@ -10,7 +10,7 @@ from ..form_poc2 import form_poc2
 from ..form_poc3 import form_poc3
 from ..form_poc3a import form_poc3a
 from ..form_poc4 import form_poc4
-from ...App import Global as glo
+from ...Utils import Constants as const
 
 class form_poc_main(form_poc_mainTemplate):
     subform = None
