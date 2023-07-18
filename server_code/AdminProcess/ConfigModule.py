@@ -15,10 +15,11 @@ from ..System import SystemModule as sysmod
 
 # DB table "settings" select method from Postgres DB
 def psqldb_select_settings():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
-    settings = {}
+    settings = None
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT default_broker, default_interval, default_datefrom, default_dateto FROM  " + sysmod.schemafin() + ".settings")
+        cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto FROM {sysmod.schemafin()}.settings")
         for i in cur.fetchall():
             settings = {
                 'default_broker': i['default_broker'],
@@ -31,98 +32,67 @@ def psqldb_select_settings():
 
 # DB table "brokers" select method from Postgres DB
 def psgldb_select_brokers():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT broker_id, name, ccy FROM  " + sysmod.schemafin() + ".brokers ORDER BY broker_id ASC")
+        cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
         cur.close()
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
 # DB table "settings" update/insert method into Postgres DB
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "INSERT INTO {schema}.settings (app_uid, default_broker, default_interval, default_datefrom, default_dateto) \
-        VALUES ('{p1}','{p2}','{p3}'{p4}{p5}) \
-        ON CONFLICT (app_uid) DO UPDATE SET default_broker='{p6}',default_interval='{p7}'{p8}{p9}"
-
-        if def_datefrom is not None:
-            datefrom1 = ",'" + str(def_datefrom) + "'"
-            datefrom2 = ",default_datefrom='" + str(def_datefrom) + "'"
-        else:
-            datefrom1 = ",NULL"
-            datefrom2 = ",default_datefrom=NULL"
-
-        if def_dateto is not None:
-            dateto1 = ",'" + str(def_dateto) + "'"
-            dateto2 = ",default_dateto='" + str(def_dateto) + "'"
-        else:
-            dateto1 = ",NULL"
-            dateto2 = ",default_dateto=NULL"
-
-        stmt = sql.format(
-            schema=sysmod.schemafin(),
-            p1=anvil.users.get_user()['app_uid'],
-            p2=def_broker,
-            p3=def_interval,
-            p4=datefrom1,
-            p5=dateto1,
-            p6=def_broker,
-            p7=def_interval,
-            p8=datefrom2,
-            p9=dateto2)
-
-        cur.execute(stmt)
-        conn.commit()
-        count = cur.rowcount
-        cur.close()
-    return count
+    userid = sysmod.get_current_userid()
+    if def_interval != const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
+    try:
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, default_dateto) \
+            VALUES (%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, default_interval=%s, default_datefrom=%s, default_dateto=%s"
+            stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, def_broker, def_interval, def_datefrom, def_dateto))
+            cur.execute(stmt)
+            conn.commit()
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
+        sysmod.print_data_debug("OperationalError in " + psgldb_upsert_settings.__name__, err)
+        conn.rollback()
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
 
 # DB table "brokers" update/insert method into Postgres DB
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
+    userid = sysmod.get_current_userid()
     try:
-        conn = sysmod.db_connect()
-  
+        conn = sysmod.db_connect()  
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if b_id is None or b_id == '':
-                sql = "INSERT INTO {schema}.brokers (prefix, name, ccy) VALUES ('{p1}','{p2}','{p3}') RETURNING id"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=prefix,
-                    p2=name,
-                    p3=ccy)
-                cur.execute(stmt)
+            if b_id in (None, ''):
+                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
                 id = cur.fetchone()['id']
                 conn.commit()
-                cur.execute("SELECT broker_id FROM  " + sysmod.schemafin() + ".brokers WHERE id=" + str(id))
+                cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={str(id)}")
                 b_id = cur.fetchone()['broker_id']
             else:
-                sql1 = "UPDATE {schema}.brokers SET prefix='{p1}', name='{p2}', ccy='{p3}' WHERE broker_id='{p4}'"
-                stmt = sql1.format(
-                    schema=sysmod.schemafin(),
-                    p1=prefix, \
-                    p2=name, \
-                    p3=ccy, \
-                    p4=b_id)
-                cur.execute(stmt)
+                cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{name}', ccy='{ccy}' WHERE broker_id='{b_id}'")
                 conn.commit()
-                count = cur.rowcount
-                if count <= 0:
-                    raise psycopg2.OperationalError("Update fail.")  
-            cur.close()
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
             return b_id
-    except psycopg2.OperationalError as err:
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
       
 # Return selected broker name by querying DB table "brokers" from Postgres DB
 def psgldb_get_broker_name(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT name FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
+        cur.execute(f"SELECT name FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
         result = cur.fetchone()
     return result['name'] if result is not None else ''
 
@@ -130,7 +100,7 @@ def psgldb_get_broker_name(choice):
 def psgldb_get_broker_ccy(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT ccy FROM " + sysmod.schemafin() + ".brokers WHERE broker_id='" + choice + "'")
+        cur.execute(f"SELECT ccy FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
         result = cur.fetchone()
     return result['ccy'] if result is not None else ''
 
@@ -139,26 +109,25 @@ def psgldb_delete_brokers(b_id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("DELETE FROM " + sysmod.schemafin() + ".brokers WHERE broker_id = '" + b_id + "'")
+            cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{b_id}'")
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                raise psycopg2.OperationalError("Delete fail.")
-
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + psgldb_delete_brokers.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
 
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Postgres DB
 def psgldb_get_submitted_templ_list():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute("SELECT template_id, template_name FROM " + sysmod.schemafin() + ".templates WHERE submitted=true")
+        cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
         result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
         cur.close()
     result.insert(0, '')

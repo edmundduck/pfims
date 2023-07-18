@@ -16,13 +16,10 @@ from ..System import SystemModule as sysmod
 @anvil.server.callable
 # Generate expense tabs dropdown items
 def generate_expensetabs_dropdown():
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.expensetab WHERE submitted=FALSE ORDER BY tab_id ASC, tab_name ASC"
-        stmt = sql.format(
-            schema=sysmod.schemafin()
-        )
-        cur.execute(stmt)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['tab_name'] + " (" + str(row['tab_id']) + ")", [row['tab_id'], row['tab_name']]) for row in rows)
@@ -36,12 +33,7 @@ def get_selected_expensetab_attr(selected_tab):
     else:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.expensetab WHERE tab_id={p1}"   
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=selected_tab
-            )
-            cur.execute(stmt)
+            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.expensetab WHERE tab_id={selected_tab}")
             row = cur.fetchone()
             cur.close()
         return [row['tab_id'], row['tab_name']]
@@ -52,12 +44,7 @@ def select_transactions(tid):
     if tid is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.exp_transactions WHERE tab_id = {p1} ORDER BY trandate DESC, iid DESC"
-            stmt = sql.format(
-                schema=sysmod.schemafin(),
-                p1=tid
-            )
-            cur.execute(stmt)
+            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
             cur.close()
         return list(rows)
@@ -100,7 +87,6 @@ def upsert_transactions(tid, rows):
                     conn.commit()
                     count = cur.rowcount
                     if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
-                    cur.close()
                 else:
                     count = 0
             else:
@@ -109,80 +95,59 @@ def upsert_transactions(tid, rows):
         sysmod.print_data_debug("OperationalError in " + upsert_transactions.__name__, err)
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()        
     return count
     
 @anvil.server.callable
 # Delete transactions from "exp_transactions" DB table
 def delete_transactions(tid, iid_list):
-    conn = None
-    count = None
+    conn, cur, count = [None, None, None]
     try:
-        if len(iid_list) > 0:
+        if iid_list is not None and len(iid_list) > 0:
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
-                sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {p1} AND iid IN {p2}"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=tid,
-                    p2=args
-                )
-                cur.execute(stmt)
+                cur.execute(f"DELETE FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} AND iid IN {args}")
                 conn.commit()
                 count = cur.rowcount
-                if count <= 0:
-                    raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
-                cur.close()
+                if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
         else:
             count = 0
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_transactions.__name__, err)
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()        
     return count
 
 @anvil.server.callable
 # Save expense tab
 def save_expensetab(id, name):
+    userid = sysmod.get_current_userid()
     try:
         currenttime = datetime.now()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if id is None or id == '':
-                sql = "INSERT INTO {schema}.expensetab (tab_name, submitted, tab_create, tab_lastsave) \
-                VALUES ('{p1}',{p2},'{p3}','{p4}') RETURNING tab_id"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=name,
-                    p2=False,
-                    p3=currenttime,
-                    p4=currenttime
-                )
+            if id in (None, ''):
+                sql = f"INSERT INTO {sysmod.schemafin()}.expensetab (userid, tab_name, submitted, tab_create, tab_lastsave) \
+                VALUES ({userid},'{name}',False,'{currenttime}','{currenttime}') RETURNING tab_id"
             else:
-                sql = "UPDATE {schema}.expensetab SET tab_name='{p2}', submitted={p3}, tab_create='{p4}', tab_lastsave='{p5}' \
-                WHERE tab_id={p1} RETURNING tab_id"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=id,
-                    p2=name,
-                    p3=False,
-                    p4=currenttime,
-                    p5=currenttime,
-                )
-            cur.execute(stmt)
+                sql = f"UPDATE {sysmod.schemafin()}.expensetab SET tab_name='{name}', submitted=False, tab_create='{currenttime}', tab_lastsave='{currenttime}' \
+                WHERE userid={userid} AND tab_id={id} RETURNING tab_id"
+            cur.execute(sql)
             conn.commit()
             tid = cur.fetchone()
-            if tid['tab_id'] < 0:
-                    raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))
-            cur.close()
-        return tid['tab_id']
-    except psycopg2.OperationalError as err:
+            if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))
+            return tid['tab_id']
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + save_expensetab.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()        
+    return None
 
 @anvil.server.callable
 # Submit expense tab
@@ -192,33 +157,20 @@ def submit_expensetab(id, submitted):
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
-                sql = "UPDATE {schema}.expensetab SET submitted={p2}, tab_submitted='{p3}' \
-                WHERE tab_id={p1} RETURNING tab_id"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=id,
-                    p2=submitted,
-                    p3=currenttime
-                )
+                sql = f"UPDATE {sysmod.schemafin()}.expensetab SET submitted={submitted}, tab_submitted='{currenttime}' \
+                WHERE tab_id={id} RETURNING tab_id"
             else:
-                sql = "UPDATE {schema}.expensetab SET submitted={p2} \
-                WHERE tab_id={p1} RETURNING tab_id"
-                stmt = sql.format(
-                    schema=sysmod.schemafin(),
-                    p1=id,
-                    p2=submitted
-                )
-            cur.execute(stmt)
+                sql = f"UPDATE {sysmod.schemafin()}.expensetab SET submitted={submitted} WHERE tab_id={id} RETURNING tab_id"
+            cur.execute(sql)
             conn.commit()
             tid = cur.fetchone()
-            if tid['tab_id'] < 0:
-                    raise psycopg2.OperationalError("Tab (id:{0}) submission fail.".format(template_id))
-            cur.close()
-        return tid['tab_id']
+            if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) submission fail.".format(template_id))
+            return tid['tab_id']
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + submit_expensetab.__name__, err)
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
@@ -229,15 +181,14 @@ def delete_expensetab(tab_id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute("DELETE FROM {schema}.expensetab WHERE tab_id = {p1}".format(schema=sysmod.schemafin(), p1=tab_id))
+            cur.execute(f"DELETE FROM {sysmod.schemafin()}.expensetab WHERE tab_id = {tab_id}")
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                raise psycopg2.OperationalError("Expense tab (id:{0}) deletion fail.".format(tab_id))
-            cur.close()
-        return count
-    except psycopg2.OperationalError as err:
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Expense tab (id:{0}) deletion fail.".format(tab_id))
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + delete_expensetab.__name__, err)
         conn.rollback()
-        cur.close()
-        return None
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None

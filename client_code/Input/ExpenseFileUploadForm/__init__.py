@@ -32,13 +32,12 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def dropdown_filetype_change(self, **event_args):
         """This method is called when an item is selected"""
-        userid = anvil.server.call('get_current_userid')
         filetype_id, filetype = self.dropdown_filetype.selected_value
         debug.log(f"filetype_id={filetype_id}, filetype={filetype}")
         if filetype_id is None:
             self.dropdown_mapping_rule.items = []
         else:
-            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', userid, filetype_id)
+            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', filetype_id)
 
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
