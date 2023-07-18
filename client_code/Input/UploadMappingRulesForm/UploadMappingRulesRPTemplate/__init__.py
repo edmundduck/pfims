@@ -40,6 +40,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
+        debug.log("b.parent.tag[0]=", b.parent.tag[0])
         if b.parent.tag[0] is not None: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 
@@ -84,7 +85,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
         if userconf == const.Alerts.CONFIRM:
             if to_be_del_fid not in (None, ''):
-                result = anvil.server.call('delete_mapping', fid=to_be_del_fid)
+                result = anvil.server.call('delete_mapping', id=to_be_del_fid)
                 if result is not None and result > 0:
                     """ Reflect the change in tab dropdown """
                     self.remove_from_parent()
