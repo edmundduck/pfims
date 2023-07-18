@@ -40,6 +40,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
+        debug.log("b.parent.tag[0]=", b.parent.tag[0])
         if b.parent.tag[0] is not None: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 
