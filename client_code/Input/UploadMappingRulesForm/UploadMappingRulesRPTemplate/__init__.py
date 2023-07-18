@@ -54,7 +54,6 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 rules.append(i.tag)
-                # TODO to regenerate iid after saving
                 i.remove_from_parent()
         result = anvil.server.call('save_mapping_rules', id=id, mapping_rules={"name":name, "filetype":filetype_id, "rules":rules}, del_iid=del_iid)
 
@@ -67,36 +66,41 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         else:
             msg = f"WARNING: Problem occurs when saving mapping {name}."
             warning.log(msg)
-        # TODO to regenerate iid after saving
         self.item = (anvil.server.call('select_mapping_rules', id))[0]
         self.row_dropdown_type.selected_value = [filetype_id, filetype]
         if self.item.get('rule', None) is not None:
             self._generate_all_mapping_rules(self.item['rule'])
         Notification(msg).show()
+        self.parent.raise_event('x-reload-rp')
 
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        to_be_del_fid = self.row_hidden_id.text
-        to_be_del_fname = self.row_mapping_name.text
-        confirm = Label(text=f"Proceed mapping <{to_be_del_fname}> deletion by clicking DELETE.")
+        to_be_del_id = self.row_hidden_id.text
+        to_be_del_name = self.row_mapping_name.text
+        confirm = Label(text=f"Proceed mapping <{to_be_del_name}> deletion by clicking DELETE.")
         userconf = alert(content=confirm,
                         title=f"Alert - mapping Deletion",
                         buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
 
         if userconf == const.Alerts.CONFIRM:
-            if to_be_del_fid not in (None, ''):
-                result = anvil.server.call('delete_mapping', id=to_be_del_fid)
+            # Save the self.parent first so that remove_from_parent can be called before raising event
+            #https://anvil.works/forum/t/children-to-parent-update/6324/4
+            parent = self.parent
+            if to_be_del_id not in (None, ''):
+                result = anvil.server.call('delete_mapping', id=to_be_del_id)
                 if result is not None and result > 0:
                     """ Reflect the change in tab dropdown """
                     self.remove_from_parent()
-                    msg = f"Mapping {to_be_del_fname} has been deleted."
+                    msg = f"Mapping {to_be_del_name} has been deleted."
                     info.log(msg)
+                    parent.raise_event('x-reload-rp', del_id=to_be_del_id)
                 else:
-                    msg = f"ERROR: Fail to delete mapping {to_be_del_fname}."
+                    msg = f"ERROR: Fail to delete mapping {to_be_del_name}."
                     error.log(msg)
                 Notification(msg).show()
             else:
                 self.remove_from_parent()
+                parent.raise_event('x-reload-rp')
 
     def row_dropdown_extraact_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
