@@ -246,3 +246,21 @@ def select_mapping_extra_actions(id):
         rows = cur.fetchall()
         cur.close()
     return list(rows)
+
+@anvil.server.callable
+# Delete mapping and its associated rules and matrix
+def delete_mapping(id):
+    try:
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappinggroup WHERE id = '{id}'")
+            conn.commit()
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete mapping group fail with rowcount <= 0.")
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
+        sysmod.print_data_debug("OperationalError in " + delete_mapping.__name__, err)
+        conn.rollback()
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
