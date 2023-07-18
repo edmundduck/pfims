@@ -218,7 +218,6 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                 count = 0
 
             # At last perform rules deletion (if any)
-            print(f"debug/del_iid={del_iid}")
             if del_iid not in (None, ''):
                 args = "({0})".format(",".join(f"'{i}'" for i in del_iid))
                 sql = f"DELETE FROM {sysmod.schemafin()}.mappingrules WHERE gid = {id} AND col IN {args}"
