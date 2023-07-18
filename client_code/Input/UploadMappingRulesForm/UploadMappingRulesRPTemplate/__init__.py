@@ -36,12 +36,12 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         lbl_id, lbl = eval(self.row_dropdown_lbl.selected_value).values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
         acct_id, acct = self.row_dropdown_acct.selected_value if self.row_dropdown_acct.selected_value is not None else [None, None]
         extratgt_id = lbl_id if extraact_id == "L" else acct_id
-        self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id)
+        self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, True)
 
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
         dump.log("b.parent.tag[0]=", b.parent.tag[0])
-        if b.parent.tag[0] is not None: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
+        if b.parent.tag[0] is not None and not b.parent.tag[-1]: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 
     def row_button_save_click(self, **event_args):
@@ -108,7 +108,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_dropdown_lbl.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "L" else False
         self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "A" else False
 
-    def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, **event_args):
+    def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
         debug.log(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
         dict_exp_tbl_def = cache.expense_tbl_def_dict()
         dict_extraact = cache.mapping_rules_extra_action_dict()
@@ -123,7 +123,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
         
         lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=const.Icons.BULLETPOINT)
-        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule])
+        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule, is_new])
         b = Button(
             icon=const.Icons.REMOVE,
             foreground=const.ColorSchemes.BUTTON_BG,
