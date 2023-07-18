@@ -9,6 +9,7 @@ import psycopg2.extras
 from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
+from ..System.LoggingModule import dump, debug, info, warning, error, critical
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -34,6 +35,7 @@ def psqldb_select_settings():
 def psgldb_select_brokers():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
+    debug.log("TEST")
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
