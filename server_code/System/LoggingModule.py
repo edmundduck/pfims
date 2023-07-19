@@ -24,7 +24,7 @@ LOGGING_CONFIG = {
         "disable_existing_loggers": False,
         "formatters": {
             "standard": {
-                "format": "[S] %(asctime)s [%(levelname)-8s] %(message)s"
+                "format": "[S] %(asctime)s [%(levelname)] %(message)s"
             }
         },
         "handlers": {
@@ -44,26 +44,33 @@ LOGGING_CONFIG = {
     }
 
 class ServerLogger():
-    def __init__(self, func, level):
+    def __init__(self, config, level):
+        logging.config.dictConfig(config)
+        self.logger = logging.getLogger(__name__)
         self.level = level
-        self.f = func
 
     def log(self, msg=None, *args, **kwargs):
         current = datetime.datetime.now()
         output = f" [{self.level.get('desc')}] {msg} " if self.level.get('val') < DEBUG.get('val') else f" {msg} "
         if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
         if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
-        self.f(output)
+        if self.level == DEBUG_LARGEDATA or self.level == DEBUG:
+            self.logger.debug(output)
+        elif self.level == INFO:
+            self.logger.info(output)
+        elif self.level == WARNING:
+            self.logger.warning(output)
+        elif self.level == ERROR:
+            self.logger.error(output)
+        elif self.level == CRITICAL:
+            self.logger.critical(output)
 
-logging.config.dictConfig(LOGGING_CONFIG)
-logger = logging.getLogger(__name__)
-
-dump = ServerLogger(func=logger.debug, level=DEBUG_LARGEDATA)
-debug = ServerLogger(func=logger.debug, level=DEBUG)
-info = ServerLogger(func=logger.info, level=INFO)
-warning = ServerLogger(func=logger.warning, level=WARNING)
-error = ServerLogger(func=logger.error, level=ERROR)
-critical = ServerLogger(func=logger.critical, level=CRITICAL)
+dump = ServerLogger(config=LOGGING_CONFIG, level=DEBUG_LARGEDATA)
+debug = ServerLogger(config=LOGGING_CONFIG, level=DEBUG)
+info = ServerLogger(config=LOGGING_CONFIG, level=INFO)
+warning = ServerLogger(config=LOGGING_CONFIG, level=WARNING)
+error = ServerLogger(config=LOGGING_CONFIG, level=ERROR)
+critical = ServerLogger(config=LOGGING_CONFIG, level=CRITICAL)
 
 # @anvil.server.callable
 # def log(name, message, level='DEBUG'):

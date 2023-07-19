@@ -15,7 +15,7 @@ WARNING = { 'val':30, 'desc':'WARNING' }
 ERROR = { 'val':40, 'desc':'ERROR' }
 CRITICAL = { 'val':50, 'desc':'CRITICAL' }
 
-class Logger():
+class ClientLogger():
     def __init__(self, config, level):
         self.datefmt = config.datefmt
         self.default = config.default
@@ -24,21 +24,21 @@ class Logger():
     def log(self, msg=None, *args, **kwargs):
         if self.level.get('val') >= self.default.get('val'):
             current = datetime.datetime.now()
-            output = f" {current.strftime(self.datefmt)} [{self.level.get('desc')}] {msg} "
+            output = f"[C] {current.strftime(self.datefmt)} [{self.level.get('desc')}] {msg} "
             if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
             if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
             print(output)
 
-class LoggerConfig():
+class ClientLoggerConfig():
     def __init__(self, datefmt='%Y-%m-%d %H:%M:%S', default=INFO):
         self.datefmt = datefmt
         self.default = default
 
-config = LoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=DEBUG_LARGEDATA)
+config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=DEBUG_LARGEDATA)
 
-dump = Logger(config=config, level=DEBUG_LARGEDATA)
-debug = Logger(config=config, level=DEBUG)
-info = Logger(config=config, level=INFO)
-warning = Logger(config=config, level=WARNING)
-error = Logger(config=config, level=ERROR)
-critical = Logger(config=config, level=CRITICAL)
+dump = ClientLogger(config=config, level=DEBUG_LARGEDATA)
+debug = ClientLogger(config=config, level=DEBUG)
+info = ClientLogger(config=config, level=INFO)
+warning = ClientLogger(config=config, level=WARNING)
+error = ClientLogger(config=config, level=ERROR)
+critical = ClientLogger(config=config, level=CRITICAL)
