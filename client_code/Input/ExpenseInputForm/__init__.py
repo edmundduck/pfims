@@ -219,3 +219,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def tab_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""
         self._switch_to_save_button()
+
+    def reload_rp_data(self, del_id=None, **event_args):
+        for d in self.repeating_panel_1.get_components(): dump.log("reload_rp_data d.item=", d.item)
+        # This doesn't work
+        #self.repeating_panel_1.items = [c for c in self.repeating_panel_1.items if c['id'] != del_id]
+        self.repeating_panel_1.items = [c.item for c in self.repeating_panel_1.get_components() if c.item['id'] != del_id]
