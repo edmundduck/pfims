@@ -34,7 +34,7 @@ class LoggerConfig():
         self.datefmt = datefmt
         self.default = default
 
-config = LoggerConfig(default=DEBUG_LARGEDATA)
+config = LoggerConfig(default=DEBUG)
 
 dump = Logger(config=config, level=DEBUG_LARGEDATA)
 debug = Logger(config=config, level=DEBUG)

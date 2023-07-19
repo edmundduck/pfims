@@ -24,6 +24,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
+            self.tab_name.text = tab_id[1]
             debug.log("self.dropdown_tabs.selected_value=", self.dropdown_tabs.selected_value)
 
         if data is None:
