@@ -215,3 +215,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
                 error.log(msg2)
             Notification(msg2).show()
+
+    def tab_name_change(self, **event_args):
+        """This method is called when the text in this text box is edited"""
+        self._switch_to_save_button()
