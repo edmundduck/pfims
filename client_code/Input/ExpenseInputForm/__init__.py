@@ -145,6 +145,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
+        # Reload to allow changed rows (deleted, added or updated) to reflect properly
+        self.reload_rp_data()
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
@@ -220,8 +222,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the text in this text box is edited"""
         self._switch_to_save_button()
 
-    def reload_rp_data(self, del_id=None, **event_args):
+    def reload_rp_data(self, **event_args):
         for d in self.repeating_panel_1.get_components(): dump.log("reload_rp_data d.item=", d.item)
-        # This doesn't work
-        #self.repeating_panel_1.items = [c for c in self.repeating_panel_1.items if c['id'] != del_id]
-        self.repeating_panel_1.items = [c.item for c in self.repeating_panel_1.get_components() if c.item['id'] != del_id]
+        self.repeating_panel_1.items = [c.item for c in self.repeating_panel_1.get_components() if c.item['id'] not in cache.get_deleted_row()]
