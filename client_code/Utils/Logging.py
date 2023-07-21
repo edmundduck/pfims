@@ -28,7 +28,7 @@ class ClientLogger():
             # Call the original function
             result = func(*args, **kwargs)
             # Log the function return value
-            self.log("Client function %s.%s returned: %s ///" % (func.__class__, func.__name__, result))
+            self.log("Client function %s.%s returned: %s ///" % (func.__class__.__name__, func.__name__, result))
             return result
         return wrapper
 
