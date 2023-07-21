@@ -22,10 +22,12 @@ class UploadMappingRulesForm(UploadMappingRulesFormTemplate):
         """This method is called when the button is clicked"""
         self.repeating_panel_1.items = [{} for i in range(1)] + self.repeating_panel_1.items 
 
+    @debug.log_function
     def button_file_import_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_exp_file_upload_form(self)
 
+    @debug.log_function
     def reload_rp_data(self, del_id=None, **event_args):
         for d in self.repeating_panel_1.get_components(): dump.log("reload_rp_data d.item=", d.item)
         # This doesn't work

@@ -50,6 +50,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         else:
             self.button_next.visible = False
 
+    @debug.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping=self.labels_mapping_panel.items)

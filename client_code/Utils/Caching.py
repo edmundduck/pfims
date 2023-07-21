@@ -27,6 +27,7 @@ def labels_dropdown():
 
 # Return a dict for labels for Expense Input and Upload
 # Not using generic get_cache_dict function as it involves eval() issue requiring special handling
+@debug.log_function
 def labels_dict():
     global cache_dict
     key='labels_dict'
@@ -99,6 +100,7 @@ def ccy_reset():
     clear_cache(key='ccy')
     
 # Add IID into the deletion list for delete journals / delete transactions function to process
+@debug.log_function
 def add_deleted_row(iid):
     global cache_dict
     key = 'delete_row_iid'

@@ -21,7 +21,7 @@ class ClientLogger():
         self.default = config.default
         self.level = level
 
-    def func_log_wrapper(self, func):
+    def log_function(self, func):
         def wrapper(*args, **kwargs):
             # Log the function call
             self.log("Client function %s starts ..." % func.__qualname__)

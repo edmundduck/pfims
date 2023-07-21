@@ -46,6 +46,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         else:
             self.file_loader_1.enabled = True
 
+    @debug.log_function
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
@@ -73,6 +74,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     vis = True
         self.button_next.visible = vis
 
+    @debug.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         tablist = []

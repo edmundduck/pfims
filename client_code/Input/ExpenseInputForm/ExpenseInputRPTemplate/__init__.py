@@ -31,6 +31,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
+    @debug.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.labels_list()
@@ -60,6 +61,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     self.row_panel_labels.add_component(b, False, name=lbl_name)
                     b.set_event_handler('click', self.label_button_minus_click)
 
+    @debug.log_function
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
         loc = self.hidden_lbls_id.text.find(str(b.tag))
@@ -72,6 +74,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
+    @debug.log_function
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
@@ -122,6 +125,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _set_stmt_dtl_visible(self, vis, **event_args):
         self.row_stmt_dtl.visible = vis
 
+    @debug.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.parent.raise_event('x-switch-to-save-button')

@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from ....Utils import Constants as const
 from ....Utils import Caching as cache
 from ....Utils.Validation import Validator
+from ....Utils.Logging import dump, debug, info, warning, error, critical
 
 class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -20,6 +21,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         else:
             self.foreground = const.ColorSchemes.AMT_POS
 
+    @debug.log_function
     def button_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.row_selldate.date = self.item['sell_date']
@@ -37,6 +39,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
 
+    @debug.log_function
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         v = Validator()
@@ -90,6 +93,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
             self.parent.raise_event('x-save-change')
       
+    @debug.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item['iid'] is not None: cache.add_deleted_row(self.item['iid'])
