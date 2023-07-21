@@ -28,6 +28,7 @@ def psqldb_select_settings():
                 'default_datefrom': i['default_datefrom'],
                 'default_dateto': i['default_dateto']
             }
+        dump.log("settings=", settings)
         cur.close()
     return settings
 
