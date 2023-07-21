@@ -21,6 +21,17 @@ class ClientLogger():
         self.default = config.default
         self.level = level
 
+    def func_log_wrapper(self, func):
+        def wrapper(*args, **kwargs):
+            # Log the function call
+            self.log("Client function %s starts ..." % func.__name__)
+            # Call the original function
+            result = func(*args, **kwargs)
+            # Log the function return value
+            self.log("Client function %s returned: %s ///" % (func.__name__, result))
+            return result
+        return wrapper
+
     def log(self, msg=None, *args, **kwargs):
         if self.level.get('val') >= self.default.get('val'):
             current = datetime.datetime.now()

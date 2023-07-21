@@ -14,6 +14,7 @@ from ...Utils.Logging import dump, debug, info, warning, error, critical
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
+    @info.func_log_wrapper
     def __init__(self, tab_id=None, data=None, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
