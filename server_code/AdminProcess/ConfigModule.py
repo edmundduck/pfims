@@ -28,7 +28,7 @@ def psqldb_select_settings():
                 'default_datefrom': i['default_datefrom'],
                 'default_dateto': i['default_dateto']
             }
-        dump.log("settings=", settings)
+        debug.log("settings=", settings)
         cur.close()
     return settings
 
@@ -41,6 +41,7 @@ def psgldb_select_brokers():
         cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
         cur.close()
+    debug.log("broker_list=", broker_list)
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
 # DB table "settings" update/insert method into Postgres DB
@@ -55,6 +56,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
             stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, def_broker, def_interval, def_datefrom, def_dateto))
             cur.execute(stmt)
             conn.commit()
+            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
@@ -82,6 +84,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
                 cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{name}', ccy='{ccy}' WHERE broker_id='{b_id}'")
                 conn.commit()
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
+            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             return b_id
     except (Exception, psycopg2.OperationalError) as err:
         sysmod.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
@@ -97,6 +100,7 @@ def psgldb_get_broker_name(choice):
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT name FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
         result = cur.fetchone()
+        debug.log("result=", result)
     return result['name'] if result is not None else ''
 
 # Return selected broker CCY by querying DB table "brokers" from Postgres DB
@@ -105,6 +109,7 @@ def psgldb_get_broker_ccy(choice):
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT ccy FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
         result = cur.fetchone()
+        debug.log("result=", result)
     return result['ccy'] if result is not None else ''
 
 # DB table "brokers" delete method in Postgres DB
@@ -114,6 +119,7 @@ def psgldb_delete_brokers(b_id):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{b_id}'")
             conn.commit()
+            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
@@ -132,6 +138,7 @@ def psgldb_get_submitted_templ_list():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
         result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
+        debug.log("result=", result)
         cur.close()
     result.insert(0, '')
     return result
@@ -142,6 +149,7 @@ def psgldb_select_search_interval():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
         rows = cur.fetchall()
+        debug.log("rows=", rows)
         cur.close()
     return list((row['name'], row['id']) for row in rows)
 
