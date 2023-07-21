@@ -24,11 +24,11 @@ class ClientLogger():
     def func_log_wrapper(self, func):
         def wrapper(*args, **kwargs):
             # Log the function call
-            self.log("Client function %s.%s starts ..." % (func.__class__.__name__, func.__name__))
+            self.log("Client function %s starts ..." % func.__qualname__)
             # Call the original function
             result = func(*args, **kwargs)
             # Log the function return value
-            self.log("Client function %s.%s returned: %s ///" % (func.__class__.__name__, func.__name__, result))
+            self.log("Client function %s returned: %s ///" % (func.__qualname__, result))
             return result
         return wrapper
 
