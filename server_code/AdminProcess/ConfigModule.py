@@ -29,6 +29,10 @@ def psqldb_select_settings():
                 'default_dateto': i['default_dateto']
             }
         debug.log("settings=", settings)
+        info.log("settings=", settings)
+        warning.log("settings=", settings)
+        error.log("settings=", settings)
+        critical.log("settings=", settings)
         cur.close()
     return settings
 

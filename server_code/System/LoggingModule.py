@@ -12,12 +12,7 @@ import datetime
 # rather than in the user's browser.
 
 # Constants
-DEBUG_LARGEDATA = { 'val':5, 'desc':'DUMP' }
-DEBUG = { 'val':10, 'desc':'DEBUG' }
-INFO = { 'val':20, 'desc':'INFO' }
-WARNING = { 'val':30, 'desc':'WARNING' }
-ERROR = { 'val':40, 'desc':'ERROR' }
-CRITICAL = { 'val':50, 'desc':'CRITICAL' }
+DEBUG_LARGEDATA = {'val':logging.DEBUG-5, 'desc':'DUMP'}
 
 LOGGING_CONFIG = {
         "version": 1,
@@ -30,14 +25,14 @@ LOGGING_CONFIG = {
         "handlers": {
             "console": {
                 "class": "logging.StreamHandler",
-                "level": logging.DEBUG,
+                "level": "DEBUG",
                 "formatter": "standard",
                 "stream": "ext://sys.stdout"
             }
         },
         "loggers": {
             "": {
-                "level": logging.DEBUG,
+                "level": "DEBUG",
                 "handlers": ["console"]
             }
         }
@@ -46,43 +41,31 @@ LOGGING_CONFIG = {
 class ServerLogger():
     def __init__(self, config, level):
         logging.config.dictConfig(config)
+        logging.root.setLevel(logging.DEBUG)
         self.logger = logging.getLogger(__name__)
         self.level = level
 
     def log(self, msg=None, *args, **kwargs):
         current = datetime.datetime.now()
-        output = f" [{self.level.get('desc')}] {msg} " if self.level.get('val') < DEBUG.get('val') else f" {msg} "
+        level = self.level.get('val') if isinstance(self.level, dict) else self.level
+        output = f" [{self.level.get('desc')}] {msg} " if isinstance(self.level, dict) else f" {msg} "
         if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
         if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
-        if self.level == DEBUG_LARGEDATA or self.level == DEBUG:
+        if level == logging.DEBUG:
+            print(f"TESTING {output}")
             self.logger.debug(output)
-        elif self.level == INFO:
+        elif level == logging.INFO:
             self.logger.info(output)
-        elif self.level == WARNING:
+        elif level == logging.WARNING:
             self.logger.warning(output)
-        elif self.level == ERROR:
+        elif level == logging.ERROR:
             self.logger.error(output)
-        elif self.level == CRITICAL:
+        elif level == logging.CRITICAL:
             self.logger.critical(output)
 
 dump = ServerLogger(config=LOGGING_CONFIG, level=DEBUG_LARGEDATA)
-debug = ServerLogger(config=LOGGING_CONFIG, level=DEBUG)
-info = ServerLogger(config=LOGGING_CONFIG, level=INFO)
-warning = ServerLogger(config=LOGGING_CONFIG, level=WARNING)
-error = ServerLogger(config=LOGGING_CONFIG, level=ERROR)
-critical = ServerLogger(config=LOGGING_CONFIG, level=CRITICAL)
-
-# @anvil.server.callable
-# def log(name, message, level='DEBUG'):
-#     config.dictConfig(LOGGING_CONFIG)
-#     log = logging.getLogger(name)
-#     if level == 'DEBUG':
-#         log.debug(message)
-#     elif level == 'INFO':
-#         log.info(message)
-#     elif level == 'WARNING':
-#         log.warning(message)
-#     elif level == 'ERROR':
-#         log.error(message)
-#     elif level == 'CRITICAL':
-#         log.critical(message)
+debug = ServerLogger(config=LOGGING_CONFIG, level=logging.DEBUG)
+info = ServerLogger(config=LOGGING_CONFIG, level=logging.INFO)
+warning = ServerLogger(config=LOGGING_CONFIG, level=logging.WARNING)
+error = ServerLogger(config=LOGGING_CONFIG, level=logging.ERROR)
+critical = ServerLogger(config=LOGGING_CONFIG, level=logging.CRITICAL)
