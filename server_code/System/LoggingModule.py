@@ -40,9 +40,9 @@ LOGGING_CONFIG = {
 
 class ServerLogger():
     def __init__(self, config, level):
+        self.logger = logging.getLogger(__name__)
         logging.config.dictConfig(config)
         logging.root.setLevel(logging.DEBUG)
-        self.logger = logging.getLogger(__name__)
         self.level = level
 
     def log(self, msg=None, *args, **kwargs):
