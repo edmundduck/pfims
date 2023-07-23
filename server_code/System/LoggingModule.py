@@ -19,7 +19,7 @@ LOGGING_CONFIG = {
         'disable_existing_loggers': False,
         'formatters': {
             'standard': {
-                'format': '[S] %(asctime)s [%(levelname)] %(message)s'
+                'format': '[S] %(asctime)s [%(levelname)s] %(message)s'
             }
         },
         'handlers': {

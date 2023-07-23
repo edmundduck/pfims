@@ -29,10 +29,6 @@ def psqldb_select_settings():
                 'default_dateto': i['default_dateto']
             }
         debug.log("settings=", settings)
-        info.log("settings=", settings)
-        warning.log("settings=", settings)
-        error.log("settings=", settings)
-        critical.log("settings=", settings)
         cur.close()
     return settings
 
@@ -40,7 +36,6 @@ def psqldb_select_settings():
 def psgldb_select_brokers():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
-    debug.log("TEST")
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
@@ -64,7 +59,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + psgldb_upsert_settings.__name__, err)
+        error.log(f"{type(err)} in {psgldb_upsert_settings.__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -91,7 +86,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
             debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             return b_id
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + psgldb_upsert_brokers.__name__, err)
+        error.log(f"{type(err)} in {psgldb_upsert_brokers.__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -127,7 +122,7 @@ def psgldb_delete_brokers(b_id):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + psgldb_delete_brokers.__name__, err)
+        error.log(f"{type(err)} in {psgldb_delete_brokers.__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
