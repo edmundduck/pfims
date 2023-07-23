@@ -59,7 +59,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err)} in {psgldb_upsert_settings.__name__}: {err}")
+        error.log(f"{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -86,7 +86,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
             debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             return b_id
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err)} in {psgldb_upsert_brokers.__name__}: {err}")
+        error.log(f"{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -122,7 +122,7 @@ def psgldb_delete_brokers(b_id):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err)} in {psgldb_delete_brokers.__name__}: {err}")
+        error.log(f"{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
