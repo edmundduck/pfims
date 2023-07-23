@@ -15,6 +15,7 @@ from ..System.LoggingModule import dump, debug, info, warning, error, critical
 # rather than in the user's browser.
 
 # DB table "settings" select method from Postgres DB
+@debug.log_function
 def psqldb_select_settings():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -33,6 +34,7 @@ def psqldb_select_settings():
     return settings
 
 # DB table "brokers" select method from Postgres DB
+@debug.log_function
 def psgldb_select_brokers():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -44,6 +46,7 @@ def psgldb_select_brokers():
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
 # DB table "settings" update/insert method into Postgres DB
+@debug.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     userid = sysmod.get_current_userid()
     if def_interval != const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
@@ -59,7 +62,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err).__name__}: {err}")
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -67,6 +70,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
     return None
 
 # DB table "brokers" update/insert method into Postgres DB
+@debug.log_function
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     userid = sysmod.get_current_userid()
     try:
@@ -86,7 +90,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
             debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             return b_id
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err).__name__}: {err}")
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -94,6 +98,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     return None
       
 # Return selected broker name by querying DB table "brokers" from Postgres DB
+@debug.log_function
 def psgldb_get_broker_name(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -103,6 +108,7 @@ def psgldb_get_broker_name(choice):
     return result['name'] if result is not None else ''
 
 # Return selected broker CCY by querying DB table "brokers" from Postgres DB
+@debug.log_function
 def psgldb_get_broker_ccy(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -112,6 +118,7 @@ def psgldb_get_broker_ccy(choice):
     return result['ccy'] if result is not None else ''
 
 # DB table "brokers" delete method in Postgres DB
+@debug.log_function
 def psgldb_delete_brokers(b_id):
     try:
         conn = sysmod.db_connect()
@@ -122,7 +129,7 @@ def psgldb_delete_brokers(b_id):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err).__name__}: {err}")
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -131,6 +138,7 @@ def psgldb_delete_brokers(b_id):
 
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Postgres DB
+@debug.log_function
 def psgldb_get_submitted_templ_list():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()

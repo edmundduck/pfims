@@ -44,6 +44,17 @@ class ServerLogger():
         logging.root.setLevel(logging.DEBUG)
         self.level = level
 
+    def log_function(self, func):
+        def wrapper(*args, **kwargs):
+            # Log the function call
+            self.log("Server function %s starts ..." % func.__qualname__)
+            # Call the original function
+            result = func(*args, **kwargs)
+            # Log the function return value
+            self.log("Server function %s returned: %s ///" % (func.__qualname__, result))
+            return result
+        return wrapper
+
     def log(self, msg=None, *args, **kwargs):
         current = datetime.datetime.now()
         level = self.level.get('val') if isinstance(self.level, dict) else self.level

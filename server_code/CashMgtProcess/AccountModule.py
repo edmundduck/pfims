@@ -69,7 +69,7 @@ def create_account(name, ccy, valid_from, valid_to, status):
             if id['id'] < 0: raise psycopg2.OperationalError("Account ({0}) creation fail.".format(name))
             return id['id']
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err).__name__}: {err}")
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -90,7 +90,7 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) update fail.".format(name))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err).__name__}: {err}")
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -108,12 +108,10 @@ def delete_account(id):
             cur.execute(stmt)
             conn.commit()
             debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            # debug
-            raise psycopg2.OperationalError("TEST ONLY")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(name))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{type(err).__name__}: {err}")
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
