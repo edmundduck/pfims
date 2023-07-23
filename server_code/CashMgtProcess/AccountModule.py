@@ -12,8 +12,9 @@ from ..System.LoggingModule import dump, debug, info, warning, error, critical
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-@anvil.server.callable
 # Generate accounts dropdown items for account maintenance form
+@debug.log_function
+@anvil.server.callable
 def generate_accounts_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -24,8 +25,9 @@ def generate_accounts_dropdown():
         cur.close()
     return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
 
-@anvil.server.callable
 # Generate currency dropdown items
+@debug.log_function
+@anvil.server.callable
 def generate_ccy_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -36,8 +38,9 @@ def generate_ccy_dropdown():
     content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
     return content
 
-@anvil.server.callable
 # Get selected account attributes
+@debug.log_function
+@anvil.server.callable
 def get_selected_account_attr(selected_acct):
     if selected_acct in (None, ''):
         return [None, None, None, None, None, True]
@@ -52,8 +55,9 @@ def get_selected_account_attr(selected_acct):
             cur.close()
         return [row['id'], row['name'], row['ccy'], row['valid_from'], row['valid_to'], row['status']]
 
-@anvil.server.callable
 # Create account
+@debug.log_function
+@anvil.server.callable
 def create_account(name, ccy, valid_from, valid_to, status):
     try:
         userid = sysmod.get_current_userid()
@@ -76,8 +80,9 @@ def create_account(name, ccy, valid_from, valid_to, status):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
 # Update account
+@debug.log_function
+@anvil.server.callable
 def update_account(id, name, ccy, valid_from, valid_to, status):
     try:
         conn = sysmod.db_connect()
@@ -97,8 +102,9 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
 # Delete account
+@debug.log_function
+@anvil.server.callable
 def delete_account(id):
     try:
         conn = sysmod.db_connect()
