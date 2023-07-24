@@ -31,7 +31,7 @@ LOGGING_CONFIG = {
         },
         'loggers': {
             '': {
-                'level': 'DEBUG',
+                'level': 'TRACE',
                 'handlers': ['console']
             }
         }
@@ -40,16 +40,12 @@ LOGGING_CONFIG = {
 class ServerLogger():
     def __init__(self, config, level):
         self.logger = logging.getLogger(__name__)
-        if isinstance(level, dict):
-            val = level.get('val', None)
-            desc = level.get('desc', None)
-            if val is not None and desc is not None:
-                logging.addLevelName(val, desc)
+        if isinstance(level, dict): logging.addLevelName(level.get('val'), level.get('desc'))
         logging.config.dictConfig(config)
-        logging.root.setLevel(logging.DEBUG)
+        # logging.root.setLevel(logging.DEBUG)
         self.level = level
         if isinstance(level, dict):
-            self.f = self.logger.debug
+            self.f = self.trace
         elif level == logging.DEBUG:
             self.f = self.logger.debug
         elif level == logging.INFO:
@@ -60,6 +56,8 @@ class ServerLogger():
             self.f = self.logger.error
         elif level == logging.CRITICAL:
             self.f = self.logger.critical
+        else:
+            self.f = self.logger.warning
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
@@ -81,7 +79,7 @@ class ServerLogger():
         self.f(output)
 
     def trace(self, msg=None, *args, **kwargs):
-        self.logger._log()
+        self.logger._log(TRACE.get('val'), msg, *args, **kwargs)
 
 trace = ServerLogger(config=LOGGING_CONFIG, level=TRACE)
 debug = ServerLogger(config=LOGGING_CONFIG, level=logging.DEBUG)
