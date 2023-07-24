@@ -40,6 +40,11 @@ LOGGING_CONFIG = {
 class ServerLogger():
     def __init__(self, config, level):
         self.logger = logging.getLogger(__name__)
+        if isinstance(level, dict):
+            val = level.get('val', None)
+            desc = level.get('desc', None)
+            if val is not None and desc is not None:
+                logging.addLevelName(val, desc)
         logging.config.dictConfig(config)
         logging.root.setLevel(logging.DEBUG)
         self.level = level
@@ -74,6 +79,9 @@ class ServerLogger():
         if len(args) > 0: output = '{a} {b}'.format(a=output, b=args)
         if len(kwargs) > 0: output = '{a} {b}'.format(a=output, b=kwargs)
         self.f(output)
+
+    def trace(self, msg=None, *args, **kwargs):
+        self.logger._log()
 
 trace = ServerLogger(config=LOGGING_CONFIG, level=TRACE)
 debug = ServerLogger(config=LOGGING_CONFIG, level=logging.DEBUG)
