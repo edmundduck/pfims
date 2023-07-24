@@ -7,13 +7,15 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from ..System import SystemModule as sysmod
+from ..System.LoggingModule import dump, debug, info, warning, error, critical
 from fuzzywuzzy import fuzz
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-@anvil.server.callable
 # Generate labels dropdown items
+@anvil.server.callable("generate_labels_dropdown")
+@debug.log_function
 def generate_labels_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -25,8 +27,9 @@ def generate_labels_dropdown():
     content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
     return content
 
-@anvil.server.callable
 # Generate labels into list
+@anvil.server.callable("generate_labels_list")
+@debug.log_function
 def generate_labels_list():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -36,8 +39,9 @@ def generate_labels_list():
         cur.close()
     return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
 
-@anvil.server.callable
 # Get selected label attributes
+@anvil.server.callable("get_selected_label_attr")
+@debug.log_function
 def get_selected_label_attr(selected_lbl):
     userid = sysmod.get_current_userid()
     if selected_lbl is None or selected_lbl == '':
@@ -52,8 +56,9 @@ def get_selected_label_attr(selected_lbl):
             cur.close()
         return [row['id'], row['name'], row['keywords'], row['status']]
 
-@anvil.server.callable
 # Generate labels dropdown items
+@anvil.server.callable("generate_labels_mapping_action_dropdown")
+@debug.log_function
 def generate_labels_mapping_action_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -63,8 +68,9 @@ def generate_labels_mapping_action_dropdown():
     content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
-@anvil.server.callable
 # Create label
+@anvil.server.callable("create_label")
+@debug.log_function
 def create_label(labels):
     userid = sysmod.get_current_userid()
     try:
@@ -75,19 +81,21 @@ def create_label(labels):
                 stmt = f"INSERT INTO {sysmod.schemafin()}.labels (userid, name, keywords, status) VALUES %s RETURNING id"
                 cur.execute(stmt % mogstr)
                 conn.commit()
+                debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 return [r['id'] for r in cur.fetchall()]
             else:
                 return []
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + create_label.__name__, err)
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
 # Update label
+@anvil.server.callable("update_label")
+@debug.log_function
 def update_label(id, name, keywords, status):
     try:
         conn = sysmod.db_connect()
@@ -96,18 +104,20 @@ def update_label(id, name, keywords, status):
             stmt = cur.mogrify(sql, (name, keywords, status, id))
             cur.execute(stmt)
             conn.commit()
+            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + update_label.__name__, err)
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
 # Delete label
+@anvil.server.callable("delete_label")
+@debug.log_function
 def delete_label(id):
     try:
         conn = sysmod.db_connect()
@@ -116,17 +126,19 @@ def delete_label(id):
             stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()
+            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + delete_label.__name__, err)
+        error.log(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
+@anvil.server.callable("predict_relevant_labels")
+@debug.log_function
 def predict_relevant_labels(srclbl, curlbl):
     # Max 100, min 0
     min_proximity = 40
@@ -135,6 +147,7 @@ def predict_relevant_labels(srclbl, curlbl):
         highscore = [0, None]
         for lbl in curlbl:
             similarity = fuzz.ratio(s, curlbl[lbl])
+            debug.log(f"lbl={lbl}, similarity={similarity}, highscore[0]={highscore[0]}")
             if similarity > highscore[0]:
                 highscore = [similarity, {'id': int(lbl), 'text': curlbl[lbl]}]
         score.append(highscore[1] if highscore[0] > min_proximity else None)

@@ -23,7 +23,7 @@ def generate_accounts_dropdown():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
         rows = cur.fetchall()
-        debug.log("rows=", rows)
+        dump.log("rows=", rows)
         cur.close()
     return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
 
@@ -35,7 +35,7 @@ def generate_ccy_dropdown():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.ccy ORDER BY common_seq ASC, abbv ASC")
         rows = cur.fetchall()
-        debug.log("rows=", rows)
+        dump.log("rows=", rows)
         cur.close()
     content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
     return content
@@ -53,7 +53,7 @@ def get_selected_account_attr(selected_acct):
             stmt = cur.mogrify(sql, (selected_acct, ))
             cur.execute(stmt)
             row = cur.fetchone()
-            debug.log("row=", row)
+            dump.log("row=", row)
             cur.close()
         return [row['id'], row['name'], row['ccy'], row['valid_from'], row['valid_to'], row['status']]
 

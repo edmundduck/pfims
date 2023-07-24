@@ -136,8 +136,8 @@ def psgldb_delete_brokers(b_id):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
 # Generate SUBMITTED template selection dropdown items from Postgres DB
+@anvil.server.callable("psgldb_get_submitted_templ_list")
 @debug.log_function
 def psgldb_get_submitted_templ_list():
     userid = sysmod.get_current_userid()
@@ -151,6 +151,7 @@ def psgldb_get_submitted_templ_list():
     return result
         
 # Return search interval dropdown by querying DB table "search_interval" from Postgres DB
+@debug.log_function
 def psgldb_select_search_interval():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
