@@ -14,6 +14,9 @@ import datetime
 # Constants
 TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
+# Config
+LOG_LEVEL = TRACE.get('val')
+
 LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -42,7 +45,7 @@ class ServerLogger():
         self.logger = logging.getLogger(__name__)
         if isinstance(level, dict): logging.addLevelName(level.get('val'), level.get('desc'))
         logging.config.dictConfig(config)
-        logging.root.setLevel(TRACE.get('val'))
+        logging.root.setLevel(LOG_LEVEL)
         self.level = level
         if isinstance(level, dict):
             self.f = self.trace
