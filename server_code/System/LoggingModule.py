@@ -79,7 +79,7 @@ class ServerLogger():
         self.f(output)
 
     def trace(self, msg=None, *args, **kwargs):
-        self.logger._log(TRACE.get('val'), msg, *args, **kwargs)
+        self.logger._log(TRACE.get('val'), msg, args, **kwargs)
 
 trace = ServerLogger(config=LOGGING_CONFIG, level=TRACE)
 debug = ServerLogger(config=LOGGING_CONFIG, level=logging.DEBUG)
