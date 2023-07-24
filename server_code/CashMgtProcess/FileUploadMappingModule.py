@@ -8,7 +8,7 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import dump, debug, info, warning, error, critical
+from ..System.LoggingModule import trace, debug, info, warning, error, critical
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -91,7 +91,7 @@ def generate_mapping_matrix(matrix, col_def):
             y.insert(0, '')
             result = [y] + result if result is not None else [y]
     if result is None: result = r
-    dump.log("result=", result)
+    trace.log("result=", result)
     return result
 
 # Select input expense table definition column ID
@@ -121,7 +121,7 @@ def select_mapping_rules(gid=None):
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
-        dump.log("rows=", rows)
+        trace.log("rows=", rows)
 
         # Group all mapping rules under corresponding mapping group
         result = {}
@@ -141,7 +141,7 @@ def select_mapping_rules(gid=None):
             else:
                 r = result.get(row['id'], None)['rule']
                 r.append([action1, action2, extra1, extra2]) if action1 is not None and action2 is not None else r.append(None)
-        dump.log("result=", result)
+        trace.log("result=", result)
         cur.close()
     return list(result.values())
 
@@ -205,7 +205,7 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                     rule = f"{rule[4]}"
                     mogstr.append([id, col_id, column, eaction, etarget, rule])
                     matrixobj[column].append(col_id)
-                dump.log("matrixobj=", matrixobj)
+                trace.log("matrixobj=", matrixobj)
                 if len(mogstr) > 0:
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                     (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \

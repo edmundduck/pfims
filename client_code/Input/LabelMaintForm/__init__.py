@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
 from ...Utils import Constants as const
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logging import trace, debug, info, warning, error, critical
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):
@@ -74,7 +74,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
             """ Reflect the change in labels dropdown """
             cache.labels_reset()
             self.dropdown_lbl_list.items = cache.labels_dropdown()
-            dump.log("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
+            trace.log("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
             debug.log("lbl_id=", lbl_id)
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}

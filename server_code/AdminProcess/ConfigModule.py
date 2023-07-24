@@ -9,7 +9,7 @@ import psycopg2.extras
 from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import dump, debug, info, warning, error, critical
+from ..System.LoggingModule import trace, debug, info, warning, error, critical
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.

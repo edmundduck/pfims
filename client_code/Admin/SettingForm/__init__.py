@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logging import trace, debug, info, warning, error, critical
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):

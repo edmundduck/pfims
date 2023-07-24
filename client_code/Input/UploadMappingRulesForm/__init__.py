@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logging import trace, debug, info, warning, error, critical
 
 class UploadMappingRulesForm(UploadMappingRulesFormTemplate):
     def __init__(self, **properties):
@@ -29,7 +29,7 @@ class UploadMappingRulesForm(UploadMappingRulesFormTemplate):
 
     @debug.log_function
     def reload_rp_data(self, del_id=None, **event_args):
-        for d in self.repeating_panel_1.get_components(): dump.log("reload_rp_data d.item=", d.item)
+        for d in self.repeating_panel_1.get_components(): trace.log("reload_rp_data d.item=", d.item)
         # This doesn't work
         #self.repeating_panel_1.items = [c for c in self.repeating_panel_1.items if c['id'] != del_id]
         self.repeating_panel_1.items = [c.item for c in self.repeating_panel_1.get_components() if c.item['id'] != del_id]

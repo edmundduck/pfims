@@ -12,7 +12,7 @@ import datetime
 # rather than in the user's browser.
 
 # Constants
-DEBUG_LARGEDATA = {'val':logging.DEBUG-5, 'desc':'DUMP'}
+TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
 LOGGING_CONFIG = {
         'version': 1,
@@ -75,7 +75,7 @@ class ServerLogger():
         if len(kwargs) > 0: output = '{a} {b}'.format(a=output, b=kwargs)
         self.f(output)
 
-dump = ServerLogger(config=LOGGING_CONFIG, level=DEBUG_LARGEDATA)
+trace = ServerLogger(config=LOGGING_CONFIG, level=TRACE)
 debug = ServerLogger(config=LOGGING_CONFIG, level=logging.DEBUG)
 info = ServerLogger(config=LOGGING_CONFIG, level=logging.INFO)
 warning = ServerLogger(config=LOGGING_CONFIG, level=logging.WARNING)

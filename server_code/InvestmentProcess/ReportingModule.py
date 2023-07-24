@@ -9,7 +9,7 @@ import psycopg2.extras
 from datetime import date, datetime, timedelta
 from ..Utils import Constants as const
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import dump, debug, info, warning, error, critical
+from ..System.LoggingModule import trace, debug, info, warning, error, critical
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -82,7 +82,7 @@ def select_journals(start_date, end_date, symbols=[]):
         {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
         cur.execute(sql)
         rows = cur.fetchall()
-        dump.log("rows=", rows)
+        trace.log("rows=", rows)
         cur.close()
     return list(rows)
 
@@ -144,11 +144,11 @@ def build_pnl_data(start_date, end_date, symbols):
         format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
         format_pnl_child(dictstruct_gchild, sell_yr_str, sell_date_str)
 
-    dump.log('dictstruct_day=', dictstruct_day)
-    dump.log('dictstruct_mth=', dictstruct_mth)
-    dump.log('dictstruct_yr=', dictstruct_yr)
-    dump.log('dictstruct_child=', dictstruct_child)
-    dump.log('dictstruct_gchild=', dictstruct_gchild)
+    trace.log('dictstruct_day=', dictstruct_day)
+    trace.log('dictstruct_mth=', dictstruct_mth)
+    trace.log('dictstruct_yr=', dictstruct_yr)
+    trace.log('dictstruct_child=', dictstruct_child)
+    trace.log('dictstruct_gchild=', dictstruct_gchild)
     return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild
 
 # Generate initial P&L list (year only)
@@ -186,11 +186,11 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
     
     rowstruct = []
     dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(userid, start_date, end_date, symbols)
-    dump.log('dictstruct_day=', dictstruct_day)
-    dump.log('dictstruct_mth=', dictstruct_mth)
-    dump.log('dictstruct_yr=', dictstruct_yr)
-    dump.log('dictstruct_child=', dictstruct_child)
-    dump.log('dictstruct_gchild=', dictstruct_gchild)
+    trace.log('dictstruct_day=', dictstruct_day)
+    trace.log('dictstruct_mth=', dictstruct_mth)
+    trace.log('dictstruct_yr=', dictstruct_yr)
+    trace.log('dictstruct_child=', dictstruct_child)
+    trace.log('dictstruct_gchild=', dictstruct_gchild)
     
     if action == const.Icons.DATA_DRILLDOWN:
         dictstruct = None
@@ -246,5 +246,5 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
     else:
         pass
 
-    dump.log("rowstruct=", rowstruct)
+    trace.log("rowstruct=", rowstruct)
     return sorted(rowstruct, key=lambda x: x.get('sell_date'))

@@ -7,7 +7,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import dump, debug, info, warning, error, critical
+from ..System.LoggingModule import trace, debug, info, warning, error, critical
 from fuzzywuzzy import fuzz
 
 # This is a server module. It runs on the Anvil server,

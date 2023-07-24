@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logging import trace, debug, info, warning, error, critical
 
 class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def __init__(self, **properties):
@@ -87,6 +87,6 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         extra = anvil.server.call('select_mapping_extra_actions', id=self.dropdown_mapping_rule.selected_value)
         debug.log("extra=", extra)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
-        dump.log("df=", df)
+        trace.log("df=", df)
         debug.log("lbls=", lbls)
         Routing.open_exp_file_upload_form_p2(self, data=df, labels=lbls)

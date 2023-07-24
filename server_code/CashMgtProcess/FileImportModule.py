@@ -8,8 +8,7 @@ from io import BytesIO
 import pandas as pd
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
-from ..System import SystemModule as sysmod
-from ..System.LoggingModule import dump, debug, info, warning, error, critical
+from ..System.LoggingModule import trace, debug, info, warning, error, critical
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -24,7 +23,7 @@ def convertCharToLoc(char):
 def divMappingColumnNameLists(matrix):
     nanList, nonNanList = [], []
     for c in col_name: nanList.append(c) if matrix[c] in (None, '') else nonNanList.append(c)
-    dump.log(f"nonNanList={nonNanList}, nanList={nanList}")
+    trace.log(f"nonNanList={nonNanList}, nanList={nanList}")
     return nonNanList, nanList
 
 @anvil.server.callable
@@ -54,11 +53,11 @@ def import_file(file, tablist, rules, extra):
             # iloc left one is row, right one is column
             # 1) Filter required columns
             tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
-            dump.log("1) Filter required columns, tmp_df=", tmp_df)
+            trace.log("1) Filter required columns, tmp_df=", tmp_df)
             
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
-            dump.log("2) Rename columns, tmp_df=", tmp_df)
+            trace.log("2) Rename columns, tmp_df=", tmp_df)
             
             # 3) Add 'not in rule' fields to the end
             tmp_df.loc[:, nanList] = None
@@ -70,11 +69,11 @@ def import_file(file, tablist, rules, extra):
                     tmp_df['account_id'] = int(extra_dl.get('etarget')[extra_dl_pointer])
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
                     tmp_df['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df['labels'] in (None, '') else tmp_df['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
-                dump.log("4) Map extra action logic, tmp_df=", tmp_df)
+                trace.log("4) Map extra action logic, tmp_df=", tmp_df)
             
             # 5) Concat temp DF to the resultant DF
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
-            dump.log("5) Concat temp DF to the resultant DF, new_df=", new_df)
+            trace.log("5) Concat temp DF to the resultant DF, new_df=", new_df)
 
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
@@ -105,8 +104,8 @@ def update_mapping(data, mapping):
     
         # 2. Replace labels with action = 'C' to the newly created label codes in step 1
         for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
-        dump.log("2) Replace labels with action = 'C' to the newly created label codes in step 1")
-        dump.log("DL['tgtlbl']=", DL['tgtlbl'])
+        trace.log("2) Replace labels with action = 'C' to the newly created label codes in step 1")
+        trace.log("DL['tgtlbl']=", DL['tgtlbl'])
     
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
@@ -121,8 +120,8 @@ def update_mapping(data, mapping):
                         # Case 001 - string dict key handling review
                         id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
                         df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
-        dump.log("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
-        dump.log("df=", df)
+        trace.log("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
+        trace.log("df=", df)
         # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
         return df.sort_values(by='trandate', key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')

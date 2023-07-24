@@ -8,7 +8,7 @@ import datetime
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 # Constants
-DEBUG_LARGEDATA = { 'val':5, 'desc':'DUMP' }
+TRACE = { 'val':5, 'desc':'TRACE' }
 DEBUG = { 'val':10, 'desc':'DEBUG' }
 INFO = { 'val':20, 'desc':'INFO' }
 WARNING = { 'val':30, 'desc':'WARNING' }
@@ -45,9 +45,9 @@ class ClientLoggerConfig():
         self.datefmt = datefmt
         self.default = default
 
-config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=DEBUG_LARGEDATA)
+config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=TRACE)
 
-dump = ClientLogger(config=config, level=DEBUG_LARGEDATA)
+trace = ClientLogger(config=config, level=TRACE)
 debug = ClientLogger(config=config, level=DEBUG)
 info = ClientLogger(config=config, level=INFO)
 warning = ClientLogger(config=config, level=WARNING)

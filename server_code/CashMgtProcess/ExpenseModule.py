@@ -9,7 +9,7 @@ import psycopg2.extras
 from datetime import date, datetime
 from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import dump, debug, info, warning, error, critical
+from ..System.LoggingModule import trace, debug, info, warning, error, critical
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -50,7 +50,7 @@ def select_transactions(tid):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"SELECT * FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
-            dump.log("rows=", rows)
+            trace.log("rows=", rows)
             cur.close()
         return list(rows)
     return []
@@ -80,7 +80,7 @@ def upsert_transactions(tid, rows):
                     # also makes None becomes string so cannot be auto converted to NULL when execute
                     # mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
                     if tj.isValidRecord(): mogstr.append(tj.getDatabaseRecord())
-                dump.log("mogstr=", mogstr)
+                trace.log("mogstr=", mogstr)
                 if len(mogstr) > 0:
                     cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                     remarks, stmt_dtl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (iid, tab_id) DO UPDATE SET \

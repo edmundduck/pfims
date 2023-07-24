@@ -11,7 +11,7 @@ from ..Utils import Constants as const
 from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import dump, debug, info, warning, error, critical
+from ..System.LoggingModule import trace, debug, info, warning, error, critical
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -205,7 +205,7 @@ def get_selected_template_attr(templ_choice_str):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id='{get_template_id(templ_choice_str)}'")
             row = cur.fetchone()
-            dump.log("row=", row)
+            trace.log("row=", row)
             cur.close()
         return [row['template_name'] if row is not None else None, row['broker_id'] if row is not None else '']
   

@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Caching as cache
 from ....Utils import Constants as const
-from ....Utils.Logging import dump, debug, info, warning, error, critical
+from ....Utils.Logging import trace, debug, info, warning, error, critical
 
 class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def __init__(self, **properties):
@@ -42,7 +42,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @debug.log_function
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
-        dump.log("b.parent.tag[0]=", b.parent.tag[0])
+        trace.log("b.parent.tag[0]=", b.parent.tag[0])
         if b.parent.tag[0] is not None and not b.parent.tag[-1]: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 

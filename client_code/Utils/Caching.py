@@ -3,7 +3,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from .Logging import dump, debug, info, warning, error, critical
+from .Logging import trace, debug, info, warning, error, critical
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -35,9 +35,9 @@ def labels_dict():
     result = cache_dict.get(key, {})
     if not result:
         for i in labels_dropdown():
-            dump.log("item (i) in labels_dropdown=", i)
-            dump.log("eval(i[1])['id']=", eval(i[1])['id'])
-            dump.log("eval(i[1])['text']=", eval(i[1])['text'])
+            trace.log("item (i) in labels_dropdown=", i)
+            trace.log("eval(i[1])['id']=", eval(i[1])['id'])
+            trace.log("eval(i[1])['text']=", eval(i[1])['text'])
             # Case 001 - string dict key handling review
             result[str(eval(i[1])['id'])] = eval(i[1])['text']
         cache_dict[key] = result

@@ -10,7 +10,7 @@ from ...Utils import Constants as const
 from ...Utils import Routing
 from ...Utils import Caching as cache
 from ...Utils.Validation import Validator
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logging import trace, debug, info, warning, error, critical
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
