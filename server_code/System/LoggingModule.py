@@ -42,7 +42,7 @@ class ServerLogger():
         self.logger = logging.getLogger(__name__)
         if isinstance(level, dict): logging.addLevelName(level.get('val'), level.get('desc'))
         logging.config.dictConfig(config)
-        # logging.root.setLevel(logging.DEBUG)
+        logging.root.setLevel(TRACE.get('val'))
         self.level = level
         if isinstance(level, dict):
             self.f = self.trace
