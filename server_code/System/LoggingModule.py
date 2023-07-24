@@ -43,15 +43,27 @@ class ServerLogger():
         logging.config.dictConfig(config)
         logging.root.setLevel(logging.DEBUG)
         self.level = level
+        if isinstance(level, dict):
+            self.f = self.logger.debug
+        elif level == logging.DEBUG:
+            self.f = self.logger.debug
+        elif level == logging.INFO:
+            self.f = self.logger.info
+        elif level == logging.WARNING:
+            self.f = self.logger.warning
+        elif level == logging.ERROR:
+            self.f = self.logger.error
+        elif level == logging.CRITICAL:
+            self.f = self.logger.critical
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
             # Log the function call
-            self.log("Server function %s starts ..." % func.__qualname__)
+            self.f("Server function %s starts ..." % func.__qualname__)
             # Call the original function
             result = func(*args, **kwargs)
             # Log the function return value
-            self.log("Server function %s returned: %s ///" % (func.__qualname__, result))
+            self.f("Server function %s returned: %s ///" % (func.__qualname__, result))
             return result
         return wrapper
 
@@ -61,16 +73,7 @@ class ServerLogger():
         output = f" [{self.level.get('desc')}] {msg} " if isinstance(self.level, dict) else f" {msg} "
         if len(args) > 0: output = '{a} {b}'.format(a=output, b=args)
         if len(kwargs) > 0: output = '{a} {b}'.format(a=output, b=kwargs)
-        if level == logging.DEBUG:
-            self.logger.debug(output)
-        elif level == logging.INFO:
-            self.logger.info(output)
-        elif level == logging.WARNING:
-            self.logger.warning(output)
-        elif level == logging.ERROR:
-            self.logger.error(output)
-        elif level == logging.CRITICAL:
-            self.logger.critical(output)
+        self.f(output)
 
 dump = ServerLogger(config=LOGGING_CONFIG, level=DEBUG_LARGEDATA)
 debug = ServerLogger(config=LOGGING_CONFIG, level=logging.DEBUG)
