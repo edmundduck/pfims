@@ -100,6 +100,7 @@ def delete_journals(template_id, iid_list):
                 args = "({0})".format(",".join(str(i) for i in iid_list))
                 cur.execute(f"DELETE FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {template_id} AND iid IN {args}")
                 conn.commit()
+                debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Journals (template id:{0}) deletion fail.".format(template_id))
                 return cur.rowcount
         return 0
