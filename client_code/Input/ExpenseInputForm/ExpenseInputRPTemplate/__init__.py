@@ -36,7 +36,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
-            trace.log("trimmed_list=", trimmed_list)
+            trace.log(f"trimmed_list={trimmed_list}, lbls={lbls}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
@@ -108,7 +108,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # self.parent = Repeating Panel
         # self.parent.parent = Data Grid
         # self.parent.parent.parent = Parent Form
-        #print(self.parent.parent.parent.valerror_1.text)
+        trace.log("self.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)

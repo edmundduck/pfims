@@ -14,9 +14,8 @@ import datetime
 # Constants
 TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
-# Config
+# Config - Customize the log level required here
 LOG_LEVEL = TRACE.get('val')
-
 LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -42,11 +41,10 @@ LOGGING_CONFIG = {
 
 class ServerLogger():
     def __init__(self, config, level):
-        self.logger = logging.getLogger(__name__)
         if isinstance(level, dict): logging.addLevelName(level.get('val'), level.get('desc'))
         logging.config.dictConfig(config)
-        logging.root.setLevel(LOG_LEVEL)
-        self.level = level
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(LOG_LEVEL)
         if isinstance(level, dict):
             self.f = self.trace
         elif level == logging.DEBUG:
@@ -75,11 +73,9 @@ class ServerLogger():
 
     def log(self, msg=None, *args, **kwargs):
         current = datetime.datetime.now()
-        level = self.level.get('val') if isinstance(self.level, dict) else self.level
-        output = f" [{self.level.get('desc')}] {msg} " if isinstance(self.level, dict) else f" {msg} "
-        if len(args) > 0: output = '{a} {b}'.format(a=output, b=args)
-        if len(kwargs) > 0: output = '{a} {b}'.format(a=output, b=kwargs)
-        self.f(output)
+        if len(args) > 0: msg = '{a} {b}'.format(a=msg, b=args)
+        if len(kwargs) > 0: msg = '{a} {b}'.format(a=msg, b=kwargs)
+        self.f(msg)
 
     def trace(self, msg=None, *args, **kwargs):
         self.logger._log(TRACE.get('val'), msg, args, **kwargs)
