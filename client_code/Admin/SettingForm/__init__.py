@@ -30,6 +30,7 @@ class SettingForm(SettingFormTemplate):
         self.button_broker_create.enabled = False
         self.button_broker_update.enabled = False
         self.button_broker_delete.enabled = False
+        self.dropdown_logging_level.items = const.LoggingLevel.dropdown
     
     def dropdown_default_broker_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -153,4 +154,7 @@ class SettingForm(SettingFormTemplate):
         else:
             n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=to_be_enabled_templ_name))
         n.show()
-        
+
+    def button_logging_edit_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass

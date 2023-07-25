@@ -38,6 +38,10 @@ class PNLDrillMode:
     MONTH = 'm'
     YEAR = 'y'
 
+# Logging levels used in setting
+class LoggingLevel:
+    dropdown = [('TRACE', 5), ('DEBUG', 10), ('INFO', 20), ('WARNING', 30), ('ERROR', 40), ('CRITICAL', 50)]
+
 class Icons:
     BULLETPOINT = 'fa:info'
     DATA_DRILLDOWN = 'fa:plus-square'
