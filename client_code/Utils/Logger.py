@@ -4,6 +4,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import datetime
+
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
@@ -14,6 +15,13 @@ INFO = { 'val':20, 'desc':'INFO' }
 WARNING = { 'val':30, 'desc':'WARNING' }
 ERROR = { 'val':40, 'desc':'ERROR' }
 CRITICAL = { 'val':50, 'desc':'CRITICAL' }
+
+# Config - Customize the log level required here
+def get_log_level():
+    from . import Caching as cache
+    return WARNING if cache.logging_level() is None else cache.logging_level()
+    
+LOG_LEVEL = get_log_level()
 
 class ClientLogger():
     def __init__(self, config, level):
@@ -45,7 +53,7 @@ class ClientLoggerConfig():
         self.datefmt = datefmt
         self.default = default
 
-config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=TRACE)
+config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=LOG_LEVEL)
 
 trace = ClientLogger(config=config, level=TRACE)
 debug = ClientLogger(config=config, level=DEBUG)

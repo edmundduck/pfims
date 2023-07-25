@@ -21,13 +21,14 @@ def psqldb_select_settings():
     conn = sysmod.db_connect()
     settings = None
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto FROM {sysmod.schemafin()}.settings")
+        cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {sysmod.schemafin()}.settings")
         for i in cur.fetchall():
             settings = {
                 'default_broker': i['default_broker'],
                 'default_interval': i['default_interval'],
                 'default_datefrom': i['default_datefrom'],
-                'default_dateto': i['default_dateto']
+                'default_dateto': i['default_dateto'],
+                'logging_level': i['logging_level']
             }
         debug.log("settings=", settings)
         cur.close()
@@ -47,15 +48,16 @@ def psgldb_select_brokers():
 
 # DB table "settings" update/insert method into Postgres DB
 @debug.log_function
-def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
+def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
     userid = sysmod.get_current_userid()
     if def_interval != const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, default_dateto) \
-            VALUES (%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, default_interval=%s, default_datefrom=%s, default_dateto=%s"
-            stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, def_broker, def_interval, def_datefrom, def_dateto))
+            sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
+            default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
+            default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
+            stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
             cur.execute(stmt)
             conn.commit()
             debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
@@ -161,6 +163,28 @@ def psgldb_select_search_interval():
         cur.close()
     return list((row['name'], row['id']) for row in rows)
 
+# Return user logging level for dev environment from Postgres DB 
+@debug.log_function
+def psgldb_get_logging_level():
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT logging_level FROM {sysmod.schemafin()}.settings WHERE userid='{userid}'")
+        result = cur.fetchone()
+        debug.log("result=", result)
+    return result['logging_level']
+
+# Return user logging level for dev environment from Postgres DB 
+@debug.log_function
+def psgldb_get_logging_level():
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT logging_level FROM {sysmod.schemafin()}.settings WHERE userid='{userid}'")
+        result = cur.fetchone()
+        debug.log("result=", result)
+    return result['logging_level']
+
 # Postgres impl END
 
 @anvil.server.callable
@@ -175,8 +199,8 @@ def select_brokers():
 
 @anvil.server.callable
 # DB table "settings" update/insert method callable by client modules
-def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-    return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto)
+def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+    return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
 
 @anvil.server.callable
 # DB table "brokers" update/insert method callable by client modules

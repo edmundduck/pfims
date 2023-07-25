@@ -5,7 +5,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...Utils.Logging import trace, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class PnLReportForm(PnLReportFormTemplate):
     def __init__(self, **properties):

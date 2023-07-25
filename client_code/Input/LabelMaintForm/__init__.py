@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
 from ...Utils import Constants as const
-from ...Utils.Logging import trace, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):

@@ -7,6 +7,7 @@ import anvil.server
 import logging as logging
 import logging.config as config
 import datetime
+from ..Utils import Caching as cache
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -15,7 +16,7 @@ import datetime
 TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
 # Config - Customize the log level required here
-LOG_LEVEL = TRACE.get('val')
+LOG_LEVEL = logging.WARNING if cache.logging_level() is None else cache.logging_level()
 LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,

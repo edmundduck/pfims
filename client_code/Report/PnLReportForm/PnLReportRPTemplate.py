@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
-from ...Utils.Logging import trace, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
