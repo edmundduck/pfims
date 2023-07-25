@@ -3,6 +3,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from .Logger import trace, debug, info, warning, error, critical
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -33,9 +34,9 @@ def labels_dict():
     result = cache_dict.get(key, {})
     if not result:
         for i in labels_dropdown():
-            # trace.log("item (i) in labels_dropdown=", i)
-            # trace.log("eval(i[1])['id']=", eval(i[1])['id'])
-            # trace.log("eval(i[1])['text']=", eval(i[1])['text'])
+            trace.log("item (i) in labels_dropdown=", i)
+            trace.log("eval(i[1])['id']=", eval(i[1])['id'])
+            trace.log("eval(i[1])['text']=", eval(i[1])['text'])
             # Case 001 - string dict key handling review
             result[str(eval(i[1])['id'])] = eval(i[1])['text']
         cache_dict[key] = result
@@ -118,20 +119,10 @@ def get_deleted_row():
 def deleted_row_reset():
     clear_cache(key='delete_row_iid')
 
-def logging_level():
-    settings = get_cache_dict(key='logging_level', func='select_settings')
-    return settings.get('logging_level')
-
-def logging_level_reset():
-    clear_cache(key='logging_level')
-
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
 def get_cache(key, func, *args):
-    # from . import Logger
-    from .Logger import trace, debug, info, warning, error, critical
-    from .Logger import 
     global cache_dict
     if cache_dict is None: cache_dict = {}
     if cache_dict.get(key, None) is None:
@@ -143,8 +134,6 @@ def get_cache(key, func, *args):
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
 def get_cache_dict(key, func, *args):
-    # from . import Logger
-    from .Logger import trace, debug, info, warning, error, critical
     global cache_dict
     dict_key = "".join((key, '_dict'))
     if cache_dict.get(dict_key, None) is None:
@@ -158,8 +147,6 @@ def get_cache_dict(key, func, *args):
 # Generic clear cache
 # @key = Key in string to access particular cache data
 def clear_cache(key):
-    # from . import Logger
-    from .Logger import trace, debug, info, warning, error, critical
     global cache_dict
     cache_dict[key] = None
     cache_dict["".join((key, '_dict'))] = None

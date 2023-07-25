@@ -34,6 +34,7 @@ class MainForm(MainFormTemplate):
         self.colpanel_rpt3.visible = False
         self.app_welcome_msg.text = "Welcome {username}".format(username=username)
         self.label_version.text = anvil.app.environment.name if anvil.app.environment.name in 'Dev' else None
+        
   
     def reset_link_status(self, **event_args):
         self.colpanel_link_dashb.role = ''

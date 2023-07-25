@@ -7,7 +7,6 @@ import anvil.server
 import logging as logging
 import logging.config as config
 import datetime
-from ..Utils import Caching as cache
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -16,7 +15,12 @@ from ..Utils import Caching as cache
 TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
 # Config - Customize the log level required here
-LOG_LEVEL = logging.WARNING if cache.logging_level() is None else cache.logging_level()
+def get_log_level():
+    from ..AdminProcess import ConfigModule as cfmod
+    settings = cfmod.select_settings()
+    return logging.WARNING if settings.get('logging_level', None) is None else settings.get('logging_level')
+
+LOG_LEVEL = get_log_level()
 LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,
