@@ -43,7 +43,7 @@ class ServerLogger():
     def __init__(self, config, level, logfunc=None):
         logging.addLevelName(TRACE.get('val'), TRACE.get('desc'))
         logging.config.dictConfig(config)
-        self.logger = logging.getLogger(__name__) 
+        self.logger = logging.getLogger(__name__)
         self.logger.setLevel(level if level is not None else DEFAULT_LVL)
         if logfunc is None or logfunc == logging.DEBUG:
             self.f = self.logger.debug

@@ -42,7 +42,6 @@ def get_user_logging_level():
     except AttributeError as err:
         return None
 
-
 # Establish DB connection and determine which env DB to conntact to 
 def db_connect():
     return psqldb_connect()

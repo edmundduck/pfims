@@ -17,21 +17,13 @@ ERROR = { 'val':40, 'desc':'ERROR' }
 CRITICAL = { 'val':50, 'desc':'CRITICAL' }
 
 # Config - Customize the log level required here
-def get_log_level():
-    try:
-        return anvil.server.session.get('logging_level')
-    except AttributeError as err:
-        return WARNING
-    
-LOG_LEVEL = get_log_level()
-# LOG_LEVEL = WARNING
+LOG_LEVEL = WARNING
 
 class ClientLogger():
     def __init__(self, config, level):
         self.datefmt = config.datefmt
         self.default = config.default
         self.level = level
-        print(f"Client logging level in {self.level.get('val')}")
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
