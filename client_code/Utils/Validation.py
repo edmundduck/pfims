@@ -38,8 +38,8 @@ to check the status of the form.
     def require(self, component, event_list, predicate, error_lbl=None, show_errors_immediately=False):
         def check_this_component(**e):
             result = predicate(component)
-            trace.log(f"component.text=", component.text)
-            trace.log(f"predicate(component)=", predicate(component))
+            # trace.log(f"component.text=", component.text)
+            # trace.log(f"predicate(component)=", predicate(component))
             self._validity[component] = result
             if error_lbl is not None:
                 error_lbl.visible = not result
