@@ -19,6 +19,8 @@ class form_poc1(form_poc1Template):
         a, b = dict_test.get('a', [0, 0])
         print("a={}, b={}".format(a, b))
         """
+
+        anvil.server.call('set_user_logging_level')
       
     def create_tag(self, txt):
         self.panel_tags.add_component(Button(text=txt, background=const.ColorSchemes.THEME_PRIM, foreground=const.ColorSchemes.THEME_WHITE, font_size=9, icon=const.Icons.REMOVE, icon_align='left', spacing_above='None', spacing_below='None'))

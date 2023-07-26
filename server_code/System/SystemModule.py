@@ -35,6 +35,7 @@ def set_user_logging_level():
         print(f"({anvil.server.get_session_id()} set_user_logging_level={anvil.server.session}")
 
 # Get user logging level from session
+@anvil.server.callable
 def get_user_logging_level():
     try:
         print(f"({anvil.server.get_session_id()} get_user_logging_level={anvil.server.session}")
