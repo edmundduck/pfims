@@ -51,9 +51,8 @@ class ServerLogger():
     def __init__(self, config, level):
         if isinstance(level, dict): logging.addLevelName(level.get('val'), level.get('desc'))
         logging.config.dictConfig(config)
-        self.logger = logging.getLogger(__name__)
-        logging.root.setLevel(LOG_LEVEL)
-        print("logging.root.level=", logging.root.level)
+        self.logger = logging.getLogger(__name__) 
+        self.logger.setLevel(LOG_LEVEL)
         if isinstance(level, dict):
             self.f = self.trace
         elif level == logging.DEBUG:
