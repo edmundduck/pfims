@@ -16,9 +16,7 @@ TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
 # Config - Customize the log level required here
 def get_log_level():
-    from ..AdminProcess import ConfigModule as cfmod
-    settings = cfmod.select_settings()
-    return logging.WARNING if settings.get('logging_level', None) is None else settings.get('logging_level')
+    return logging.WARNING if anvil.server.session.get('logging_level', None) is None else anvil.server.session.get('logging_level')
 
 LOG_LEVEL = get_log_level()
 LOGGING_CONFIG = {

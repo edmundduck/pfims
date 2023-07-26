@@ -18,8 +18,7 @@ CRITICAL = { 'val':50, 'desc':'CRITICAL' }
 
 # Config - Customize the log level required here
 def get_log_level():
-    settings = anvil.server.call('select_settings')
-    return WARNING if settings.get('logging_level', None) is None else settings.get('logging_level')
+    return WARNING if anvil.server.session.get('logging_level', None) is None else anvil.server.session.get('logging_level')
     
 LOG_LEVEL = get_log_level()
 
