@@ -26,8 +26,15 @@ def get_current_userid():
 # Get user logging level from server session, otherwise from DB table "settings"
 @anvil.server.callable
 def get_user_logging_level():
-    if anvil.server.session.
-            anvil.server.session['logging_level'] = anvil.server.call('select_settings').get('logging_level', None)
+    from ..AdminProcess import ConfigModule as cfmod
+    anvil.server.session['logging_level'] = cfmod.select_settings().get('logging_level', None)
+    print(anvil.server.session)
+    if anvil.server.session is not None:
+        if 'logging_level' not in anvil.server.session:
+            anvil.server.session['logging_level'] = cfmod.select_settings().get('logging_level', None)
+    else:
+        anvil.server.session['logging_level'] = cfmod.select_settings().get('logging_level', None)
+    return anvil.server.session.get('logging_level')
 
 # Establish DB connection and determine which env DB to conntact to 
 def db_connect():
