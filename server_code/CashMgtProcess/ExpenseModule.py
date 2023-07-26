@@ -9,14 +9,14 @@ import psycopg2.extras
 from datetime import date, datetime
 from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import trace, debug, info, warning, error, critical
+from ..System.LoggingModule import logger
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 # Generate expense tabs dropdown items
 @anvil.server.callable("generate_expensetabs_dropdown")
-@debug.log_function
+@logger.log_function
 def generate_expensetabs_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -29,7 +29,7 @@ def generate_expensetabs_dropdown():
 
 # Get selected expense tab attributes
 @anvil.server.callable("get_selected_expensetab_attr")
-@debug.log_function
+@logger.log_function
 def get_selected_expensetab_attr(selected_tab):
     if selected_tab is None or selected_tab == '':
         return [None, None]
@@ -43,14 +43,14 @@ def get_selected_expensetab_attr(selected_tab):
 
 # Return transactions for repeating panel to display based on expense tab selection dropdown
 @anvil.server.callable("select_transactions")
-@debug.log_function
+@logger.log_function
 def select_transactions(tid):
     if tid is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"SELECT * FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
-            trace.log("rows=", rows)
+            logger.trace("rows=", rows)
             cur.close()
         return list(rows)
     return []
@@ -58,7 +58,7 @@ def select_transactions(tid):
 # Insert or update transactions into "exp_transactions" DB table
 # Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 @anvil.server.callable("upsert_transactions")
-@debug.log_function
+@logger.log_function
 def upsert_transactions(tid, rows):
     conn = None
     count = None
@@ -80,7 +80,7 @@ def upsert_transactions(tid, rows):
                     # also makes None becomes string so cannot be auto converted to NULL when execute
                     # mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
                     if tj.isValidRecord(): mogstr.append(tj.getDatabaseRecord())
-                trace.log("mogstr=", mogstr)
+                logger.trace("mogstr=", mogstr)
                 if len(mogstr) > 0:
                     cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                     remarks, stmt_dtl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
@@ -93,14 +93,14 @@ def upsert_transactions(tid, rows):
                     WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(schema=sysmod.schemafin()), mogstr)
                     conn.commit()
                     count = cur.rowcount
-                    debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
                 else:
                     count = 0
             else:
                 count = 0
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -109,7 +109,7 @@ def upsert_transactions(tid, rows):
     
 # Delete transactions from "exp_transactions" DB table
 @anvil.server.callable("delete_transactions")
-@debug.log_function
+@logger.log_function
 def delete_transactions(tid, iid_list):
     conn, cur, count = [None, None, None]
     try:
@@ -120,12 +120,12 @@ def delete_transactions(tid, iid_list):
                 cur.execute(f"DELETE FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} AND iid IN {args}")
                 conn.commit()
                 count = cur.rowcount
-                debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
         else:
             count = 0
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -134,7 +134,7 @@ def delete_transactions(tid, iid_list):
 
 # Save expense tab
 @anvil.server.callable("save_expensetab")
-@debug.log_function
+@logger.log_function
 def save_expensetab(id, name):
     userid = sysmod.get_current_userid()
     try:
@@ -149,12 +149,12 @@ def save_expensetab(id, name):
                 WHERE userid={userid} AND tab_id={id} RETURNING tab_id"
             cur.execute(sql)
             conn.commit()
-            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             tid = cur.fetchone()
             if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))
             return tid['tab_id']
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -163,7 +163,7 @@ def save_expensetab(id, name):
 
 # Submit expense tab
 @anvil.server.callable("submit_expensetab")
-@debug.log_function
+@logger.log_function
 def submit_expensetab(id, submitted):
     try:
         currenttime = datetime.now()
@@ -176,12 +176,12 @@ def submit_expensetab(id, submitted):
                 sql = f"UPDATE {sysmod.schemafin()}.expensetab SET submitted={submitted} WHERE tab_id={id} RETURNING tab_id"
             cur.execute(sql)
             conn.commit()
-            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             tid = cur.fetchone()
             if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) submission fail.".format(template_id))
             return tid['tab_id']
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -191,18 +191,18 @@ def submit_expensetab(id, submitted):
 # Delete expense tab
 # Delete cascade is implemented in "exp_transactions" DB table "tab_id" column, hence transactions under particular tab will be deleted automatically
 @anvil.server.callable("delete_expensetab")
-@debug.log_function
+@logger.log_function
 def delete_expensetab(tab_id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"DELETE FROM {sysmod.schemafin()}.expensetab WHERE tab_id = {tab_id}")
             conn.commit()
-            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Expense tab (id:{0}) deletion fail.".format(tab_id))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()

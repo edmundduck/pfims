@@ -9,13 +9,13 @@ import psycopg2.extras
 from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import trace, debug, info, warning, error, critical
+from ..System.LoggingModule import logger
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 # DB table "settings" select method from Postgres DB
-@debug.log_function
+@logger.log_function
 def psqldb_select_settings():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -30,12 +30,12 @@ def psqldb_select_settings():
                 'default_dateto': i['default_dateto'],
                 'logging_level': i['logging_level']
             }
-        debug.log("settings=", settings)
+        logger.debug("settings=", settings)
         cur.close()
     return settings
 
 # DB table "brokers" select method from Postgres DB
-@debug.log_function
+@logger.log_function
 def psgldb_select_brokers():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -43,11 +43,11 @@ def psgldb_select_brokers():
         cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
         broker_list = cur.fetchall()
         cur.close()
-    debug.log("broker_list=", broker_list)
+    logger.debug("broker_list=", broker_list)
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
 # DB table "settings" update/insert method into Postgres DB
-@debug.log_function
+@logger.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
     userid = sysmod.get_current_userid()
     if def_interval != const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
@@ -60,11 +60,11 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
             stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
             cur.execute(stmt)
             conn.commit()
-            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -72,7 +72,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
     return None
 
 # DB table "brokers" update/insert method into Postgres DB
-@debug.log_function
+@logger.log_function
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     userid = sysmod.get_current_userid()
     try:
@@ -89,10 +89,10 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
                 cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{name}', ccy='{ccy}' WHERE broker_id='{b_id}'")
                 conn.commit()
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
-            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             return b_id
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -100,38 +100,38 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     return None
       
 # Return selected broker name by querying DB table "brokers" from Postgres DB
-@debug.log_function
+@logger.log_function
 def psgldb_get_broker_name(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT name FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
         result = cur.fetchone()
-        debug.log("result=", result)
+        logger.debug("result=", result)
     return result['name'] if result is not None else ''
 
 # Return selected broker CCY by querying DB table "brokers" from Postgres DB
-@debug.log_function
+@logger.log_function
 def psgldb_get_broker_ccy(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT ccy FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
         result = cur.fetchone()
-        debug.log("result=", result)
+        logger.debug("result=", result)
     return result['ccy'] if result is not None else ''
 
 # DB table "brokers" delete method in Postgres DB
-@debug.log_function
+@logger.log_function
 def psgldb_delete_brokers(b_id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{b_id}'")
             conn.commit()
-            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -140,26 +140,26 @@ def psgldb_delete_brokers(b_id):
 
 # Generate SUBMITTED template selection dropdown items from Postgres DB
 @anvil.server.callable("psgldb_get_submitted_templ_list")
-@debug.log_function
+@logger.log_function
 def psgldb_get_submitted_templ_list():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
         result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
-        debug.log("result=", result)
+        logger.debug("result=", result)
         cur.close()
     result.insert(0, '')
     return result
         
 # Return search interval dropdown by querying DB table "search_interval" from Postgres DB
-@debug.log_function
+@logger.log_function
 def psgldb_select_search_interval():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
         rows = cur.fetchall()
-        debug.log("rows=", rows)
+        logger.debug("rows=", rows)
         cur.close()
     return list((row['name'], row['id']) for row in rows)
 

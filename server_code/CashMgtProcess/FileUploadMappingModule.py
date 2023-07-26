@@ -8,14 +8,14 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import trace, debug, info, warning, error, critical
+from ..System.LoggingModule import logger
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 # Generate mapping dropdown items
 @anvil.server.callable("generate_mapping_dropdown")
-@debug.log_function
+@logger.log_function
 def generate_mapping_dropdown(ftype):
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -30,7 +30,7 @@ def generate_mapping_dropdown(ftype):
 
 # Generate mapping file type dropdown items
 @anvil.server.callable("generate_mapping_type_dropdown")
-@debug.log_function
+@logger.log_function
 def generate_mapping_type_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -44,7 +44,7 @@ def generate_mapping_type_dropdown():
 
 # Generate input expense table definition dropdown items
 @anvil.server.callable("generate_expense_tbl_def_dropdown")
-@debug.log_function
+@logger.log_function
 def generate_expense_tbl_def_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -57,7 +57,7 @@ def generate_expense_tbl_def_dropdown():
 
 # Generate input expense table definition dropdown items
 @anvil.server.callable("generate_upload_action_dropdown")
-@debug.log_function
+@logger.log_function
 def generate_upload_action_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -69,7 +69,7 @@ def generate_upload_action_dropdown():
     return content
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
-@debug.log_function
+@logger.log_function
 def generate_mapping_matrix(matrix, col_def):
     if len(col_def) < 1:
         return [[]]
@@ -91,11 +91,11 @@ def generate_mapping_matrix(matrix, col_def):
             y.insert(0, '')
             result = [y] + result if result is not None else [y]
     if result is None: result = r
-    trace.log("result=", result)
+    logger.trace("result=", result)
     return result
 
 # Select input expense table definition column ID
-@debug.log_function
+@logger.log_function
 def select_expense_tbl_def_id():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -108,7 +108,7 @@ def select_expense_tbl_def_id():
 
 # Select the mapping and rules belong to the logged on user, it can be all or particular one only
 @anvil.server.callable("select_mapping_rules")
-@debug.log_function
+@logger.log_function
 def select_mapping_rules(gid=None):
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -121,7 +121,7 @@ def select_mapping_rules(gid=None):
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
-        trace.log("rows=", rows)
+        logger.trace("rows=", rows)
 
         # Group all mapping rules under corresponding mapping group
         result = {}
@@ -141,13 +141,13 @@ def select_mapping_rules(gid=None):
             else:
                 r = result.get(row['id'], None)['rule']
                 r.append([action1, action2, extra1, extra2]) if action1 is not None and action2 is not None else r.append(None)
-        trace.log("result=", result)
+        logger.trace("result=", result)
         cur.close()
     return list(result.values())
 
 # Select the mapping matrix belong to the logged on user
 @anvil.server.callable("select_mapping_matrix")
-@debug.log_function
+@logger.log_function
 def select_mapping_matrix(id):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -161,7 +161,7 @@ def select_mapping_matrix(id):
 # Save the mapping and rules
 # Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 @anvil.server.callable("save_mapping_rules")
-@debug.log_function
+@logger.log_function
 def save_mapping_rules(id, mapping_rules, del_iid=None):
     conn = None
     count = None
@@ -185,7 +185,7 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                     stmt = cur.mogrify(sql, (int(userid), name, type_id, currenttime))
                 cur.execute(stmt)
                 conn.commit()
-                debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 id = (cur.fetchone())['id']
                 if id < 0:
                     raise psycopg2.OperationalError(f"Fail to save the mapping ({name}).")
@@ -205,14 +205,14 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                     rule = f"{rule[4]}"
                     mogstr.append([id, col_id, column, eaction, etarget, rule])
                     matrixobj[column].append(col_id)
-                trace.log("matrixobj=", matrixobj)
+                logger.trace("matrixobj=", matrixobj)
                 if len(mogstr) > 0:
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                     (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
                     etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col", mogstr)
                     conn.commit()
                     count = cur.rowcount
-                    debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if count <= 0: raise psycopg2.OperationalError(f"Fail to save mapping rules (Mapping name={name}).")
                 else:
                     count = 0
@@ -229,7 +229,7 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                     VALUES ({id}, %s, %s, %s, %s, %s, %s)", matrixstr)
                     conn.commit()
                     count = cur.rowcount
-                    debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if count <= 0 or dcount < 0: raise psycopg2.OperationalError(f"Fail to save mapping matrix (Mapping name={name}).")
             else:
                 count = 0
@@ -241,13 +241,13 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                 cur.execute(sql)
                 conn.commit()
                 dcount = cur.rowcount
-                debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if dcount <= 0: raise psycopg2.OperationalError(f"Fail to remove deleted mapping rules (Mapping name={name}).")
             else:
                 dcount = 0
             cur.close()            
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -255,7 +255,7 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
     return {"id": id, "count": count, "dcount": dcount}
 
 @anvil.server.callable("select_mapping_extra_actions")
-@debug.log_function
+@logger.log_function
 def select_mapping_extra_actions(id):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -269,18 +269,18 @@ def select_mapping_extra_actions(id):
 
 # Delete mapping and its associated rules and matrix
 @anvil.server.callable("delete_mapping")
-@debug.log_function
+@logger.log_function
 def delete_mapping(id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappinggroup WHERE id = '{id}'")
             conn.commit()
-            debug.log(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete mapping group fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        error.log(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()

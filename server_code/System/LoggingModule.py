@@ -22,8 +22,6 @@ def get_log_level():
     except AttributeError as err:
         return logging.WARNING
     
-LOG_LEVEL = get_log_level()
-# LOG_LEVEL = logging.WARNING
 LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -48,26 +46,23 @@ LOGGING_CONFIG = {
     }
 
 class ServerLogger():
-    def __init__(self, config, level):
-        if isinstance(level, dict): logging.addLevelName(level.get('val'), level.get('desc'))
+    def __init__(self, config, level, logfunc=None):
+        logging.addLevelName(TRACE.get('val'), TRACE.get('desc'))
         logging.config.dictConfig(config)
         self.logger = logging.getLogger(__name__) 
-        self.logger.setLevel(LOG_LEVEL)
-        if isinstance(level, dict):
-            self.f = self.trace
-        elif level == logging.DEBUG:
+        self.logger.setLevel(level)
+        if logfunc is None or logfunc == logging.DEBUG:
             self.f = self.logger.debug
-        elif level == logging.INFO:
+        elif logfunc == TRACE.get('val'):            
+            self.f = self.trace
+        elif logfunc == logging.INFO:
             self.f = self.logger.info
-        elif level == logging.WARNING:
+        elif logfunc == logging.WARNING:
             self.f = self.logger.warning
-        elif level == logging.ERROR:
+        elif logfunc == logging.ERROR:
             self.f = self.logger.error
-        elif level == logging.CRITICAL:
+        elif logfunc == logging.CRITICAL:
             self.f = self.logger.critical
-        else:
-            self.f = self.logger.warning
-        self.f(f"Server logging level in {LOG_LEVEL}")
         
     def log_function(self, func):
         def wrapper(*args, **kwargs):
@@ -80,18 +75,22 @@ class ServerLogger():
             return result
         return wrapper
 
-    def log(self, msg=None, *args, **kwargs):
-        current = datetime.datetime.now()
-        if len(args) > 0: msg = '{a} {b}'.format(a=msg, b=args)
-        if len(kwargs) > 0: msg = '{a} {b}'.format(a=msg, b=kwargs)
-        self.f(msg)
-
     def trace(self, msg=None, *args, **kwargs):
         self.logger._log(TRACE.get('val'), msg, args, **kwargs)
 
-trace = ServerLogger(config=LOGGING_CONFIG, level=TRACE)
-debug = ServerLogger(config=LOGGING_CONFIG, level=logging.DEBUG)
-info = ServerLogger(config=LOGGING_CONFIG, level=logging.INFO)
-warning = ServerLogger(config=LOGGING_CONFIG, level=logging.WARNING)
-error = ServerLogger(config=LOGGING_CONFIG, level=logging.ERROR)
-critical = ServerLogger(config=LOGGING_CONFIG, level=logging.CRITICAL)
+    def debug(self, msg=None, *args, **kwargs):
+        self.logger.debug(msg, args, **kwargs)
+
+    def info(self, msg=None, *args, **kwargs):
+        self.logger.info(msg, args, **kwargs)
+
+    def warning(self, msg=None, *args, **kwargs):
+        self.logger.warning(msg, args, **kwargs)
+
+    def error(self, msg=None, *args, **kwargs):
+        self.logger.error(msg, args, **kwargs)
+
+    def critical(self, msg=None, *args, **kwargs):
+        self.logger.critical(msg, args, **kwargs)
+
+logger = ServerLogger(config=LOGGING_CONFIG, level=get_log_level(), logfunc=logging.DEBUG)

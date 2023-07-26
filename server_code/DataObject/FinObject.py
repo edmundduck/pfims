@@ -4,7 +4,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-from ..System.LoggingModule import trace, debug, info, warning, error, critical
+from ..System.LoggingModule import logger
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -30,7 +30,7 @@ class TradeJournal:
             self.attr.get('pnl')
         )
 
-    @debug.log_function
+    @logger.log_function
     def getTuple(self):
         param_list = ['iid', 'template_id', 'sell_date', 'buy_date', 'symbol', 'qty', 'sales', 'cost', 'fee', 'sell_price', 'buy_price', 'pnl']
         tuple_list = []
@@ -38,7 +38,7 @@ class TradeJournal:
             tuple_list.append(str(self.attr.get(item)))
         return tuple_list
 
-    @debug.log_function
+    @logger.log_function
     def assignFromDict(self, dict):
         for key in dict.keys():
             self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
@@ -62,7 +62,7 @@ class CashTransaction:
         )
 
     # Return a record compatible for database operation in list type
-    @debug.log_function
+    @logger.log_function
     def getDatabaseRecord(self):
         param_list = ('iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl')
         tuple_list = []
@@ -71,7 +71,7 @@ class CashTransaction:
             tuple_list.append(i)
         return tuple_list
 
-    @debug.log_function
+    @logger.log_function
     def assignFromDict(self, dict):
         for key in dict.keys():
             if dict.get(key) is not None:
@@ -82,7 +82,7 @@ class CashTransaction:
         return self
 
     # Return False if any of the mandatory field value is None, otherwise True
-    @debug.log_function
+    @logger.log_function
     def isValidRecord(self):
         mandatory_list = ('trandate', 'account_id', 'amount')
         for item in mandatory_list:
