@@ -7,21 +7,15 @@ import anvil.server
 import logging as logging
 import logging.config as config
 import datetime
+from .SystemModule import get_user_logging_level
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 # Constants
 TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
+DEFAULT_LVL = logging.WARNING
 
-# Config - Customize the log level required here
-def get_log_level():
-    try:
-        print("get_log_level=", anvil.server.session)
-        return anvil.server.session.get('logging_level')
-    except AttributeError as err:
-        return logging.WARNING
-    
 LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,
@@ -50,7 +44,7 @@ class ServerLogger():
         logging.addLevelName(TRACE.get('val'), TRACE.get('desc'))
         logging.config.dictConfig(config)
         self.logger = logging.getLogger(__name__) 
-        self.logger.setLevel(level)
+        self.logger.setLevel(level if level is not None else DEFAULT_LVL)
         if logfunc is None or logfunc == logging.DEBUG:
             self.f = self.logger.debug
         elif logfunc == TRACE.get('val'):            
@@ -93,4 +87,4 @@ class ServerLogger():
     def critical(self, msg=None, *args, **kwargs):
         self.logger.critical(msg, args, **kwargs)
 
-logger = ServerLogger(config=LOGGING_CONFIG, level=get_log_level(), logfunc=logging.DEBUG)
+logger = ServerLogger(config=LOGGING_CONFIG, level=get_user_logging_level(), logfunc=logging.DEBUG)
