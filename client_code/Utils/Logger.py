@@ -21,7 +21,7 @@ def get_log_level():
     try:
         return anvil.server.session.get('logging_level')
     except AttributeError as err:
-        return logging.WARNING
+        return WARNING
     
 LOG_LEVEL = get_log_level()
 # LOG_LEVEL = WARNING

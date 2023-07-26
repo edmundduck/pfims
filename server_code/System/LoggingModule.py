@@ -17,6 +17,7 @@ TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 # Config - Customize the log level required here
 def get_log_level():
     try:
+        print("get_log_level=", anvil.server.session)
         return anvil.server.session.get('logging_level')
     except AttributeError as err:
         return logging.WARNING
@@ -40,7 +41,7 @@ LOGGING_CONFIG = {
         },
         'loggers': {
             '': {
-                'level': 'TRACE',
+                'level': 'DEBUG',
                 'handlers': ['console']
             }
         }
@@ -51,7 +52,8 @@ class ServerLogger():
         if isinstance(level, dict): logging.addLevelName(level.get('val'), level.get('desc'))
         logging.config.dictConfig(config)
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(LOG_LEVEL)
+        logging.root.setLevel(LOG_LEVEL)
+        print("logging.root.level=", logging.root.level)
         if isinstance(level, dict):
             self.f = self.trace
         elif level == logging.DEBUG:

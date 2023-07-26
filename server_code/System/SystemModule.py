@@ -27,13 +27,12 @@ def get_current_userid():
 # This function should not be placed in module importing Logger/Logging, otherwise circular import error will occur
 @anvil.server.callable
 def set_user_logging_level():
-    if anvil.server.session is None or (anvil.server.session is not None and 'logging_level' not in anvil.server.session):
-        conn = db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{get_current_userid()}'")
-            result = cur.fetchone()
-            anvil.server.session['logging_level'] = result.get('logging_level', None)
-    return anvil.server.session.get('logging_level')
+    conn = db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{get_current_userid()}'")
+        result = cur.fetchone()
+        anvil.server.session['logging_level'] = result.get('logging_level', None)
+        print("anvil.server.session=", anvil.server.session)
 
 # Establish DB connection and determine which env DB to conntact to 
 def db_connect():
