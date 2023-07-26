@@ -16,9 +16,11 @@ TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
 # Config - Customize the log level required here
 def get_log_level():
-    log_level = None if anvil.server.session is None or 'logging_level' not in anvil.server.session else anvil.server.session.get('logging_level')
-    return logging.WARNING if log_level is None else log_level
-
+    try:
+        return anvil.server.session.get('logging_level')
+    except AttributeError as err:
+        return logging.WARNING
+    
 LOG_LEVEL = get_log_level()
 # LOG_LEVEL = logging.WARNING
 LOGGING_CONFIG = {
@@ -64,7 +66,8 @@ class ServerLogger():
             self.f = self.logger.critical
         else:
             self.f = self.logger.warning
-
+        self.f(f"Server logging level in {LOG_LEVEL}")
+        
     def log_function(self, func):
         def wrapper(*args, **kwargs):
             # Log the function call
