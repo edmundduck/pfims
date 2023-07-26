@@ -22,6 +22,7 @@ def get_log_level():
     return WARNING if log_level is None else log_level
     
 LOG_LEVEL = get_log_level()
+# LOG_LEVEL = WARNING
 
 class ClientLogger():
     def __init__(self, config, level):

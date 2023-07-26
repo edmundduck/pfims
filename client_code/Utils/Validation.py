@@ -1,6 +1,6 @@
 import anvil.server
 import anvil.users
-from .Logging import trace, debug, info, warning, error, critical
+from .Logger import trace, debug, info, warning, error, critical
 
 class Validator:
     """

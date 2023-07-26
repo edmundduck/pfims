@@ -163,28 +163,6 @@ def psgldb_select_search_interval():
         cur.close()
     return list((row['name'], row['id']) for row in rows)
 
-# Return user logging level for dev environment from Postgres DB 
-@debug.log_function
-def psgldb_get_logging_level():
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT logging_level FROM {sysmod.schemafin()}.settings WHERE userid='{userid}'")
-        result = cur.fetchone()
-        debug.log("result=", result)
-    return result['logging_level']
-
-# Return user logging level for dev environment from Postgres DB 
-@debug.log_function
-def psgldb_get_logging_level():
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT logging_level FROM {sysmod.schemafin()}.settings WHERE userid='{userid}'")
-        result = cur.fetchone()
-        debug.log("result=", result)
-    return result['logging_level']
-
 # Postgres impl END
 
 @anvil.server.callable

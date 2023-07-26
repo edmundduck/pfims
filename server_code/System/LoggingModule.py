@@ -16,11 +16,11 @@ TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
 # Config - Customize the log level required here
 def get_log_level():
-    from . import SystemModule as sysmod
-    log_level = sysmod.get_user_logging_level()
+    log_level = None if anvil.server.session is None or 'logging_level' not in anvil.server.session else anvil.server.session.get('logging_level')
     return logging.WARNING if log_level is None else log_level
 
 LOG_LEVEL = get_log_level()
+# LOG_LEVEL = logging.WARNING
 LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,
