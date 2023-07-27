@@ -7,6 +7,8 @@ import anvil.server
 import logging as logging
 import logging.config as config
 import datetime
+import psycopg2
+import psycopg2.extras
 from .SystemModule import db_connect, get_current_userid, schemafin
 
 # This is a server module. It runs on the Anvil server,
