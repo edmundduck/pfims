@@ -88,6 +88,7 @@ class ServerLogger():
     def critical(self, msg=None, *args, **kwargs):
         self.logger.critical(msg, args, **kwargs)
 
-lvl = get_user_logging_level()
+# lvl = get_user_logging_level()
+lvl = logging.DEBUG
 print("lvl=", lvl)
 logger = ServerLogger(config=LOGGING_CONFIG, level=lvl, logfunc=logging.DEBUG)
