@@ -23,26 +23,6 @@ def get_current_userid():
     userid = anvil.users.get_user().get_id()
     return userid[userid.find(",")+1:len(userid)-1] if type(userid) is str else None
 
-# Retrieve user logging level from DB table "settings", then save into session
-# This function should not be placed in module importing Logger/Logging, otherwise circular import error will occur
-@anvil.server.callable
-def set_user_logging_level():
-    conn = db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{get_current_userid()}'")
-        result = cur.fetchone()
-        anvil.server.session['logging_level'] = result.get('logging_level', None)
-        print(f"({anvil.server.get_session_id()} set_user_logging_level={anvil.server.session}")
-
-# Get user logging level from session
-@anvil.server.callable
-def get_user_logging_level():
-    try:
-        print(f"({anvil.server.get_session_id()} get_user_logging_level={anvil.server.session}")
-        return anvil.server.session.get('logging_level')
-    except AttributeError as err:
-        return None
-
 # Establish DB connection and determine which env DB to conntact to 
 def db_connect():
     return psqldb_connect()

@@ -7,10 +7,30 @@ import anvil.server
 import logging as logging
 import logging.config as config
 import datetime
-from .SystemModule import get_user_logging_level
+from .SystemModule import db_connect, get_current_userid, schemafin
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+
+# Retrieve user logging level from DB table "settings", then save into session
+# This function should not be placed in module importing Logger/Logging, otherwise circular import error will occur
+@anvil.server.callable
+def set_user_logging_level():
+    conn = db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{get_current_userid()}'")
+        result = cur.fetchone()
+        anvil.server.session['logging_level'] = result.get('logging_level', None)
+        print(f"({anvil.server.get_session_id()} set_user_logging_level={anvil.server.session}")
+
+# Get user logging level from session
+@anvil.server.callable
+def get_user_logging_level():
+    try:
+        print(f"({anvil.server.get_session_id()} get_user_logging_level={anvil.server.session}")
+        return anvil.server.session.get('logging_level')
+    except AttributeError as err:
+        return None
 
 class ServerLoggerLevel:
     DEFAULT_LVL = logging.WARNING
