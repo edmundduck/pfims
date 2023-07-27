@@ -9,26 +9,10 @@ import logging.config as config
 import datetime
 import psycopg2
 import psycopg2.extras
-from .SystemModule import db_connect, get_current_userid, schemafin
-from ..Utils.Caching import logging_level
+from ..Utils.Caching import loglevel
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-
-# Retrieve user logging level from DB table "settings", then save into session
-# This function should not be placed in module importing Logger/Logging, otherwise circular import error will occur
-def set_user_logging_level():
-    conn = db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{get_current_userid()}'")
-        result = cur.fetchone()
-        # Storing in session doesn't work in any means, hence need to use client caching instead
-        # anvil.server.session['logging_level'] = result.get('logging_level', None)
-        return result.get('logging_level', None)
-
-# Get user logging level from session
-def get_user_logging_level():
-    return logging_level()
 
 class ServerLoggerLevel:
     DEFAULT_LVL = logging.WARNING
@@ -61,7 +45,8 @@ class ServerLoggerConfig:
 class ServerLogger:
     logger = logging.getLogger(__name__)
     
-    def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=get_user_logging_level()):
+    # def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=loglevel()):
+    def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=logging.INFO):
         logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
         logging.config.dictConfig(config)
         ServerLogger.logger.setLevel(level if level is not None else ServerLoggerLevel.DEFAULT_LVL)

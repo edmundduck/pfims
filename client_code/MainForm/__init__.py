@@ -12,7 +12,9 @@ class MainForm(MainFormTemplate):
     def __init__(self, **properties):
         # TODO - Move the logon logic to a new logon page
         anvil.users.login_with_form()
+        print(f"before username")
         username = anvil.server.call('get_current_username')
+        print(f"after username")
         
         # Set Form properties and Data Bindings.
         self.init_components(**properties)

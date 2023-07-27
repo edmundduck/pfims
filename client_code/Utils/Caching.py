@@ -119,12 +119,12 @@ def get_deleted_row():
 def deleted_row_reset():
     clear_cache(key='delete_row_iid')
 
-# Return the logging_level which supposes to be stored in session
-def logging_level():
-    return get_cache(key='logging_level', func='set_user_logging_level')
+# Return the logging level which supposes to be stored in session
+def loglevel():
+    return get_cache(key='loglevel', func='set_user_logging_level')
 
-def logging_level_reset():
-    clear_cache(key='logging_level')
+def loglevel_reset():
+    clear_cache(key='loglevel')
     
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data
@@ -133,7 +133,9 @@ def get_cache(key, func, *args):
     global cache_dict
     if cache_dict is None: cache_dict = {}
     if cache_dict.get(key, None) is None:
+        print(f"cache_dict.get(key, None)={cache_dict.get(key, None)}")
         cache_dict[key] = anvil.server.call(func, *args)
+        print(f"cache_dict[key]={cache_dict[key]}")
         debug.log(f"get_cache cache loaded (key={key}, func={func})")
     return cache_dict.get(key, None)
 
