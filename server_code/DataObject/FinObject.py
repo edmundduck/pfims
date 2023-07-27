@@ -4,7 +4,8 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-from ..System.LoggingModule import logger
+from ..System.LoggingModule import ServerLogger as logger
+from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.

@@ -9,7 +9,8 @@ import psycopg2.extras
 from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import 
+from ..System.LoggingModule import ServerLogger as logger
+from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
