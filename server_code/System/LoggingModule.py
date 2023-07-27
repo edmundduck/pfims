@@ -8,6 +8,7 @@ import logging as logging
 import logging.config as config
 import datetime
 from .SystemModule import get_user_logging_level
+print("after import")
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -87,4 +88,6 @@ class ServerLogger():
     def critical(self, msg=None, *args, **kwargs):
         self.logger.critical(msg, args, **kwargs)
 
-logger = ServerLogger(config=LOGGING_CONFIG, level=get_user_logging_level(), logfunc=logging.DEBUG)
+lvl = get_user_logging_level()
+print("lvl=", lvl)
+logger = ServerLogger(config=LOGGING_CONFIG, level=lvl, logfunc=logging.DEBUG)
