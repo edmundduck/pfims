@@ -8,7 +8,8 @@ from io import BytesIO
 import pandas as pd
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
-from ..System.LoggingModule import logger
+from ..System.LoggingModule import ServerLogger as logger
+from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -19,7 +20,7 @@ def convertCharToLoc(char):
     return ord(char.lower()) - 97 if 'a' <= char.lower() <= 'z' else None
 
 # Internal function to get the list of included column names in mapping matrix
-@logger.log_function
+@log_function
 def divMappingColumnNameLists(matrix):
     nanList, nonNanList = [], []
     for c in col_name: nanList.append(c) if matrix[c] in (None, '') else nonNanList.append(c)
@@ -36,7 +37,7 @@ def get_labels_list(file, lblcol):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     
 @anvil.server.callable("import_file")
-@logger.log_function
+@log_function
 def import_file(file, tablist, rules, extra):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
@@ -82,7 +83,7 @@ def import_file(file, tablist, rules, extra):
     return (new_df.dropna(subset=['amount', 'trandate'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()
 
 @anvil.server.callable("update_mapping")
-@logger.log_function
+@log_function
 def update_mapping(data, mapping):
     try:
         # 1. Get all items with action = 'C', and grab new field to create new labels

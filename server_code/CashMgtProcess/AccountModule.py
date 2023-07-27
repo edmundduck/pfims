@@ -7,7 +7,8 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import logger
+from ..System.LoggingModule import ServerLogger as logger
+from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -16,7 +17,7 @@ from ..System.LoggingModule import logger
 # For callable decorator to be used with other decorator, refer to following,
 # https://anvil.works/forum/t/fixed-multiple-decorators-in-forms/3582/5
 @anvil.server.callable("generate_accounts_dropdown")
-@logger.log_function
+@log_function
 def generate_accounts_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -29,7 +30,7 @@ def generate_accounts_dropdown():
 
 # Generate currency dropdown items
 @anvil.server.callable("generate_ccy_dropdown")
-@logger.log_function
+@log_function
 def generate_ccy_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -42,7 +43,7 @@ def generate_ccy_dropdown():
 
 # Get selected account attributes
 @anvil.server.callable("get_selected_account_attr")
-@logger.log_function
+@log_function
 def get_selected_account_attr(selected_acct):
     if selected_acct in (None, ''):
         return [None, None, None, None, None, True]
@@ -59,7 +60,7 @@ def get_selected_account_attr(selected_acct):
 
 # Create account
 @anvil.server.callable("create_account")
-@logger.log_function
+@log_function
 def create_account(name, ccy, valid_from, valid_to, status):
     try:
         userid = sysmod.get_current_userid()
@@ -84,7 +85,7 @@ def create_account(name, ccy, valid_from, valid_to, status):
 
 # Update account
 @anvil.server.callable("update_account")
-@logger.log_function
+@log_function
 def update_account(id, name, ccy, valid_from, valid_to, status):
     try:
         conn = sysmod.db_connect()
@@ -106,7 +107,7 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
 
 # Delete account
 @anvil.server.callable("delete_account")
-@logger.log_function
+@log_function
 def delete_account(id):
     try:
         conn = sysmod.db_connect()

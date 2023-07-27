@@ -9,50 +9,51 @@ import psycopg2.extras
 from datetime import date, datetime, timedelta
 from ..Utils import Constants as const
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import logger
+from ..System.LoggingModule import ServerLogger as logger
+from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 # Internal function - Return start date of last 1 month
-@logger.log_function
+@log_function
 def get_L1M_start_date(end_date):
     return date(end_date.year-1, end_date.month+12-1, end_date.day) if end_date.month-1 < 1 else date(end_date.year, end_date.month-1, end_date.day)
 
 # Internal function - Return start date of last 3 months
-@logger.log_function
+@log_function
 def get_L3M_start_date(end_date):
     return date(end_date.year-1, end_date.month+12-3, end_date.day) if end_date.month-3 < 1 else date(end_date.year, end_date.month-3, end_date.day)
 
 # Internal function - Return start date of last 6 months
-@logger.log_function
+@log_function
 def get_L6M_start_date(end_date):
     return date(end_date.year-1, end_date.month+12-6, end_date.day) if end_date.month-6 < 1 else date(end_date.year, end_date.month-6, end_date.day)
 
 # Internal function - Return start date of last 1 year
-@logger.log_function
+@log_function
 def get_L1Y_start_date(end_date):
     return date(end_date.year-1, end_date.month, end_date.day)
 
 # Internal function - Return the 1st date of the current year
-@logger.log_function
+@log_function
 def get_YTD_start_date(end_date):
     return date(end_date.year, 1, 1)
 
 # Internal function - Return None if it's not date
-@logger.log_function
+@log_function
 def interval_default(end_date):
     return None
 
 # Get all symbols which were transacted between start and end date into the dropdown
 @anvil.server.callable("get_symbol_dropdown_items")
-@logger.log_function
+@log_function
 def get_symbol_dropdown_items(start_date, end_date=date.today()):
     return list(sorted(set(row['symbol'] for row in select_journals(start_date, end_date))))
 
 # Get start date based on end date and time interval dropdown value
 @anvil.server.callable("get_start_date")
-@logger.log_function
+@log_function
 def get_start_date(end_date, interval):
     switcher = {
         const.SearchInterval.INTERVAL_LAST_1_MTH: get_L1M_start_date,
@@ -65,7 +66,7 @@ def get_start_date(end_date, interval):
 
 # Return journals for repeating panel to display based on sell and buy date criteria
 @anvil.server.callable("select_journals")
-@logger.log_function
+@log_function
 def select_journals(start_date, end_date, symbols=[]):
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -88,13 +89,13 @@ def select_journals(start_date, end_date, symbols=[]):
 
 # Return template journals for csv generation
 @anvil.server.callable("generate_csv")
-@logger.log_function
+@log_function
 def generate_csv(start_date, end_date, symbols):
     return select_journals(start_date, end_date, symbols).to_csv()
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
-@logger.log_function
+@log_function
 def format_pnl_dict(rowitem, dictupdate, key, mode):
     numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
     if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
@@ -108,14 +109,14 @@ def format_pnl_dict(rowitem, dictupdate, key, mode):
     dictupdate.update({key: [numtrade, numdaytrade, sales, cost, fee, pnl, mode]})
 
 # Internal function - Format a parent: child mapping into dictionary
-@logger.log_function
+@log_function
 def format_pnl_child(dictupdate, parent, child):
     childset = dictupdate.get(parent, set())
     childset.add(child)
     dictupdate.update({parent: childset})
   
 # Internal function - Load DB table 'templ_journals' to build 3 P&L data dictionaries - day, month, year
-@logger.log_function
+@log_function
 def build_pnl_data(start_date, end_date, symbols):
     userid = sysmod.get_current_userid()
     rows = select_journals(userid, start_date, end_date, symbols)
@@ -153,7 +154,7 @@ def build_pnl_data(start_date, end_date, symbols):
 
 # Generate initial P&L list (year only)
 @anvil.server.callable("generate_init_pnl_list")
-@logger.log_function
+@log_function
 def generate_init_pnl_list(start_date, end_date, symbols):
     userid = sysmod.get_current_userid()
     rowstruct = []
@@ -179,7 +180,7 @@ def generate_init_pnl_list(start_date, end_date, symbols):
 
 # Update P&L data according to expand/shrink action and reformat into repeatingpanel compatible data (dict in list)
 @anvil.server.callable("update_pnl_list")
-@logger.log_function
+@log_function
 def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, action):
     userid = sysmod.get_current_userid()
     logger.debug(f"param list={start_date} / {end_date} / {symbols} / {pnl_list} / {date_value} / {mode} / {action}")

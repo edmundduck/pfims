@@ -10,13 +10,13 @@ from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
 from ..System.LoggingModule import ServerLogger as logger
-from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel
+from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 # DB table "settings" select method from Postgres DB
-@logger.log_function
+@log_function
 def psqldb_select_settings():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -36,7 +36,7 @@ def psqldb_select_settings():
     return settings
 
 # DB table "brokers" select method from Postgres DB
-@logger.log_function
+@log_function
 def psgldb_select_brokers():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -48,7 +48,7 @@ def psgldb_select_brokers():
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
 # DB table "settings" update/insert method into Postgres DB
-@logger.log_function
+@log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
     userid = sysmod.get_current_userid()
     if def_interval != const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
@@ -73,7 +73,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
     return None
 
 # DB table "brokers" update/insert method into Postgres DB
-@logger.log_function
+@log_function
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     userid = sysmod.get_current_userid()
     try:
@@ -101,7 +101,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     return None
       
 # Return selected broker name by querying DB table "brokers" from Postgres DB
-@logger.log_function
+@log_function
 def psgldb_get_broker_name(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -111,7 +111,7 @@ def psgldb_get_broker_name(choice):
     return result['name'] if result is not None else ''
 
 # Return selected broker CCY by querying DB table "brokers" from Postgres DB
-@logger.log_function
+@log_function
 def psgldb_get_broker_ccy(choice):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -121,7 +121,7 @@ def psgldb_get_broker_ccy(choice):
     return result['ccy'] if result is not None else ''
 
 # DB table "brokers" delete method in Postgres DB
-@logger.log_function
+@log_function
 def psgldb_delete_brokers(b_id):
     try:
         conn = sysmod.db_connect()
@@ -141,7 +141,7 @@ def psgldb_delete_brokers(b_id):
 
 # Generate SUBMITTED template selection dropdown items from Postgres DB
 @anvil.server.callable("psgldb_get_submitted_templ_list")
-@logger.log_function
+@log_function
 def psgldb_get_submitted_templ_list():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -154,7 +154,7 @@ def psgldb_get_submitted_templ_list():
     return result
         
 # Return search interval dropdown by querying DB table "search_interval" from Postgres DB
-@logger.log_function
+@log_function
 def psgldb_select_search_interval():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:

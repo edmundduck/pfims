@@ -9,14 +9,15 @@ import psycopg2.extras
 from datetime import date, datetime
 from ..DataObject import FinObject as fobj
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import logger
+from ..System.LoggingModule import ServerLogger as logger
+from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 # Generate expense tabs dropdown items
 @anvil.server.callable("generate_expensetabs_dropdown")
-@logger.log_function
+@log_function
 def generate_expensetabs_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -29,7 +30,7 @@ def generate_expensetabs_dropdown():
 
 # Get selected expense tab attributes
 @anvil.server.callable("get_selected_expensetab_attr")
-@logger.log_function
+@log_function
 def get_selected_expensetab_attr(selected_tab):
     if selected_tab is None or selected_tab == '':
         return [None, None]
@@ -43,7 +44,7 @@ def get_selected_expensetab_attr(selected_tab):
 
 # Return transactions for repeating panel to display based on expense tab selection dropdown
 @anvil.server.callable("select_transactions")
-@logger.log_function
+@log_function
 def select_transactions(tid):
     if tid is not None:
         conn = sysmod.db_connect()
@@ -58,7 +59,7 @@ def select_transactions(tid):
 # Insert or update transactions into "exp_transactions" DB table
 # Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 @anvil.server.callable("upsert_transactions")
-@logger.log_function
+@log_function
 def upsert_transactions(tid, rows):
     conn = None
     count = None
@@ -109,7 +110,7 @@ def upsert_transactions(tid, rows):
     
 # Delete transactions from "exp_transactions" DB table
 @anvil.server.callable("delete_transactions")
-@logger.log_function
+@log_function
 def delete_transactions(tid, iid_list):
     conn, cur, count = [None, None, None]
     try:
@@ -134,7 +135,7 @@ def delete_transactions(tid, iid_list):
 
 # Save expense tab
 @anvil.server.callable("save_expensetab")
-@logger.log_function
+@log_function
 def save_expensetab(id, name):
     userid = sysmod.get_current_userid()
     try:
@@ -163,7 +164,7 @@ def save_expensetab(id, name):
 
 # Submit expense tab
 @anvil.server.callable("submit_expensetab")
-@logger.log_function
+@log_function
 def submit_expensetab(id, submitted):
     try:
         currenttime = datetime.now()
@@ -191,7 +192,7 @@ def submit_expensetab(id, submitted):
 # Delete expense tab
 # Delete cascade is implemented in "exp_transactions" DB table "tab_id" column, hence transactions under particular tab will be deleted automatically
 @anvil.server.callable("delete_expensetab")
-@logger.log_function
+@log_function
 def delete_expensetab(tab_id):
     try:
         conn = sysmod.db_connect()

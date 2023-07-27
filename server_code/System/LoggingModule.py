@@ -47,17 +47,6 @@ class ServerLogger:
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(level if level is not None else ServerLoggerLevel.DEFAULT_LVL)
         
-    def log_function(self, func):
-        def wrapper(*args, **kwargs):
-            # Log the function call
-            self.logger.debug("Server function %s starts ..." % func.__qualname__)
-            # Call the original function
-            result = func(*args, **kwargs)
-            # Log the function return value
-            self.logger.debug("Server function %s returned: %s ///" % (func.__qualname__, result))
-            return result
-        return wrapper
-
     def trace(self, msg=None, *args, **kwargs):
         self.logger._log(ServerLoggerLevel.TRACE.get('val'), msg, args, **kwargs)
 
@@ -75,3 +64,14 @@ class ServerLogger:
 
     def critical(self, msg=None, *args, **kwargs):
         self.logger.critical(msg, args, **kwargs)
+
+def log_function(func):
+    def wrapper(*args, **kwargs):
+        # Log the function call
+        ServerLogger.logger.debug("Server function %s starts ..." % func.__qualname__)
+        # Call the original function
+        result = func(*args, **kwargs)
+        # Log the function return value
+        ServerLogger.logger.debug("Server function %s returned: %s ///" % (func.__qualname__, result))
+        return result
+    return wrapper
