@@ -16,8 +16,7 @@ print("after import")
 # Constants
 TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 DEFAULT_LVL = logging.WARNING
-
-LOGGING_CONFIG = {
+DEFAULT_LOGGING_CONFIG = {
         'version': 1,
         'disable_existing_loggers': False,
         'formatters': {
@@ -41,7 +40,7 @@ LOGGING_CONFIG = {
     }
 
 class ServerLogger():
-    def __init__(self, config, level, logfunc=None):
+    def __init__(self, config=DEFAULT_LOGGING_CONFIG, level=get_user_logging_level(), logfunc=None):
         logging.addLevelName(TRACE.get('val'), TRACE.get('desc'))
         logging.config.dictConfig(config)
         self.logger = logging.getLogger(__name__)
@@ -87,8 +86,3 @@ class ServerLogger():
 
     def critical(self, msg=None, *args, **kwargs):
         self.logger.critical(msg, args, **kwargs)
-
-# lvl = get_user_logging_level()
-lvl = logging.DEBUG
-print("lvl=", lvl)
-logger = ServerLogger(config=LOGGING_CONFIG, level=lvl, logfunc=logging.DEBUG)
