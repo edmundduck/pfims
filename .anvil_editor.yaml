@@ -55,6 +55,7 @@ unique_ids:
     InvestmentProcess.InputModule: X45I2HKCTR4L4RTO5ZJPFZDW2YWARRQR
     CashMgtProcess.FileUploadMappingModule: '1682547745565167613178875.7249'
     CashMgtProcess.FileImportModule: '1682200866518119534374030.21994'
+    zzObsolete.TestModule: '1690490565629305514768134.5227'
     zzObsolete: '1679841779311359289413767.20715'
     CashMgtProcess.ExpenseModule: '1680108919559545469398403.31256'
     CashMgtProcess.AccountModule: '1681251190842588428188771.8152'

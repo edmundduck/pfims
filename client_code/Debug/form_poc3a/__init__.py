@@ -21,9 +21,9 @@ class form_poc3a(form_poc3aTemplate):
         # error.log("level=", anvil.server.call('get_user_logging_level'))
         # error.log("yy")
         print("xx")
-        print("level=", anvil.server.call('get_user_logging_level'))
+        # print("level=", anvil.server.call('get_user_logging_level'))
         print("brokers=", anvil.server.call('select_brokers'))
-        print("level=", anvil.server.call('get_user_logging_level'))
+        # print("level=", anvil.server.call('get_user_logging_level'))
         print("yy")
 
     def button_1_click(self, **event_args):
