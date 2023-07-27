@@ -10,6 +10,7 @@ import datetime
 import psycopg2
 import psycopg2.extras
 from .SystemModule import db_connect, get_current_userid, schemafin
+from ..Utils.Caching import logging_level
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -21,17 +22,13 @@ def set_user_logging_level():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{get_current_userid()}'")
         result = cur.fetchone()
-        anvil.server.session['logging_level'] = result.get('logging_level', None)
-        print(f"({anvil.server.get_session_id()} set_user_logging_level={anvil.server.session}, {anvil.server.session.get('logging_level')}")
-        return anvil.server.session.get('logging_level')
+        # Storing in session doesn't work in any means, hence need to use client caching instead
+        # anvil.server.session['logging_level'] = result.get('logging_level', None)
+        return result.get('logging_level', None)
 
 # Get user logging level from session
 def get_user_logging_level():
-    try:
-        print(f"({anvil.server.get_session_id()} get_user_logging_level={anvil.server.session}")
-        return anvil.server.session.get('logging_level')
-    except AttributeError as err:
-        return set_user_logging_level()
+    return logging_level()
 
 class ServerLoggerLevel:
     DEFAULT_LVL = logging.WARNING
