@@ -21,6 +21,9 @@ def psqldb_select_settings():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     settings = None
+    # DEBUG
+    logger.error("TEST")
+    logger.initialize()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {sysmod.schemafin()}.settings")
         for i in cur.fetchall():

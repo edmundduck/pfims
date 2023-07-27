@@ -133,9 +133,7 @@ def get_cache(key, func, *args):
     global cache_dict
     if cache_dict is None: cache_dict = {}
     if cache_dict.get(key, None) is None:
-        print(f"cache_dict.get(key, None)={cache_dict.get(key, None)}")
         cache_dict[key] = anvil.server.call(func, *args)
-        print(f"cache_dict[key]={cache_dict[key]}")
         debug.log(f"get_cache cache loaded (key={key}, func={func})")
     return cache_dict.get(key, None)
 

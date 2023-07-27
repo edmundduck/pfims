@@ -44,29 +44,46 @@ class ServerLoggerConfig:
 
 class ServerLogger:
     logger = logging.getLogger(__name__)
-    
+
+    # Cannot put function loglevel in level argument otherwise will cause nested loop (reason unknown)
     # def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=loglevel()):
-    def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=logging.INFO):
+    def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=ServerLoggerLevel.DEFAULT_LVL):
         logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
         logging.config.dictConfig(config)
-        ServerLogger.logger.setLevel(level if level is not None else ServerLoggerLevel.DEFAULT_LVL)
-        
-    def trace(self, msg=None, *args, **kwargs):
+        userlevel=loglevel()
+        print(f"init={userlevel if userlevel is not None else level}")
+        ServerLogger.logger.setLevel(userlevel if userlevel is not None else level)
+
+    @staticmethod
+    def initialize(config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=ServerLoggerLevel.DEFAULT_LVL):
+        logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
+        logging.config.dictConfig(config)
+        userlevel=loglevel()
+        print(f"init={userlevel if userlevel is not None else level}")
+        ServerLogger.logger.setLevel(userlevel if userlevel is not None else level)
+
+    @staticmethod
+    def trace(msg=None, *args, **kwargs):
         ServerLogger.logger._log(ServerLoggerLevel.TRACE.get('val'), msg, args, **kwargs)
 
-    def debug(self, msg=None, *args, **kwargs):
+    @staticmethod
+    def debug(msg=None, *args, **kwargs):
         ServerLogger.logger.debug(msg, args, **kwargs)
 
-    def info(self, msg=None, *args, **kwargs):
+    @staticmethod
+    def info(msg=None, *args, **kwargs):
         ServerLogger.logger.info(msg, args, **kwargs)
 
-    def warning(self, msg=None, *args, **kwargs):
+    @staticmethod
+    def warning(msg=None, *args, **kwargs):
         ServerLogger.logger.warning(msg, args, **kwargs)
 
-    def error(self, msg=None, *args, **kwargs):
+    @staticmethod
+    def error(msg=None, *args, **kwargs):
         ServerLogger.logger.error(msg, args, **kwargs)
 
-    def critical(self, msg=None, *args, **kwargs):
+    @staticmethod
+    def critical(msg=None, *args, **kwargs):
         ServerLogger.logger.critical(msg, args, **kwargs)
 
 def log_function(func):
