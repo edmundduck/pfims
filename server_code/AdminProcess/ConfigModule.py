@@ -9,11 +9,12 @@ import psycopg2.extras
 from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..System import SystemModule as sysmod
-from ..System.LoggingModule import ServerLogger as logger
+from ..System.LoggingModule import ServerLogger
 from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+logger = ServerLogger.init_logger()
 
 # DB table "settings" select method from Postgres DB
 @log_function
@@ -23,7 +24,6 @@ def psqldb_select_settings():
     settings = None
     # DEBUG
     logger.error("TEST")
-    logger.initialize()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {sysmod.schemafin()}.settings")
         for i in cur.fetchall():

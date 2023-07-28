@@ -43,26 +43,20 @@ class ServerLoggerConfig:
         }
 
 class ServerLogger:
-    logger = logging.getLogger(__name__)
 
     # Cannot put function loglevel in level argument otherwise will cause nested loop (reason unknown)
-    # def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=loglevel()):
-    def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=ServerLoggerLevel.DEFAULT_LVL):
-        logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
-        logging.config.dictConfig(config)
-        userlevel=loglevel()
-        print(f"init={userlevel if userlevel is not None else level}")
-        ServerLogger.logger.setLevel(userlevel if userlevel is not None else level)
-
     @staticmethod
-    def initialize(config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=ServerLoggerLevel.DEFAULT_LVL):
+    def init_logger(config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=ServerLoggerLevel.DEFAULT_LVL):
+        logger = logging.getLogger(__name__)
         logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
         logging.config.dictConfig(config)
-        userlevel=loglevel()
-        print(f"init={userlevel if userlevel is not None else level}")
-        print(ServerLogger.logger.level)
+        print("before call")
+        anvil.server.session['loglevel'] = 5
+        userlevel = anvil.server.session.get('loglevel')
+        # userlevel=loglevel()
+        print("after call")
         ServerLogger.logger.setLevel(userlevel if userlevel is not None else level)
-        print(ServerLogger.logger.level)
+        return logger
 
     @staticmethod
     def trace(msg=None, *args, **kwargs):
@@ -70,7 +64,8 @@ class ServerLogger:
 
     @staticmethod
     def debug(msg=None, *args, **kwargs):
-        print(ServerLogger.logger.level)
+        print("debug,",ServerLogger.logger.level)
+        print("anvil.server.session.get('loglevel'),",anvil.server.session.get('loglevel'))
         ServerLogger.logger.debug(msg, args, **kwargs)
 
     @staticmethod
