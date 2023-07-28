@@ -9,7 +9,7 @@ services:
 - source: /runtime/services/anvil/secrets.yml
   client_config: {}
   server_config: {}
-startup: {type: form, module: MainForm.Form1}
+startup: {type: form, module: MainForm}
 package_name: PFIMS
 allow_embedding: false
 name: Personal Finance and Inventory Management System
