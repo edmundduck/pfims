@@ -60,7 +60,9 @@ class ServerLogger:
         logging.config.dictConfig(config)
         userlevel=loglevel()
         print(f"init={userlevel if userlevel is not None else level}")
+        print(ServerLogger.logger.level)
         ServerLogger.logger.setLevel(userlevel if userlevel is not None else level)
+        print(ServerLogger.logger.level)
 
     @staticmethod
     def trace(msg=None, *args, **kwargs):
@@ -68,6 +70,7 @@ class ServerLogger:
 
     @staticmethod
     def debug(msg=None, *args, **kwargs):
+        print(ServerLogger.logger.level)
         ServerLogger.logger.debug(msg, args, **kwargs)
 
     @staticmethod
