@@ -29,3 +29,7 @@ def zz_test_session():
         print("It's empty")
     else:
         print("It's not empty")
+
+class NewLog:
+    def __init__(self):
+        print("NewLog=", anvil.server.session)

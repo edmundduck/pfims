@@ -10,9 +10,9 @@ from datetime import date, datetime
 from ..Utils import Constants as const
 from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
-from ..System import SystemModule as sysmod
-from ..System.LoggingModule import ServerLogger as logger
-from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
+from ..SysProcess import SystemModule as sysmod
+from ..SysProcess.LoggingModule import ServerLogger as logger
+from ..SysProcess.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.

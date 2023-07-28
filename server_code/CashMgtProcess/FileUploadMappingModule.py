@@ -7,9 +7,9 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from ..System import SystemModule as sysmod
-from ..System.LoggingModule import ServerLogger as logger
-from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
+from ..SysProcess import SystemModule as sysmod
+from ..SysProcess.LoggingModule import ServerLogger as logger
+from ..SysProcess.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.

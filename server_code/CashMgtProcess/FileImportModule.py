@@ -8,8 +8,8 @@ from io import BytesIO
 import pandas as pd
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
-from ..System.LoggingModule import ServerLogger as logger
-from ..System.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
+from ..SysProcess.LoggingModule import ServerLogger as logger
+from ..SysProcess.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
