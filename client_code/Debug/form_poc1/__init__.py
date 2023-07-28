@@ -13,12 +13,6 @@ class form_poc1(form_poc1Template):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        """
-        #dict_test = {'a': 1, 'b': 2}
-        dict_test = {}
-        a, b = dict_test.get('a', [0, 0])
-        print("a={}, b={}".format(a, b))
-        """
 
     def create_tag(self, txt):
         self.panel_tags.add_component(Button(text=txt, background=const.ColorSchemes.THEME_PRIM, foreground=const.ColorSchemes.THEME_WHITE, font_size=9, icon=const.Icons.REMOVE, icon_align='left', spacing_above='None', spacing_below='None'))

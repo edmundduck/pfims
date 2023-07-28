@@ -12,8 +12,6 @@ class form_poc4(form_poc4Template):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        print("??")
-        anvil.server.call('get_user_logging_level')
 
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""

@@ -7,16 +7,16 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from ..SysProcess import SystemModule as sysmod
-from ..SysProcess.LoggingModule import ServerLogger as logger
-from ..SysProcess.LoggingModule import ServerLoggerConfig, ServerLoggerLevel, log_function
+from ..SysProcess import LoggingModule
 from fuzzywuzzy import fuzz
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+logger = LoggingModule.ServerLogger()
 
 # Generate labels dropdown items
 @anvil.server.callable("generate_labels_dropdown")
-@log_function
+@logger.log_function
 def generate_labels_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -30,7 +30,7 @@ def generate_labels_dropdown():
 
 # Generate labels into list
 @anvil.server.callable("generate_labels_list")
-@log_function
+@logger.log_function
 def generate_labels_list():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -42,7 +42,7 @@ def generate_labels_list():
 
 # Get selected label attributes
 @anvil.server.callable("get_selected_label_attr")
-@log_function
+@logger.log_function
 def get_selected_label_attr(selected_lbl):
     userid = sysmod.get_current_userid()
     if selected_lbl is None or selected_lbl == '':
@@ -59,7 +59,7 @@ def get_selected_label_attr(selected_lbl):
 
 # Generate labels dropdown items
 @anvil.server.callable("generate_labels_mapping_action_dropdown")
-@log_function
+@logger.log_function
 def generate_labels_mapping_action_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -71,7 +71,7 @@ def generate_labels_mapping_action_dropdown():
 
 # Create label
 @anvil.server.callable("create_label")
-@log_function
+@logger.log_function
 def create_label(labels):
     userid = sysmod.get_current_userid()
     try:
@@ -96,7 +96,7 @@ def create_label(labels):
 
 # Update label
 @anvil.server.callable("update_label")
-@log_function
+@logger.log_function
 def update_label(id, name, keywords, status):
     try:
         conn = sysmod.db_connect()
@@ -118,7 +118,7 @@ def update_label(id, name, keywords, status):
 
 # Delete label
 @anvil.server.callable("delete_label")
-@log_function
+@logger.log_function
 def delete_label(id):
     try:
         conn = sysmod.db_connect()
@@ -139,7 +139,7 @@ def delete_label(id):
     return None
 
 @anvil.server.callable("predict_relevant_labels")
-@log_function
+@logger.log_function
 def predict_relevant_labels(srclbl, curlbl):
     # Max 100, min 0
     min_proximity = 40

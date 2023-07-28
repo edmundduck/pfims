@@ -9,7 +9,6 @@ import logging.config as config
 import datetime
 import psycopg2
 import psycopg2.extras
-# from ..Utils.Caching import loglevel
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -46,15 +45,23 @@ class ServerLogger:
     # Cannot put function loglevel in level argument otherwise will cause nested loop (reason unknown)
     def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=ServerLoggerLevel.DEFAULT_LVL):
         self.logger = logging.getLogger(__name__)
+        self.default_level = level
         logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
         logging.config.dictConfig(config)
+        # ** NOTE **
+        # If set level is enabled in __init__, server session is NoneType (but eval it is not None which looks like a bug!!)
+        # and cannot proceed forward, thus these 2 lines are placed in a separate function which is called everytime when log happens
+        # **********
+        # userlevel = anvil.server.session.get('loglevel')
+        # self.logger.setLevel(userlevel if userlevel is not None else self.default_level)
+
+    def set_level(self):
         userlevel = anvil.server.session.get('loglevel')
-        # userlevel=loglevel()
-        # userlevel=logging.INFO
-        self.logger.setLevel(userlevel if userlevel is not None else level)
+        self.logger.setLevel(userlevel if userlevel is not None else self.default_level)
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
+            if self.logger.level == 0: self.set_level()
             # Log the function call
             self.logger.debug("Server function %s starts ..." % func.__qualname__)
             # Call the original function
@@ -65,21 +72,25 @@ class ServerLogger:
         return wrapper
 
     def trace(self, msg=None, *args, **kwargs):
+        if self.logger.level == 0: self.set_level()
         self.logger._log(ServerLoggerLevel.TRACE.get('val'), msg, args, **kwargs)
 
     def debug(self, msg=None, *args, **kwargs):
+        if self.logger.level == 0: self.set_level()
         self.logger.debug(msg, args, **kwargs)
 
     def info(self, msg=None, *args, **kwargs):
+        if self.logger.level == 0: self.set_level()
         self.logger.info(msg, args, **kwargs)
 
     def warning(self, msg=None, *args, **kwargs):
+        if self.logger.level == 0: self.set_level()
         self.logger.warning(msg, args, **kwargs)
 
     def error(self, msg=None, *args, **kwargs):
+        if self.logger.level == 0: self.set_level()
         self.logger.error(msg, args, **kwargs)
 
     def critical(self, msg=None, *args, **kwargs):
+        if self.logger.level == 0: self.set_level()
         self.logger.critical(msg, args, **kwargs)
-
-logger = ServerLogger()

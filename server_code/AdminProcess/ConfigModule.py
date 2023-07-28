@@ -9,11 +9,11 @@ import psycopg2.extras
 from ..Utils import Constants as const
 from ..InvestmentProcess import InputModule as imod
 from ..SysProcess import SystemModule as sysmod
-from ..SysProcess.LoggingModule import logger
+from ..SysProcess import LoggingModule
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-logger = ServerLogger.init_logger()
+logger = LoggingModule.ServerLogger()
 
 # DB table "settings" select method from Postgres DB
 @logger.log_function
@@ -63,6 +63,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
             conn.commit()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
+            anvil.server.session['loglevel'] = logging_level
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")

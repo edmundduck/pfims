@@ -119,13 +119,6 @@ def get_deleted_row():
 def deleted_row_reset():
     clear_cache(key='delete_row_iid')
 
-# Return the logging level which supposes to be stored in session
-def loglevel():
-    return get_cache(key='loglevel', func='set_user_logging_level')
-
-def loglevel_reset():
-    clear_cache(key='loglevel')
-    
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
