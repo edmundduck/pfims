@@ -51,11 +51,17 @@ class ServerLogger:
         logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
         logging.config.dictConfig(config)
         print("before call")
+        print(anvil.server.session)
+        if not anvil.server.session:
+            print("The session is empty.")
+        else:
+            print("The session is not empty.")
+        anvil.server.session = {}
         anvil.server.session['loglevel'] = 5
         userlevel = anvil.server.session.get('loglevel')
         # userlevel=loglevel()
         print("after call")
-        ServerLogger.logger.setLevel(userlevel if userlevel is not None else level)
+        logger.setLevel(userlevel if userlevel is not None else level)
         return logger
 
     @staticmethod
@@ -87,10 +93,11 @@ class ServerLogger:
 def log_function(func):
     def wrapper(*args, **kwargs):
         # Log the function call
-        ServerLogger.logger.debug("Server function %s starts ..." % func.__qualname__)
+        logger = ServerLogger.init_logger()
+        logger.debug("Server function %s starts ..." % func.__qualname__)
         # Call the original function
         result = func(*args, **kwargs)
         # Log the function return value
-        ServerLogger.logger.debug("Server function %s returned: %s ///" % (func.__qualname__, result))
+        logger.debug("Server function %s returned: %s ///" % (func.__qualname__, result))
         return result
     return wrapper
