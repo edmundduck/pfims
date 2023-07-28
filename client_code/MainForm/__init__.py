@@ -11,16 +11,8 @@ from ..Utils import Routing
 class MainForm(MainFormTemplate):
     def __init__(self, **properties):
         # TODO - Move the logon logic to a new logon page
+        anvil.server.call('zz_test_session')
         anvil.users.login_with_form()
-        print(anvil.server.session)
-        if anvil.server.session is None:
-            print("It's none")
-        else:
-            print("It's not none")
-        if not anvil.server.session:
-            print("It's empty")
-        else:
-            print("It's not empty")
         username = anvil.server.call('get_current_username')
         
         # Set Form properties and Data Bindings.

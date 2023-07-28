@@ -19,5 +19,13 @@ import anvil.server
 #
 
 @anvil.server.callable
-def zz_print_test_msg():
-    print(f"test_msg")
+def zz_test_session():
+    print(anvil.server.session)
+    if anvil.server.session is None:
+        print("It's none")
+    else:
+        print("It's not none")
+    if not anvil.server.session:
+        print("It's empty")
+    else:
+        print("It's not empty")
