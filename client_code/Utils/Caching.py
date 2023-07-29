@@ -120,6 +120,22 @@ def get_deleted_row():
 def deleted_row_reset():
     clear_cache(key='delete_row_iid')
 
+def set_client_loglevel(level):
+    global cache_dict
+    key = 'cloglevel'
+    if cache_dict is None: cache_dict = {}
+    cache_dict[key] = level
+
+# Return the client logging level
+def get_client_loglevel():
+    global cache_dict
+    key = 'cloglevel'
+    if cache_dict is None: cache_dict = {}
+    return cache_dict.get(key, None)
+
+def client_loglevel_reset():
+    clear_cache(key='cloglevel')
+    
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
