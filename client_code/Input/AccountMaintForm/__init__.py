@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class AccountMaintForm(AccountMaintFormTemplate):
     def __init__(self, **properties):
@@ -50,6 +50,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
         self.dropdown_status.selected_value = True
 
+    @debug.log_function
     def button_accounts_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_name = self.text_acct_name.text
@@ -74,6 +75,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         Notification(msg).show()
         return
 
+    @debug.log_function
     def button_accounts_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_name = self.text_acct_name.text
@@ -100,6 +102,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         Notification(msg).show()
         return
 
+    @debug.log_function
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_id, acct_name = self.dropdown_acct_list.selected_value if self.dropdown_acct_list.selected_value is not None else [None, None]

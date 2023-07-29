@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Caching as cache
 from ....Utils import Constants as const
+from ....Utils.Logger import trace, debug, info, warning, error, critical
 
 class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
     def __init__(self, **properties):
@@ -34,6 +35,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = True
 
+    @debug.log_function
     def dropdown_lbl_action_change(self, **event_args):
         """This method is called when an item is selected"""
         self.dropdown_lbl_action_show()

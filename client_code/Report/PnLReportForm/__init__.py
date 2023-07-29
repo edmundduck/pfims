@@ -5,6 +5,7 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class PnLReportForm(PnLReportFormTemplate):
     def __init__(self, **properties):
@@ -19,6 +20,7 @@ class PnLReportForm(PnLReportFormTemplate):
         """This method is called when an item is selected"""
         self.data_grid.rows_per_page = self.dropdown_displayrow.selected_value
 
+    @debug.log_function
     def update_pnl_list(self, date, mode, action, **event_args):
         self.rpt_panel.items = anvil.server.call('update_pnl_list', 
                                                  start_date=self.hidden_time_datefrom.date, 

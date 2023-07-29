@@ -9,7 +9,7 @@ from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
 from ...Utils.Validation import Validator
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class StockInputForm(StockInputFormTemplate):
     def __init__(self, **properties):
@@ -30,6 +30,7 @@ class StockInputForm(StockInputFormTemplate):
         # Reset on screen change status
         self.disable_submit_button()
         
+    @debug.log_function
     def save_row_change(self, **event_args):
         """ 
         *** ESSENTIAL ***
@@ -43,6 +44,7 @@ class StockInputForm(StockInputFormTemplate):
         self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
                                             for c in self.input_repeating_panel.get_components()]
     
+    @debug.log_function
     def button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         v = Validator()
@@ -95,6 +97,7 @@ class StockInputForm(StockInputFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_broker.items = anvil.server.call('select_brokers')
 
+    @debug.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
@@ -149,6 +152,7 @@ class StockInputForm(StockInputFormTemplate):
         """ Reset row delete flag """
         cache.deleted_row_reset()
     
+    @debug.log_function
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_templ_name = self.dropdown_templ.selected_value
@@ -176,6 +180,7 @@ class StockInputForm(StockInputFormTemplate):
                 error.log(msg)
             Notification(msg).show()                
 
+    @debug.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_submitted_templ_name = self.dropdown_templ.selected_value

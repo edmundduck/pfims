@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def __init__(self, **properties):
@@ -46,6 +46,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         else:
             self.file_loader_1.enabled = True
 
+    @debug.log_function
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
@@ -73,6 +74,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     vis = True
         self.button_next.visible = vis
 
+    @debug.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         tablist = []
@@ -85,6 +87,6 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         extra = anvil.server.call('select_mapping_extra_actions', id=self.dropdown_mapping_rule.selected_value)
         debug.log("extra=", extra)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
-        dump.log("df=", df)
+        trace.log("df=", df)
         debug.log("lbls=", lbls)
         Routing.open_exp_file_upload_form_p2(self, data=df, labels=lbls)

@@ -7,6 +7,21 @@ from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+def open_dashboard_form(self, **event_args):
+    from ..Report.DashboardForm import DashboardForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(DashboardForm())
+
+def open_setting_form(self, **event_args):
+    from ..Admin.SettingForm import SettingForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(SettingForm())
+
+def open_stock_input_form(self, **event_args):
+    from ..Input.StockInputForm import StockInputForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(StockInputForm())
+
 def open_exp_input_form(self, tab_id=None, data=None, **event_args):
     from ..Input.ExpenseInputForm import ExpenseInputForm
     # The following doesn't work, but open_acct_maint_form one works, no idea why
@@ -39,3 +54,26 @@ def open_acct_maint_form(self, **event_args):
     from ..Input.AccountMaintForm import AccountMaintForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(AccountMaintForm())
+
+def open_tranx_list_form(self, **event_args):
+    from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Report.TransactionReportForm import TransactionReportForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(TransactionReportForm()))
+
+def open_pnl_report_form(self, **event_args):
+    from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Report.PnLReportForm import PnLReportForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(PnLReportForm()))
+
+def open_exp_list_form(self, **event_args):
+    from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Report.ExpenseReportForm import ExpenseReportForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(ExpenseReportForm()))
+
+def open_poc_main_form(self, **event_args):
+    from ..Debug.form_poc_main import form_poc_main
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(form_poc_main())

@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
@@ -15,12 +15,15 @@ class SettingForm(SettingFormTemplate):
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
+        if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
+        self.dropdown_logging_level.items = const.LoggingLevel.dropdown
         settings = anvil.server.call('select_settings')
         if settings is not None and len(settings) > 0:
             self.dropdown_default_broker.selected_value = settings.get('default_broker')
             self.dropdown_interval.selected_value = settings.get('default_interval')
             self.time_datefrom.date = settings.get('default_datefrom')
             self.time_dateto.date = settings.get('default_dateto')
+            self.dropdown_logging_level.selected_value = settings.get('logging_level')
 
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval != "SDR":
@@ -57,6 +60,7 @@ class SettingForm(SettingFormTemplate):
             self.time_datefrom.enabled = True
             self.time_dateto.enabled = True
 
+    @debug.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
@@ -64,13 +68,16 @@ class SettingForm(SettingFormTemplate):
                                   def_broker=self.dropdown_default_broker.selected_value, 
                                   def_interval=interval, 
                                   def_datefrom=self.time_datefrom.date, 
-                                  def_dateto=self.time_dateto.date)
+                                  def_dateto=self.time_dateto.date,
+                                  logging_level=self.dropdown_logging_level.selected_value
+                                 )
         if (count > 0):
             n = Notification("{count} row updated successfully.".format(count=count))
         else:
             n = Notification("ERROR: Fail to insert or update.")
         n.show()
 
+    @debug.log_function
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         b_id = anvil.server.call('upsert_brokers', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
@@ -85,6 +92,7 @@ class SettingForm(SettingFormTemplate):
         """This method is called when the TextBox loses focus"""
         self.button_broker_create.enabled = False if self.text_broker_name.text == '' else True
 
+    @debug.log_function
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         b_id = anvil.server.call('upsert_brokers', self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value)
@@ -94,6 +102,7 @@ class SettingForm(SettingFormTemplate):
         settings = anvil.server.call('select_settings')
         self.dropdown_default_broker.selected_value = settings.get('default_broker') if settings is not None else None
 
+    @debug.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         count = anvil.server.call('delete_brokers', self.hidden_b_id.text)
@@ -135,6 +144,7 @@ class SettingForm(SettingFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_sub_templ_list.raise_event('change')
 
+    @debug.log_function
     def button_templ_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_enabled_templ_name = self.dropdown_sub_templ_list.selected_value
@@ -148,4 +158,7 @@ class SettingForm(SettingFormTemplate):
         else:
             n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=to_be_enabled_templ_name))
         n.show()
+
+    def button_logging_edit_click(self, **event_args):
+        """This method is called when the button is clicked"""
         
