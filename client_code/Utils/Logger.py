@@ -17,9 +17,10 @@ ERROR = { 'val':40, 'desc':'ERROR' }
 CRITICAL = { 'val':50, 'desc':'CRITICAL' }
 
 # Config - Customize the log level required here
-LOG_LEVEL = WARNING
+class ClientLoggerLevel:
+    DEFAULT_LVL = WARNING
 
-class ClientLogger():
+class ClientLogger:
     def __init__(self, config, level):
         self.datefmt = config.datefmt
         self.default = config.default
@@ -44,12 +45,15 @@ class ClientLogger():
             if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
             print(output)
 
-class ClientLoggerConfig():
-    def __init__(self, datefmt='%Y-%m-%d %H:%M:%S', default=INFO):
-        self.datefmt = datefmt
-        self.default = default
+    def trace(self, msg=None, *args, **kwargs):
+        self.log()
 
-config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=LOG_LEVEL)
+class ClientLoggerConfig():
+    def __init__(self, datefmt='%Y-%m-%d %H:%M:%S', level=ClientLoggerLevel.DEFAULT_LVL):
+        self.datefmt = datefmt
+        self.default = level
+
+config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f')
 
 trace = ClientLogger(config=config, level=TRACE)
 debug = ClientLogger(config=config, level=DEBUG)
