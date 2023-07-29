@@ -8,10 +8,12 @@ from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
-from ...Utils.Logger import trace, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
 from ..ExpenseReportForm import ExpenseReportForm
+
+logger = ClientLogger()
 
 class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     subform = None
@@ -63,7 +65,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
       
     # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
     # Return selected symbols which appear in blue buttons 
-    @debug.log_function
+    @logger.log_function
     def _getall_selected_symbols(self):
         symbol_list = []
         for i in self.panel_symbol.get_components():
@@ -73,7 +75,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         return symbol_list
 
     # Remove all symbols selected as blue buttons from dictionary
-    @debug.log_function
+    @logger.log_function
     def _rmvall_selected_symbols(self):
         for i in self.panel_symbol.get_components():
             if isinstance(i, Button):
@@ -82,7 +84,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                     self.tag['added_symbols'].pop(i.text)
                     i.remove_from_parent()
 
-    @debug.log_function
+    @logger.log_function
     def _upd_scr_enablement(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval in (None, ''):
@@ -116,7 +118,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.button_pnl_search.enabled = False
         self.button_exp_search.enabled = False
     
-    @debug.log_function
+    @logger.log_function
     def _find_enddate(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval != "SDR" or self.time_dateto.date is None:
@@ -124,7 +126,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         else:
             return self.time_dateto.date
   
-    @debug.log_function
+    @logger.log_function
     def _find_startdate(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval != "SDR" or self.time_datefrom.date is None:
@@ -145,7 +147,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         """This method is called when the selected date changes"""
         self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
 
-    @debug.log_function
+    @logger.log_function
     def tranx_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.tag['added_symbols'].get(self.dropdown_symbol.selected_value, None) is None:
@@ -159,14 +161,14 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             # Register the added symbol to the dictionary in self.tag to avoid duplication
             self.tag['added_symbols'].update({self.dropdown_symbol.selected_value: 1})
 
-    @debug.log_function
+    @logger.log_function
     def tranx_rpt_button_minus_click(self, **event_args):
         b = event_args['sender']
         # Deregister the added symbol from the dictionary in self.tag
         self.tag['added_symbols'].pop(b.text)
         b.remove_from_parent()
 
-    @debug.log_function
+    @logger.log_function
     def button_tranx_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
@@ -189,7 +191,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         """This method is called when the button is clicked"""
         self._reset_search()
     
-    @debug.log_function
+    @logger.log_function
     def button_pnl_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()

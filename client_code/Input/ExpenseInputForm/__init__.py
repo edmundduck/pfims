@@ -10,8 +10,10 @@ from ...Utils import Constants as const
 from ...Utils import Routing
 from ...Utils import Caching as cache
 from ...Utils.Validation import Validator
-from ...Utils.Logger import trace, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
+
+logger = ClientLogger()
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
     def __init__(self, tab_id=None, data=None, **properties):
@@ -24,13 +26,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
-            debug.log("self.dropdown_tabs.selected_value=", self.dropdown_tabs.selected_value)
+            logger.debug("self.dropdown_tabs.selected_value=", self.dropdown_tabs.selected_value)
 
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
             self.input_repeating_panel.items = [{} for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
         else:
-            info.log(f"{len(data)} rows are imported to {__name__}.")
+            logger.info(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
         cache.deleted_row_reset()
 
@@ -46,7 +48,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_save_click)
         
-    @debug.log_function
+    @logger.log_function
     def _getall_selected_labels(self):
         label_list = []
         for i in self.panel_labels.get_components():
@@ -75,7 +77,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_labels.items = cache.labels_dropdown()
 
-    @debug.log_function
+    @logger.log_function
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
         # Case 001 - string dict key handling review
@@ -89,7 +91,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
 
-    @debug.log_function
+    @logger.log_function
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
@@ -140,7 +142,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-stmt-dtl-visible', vis=not self.cb_hide_stmtdtl.checked)
 
-    @debug.log_function
+    @logger.log_function
     def button_save_click(self, **event_args):
         """Validation"""
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
@@ -153,7 +155,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
         if tab_id is None or tab_id <= 0:
             msg = f"ERROR: Fail to save expense tab {tab_name}."
-            error.log(msg)
+            logger.error(msg)
             Notification(msg).show()
             return
 
@@ -169,7 +171,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             cache.deleted_row_reset()
             self._switch_to_submit_button()
             msg2 = f"Expense tab {tab_name} has been saved successfully."
-            info.log(msg2)
+            logger.info(msg2)
         else:
             if result_d is not None:
                 cache.deleted_row_reset()
@@ -178,10 +180,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
             else:
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
-            warning.log(msg2)
+            logger.warning(msg2)
         Notification(msg2).show()
 
-    @debug.log_function
+    @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         tab_name = self.tab_name.text
@@ -193,13 +195,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
             self.dropdown_tabs.raise_event('change')
             msg = f"Expense tab {tab_name} has been submitted."
-            info.log(msg)
+            logger.info(msg)
         else:
             msg = f"ERROR: Fail to submit expense tab {tab_name}."
-            error.log(msg)
+            logger.error(msg)
         Notification(msg).show()
 
-    @debug.log_function
+    @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
@@ -215,8 +217,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 self.dropdown_tabs.raise_event('change')
                 cache.deleted_row_reset()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
-                info.log(msg2)
+                logger.info(msg2)
             else:
                 msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
-                error.log(msg2)
+                logger.error(msg2)
             Notification(msg2).show()

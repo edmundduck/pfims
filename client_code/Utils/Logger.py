@@ -4,56 +4,82 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import datetime
+# from .Caching import get_client_loglevel, set_client_loglevel, client_loglevel_reset
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-# Constants
-TRACE = { 'val':5, 'desc':'TRACE' }
-DEBUG = { 'val':10, 'desc':'DEBUG' }
-INFO = { 'val':20, 'desc':'INFO' }
-WARNING = { 'val':30, 'desc':'WARNING' }
-ERROR = { 'val':40, 'desc':'ERROR' }
-CRITICAL = { 'val':50, 'desc':'CRITICAL' }
+class ClientLoggerLevel:
+    def __init__(self, val, desc):
+        self.val = val
+        self.desc = desc
 
-# Config - Customize the log level required here
-LOG_LEVEL = WARNING
+TRACE = ClientLoggerLevel(5, 'TRACE')
+DEBUG = ClientLoggerLevel(10, 'DEBUG')
+INFO = ClientLoggerLevel(20, 'INFO')
+WARNING = ClientLoggerLevel(30, 'WARNING')
+ERROR = ClientLoggerLevel(40, 'ERROR')
+CRITICAL = ClientLoggerLevel(50, 'CRITICAL')
+# ** Config - Customize the application logging level below **
+# ** User logging level, if exists, overrides application logging level **
+APP_LOGGING_LVL = INFO
+# ** Config - Customize the application logging level END **
 
-class ClientLogger():
-    def __init__(self, config, level):
-        self.datefmt = config.datefmt
-        self.default = config.default
-        self.level = level
+class ClientLoggerConfig:
+    DEFAULT_CONFIG = {
+        'datefmt': '%Y-%m-%d %H:%M:%S,%f'
+    }
+
+class ClientLogger:
+    def __init__(self, config=ClientLoggerConfig.DEFAULT_CONFIG, logging_level=APP_LOGGING_LVL):
+        self.datefmt = config.get('datefmt')
+        self.set_level()
+
+    def set_level(self):
+        # TODO implement caching (have to resolve the circular import issue first ...)
+        # self.logging_level = get_client_loglevel()
+        # if self.logging_level is None:
+        #     self.debug(f"Client logging_level is None ...")
+            userlevel = anvil.server.call('set_user_logging_level')
+            self.logging_level = userlevel if userlevel is not None else self.logging_level
+            # set_client_loglevel(self.logging_level)
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
             # Log the function call
-            self.log("Client function %s starts ..." % func.__qualname__)
+            self.debug("Client function %s starts ..." % func.__qualname__)
             # Call the original function
             result = func(*args, **kwargs)
             # Log the function return value
-            self.log("Client function %s returned: %s ///" % (func.__qualname__, result))
+            self.debug("Client function %s returned: %s ///" % (func.__qualname__, result))
             return result
         return wrapper
 
-    def log(self, msg=None, *args, **kwargs):
-        if self.level.get('val') >= self.default.get('val'):
+    def _log(self, level, msg=None, *args, **kwargs):
+        baselvl = self.logging_level.val if isinstance(self.logging_level, ClientLoggerLevel) else self.logging_level
+        loglvl = level.val if isinstance(level, ClientLoggerLevel) else level
+        loglvldesc = level.desc if isinstance(level, ClientLoggerLevel) else loglvl
+        if loglvl >= baselvl:
             current = datetime.datetime.now()
-            output = f"[C] {current.strftime(self.datefmt)} [{self.level.get('desc')}] {msg} "
+            output = f"[C] {current.strftime(self.datefmt)} [{loglvldesc}] {msg} "
             if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
             if len(kwargs) > 0: output = "{a} {b}".format(a=output, b=kwargs)
             print(output)
 
-class ClientLoggerConfig():
-    def __init__(self, datefmt='%Y-%m-%d %H:%M:%S', default=INFO):
-        self.datefmt = datefmt
-        self.default = default
+    def trace(self, msg=None, *args, **kwargs):
+        self._log(TRACE, msg, *args, **kwargs)
 
-config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f', default=LOG_LEVEL)
+    def debug(self, msg=None, *args, **kwargs):
+        self._log(DEBUG, msg, *args, **kwargs)
 
-trace = ClientLogger(config=config, level=TRACE)
-debug = ClientLogger(config=config, level=DEBUG)
-info = ClientLogger(config=config, level=INFO)
-warning = ClientLogger(config=config, level=WARNING)
-error = ClientLogger(config=config, level=ERROR)
-critical = ClientLogger(config=config, level=CRITICAL)
+    def info(self, msg=None, *args, **kwargs):
+        self._log(INFO, msg, *args, **kwargs)
+
+    def warning(self, msg=None, *args, **kwargs):
+        self._log(WARNING, msg, *args, **kwargs)
+
+    def error(self, msg=None, *args, **kwargs):
+        self._log(ERROR, msg, *args, **kwargs)
+
+    def critical(self, msg=None, *args, **kwargs):
+        self._log(CRITICAL, msg, *args, **kwargs)

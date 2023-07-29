@@ -9,7 +9,9 @@ from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
 from ...Utils.Validation import Validator
-from ...Utils.Logger import trace, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 class StockInputForm(StockInputFormTemplate):
     def __init__(self, **properties):
@@ -30,7 +32,7 @@ class StockInputForm(StockInputFormTemplate):
         # Reset on screen change status
         self.disable_submit_button()
         
-    @debug.log_function
+    @logger.log_function
     def save_row_change(self, **event_args):
         """ 
         *** ESSENTIAL ***
@@ -44,7 +46,7 @@ class StockInputForm(StockInputFormTemplate):
         self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
                                             for c in self.input_repeating_panel.get_components()]
     
-    @debug.log_function
+    @logger.log_function
     def button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         v = Validator()
@@ -97,7 +99,7 @@ class StockInputForm(StockInputFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_broker.items = anvil.server.call('select_brokers')
 
-    @debug.log_function
+    @logger.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
@@ -112,7 +114,7 @@ class StockInputForm(StockInputFormTemplate):
 
         if templ_id is None or templ_id <= 0:
             msg = f"ERROR: Fail to save template {templ_name}."
-            error.log(msg)
+            logger.error(msg)
             Notification(msg).show()
             return
         
@@ -131,10 +133,10 @@ class StockInputForm(StockInputFormTemplate):
             self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
             self.button_submit.enabled = True
             msg = f"Template {templ_name} has been saved successfully."
-            info.log(msg)
+            logger.info(msg)
         else:
             msg = f"ERROR: Fail to save template {templ_name}."
-            error.log(msg)
+            logger.error(msg)
         Notification(msg).show()
             
     def button_erase_click(self, **event_args):
@@ -152,7 +154,7 @@ class StockInputForm(StockInputFormTemplate):
         """ Reset row delete flag """
         cache.deleted_row_reset()
     
-    @debug.log_function
+    @logger.log_function
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_templ_name = self.dropdown_templ.selected_value
@@ -174,13 +176,13 @@ class StockInputForm(StockInputFormTemplate):
                 self.input_repeating_panel.items = []
                 
                 msg = f"Template {to_be_del_templ_name} has been deleted."
-                info.log(msg)
+                logger.info(msg)
             else:
                 msg = f"ERROR: Fail to delete template {to_be_del_templ_name}."
-                error.log(msg)
+                logger.error(msg)
             Notification(msg).show()                
 
-    @debug.log_function
+    @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_submitted_templ_name = self.dropdown_templ.selected_value
@@ -195,10 +197,10 @@ class StockInputForm(StockInputFormTemplate):
             self.dropdown_templ.raise_event('change')
         
             msg = f"Template {to_be_submitted_templ_name} has been submitted.\n It can be viewed in the transaction list report only."
-            info.log(msg)
+            logger.info(msg)
         else:
             msg = f"ERROR: Fail to submit template {to_be_submitted_templ_name}."
-            error.log(msg)
+            logger.error(msg)
         Notification(msg).show()
 
     def templ_name_change(self, **event_args):
