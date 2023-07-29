@@ -3,12 +3,13 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from .Logger import trace, debug, info, warning, error, critical
+from .Logger import ClientLogger
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 cache_dict = {}
+logger = ClientLogger()
 
 # Return a list for accounts dropdown for Expense Input and Upload
 def accounts_dropdown():
@@ -34,9 +35,9 @@ def labels_dict():
     result = cache_dict.get(key, {})
     if not result:
         for i in labels_dropdown():
-            trace.log("item (i) in labels_dropdown=", i)
-            trace.log("eval(i[1])['id']=", eval(i[1])['id'])
-            trace.log("eval(i[1])['text']=", eval(i[1])['text'])
+            logger.trace("item (i) in labels_dropdown=", i)
+            logger.trace("eval(i[1])['id']=", eval(i[1])['id'])
+            logger.trace("eval(i[1])['text']=", eval(i[1])['text'])
             # Case 001 - string dict key handling review
             result[str(eval(i[1])['id'])] = eval(i[1])['text']
         cache_dict[key] = result
@@ -127,7 +128,7 @@ def get_cache(key, func, *args):
     if cache_dict is None: cache_dict = {}
     if cache_dict.get(key, None) is None:
         cache_dict[key] = anvil.server.call(func, *args)
-        debug.log(f"get_cache cache loaded (key={key}, func={func})")
+        logger.debug(f"get_cache cache loaded (key={key}, func={func})")
     return cache_dict.get(key, None)
 
 # Generic get and store database data as cache in a form of dictionary
@@ -141,7 +142,7 @@ def get_cache_dict(key, func, *args):
         for i in get_cache(key, func, *args):
             result[i[1][0]] = i[1][1]
         cache_dict[dict_key] = result
-        debug.log(f"get_cache_dict cache loaded (dict_key={dict_key}, func={func})")
+        logger.debug(f"get_cache_dict cache loaded (dict_key={dict_key}, func={func})")
     return cache_dict.get(dict_key, None)
 
 # Generic clear cache
@@ -150,7 +151,7 @@ def clear_cache(key):
     global cache_dict
     cache_dict[key] = None
     cache_dict["".join((key, '_dict'))] = None
-    debug.log(f"Cache clear (key={key})")
+    logger.debug(f"Cache clear (key={key})")
 
 # Generic clear all cache (all keys)
 def clearall_cache():
