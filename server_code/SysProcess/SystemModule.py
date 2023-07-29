@@ -30,6 +30,7 @@ def set_user_logging_level():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{userid}'")
         result = cur.fetchone()
+        
         return result.get('logging_level', None)
 
 # Establish DB connection and determine which env DB to conntact to 
