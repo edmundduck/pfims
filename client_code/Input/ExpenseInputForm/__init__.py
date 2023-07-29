@@ -10,7 +10,7 @@ from ...Utils import Constants as const
 from ...Utils import Routing
 from ...Utils import Caching as cache
 from ...Utils.Validation import Validator
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
@@ -47,6 +47,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_save_click)
         
+    @debug.log_function
     def _getall_selected_labels(self):
         label_list = []
         for i in self.panel_labels.get_components():
@@ -75,6 +76,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_labels.items = cache.labels_dropdown()
 
+    @debug.log_function
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
         # Case 001 - string dict key handling review
@@ -88,6 +90,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
 
+    @debug.log_function
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
@@ -138,6 +141,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-stmt-dtl-visible', vis=not self.cb_hide_stmtdtl.checked)
 
+    @debug.log_function
     def button_save_click(self, **event_args):
         """Validation"""
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
@@ -180,6 +184,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             warning.log(msg2)
         Notification(msg2).show()
 
+    @debug.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         tab_name = self.tab_name.text
@@ -197,6 +202,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             error.log(msg)
         Notification(msg).show()
 
+    @debug.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None

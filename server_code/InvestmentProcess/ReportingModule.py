@@ -8,44 +8,52 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
 from ..Utils import Constants as const
-from ..System import SystemModule as sysmod
+from ..SysProcess import SystemModule as sysmod
+from ..SysProcess import LoggingModule
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-
-# Static variables
+logger = LoggingModule.ServerLogger()
 
 # Internal function - Return start date of last 1 month
+@logger.log_function
 def get_L1M_start_date(end_date):
     return date(end_date.year-1, end_date.month+12-1, end_date.day) if end_date.month-1 < 1 else date(end_date.year, end_date.month-1, end_date.day)
 
 # Internal function - Return start date of last 3 months
+@logger.log_function
 def get_L3M_start_date(end_date):
     return date(end_date.year-1, end_date.month+12-3, end_date.day) if end_date.month-3 < 1 else date(end_date.year, end_date.month-3, end_date.day)
 
 # Internal function - Return start date of last 6 months
+@logger.log_function
 def get_L6M_start_date(end_date):
     return date(end_date.year-1, end_date.month+12-6, end_date.day) if end_date.month-6 < 1 else date(end_date.year, end_date.month-6, end_date.day)
 
 # Internal function - Return start date of last 1 year
+@logger.log_function
 def get_L1Y_start_date(end_date):
     return date(end_date.year-1, end_date.month, end_date.day)
 
 # Internal function - Return the 1st date of the current year
+@logger.log_function
 def get_YTD_start_date(end_date):
     return date(end_date.year, 1, 1)
 
 # Internal function - Return None if it's not date
+@logger.log_function
 def interval_default(end_date):
     return None
 
-@anvil.server.callable
 # Get all symbols which were transacted between start and end date into the dropdown
+@anvil.server.callable("get_symbol_dropdown_items")
+@logger.log_function
 def get_symbol_dropdown_items(start_date, end_date=date.today()):
     return list(sorted(set(row['symbol'] for row in select_journals(start_date, end_date))))
 
-@anvil.server.callable
 # Get start date based on end date and time interval dropdown value
+@anvil.server.callable("get_start_date")
+@logger.log_function
 def get_start_date(end_date, interval):
     switcher = {
         const.SearchInterval.INTERVAL_LAST_1_MTH: get_L1M_start_date,
@@ -56,8 +64,9 @@ def get_start_date(end_date, interval):
     }
     return switcher.get(interval, interval_default)(end_date)
 
-@anvil.server.callable
 # Return journals for repeating panel to display based on sell and buy date criteria
+@anvil.server.callable("select_journals")
+@logger.log_function
 def select_journals(start_date, end_date, symbols=[]):
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -74,16 +83,19 @@ def select_journals(start_date, end_date, symbols=[]):
         {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
         cur.execute(sql)
         rows = cur.fetchall()
+        logger.trace("rows=", rows)
         cur.close()
     return list(rows)
 
-@anvil.server.callable
 # Return template journals for csv generation
+@anvil.server.callable("generate_csv")
+@logger.log_function
 def generate_csv(start_date, end_date, symbols):
     return select_journals(start_date, end_date, symbols).to_csv()
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
+@logger.log_function
 def format_pnl_dict(rowitem, dictupdate, key, mode):
     numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
     if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
@@ -97,22 +109,16 @@ def format_pnl_dict(rowitem, dictupdate, key, mode):
     dictupdate.update({key: [numtrade, numdaytrade, sales, cost, fee, pnl, mode]})
 
 # Internal function - Format a parent: child mapping into dictionary
+@logger.log_function
 def format_pnl_child(dictupdate, parent, child):
     childset = dictupdate.get(parent, set())
     childset.add(child)
     dictupdate.update({parent: childset})
   
 # Internal function - Load DB table 'templ_journals' to build 3 P&L data dictionaries - day, month, year
+@logger.log_function
 def build_pnl_data(start_date, end_date, symbols):
     userid = sysmod.get_current_userid()
-    # rows = None
-    # if len(symbols) > 0:
-    #     rows = app_tables.templ_journals.search(
-    #         sell_date=q.less_than_or_equal_to(end_date), 
-    #         buy_date=q.greater_than_or_equal_to(start_date),
-    #         symbol=q.any_of(*symbols))
-    # else:
-    #     rows = app_tables.templ_journals.search(sell_date=q.between(start_date, end_date, max_inclusive=True))
     rows = select_journals(userid, start_date, end_date, symbols)
     
     # Prepare the data in dictionary structure
@@ -126,8 +132,7 @@ def build_pnl_data(start_date, end_date, symbols):
         sell_date_str = i['sell_date'].strftime("%Y-%m-%d")
         sell_mth_str = i['sell_date'].strftime("%Y-%m")
         sell_yr_str = i['sell_date'].strftime("%Y")
-        # Debug
-        #print("sell={} / buy={} / diff={}".format(i['sell_date'], i['buy_date'], (i['sell_date']-i['buy_date']).days))
+        logger.debug(f"sell={i['sell_date']} / buy={i['buy_date']} / diff={(i['sell_date']-i['buy_date']).days}")
         
         # Handling of Day
         format_pnl_dict(i, dictstruct_day, sell_date_str, const.PNLDrillMode.DAY)
@@ -140,16 +145,16 @@ def build_pnl_data(start_date, end_date, symbols):
         format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
         format_pnl_child(dictstruct_gchild, sell_yr_str, sell_date_str)
 
-    # Debug
-    #sysmod.print_data_debug('dictstruct_day', dictstruct_day)
-    #sysmod.print_data_debug('dictstruct_mth', dictstruct_mth)
-    #sysmod.print_data_debug('dictstruct_yr', dictstruct_yr)
-    #sysmod.print_data_debug('dictstruct_child', dictstruct_child)
-    #sysmod.print_data_debug('dictstruct_gchild', dictstruct_gchild)
+    logger.trace('dictstruct_day=', dictstruct_day)
+    logger.trace('dictstruct_mth=', dictstruct_mth)
+    logger.trace('dictstruct_yr=', dictstruct_yr)
+    logger.trace('dictstruct_child=', dictstruct_child)
+    logger.trace('dictstruct_gchild=', dictstruct_gchild)
     return dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild
 
-@anvil.server.callable
 # Generate initial P&L list (year only)
+@anvil.server.callable("generate_init_pnl_list")
+@logger.log_function
 def generate_init_pnl_list(start_date, end_date, symbols):
     userid = sysmod.get_current_userid()
     rowstruct = []
@@ -173,21 +178,20 @@ def generate_init_pnl_list(start_date, end_date, symbols):
     
     return sorted(rowstruct, key=lambda x: x.get('sell_date'))
 
-@anvil.server.callable
 # Update P&L data according to expand/shrink action and reformat into repeatingpanel compatible data (dict in list)
+@anvil.server.callable("update_pnl_list")
+@logger.log_function
 def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, action):
     userid = sysmod.get_current_userid()
-    # Debug
-    #print("param list={} / {} / {} / {} / {} / {} / {}".format(start_date, end_date, symbols, pnl_list, date_value, mode, action))
+    logger.debug(f"param list={start_date} / {end_date} / {symbols} / {pnl_list} / {date_value} / {mode} / {action}")
     
     rowstruct = []
     dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(userid, start_date, end_date, symbols)
-    # Debug
-    #sysmod.print_data_debug('dictstruct_day', dictstruct_day)
-    #sysmod.print_data_debug('dictstruct_mth', dictstruct_mth)
-    #sysmod.print_data_debug('dictstruct_yr', dictstruct_yr)
-    #sysmod.print_data_debug('dictstruct_child', dictstruct_child)
-    #sysmod.print_data_debug('dictstruct_gchild', dictstruct_gchild)
+    logger.trace('dictstruct_day=', dictstruct_day)
+    logger.trace('dictstruct_mth=', dictstruct_mth)
+    logger.trace('dictstruct_yr=', dictstruct_yr)
+    logger.trace('dictstruct_child=', dictstruct_child)
+    logger.trace('dictstruct_gchild=', dictstruct_gchild)
     
     if action == const.Icons.DATA_DRILLDOWN:
         dictstruct = None
@@ -242,6 +246,6 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
                 rowstruct = rowstruct + [rowitem]
     else:
         pass
-  
+
+    logger.trace("rowstruct=", rowstruct)
     return sorted(rowstruct, key=lambda x: x.get('sell_date'))
-  

@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ....Utils import Constants as const
 from ....Utils import Caching as cache
 from ....Utils.Validation import Validator
-from ....Utils.Logging import dump, debug, info, warning, error, critical
+from ....Utils.Logger import trace, debug, info, warning, error, critical
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -19,7 +19,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.accounts_dropdown()
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
         acct_dict = cache.accounts_dict()
-        dump.log("self.row_acct.selected_value=", self.row_acct.selected_value)
+        trace.log("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
         
@@ -31,11 +31,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
+    @debug.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
-            dump.log("trimmed_list=", trimmed_list)
+            trace.log(f"trimmed_list={trimmed_list}, lbls={lbls}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
@@ -60,6 +61,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     self.row_panel_labels.add_component(b, False, name=lbl_name)
                     b.set_event_handler('click', self.label_button_minus_click)
 
+    @debug.log_function
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
         loc = self.hidden_lbls_id.text.find(str(b.tag))
@@ -72,6 +74,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
+    @debug.log_function
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
@@ -105,7 +108,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # self.parent = Repeating Panel
         # self.parent.parent = Data Grid
         # self.parent.parent.parent = Parent Form
-        #print(self.parent.parent.parent.valerror_1.text)
+        trace.log("self.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
@@ -122,6 +125,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _set_stmt_dtl_visible(self, vis, **event_args):
         self.row_stmt_dtl.visible = vis
 
+    @debug.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.parent.raise_event('x-switch-to-save-button')

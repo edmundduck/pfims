@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
 from ...Utils import Constants as const
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import trace, debug, info, warning, error, critical
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):
@@ -37,6 +37,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         # TODO - Enable after Move to logic is implemented
         self.dropdown_moveto.enabled = False
 
+    @debug.log_function
     def dropdown_lbl_list_change(self, **event_args):
         """This method is called when an item is selected"""
         # Case 001 - string dict key handling review
@@ -57,6 +58,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
         self.dropdown_status.selected_value = True
 
+    @debug.log_function
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_name = self.text_lbl_name.text
@@ -72,7 +74,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
             """ Reflect the change in labels dropdown """
             cache.labels_reset()
             self.dropdown_lbl_list.items = cache.labels_dropdown()
-            dump.log("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
+            trace.log("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
             debug.log("lbl_id=", lbl_id)
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
@@ -84,6 +86,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         Notification(msg).show()
         return
 
+    @debug.log_function
     def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         # Case 001 - string dict key handling review
@@ -113,10 +116,12 @@ class LabelMaintForm(LabelMaintFormTemplate):
         Notification(msg).show()
         return
 
+    @debug.log_function
     def button_labels_move_click(self, **event_args):
         """This method is called when the button is clicked"""
         pass
 
+    @debug.log_function
     def button_labels_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         # Case 001 - string dict key handling review

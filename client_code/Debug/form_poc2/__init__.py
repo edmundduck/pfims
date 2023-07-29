@@ -20,5 +20,4 @@ class form_poc2(form_poc2Template):
     self.rpt_panel.get_event_handlers('x-vis')
     
   def setvisibility(self, **properties):
-    print("setvisibility")
     self.data_grid.visible = False
