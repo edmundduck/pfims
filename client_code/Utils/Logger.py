@@ -8,23 +8,19 @@ import datetime
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-# Constants
-TRACE = { 'val':5, 'desc':'TRACE' }
-DEBUG = { 'val':10, 'desc':'DEBUG' }
-INFO = { 'val':20, 'desc':'INFO' }
-WARNING = { 'val':30, 'desc':'WARNING' }
-ERROR = { 'val':40, 'desc':'ERROR' }
-CRITICAL = { 'val':50, 'desc':'CRITICAL' }
-
 # Config - Customize the log level required here
 class ClientLoggerLevel:
-    DEFAULT_LVL = WARNING
+    TRACE = { 'val':5, 'desc':'TRACE' }
+    DEBUG = { 'val':10, 'desc':'DEBUG' }
+    INFO = { 'val':20, 'desc':'INFO' }
+    WARNING = { 'val':30, 'desc':'WARNING' }
+    ERROR = { 'val':40, 'desc':'ERROR' }
+    CRITICAL = { 'val':50, 'desc':'CRITICAL' }
 
 class ClientLogger:
-    def __init__(self, config, level):
+    def __init__(self, config, default_level=ClientLoggerLevel.WARNING):
         self.datefmt = config.datefmt
-        self.default = config.default
-        self.level = level
+        self.default_level = default_level
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
@@ -37,8 +33,8 @@ class ClientLogger:
             return result
         return wrapper
 
-    def log(self, msg=None, *args, **kwargs):
-        if self.level.get('val') >= self.default.get('val'):
+    def _log(self, level=None, msg=None, *args, **kwargs):
+        if self.level.get('val') >= self.default_level.get('val'):
             current = datetime.datetime.now()
             output = f"[C] {current.strftime(self.datefmt)} [{self.level.get('desc')}] {msg} "
             if len(args) > 0: output = "{a} {b}".format(a=output, b=args)
@@ -46,18 +42,31 @@ class ClientLogger:
             print(output)
 
     def trace(self, msg=None, *args, **kwargs):
-        self.log()
+        self._log(self, ClientLoggerLevel.TRACE, msg, *args, **kwargs)
 
-class ClientLoggerConfig():
-    def __init__(self, datefmt='%Y-%m-%d %H:%M:%S', level=ClientLoggerLevel.DEFAULT_LVL):
-        self.datefmt = datefmt
-        self.default = level
+    def debug(self, msg=None, *args, **kwargs):
+        self._log(self, ClientLoggerLevel.DEBUG, msg, *args, **kwargs)
 
-config = ClientLoggerConfig(datefmt='%Y-%m-%d %H:%M:%S,%f')
+    def info(self, msg=None, *args, **kwargs):
+        self._log(self, ClientLoggerLevel.INFO, msg, *args, **kwargs)
 
-trace = ClientLogger(config=config, level=TRACE)
-debug = ClientLogger(config=config, level=DEBUG)
-info = ClientLogger(config=config, level=INFO)
-warning = ClientLogger(config=config, level=WARNING)
-error = ClientLogger(config=config, level=ERROR)
-critical = ClientLogger(config=config, level=CRITICAL)
+    def warning(self, msg=None, *args, **kwargs):
+        self._log(self, ClientLoggerLevel.WARNING, msg, *args, **kwargs)
+
+    def error(self, msg=None, *args, **kwargs):
+        self._log(self, ClientLoggerLevel.ERROR, msg, *args, **kwargs)
+
+    def critical(self, msg=None, *args, **kwargs):
+        self._log(self, ClientLoggerLevel.CRITICAL, msg, *args, **kwargs)
+
+class ClientLoggerConfig:
+    def __init__(self, config_dict):
+        if config_dict:
+            self.datefmt = config_dict.get('datefmt') if config_dict.get('datefmt') else '%Y-%m-%d %H:%M:%S'
+            # self.msgfmt = config_dict.get('msgfmt') if config_dict.get('msgfmt') else '[C]'
+
+config = ClientLoggerConfig({
+    'datefmt': '%Y-%m-%d %H:%M:%S,%f'
+})
+
+logger = ClientLogger(config=config, level=ClientLoggerLevel.INFO)

@@ -7,12 +7,13 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
-from ...Utils.Logger import trace, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
+        self.logger = ClientLogger()
         
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
