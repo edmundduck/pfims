@@ -7,7 +7,9 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Caching as cache
 from ....Utils import Constants as const
-from ....Utils.Logger import trace, debug, info, warning, error, critical
+from ....Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def __init__(self, **properties):
@@ -25,7 +27,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         if self.item.get('rule', None) is not None:
             self._generate_all_mapping_rules(self.item['rule'])
 
-    @debug.log_function
+    @logger.log_function
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
         excelcol = self.row_dropdown_excelcol.selected_value
@@ -39,14 +41,14 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         extratgt_id = lbl_id if extraact_id == "L" else acct_id
         self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, True)
 
-    @debug.log_function
+    @logger.log_function
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
-        trace.log("b.parent.tag[0]=", b.parent.tag[0])
+        logger.trace("b.parent.tag[0]=", b.parent.tag[0])
         if b.parent.tag[0] is not None and not b.parent.tag[-1]: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 
-    @debug.log_function
+    @logger.log_function
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         id = self.row_hidden_id.text if self.row_hidden_id.text not in (None, '') else None
@@ -65,10 +67,10 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
             self.row_hidden_id.text = id
             self.row_hidden_del_fid.text = ''
             msg = f"Mapping {name} has been saved successfully."
-            info.log(msg)
+            logger.info(msg)
         else:
             msg = f"WARNING: Problem occurs when saving mapping {name}."
-            warning.log(msg)
+            logger.warning(msg)
         self.item = (anvil.server.call('select_mapping_rules', id))[0]
         self.row_dropdown_type.selected_value = [filetype_id, filetype]
         if self.item.get('rule', None) is not None:
@@ -76,7 +78,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         Notification(msg).show()
         self.parent.raise_event('x-reload-rp')
 
-    @debug.log_function
+    @logger.log_function
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         to_be_del_id = self.row_hidden_id.text
@@ -96,11 +98,11 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
                     """ Reflect the change in tab dropdown """
                     self.remove_from_parent()
                     msg = f"Mapping {to_be_del_name} has been deleted."
-                    info.log(msg)
+                    logger.info(msg)
                     parent.raise_event('x-reload-rp', del_id=to_be_del_id)
                 else:
                     msg = f"ERROR: Fail to delete mapping {to_be_del_name}."
-                    error.log(msg)
+                    logger.error(msg)
                 Notification(msg).show()
             else:
                 self.remove_from_parent()
@@ -116,9 +118,9 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_dropdown_lbl.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "L" else False
         self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "A" else False
 
-    @debug.log_function
+    @logger.log_function
     def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
-        debug.log(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
+        logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
         dict_exp_tbl_def = cache.expense_tbl_def_dict()
         dict_extraact = cache.mapping_rules_extra_action_dict()
         dict_lbl = cache.labels_dict()
@@ -146,7 +148,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         fp.add_component(b)
         b.set_event_handler('click', self.mapping_button_minus_click)
 
-    @debug.log_function
+    @logger.log_function
     def _generate_all_mapping_rules(self, rules, **event):
         for r in rules:
             excelcol, datacol_id, extraact_id, extratgt_id = r

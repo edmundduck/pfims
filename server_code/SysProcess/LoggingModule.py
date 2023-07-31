@@ -7,6 +7,7 @@ import anvil.server
 import logging as logging
 import logging.config as config
 import datetime
+import time
 import psycopg2
 import psycopg2.extras
 
@@ -63,11 +64,13 @@ class ServerLogger:
         def wrapper(*args, **kwargs):
             if self.logger.level == 0: self.set_level()
             # Log the function call
-            self.logger.debug("Server function %s starts ..." % func.__qualname__)
+            self.logger.debug("***** Server function %s starts *****" % func.__qualname__)
+            start = time.time()
             # Call the original function
             result = func(*args, **kwargs)
+            end = time.time()
             # Log the function return value
-            self.logger.debug("Server function %s returned: %s ///" % (func.__qualname__, result))
+            self.logger.debug("***** Server function %s returned (%s sec): %s *****" % (func.__qualname__, end - start, result))
             return result
         return wrapper
 

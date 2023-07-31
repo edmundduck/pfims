@@ -6,7 +6,9 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
-from ...Utils.Logger import trace, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
@@ -34,7 +36,7 @@ class PnLReportRPTemplate(PnLReportRPTemplateTemplate):
         elif self.item['action'] == const.Icons.DATA_SUMMARIZE:
             self.button_exp.icon = const.Icons.DATA_SUMMARIZE
 
-    @debug.log_function
+    @logger.log_function
     def button_exp_click(self, **event_args):
         """This method is called when the button is clicked"""
         action = self.button_exp.icon
