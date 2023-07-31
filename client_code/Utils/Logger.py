@@ -4,6 +4,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import datetime
+import time
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -47,11 +48,13 @@ class ClientLogger:
     def log_function(self, func):
         def wrapper(*args, **kwargs):
             # Log the function call
-            self.debug("Client function %s starts ..." % func.__qualname__)
+            self.debug("///// Client function %s starts /////" % func.__qualname__)
+            start = time.time()
             # Call the original function
             result = func(*args, **kwargs)
+            end = time.time()
             # Log the function return value
-            self.debug("Client function %s returned: %s ///" % (func.__qualname__, result))
+            self.debug("///// Client function %s returned (%s sec): %s /////" % (func.__qualname__, end - start, result))
             return result
         return wrapper
 
