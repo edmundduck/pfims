@@ -49,10 +49,12 @@ class ClientLogger:
         def wrapper(*args, **kwargs):
             # Log the function call
             self.debug("///// Client function %s starts /////" % func.__qualname__)
+            start = time.time()
             # Call the original function
             result = func(*args, **kwargs)
+            end = time.time()
             # Log the function return value
-            self.debug("///// Client function %s returned: %s /////" % (func.__qualname__, result))
+            self.debug("///// Client function %s returned (%s sec): %s /////" % (func.__qualname__, end - start, result))
             return result
         return wrapper
 
