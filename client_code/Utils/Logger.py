@@ -4,7 +4,6 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import datetime
-# from .Caching import get_client_loglevel, set_client_loglevel, client_loglevel_reset
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -36,6 +35,7 @@ class ClientLogger:
         self.set_level()
 
     def set_level(self):
+        # from .Caching import get_client_loglevel, set_client_loglevel, client_loglevel_reset
         # TODO implement caching (have to resolve the circular import issue first ...)
         # self.logging_level = get_client_loglevel()
         # if self.logging_level is None:
