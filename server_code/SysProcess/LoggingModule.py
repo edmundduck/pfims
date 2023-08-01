@@ -8,6 +8,7 @@ import logging as logging
 import logging.config as config
 import datetime
 import time
+import pytz
 import psycopg2
 import psycopg2.extras
 
@@ -18,13 +19,18 @@ class ServerLoggerLevel:
     DEFAULT_LVL = logging.INFO
     TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
+class UKTimeZoneFormatter(logging.Formatter):
+    converter = lambda *args: datetime.now(pytz.timezone('Europe/London')).timetuple()
+
 class ServerLoggerConfig:
     DEFAULT_LOGGING_CONFIG = {
             'version': 1,
             'disable_existing_loggers': False,
             'formatters': {
                 'standard': {
-                    'format': '[S] %(asctime)s [%(levelname)s] %(message)s'
+                    #'()': UKTimeZoneFormatter,
+                    'format': '[S] %(asctime)s [%(levelname)s] %(message)s',
+                    'datefmt': '%Y-%m-%d %H:%M:%S,%f'
                 }
             },
             'handlers': {
