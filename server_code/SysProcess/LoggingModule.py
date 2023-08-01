@@ -19,7 +19,9 @@ class ServerLoggerLevel:
     DEFAULT_LVL = logging.INFO
     TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
-class UKTimeZoneFormatter(logging.Formatter):
+# Suppose the timezone doesn't have to be configured further as logging is for internal use only
+# Ref: https://stackoverflow.com/questions/32402502/how-to-change-the-time-zone-in-python-logging
+class TimeZoneFormatter(logging.Formatter):
     converter = lambda *args: datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
     
 class ServerLoggerConfig:
@@ -28,9 +30,9 @@ class ServerLoggerConfig:
             'disable_existing_loggers': False,
             'formatters': {
                 'standard': {
-                    '()': UKTimeZoneFormatter,
+                    '()': TimeZoneFormatter,
                     'format': '[S] %(asctime)s [%(levelname)s] %(message)s',
-                    'datefmt': '%Y-%m-%d %H:%M:%S,%s'
+                    'datefmt': '%Y-%m-%d %H:%M:%S'
                 }
             },
             'handlers': {
