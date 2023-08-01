@@ -20,9 +20,7 @@ class ServerLoggerLevel:
     TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
 class UKTimeZoneFormatter(logging.Formatter):
-    # converter = lambda *args: datetime.now(pytz.timezone('Europe/London')).timetuple()
-    # converter = datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
-    converter = time.gmtime
+    converter = lambda *args: datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
 
 class ServerLoggerConfig:
     DEFAULT_LOGGING_CONFIG = {
