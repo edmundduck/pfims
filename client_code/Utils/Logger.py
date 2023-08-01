@@ -33,6 +33,7 @@ class ClientLoggerConfig:
 class ClientLogger:
     def __init__(self, config=ClientLoggerConfig.DEFAULT_CONFIG, logging_level=APP_LOGGING_LVL):
         self.datefmt = config.get('datefmt')
+        self.logging_level = logging_level
         self.set_level()
 
     def set_level(self):
