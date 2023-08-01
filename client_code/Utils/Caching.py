@@ -32,7 +32,7 @@ def labels_dict():
     global cache_dict
     key='labels_dict'
     if cache_dict is None: cache_dict = {}
-    dump.log("cache_dict=", cache_dict)
+    logger.trace("cache_dict=", cache_dict)
     result = cache_dict.get(key, {}) or {}
     if not result:
         for i in labels_dropdown():
