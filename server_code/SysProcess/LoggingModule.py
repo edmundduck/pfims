@@ -21,7 +21,7 @@ class ServerLoggerLevel:
 
 class UKTimeZoneFormatter(logging.Formatter):
     # converter = lambda *args: datetime.now(pytz.timezone('Europe/London')).timetuple()
-    converter = datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
+    # converter = datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
 
 class ServerLoggerConfig:
     DEFAULT_LOGGING_CONFIG = {
