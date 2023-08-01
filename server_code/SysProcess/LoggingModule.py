@@ -29,9 +29,9 @@ class ServerLoggerConfig:
             'disable_existing_loggers': False,
             'formatters': {
                 'standard': {
-                    '()': UKTimeZoneFormatter,
+                    # '()': UKTimeZoneFormatter,
                     'format': '[S] %(asctime)s [%(levelname)s] %(message)s',
-                    'datefmt': '%Y-%m-%d %H:%M:%S,%f'
+                    'datefmt': '%Y-%m-%d %H:%M:%S,%s'
                 }
             },
             'handlers': {
