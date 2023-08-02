@@ -114,6 +114,7 @@ def upsert_transactions(tid, rows):
 def delete_transactions(tid, iid_list):
     conn, cur, count = [None, None, None]
     try:
+        logger.debug("delete iid_list=", iid_list)
         if iid_list is not None and len(iid_list) > 0:
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
