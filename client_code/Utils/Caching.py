@@ -32,7 +32,8 @@ def labels_dict():
     global cache_dict
     key='labels_dict'
     if cache_dict is None: cache_dict = {}
-    result = cache_dict.get(key, {})
+    logger.trace("cache_dict=", cache_dict)
+    result = cache_dict.get(key, {}) or {}
     if not result:
         for i in labels_dropdown():
             logger.trace("item (i) in labels_dropdown=", i)
@@ -165,9 +166,13 @@ def get_cache_dict(key, func, *args):
 # @key = Key in string to access particular cache data
 def clear_cache(key):
     global cache_dict
-    cache_dict[key] = None
-    cache_dict["".join((key, '_dict'))] = None
-    logger.debug(f"Cache clear (key={key})")
+    key_to_clear = [key, "".join((key, '_dict'))]
+    for k in key_to_clear:
+        if k in cache_dict:
+            del cache_dict[k]
+            logger.debug(f"Cleared cache key={k}")
+        else:
+            logger.debug(f"Cache key={k} does not exist")    
 
 # Generic clear all cache (all keys)
 def clearall_cache():

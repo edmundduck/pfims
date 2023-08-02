@@ -36,6 +36,7 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
         elif action == const.FileUploadLabelExtraAction.CREATE:
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = True
+            self.parent.raise_event('x-refresh-label-cache')
 
     @logger.log_function
     def dropdown_lbl_action_change(self, **event_args):
