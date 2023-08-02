@@ -232,5 +232,5 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self._switch_to_save_button()
 
     def reload_rp_data(self, **event_args):
-        for d in self.repeating_panel_1.get_components(): dump.log("reload_rp_data d.item=", d.item)
+        for d in self.repeating_panel_1.get_components(): logger.trace("reload_rp_data d.item=", d.item)
         self.repeating_panel_1.items = [c.item for c in self.repeating_panel_1.get_components() if c.item['id'] not in cache.get_deleted_row()]
