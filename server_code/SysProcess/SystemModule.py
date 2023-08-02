@@ -30,7 +30,8 @@ def set_user_logging_level():
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT logging_level FROM {schemafin()}.settings WHERE userid='{userid}'")
         result = cur.fetchone()
-        return result.get('logging_level', None) if result else None
+        anvil.server.session['loglevel'] = result.get('logging_level', None) if result else None
+        return anvil.server.session['loglevel']
 
 # Establish DB connection and determine which env DB to conntact to 
 def db_connect():
@@ -65,5 +66,5 @@ def schemarefd():
 # Consolidated process for login
 @anvil.server.callable
 def proc_login():
-    anvil.server.session['loglevel'] = set_user_logging_level()
+    set_user_logging_level()
     return get_current_username()

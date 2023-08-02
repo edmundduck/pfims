@@ -19,11 +19,11 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         # Any code you write here will run when the form opens.
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.tag = {'data': data}
-        logger.trace("self.tag=", self.tag)
+        logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
         # Prefill "labels map to" dropdown by finding high proximity choices
         relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.labels_dict())
-        logger.trace("relevant_lbls=", relevant_lbls)
+        logger.debug("relevant_lbls=", relevant_lbls)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
         DL = {
