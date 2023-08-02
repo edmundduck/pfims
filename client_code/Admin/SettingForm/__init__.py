@@ -73,6 +73,8 @@ class SettingForm(SettingFormTemplate):
                                   def_dateto=self.time_dateto.date,
                                   logging_level=self.dropdown_logging_level.selected_value
                                  )
+        anvil.server.call('set_user_logging_level')
+        logger.set_level()
         if (count > 0):
             n = Notification("{count} row updated successfully.".format(count=count))
         else:

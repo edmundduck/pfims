@@ -21,7 +21,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.accounts_dropdown()
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
         acct_dict = cache.accounts_dict()
-        logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
+        logger.debug("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
         

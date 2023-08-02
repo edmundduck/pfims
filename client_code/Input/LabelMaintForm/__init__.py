@@ -76,7 +76,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
             """ Reflect the change in labels dropdown """
             cache.labels_reset()
             self.dropdown_lbl_list.items = cache.labels_dropdown()
-            logger.trace("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
+            logger.debug("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
             logger.debug("lbl_id=", lbl_id)
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
