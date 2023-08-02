@@ -233,4 +233,4 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def reload_rp_data(self, **event_args):
         for d in self.input_repeating_panel.get_components(): logger.trace("reload_rp_data d.item=", d.item)
-        self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item['iid'] not in cache.get_deleted_row()]
+        self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
