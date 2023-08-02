@@ -26,6 +26,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
+            self.tab_name.text = tab_id[1]
             logger.debug("self.dropdown_tabs.selected_value=", self.dropdown_tabs.selected_value)
 
         if data is None:
@@ -101,6 +102,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
+        cache.deleted_row_reset()
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -150,6 +152,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
+        # Reload to allow changed rows (deleted, added or updated) to reflect properly
+        self.reload_rp_data()
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
@@ -222,3 +226,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
                 logger.error(msg2)
             Notification(msg2).show()
+
+    def tab_name_change(self, **event_args):
+        """This method is called when the text in this text box is edited"""
+        self._switch_to_save_button()
+
+    def reload_rp_data(self, **event_args):
+        for d in self.input_repeating_panel.get_components(): logger.trace("reload_rp_data d.item=", d.item)
+        self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
