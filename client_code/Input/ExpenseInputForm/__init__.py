@@ -102,6 +102,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
+        cache.deleted_row_reset()
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
