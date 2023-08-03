@@ -5,3 +5,7 @@ tabulate
 requests==2.31.0
 pandas==2.0.2
 fuzzywuzzy==0.18.0
+camelot-py
+certifi==2023.7.22
+ghostscript
+opencv-python==4.5.5.64

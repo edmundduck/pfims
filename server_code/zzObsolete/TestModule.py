@@ -4,6 +4,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+import camelot
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -33,3 +34,7 @@ def zz_test_session():
 class NewLog:
     def __init__(self):
         print("NewLog=", anvil.server.session)
+
+def test_camelot(file):
+    tables = camelot.read_pdf(file)
+    print(tables)

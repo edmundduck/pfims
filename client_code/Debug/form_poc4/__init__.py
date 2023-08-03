@@ -17,7 +17,7 @@ class form_poc4(form_poc4Template):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
             if 'pdf' in file.content_type :
-                # anvil.server.call('test_tabula', file=file)
+                # anvil.server.call('test_camelot', file=file)
                 pass
             else:
                 result = anvil.server.call('import_file', file=file)
