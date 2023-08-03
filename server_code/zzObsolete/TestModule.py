@@ -33,3 +33,9 @@ def zz_test_session():
 class NewLog:
     def __init__(self):
         print("NewLog=", anvil.server.session)
+
+@anvil.server.callable
+def test_tabula(file):
+    dfs = tabula.read_pdf("test.pdf", pages='all')
+    print("test_tabula=", dfs.to_string())
+    return dfs
