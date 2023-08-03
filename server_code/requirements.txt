@@ -5,5 +5,3 @@ tabulate
 requests==2.31.0
 pandas==2.0.2
 fuzzywuzzy==0.18.0
-tabula
-certifi==2023.7.22
