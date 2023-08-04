@@ -6,6 +6,8 @@ from anvil.tables import app_tables
 import anvil.server
 import camelot
 from io import BytesIO
+import datetime
+from ..SysProcess import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -38,5 +40,22 @@ class NewLog:
 
 @anvil.server.callable
 def test_camelot(file):
+    MAX_IMAGES_STORED = 1
+    userid = int(sysmod.get_current_userid())
+    print("userid=", userid)
+    if file.content_type != "application/pdf":
+        raise Exception(f"File type not allowed, file upload aborted.")
+    
+    all_rows = app_tables.upload_files.search(userid=userid)
+    if len(all_rows) > MAX_IMAGES_STORED:
+        rows_to_delete = all_rows[:MAX_IMAGES_STORED]
+        print("rows_to_delete=", rows_to_delete)
+        for row_del in rows_to_delete:
+            row_del.delete()
+            
+    row = app_tables.upload_files.add_row(userid=userid, fileobj=file, last_upload=datetime.datetime.now())
+    for r in row:
+        print(r)
+    
     tables = camelot.read_pdf(BytesIO(file.get_bytes()))
     print(tables)
