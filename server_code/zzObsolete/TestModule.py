@@ -54,6 +54,7 @@ def test_camelot(file):
             row_del.delete()
             
     row = app_tables.upload_files.add_row(userid=userid, fileobj=file, last_upload=datetime.datetime.now())
+    print("row=", row[2][1].url)
     for r in row:
         print(r)
     
