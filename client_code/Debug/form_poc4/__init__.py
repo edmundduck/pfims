@@ -4,6 +4,7 @@ import anvil.server
 import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
+import anvil.media
 from anvil.tables import app_tables
 
 class form_poc4(form_poc4Template):
@@ -17,8 +18,9 @@ class form_poc4(form_poc4Template):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
             if 'pdf' in file.content_type :
-                anvil.server.call('test_camelot', file=file)
-                pass
+                temp_url = anvil.media.TempUrl(file)
+                anvil.server.call('test_camelot', file=file, url=temp_url.url)
+                temp_url.revoke()
             else:
                 result = anvil.server.call('import_file', file=file)
                 for i in result:

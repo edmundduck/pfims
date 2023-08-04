@@ -39,7 +39,7 @@ class NewLog:
         print("NewLog=", anvil.server.session)
 
 @anvil.server.callable
-def test_camelot(file):
+def test_camelot(file, url):
     MAX_IMAGES_STORED = 1
     userid = int(sysmod.get_current_userid())
     print("userid=", userid)
@@ -54,8 +54,9 @@ def test_camelot(file):
             row_del.delete()
             
     row = app_tables.upload_files.add_row(userid=userid, fileobj=file, last_upload=datetime.datetime.now())
-    url = row[2][1].url
-    print("row=", url)
+    fileurl = row[2][1].url
+    print("fileurl=", fileurl)
+    print("tempurl=", url)
     for r in row:
         print(r)
 
@@ -63,4 +64,4 @@ def test_camelot(file):
         tables = camelot.read_pdf(url)
         print(tables)
     except (Exception) as err:
-        print(err)
+        print(f"Error: {err}")
