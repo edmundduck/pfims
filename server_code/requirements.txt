@@ -1,11 +1,10 @@
 psycopg2
-xlrd
 openpyxl
 tabulate
 requests==2.31.0
 pandas==2.0.2
 fuzzywuzzy==0.18.0
 certifi==2023.7.22
-opencv-python==4.5.5.64
 camelot-py==0.11.0
 ghostscript==0.7
+opencv-contrib-python-headless

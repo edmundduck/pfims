@@ -5,6 +5,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
 import camelot
+from io import BytesIO
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -35,6 +36,7 @@ class NewLog:
     def __init__(self):
         print("NewLog=", anvil.server.session)
 
+@anvil.server.callable
 def test_camelot(file):
-    tables = camelot.read_pdf(file)
+    tables = camelot.read_pdf(BytesIO(file.get_bytes()))
     print(tables)
