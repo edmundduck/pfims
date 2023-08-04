@@ -54,9 +54,13 @@ def test_camelot(file):
             row_del.delete()
             
     row = app_tables.upload_files.add_row(userid=userid, fileobj=file, last_upload=datetime.datetime.now())
-    print("row=", row[2][1].url)
+    url = row[2][1].url
+    print("row=", url)
     for r in row:
         print(r)
-    
-    tables = camelot.read_pdf(BytesIO(file.get_bytes()))
-    print(tables)
+
+    try:
+        tables = camelot.read_pdf(url)
+        print(tables)
+    except (Exception) as err:
+        print(err)
