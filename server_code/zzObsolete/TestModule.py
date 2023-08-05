@@ -1,3 +1,5 @@
+import anvil.files
+from anvil.files import data_files
 import anvil.secrets
 import anvil.users
 import anvil.tables as tables
@@ -34,12 +36,16 @@ def zz_test_session():
     else:
         print("It's not empty")
 
-class NewLog:
-    def __init__(self):
-        print("NewLog=", anvil.server.session)
-
 @anvil.server.callable
 def test_camelot(file, url):
+    # Ref: https://github.com/camelot-dev/camelot/issues/286
+    # Ref: https://docs.streamlit.io/knowledge-base/dependencies/libgl
+    # Ref: https://github.com/camelot-dev/camelot/blob/master/camelot/handlers.py
+    # Camelot so far requires the following packages to work partially...
+    # camelot-py 0.11.0
+    # opencv-contrib-python-headless latest
+    # ghostscript latest (installed but still not working)
+    # tk latest (not confirmed)
     MAX_IMAGES_STORED = 1
     userid = int(sysmod.get_current_userid())
     print("userid=", userid)
@@ -60,8 +66,12 @@ def test_camelot(file, url):
     for r in row:
         print(r)
 
+    # test pdf
+    fileurl = 'https://www.expat.hsbc.com/content/dam/hsbc/mbos/docs/important-documents/expat-gbp-rate-change-sheet.pdf'
     # try:
-    df = camelot.read_pdf(fileurl)
-    print(df)
+    t = camelot.read_pdf(fileurl)
+    print("Total tables extracted:", t.n)
+    # print the first table as Pandas DataFrame
+    print(t[0].df)
     # except (Exception) as err:
-        # print(f"Error: {err}")
+    # print(f"Error: {err}")
