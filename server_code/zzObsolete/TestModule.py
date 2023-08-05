@@ -48,7 +48,7 @@ def test_camelot(file, url):
     
     all_rows = app_tables.upload_files.search(tables.order_by('last_upload', ascending=False), userid=userid)
     if len(all_rows) > MAX_IMAGES_STORED:
-        rows_to_delete = all_rows[:MAX_IMAGES_STORED-1]
+        rows_to_delete = all_rows[MAX_IMAGES_STORED:]
         print("rows_to_delete=", rows_to_delete)
         for row_del in rows_to_delete:
             row_del.delete()
