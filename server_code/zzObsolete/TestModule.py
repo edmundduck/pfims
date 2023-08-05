@@ -46,22 +46,22 @@ def test_camelot(file, url):
     if file.content_type != "application/pdf":
         raise Exception(f"File type not allowed, file upload aborted.")
     
-    all_rows = app_tables.upload_files.search(userid=userid)
+    all_rows = app_tables.upload_files.search(tables.order_by('last_upload', ascending=False), userid=userid)
     if len(all_rows) > MAX_IMAGES_STORED:
-        rows_to_delete = all_rows[:MAX_IMAGES_STORED]
+        rows_to_delete = all_rows[:MAX_IMAGES_STORED-1]
         print("rows_to_delete=", rows_to_delete)
         for row_del in rows_to_delete:
             row_del.delete()
             
     row = app_tables.upload_files.add_row(userid=userid, fileobj=file, last_upload=datetime.datetime.now())
-    fileurl = row[2][1].url
+    fileurl = row[2][1].url[:-3]
     print("fileurl=", fileurl)
     print("tempurl=", url)
     for r in row:
         print(r)
 
-    try:
-        tables = camelot.read_pdf(url)
-        print(tables)
-    except (Exception) as err:
-        print(f"Error: {err}")
+    # try:
+    df = camelot.read_pdf(fileurl)
+    print(df)
+    # except (Exception) as err:
+        # print(f"Error: {err}")
