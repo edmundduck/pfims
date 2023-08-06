@@ -19,7 +19,8 @@ class form_poc4(form_poc4Template):
         if file is not None:
             if file.content_type == "application/pdf":
                 temp_url = anvil.media.TempUrl(file)
-                anvil.server.call('test_camelot', file=file, url=temp_url.url)
+                # anvil.server.call('test_camelot', file=file, url=temp_url.url)
+                anvil.server.call('test_tabula', file=file, url=temp_url.url)
                 temp_url.revoke()
             else:
                 result = anvil.server.call('import_file', file=file)

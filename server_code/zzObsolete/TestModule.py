@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-import camelot
+# import camelot
 from io import BytesIO
 import datetime
 from ..SysProcess import SystemModule as sysmod
@@ -75,3 +75,11 @@ def test_camelot(file, url):
     print(t[0].df)
     # except (Exception) as err:
     # print(f"Error: {err}")
+
+@anvil.server.callable
+def test_tabula(file, url):
+    import tabula
+
+    pdf_url = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_61_COVID-19.pdf'
+    test_df = tabula.read_pdf(pdf_url)[0]
+    print(test_df)

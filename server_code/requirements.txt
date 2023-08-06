@@ -5,3 +5,4 @@ requests==2.31.0
 fuzzywuzzy==0.18.0
 pandas
 certifi==2023.7.22
+tabula-py
