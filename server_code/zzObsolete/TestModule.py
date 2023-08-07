@@ -83,3 +83,13 @@ def test_tabula(file, url):
     pdf_url = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_61_COVID-19.pdf'
     test_df = tabula.read_pdf(pdf_url)[0]
     print(test_df)
+
+@anvil.server.callable
+def test_pdfplumber(file, url):
+    import pdfplumber
+    
+    with pdfplumber.open(BytesIO(file.get_bytes())) as pdf:
+        # table = pdf.pages[1].extract_table()
+        page = pdf.pages[0]
+        print(page.width, ",", page.height)
+        # pd.DataFrame(table[1::],columns=table[0]))
