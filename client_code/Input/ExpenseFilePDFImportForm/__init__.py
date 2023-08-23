@@ -25,8 +25,8 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
         DL = {
             'srccol': data[0],
-            'tgtcol': [],
-            'sign': []
+            'tgtcol': [None for i in range(len(data[0]))],
+            'sign': [None for i in range(len(data[0]))]
         }
         logger.trace("DL=", DL)
         self.cols_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
