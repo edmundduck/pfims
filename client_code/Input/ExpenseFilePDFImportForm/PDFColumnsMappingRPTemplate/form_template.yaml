@@ -1,0 +1,78 @@
+container:
+  type: DataRowPanel
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
+    visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none,
+    italic: false, background: '', bold: false, underline: false}
+  data_bindings: []
+components:
+- type: DropDown
+  properties:
+    role: null
+    align: full
+    tooltip: ''
+    placeholder: Choose mapping label
+    border: ''
+    enabled: true
+    foreground: ''
+    items: []
+    visible: true
+    font_size: 12
+    font: ''
+    spacing_above: small
+    spacing_below: small
+    italic: false
+    background: ''
+    bold: false
+    underline: false
+    include_placeholder: true
+  name: dropdown_lbl_map_to
+  layout_properties: {column: WIDMCS}
+  data_bindings:
+  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
+- type: TextBox
+  properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New label name,
+    border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
+    font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+    background: '', bold: false, underline: false}
+  name: input_label
+  layout_properties: {column: WIDMCS}
+  data_bindings:
+  - {property: text, code: 'self.item[''new'']', writeback: true}
+- type: Label
+  properties: {}
+  name: src_column
+  layout_properties: {column: LFIIUE}
+  data_bindings:
+  - {property: text, code: 'self.item[''srclbl'']'}
+- type: DropDown
+  properties:
+    role: null
+    align: full
+    tooltip: ''
+    placeholder: Choose action
+    border: ''
+    enabled: true
+    foreground: ''
+    items: []
+    visible: true
+    font_size: 12
+    font: ''
+    spacing_above: small
+    spacing_below: small
+    italic: false
+    background: ''
+    bold: false
+    underline: false
+    include_placeholder: true
+  name: dropdown_lbl_action
+  layout_properties: {column: DUOBFI}
+  event_bindings: {change: dropdown_lbl_action_change, show: dropdown_lbl_action_show}
+  data_bindings:
+  - {property: selected_value, code: 'self.item[''action'']', writeback: true}
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
+    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+    italic: false, background: '', bold: false, underline: false, icon: ''}
+  name: hidden_lbl_action
+  layout_properties: {column: DUOBFI}
+is_package: true

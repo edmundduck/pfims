@@ -1,4 +1,4 @@
-from ._anvil_designer import ExpenseFileUploadFormP2Template
+from ._anvil_designer import ExpenseFileExcelImportFormTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -11,7 +11,7 @@ from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
-class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
+class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     def __init__(self, data, labels, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)

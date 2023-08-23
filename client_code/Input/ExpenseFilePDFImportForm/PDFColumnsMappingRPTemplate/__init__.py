@@ -1,4 +1,4 @@
-from ._anvil_designer import LabelsMappingRPTemplateTemplate
+from ._anvil_designer import PDFColumnsMappingRPTemplateTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -11,7 +11,7 @@ from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
-class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
+class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)

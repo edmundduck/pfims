@@ -120,7 +120,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
         logger.trace("df=", df)
         logger.debug("lbls=", lbls)
-        Routing.open_exp_file_upload_form_p2(self, data=df, labels=lbls)
+        Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls)
 
     @logger.log_function
     def button_pdf_next_click(self, **event_args):
