@@ -40,6 +40,11 @@ def open_exp_file_excel_import_form(self, data, labels, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseFileExcelImportForm(data, labels))
 
+def open_exp_file_pdf_import_form(self, data, **event_args):
+    from ..Input.ExpenseFilePDFImportForm import ExpenseFilePDFImportForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ExpenseFilePDFImportForm(data))
+
 def open_upload_mapping_form(self, **event_args):
     from ..Input.UploadMappingRulesForm import UploadMappingRulesForm
     anvil.get_open_form().content_panel.clear()

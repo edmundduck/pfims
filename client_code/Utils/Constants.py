@@ -18,6 +18,14 @@ class ExpenseConfig:
     BUTTON_SUBMIT_TEXT = 'SUBMIT TAB'
     BUTTON_DRAFT_TEXT = 'SAVE DRAFT'
 
+class ExpenseDBTableDefinion:
+    Amount = 'AM'
+    Date = 'D'
+    Labels = 'L'
+    StmtDtl = 'SD'
+    Remarks = 'R'
+    Account = 'AC'
+
 class FileImportType:
     Excel = 'E'
     PDF = 'P'

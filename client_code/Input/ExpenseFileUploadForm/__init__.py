@@ -127,4 +127,4 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         """This method is called when the button is clicked"""
         pdf_tbl = anvil.server.call('import_pdf_file', file=self.file_loader_1.file)
         logger.debug("pdf_tbl=", pdf_tbl)
-
+        Routing.open_exp_file_pdf_import_form(self, data=pdf_tbl)
