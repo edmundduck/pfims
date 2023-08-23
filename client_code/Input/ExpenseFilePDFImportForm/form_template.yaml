@@ -127,7 +127,7 @@ components:
       properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
         visible: true, spacing_above: none, spacing_below: none, item_template: Input.ExpenseFilePDFImportForm.PDFColumnsMappingRPTemplate,
         background: ''}
-      name: labels_mapping_panel
+      name: cols_mapping_panel
       layout_properties: {}
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
@@ -142,7 +142,7 @@ components:
       visible: false, text: '0', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
-    name: hidden_action_count
+    name: hidden_mapping_count
     layout_properties: {grid_position: 'EAKVAM,UJELHX'}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
