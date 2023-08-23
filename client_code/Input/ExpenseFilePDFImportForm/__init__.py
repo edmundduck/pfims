@@ -52,7 +52,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
-        df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items)
+        df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def handle_mapping_count(self, action, prev, **event_args):

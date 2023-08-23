@@ -309,6 +309,8 @@ def update_pdf_mapping(data, mapping):
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
         LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        print("df=", df)
+        print("LD=", LD)
         if df is not None and LD is not None:
             for col_mapping in LD:
                 if col_mapping is not None:
