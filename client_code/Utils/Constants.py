@@ -18,7 +18,11 @@ class ExpenseConfig:
     BUTTON_SUBMIT_TEXT = 'SUBMIT TAB'
     BUTTON_DRAFT_TEXT = 'SAVE DRAFT'
 
-class FileUploadLabelExtraAction:
+class FileImportType:
+    Excel = 'E'
+    PDF = 'P'
+
+class FileImportLabelExtraAction:
     SKIP = 'S'
     MAP = 'M'
     CREATE = 'C'

@@ -8,6 +8,8 @@ from anvil.tables import app_tables
 import anvil.server
 from io import BytesIO
 import pandas as pd
+import pdfplumber
+import re
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
 from ..SysProcess import LoggingModule
@@ -16,6 +18,41 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 col_name = ['trandate', 'account_id', 'amount', 'remarks', 'stmt_dtl', 'labels']
+redex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
+redex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy
+redex_mdy = '(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(\d{4}|\d{2})'        # mm-dd-yyyy / mmm-dd-yyyy
+type_fmt = {
+    'date': f"({redex_ymd}|{redex_dmy}|{redex_mdy})*",
+    'amount': '(\d+\.(\d{3}|\d{2}))*',
+    'whitespace': '\s*',
+    'any': '.*'
+}
+column_type_mapping = {
+    'date': ['Date'],
+    'amount': ['Paid out', 'Paid in', 'Money Out', 'Money In', 'Money Out (£)', 'Money In (£)', 'Balance', 'Balance (£)', 'Withdraw', 'Deposit']
+}
+pdf_table_settings = {
+    "vertical_strategy": "explicit", 
+    "horizontal_strategy": "text",
+    "explicit_vertical_lines": [55, 100, 350, 420, 500, 550],
+    "explicit_horizontal_lines": [],
+    # "snap_tolerance": 0,
+    "snap_x_tolerance": 6,
+    # "snap_y_tolerance": 5,
+    # "join_tolerance": 3,
+    # "join_x_tolerance": 3,
+    # "join_y_tolerance": 3,
+    # "edge_min_length": 3,
+    # "min_words_vertical": 1,
+    # "min_words_horizontal": 2,
+    # "keep_blank_chars": False,
+    # "text_tolerance": 3,
+    "text_x_tolerance": 5,
+    # "text_y_tolerance": 5,
+    # "intersection_tolerance": 15,
+    # "intersection_x_tolerance": 15,
+    # "intersection_y_tolerance": 3,
+}
 
 # Internal function to convert column in character ID to number for Pandas read_excel
 def convertCharToLoc(char):
@@ -131,3 +168,135 @@ def update_mapping(data, mapping):
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
     return None
+
+# Internal function to format words in column headers and pdf lines to be single comparable format
+def format_comparable_word(word):
+    return word.lower().replace(' ', '')
+
+# Internal function to generate a dynamic regular expression string based on pdf table column type
+def get_regex_str(str_list, mandatory_type=None):
+    trimmed_str_list = list(map(lambda x: x.lower().replace(' ', ''), str_list))
+    trx_regex = ""
+    isMandatorySet = False
+    for i in trimmed_str_list:
+        # This list comprehension is NOT working, to find out why
+        # column_type = (key for key, value in column_type_mapping.items() if i in list(map(lambda x: x.lower().replace(' ', ''), value)))
+        column_type = next((key for key, value in column_type_mapping.items() if i in list(map(lambda x: x.lower().replace(' ', ''), value))), None)
+        logger.trace(f"column_type={column_type}")
+        if mandatory_type and not isMandatorySet and column_type == mandatory_type:
+            trx_regex = trx_regex + (type_fmt.get(column_type, type_fmt.get('any')))[:-1] + '+' + type_fmt.get('whitespace')
+            isMandatorySet = True
+        else:
+            trx_regex = trx_regex + type_fmt.get(column_type, type_fmt.get('any')) + type_fmt.get('whitespace')
+    logger.debug(f"trx_regex={trx_regex}")
+    return trx_regex
+
+@anvil.server.callable("import_pdf_file")
+def import_pdf_file(file):
+    with pdfplumber.open(BytesIO(file.get_bytes())) as pdf:
+        # compiled_column_headers = re.compile('.*'.join(ch.replace(' ', '.*') for ch in column_headers))
+        result_table = []
+        for pagenum in range(len(pdf.pages)):
+            page = pdf.pages[pagenum]
+            text = page.extract_text(layout=True, x_density=4.5, y_density=10)
+    
+            # Find column header by regex
+            compiled_column_headers = re.compile(r'.*Date.*Balance.*')
+            result = compiled_column_headers.search(text)
+            if result:
+                # Finding column headers
+                # column_headers = ['Date', 'Payment type and details', 'Paid out', 'Paid in', 'Balance']
+                # column_headers = ['Date', 'Pmnt', 'Details', 'Money Out (£)', 'Money In (£)', 'Balance (£)']
+                column_headers = result.group(0).split()
+                logger.debug("column_headers=", column_headers)
+                print(f"column_headers={column_headers}")
+                
+                # Word object comparison
+                header_word_dict = {}
+                partial_word_list = []
+                for word in page.extract_words():
+                    if len(header_word_dict.keys()) < len(column_headers):
+                        patternNotFound = True
+                        for header in column_headers:
+                            pdf_word = format_comparable_word(word['text'])
+                            header_word = format_comparable_word(header)
+                            # print(f"header_word=\"{header_word}\"/pdf_word=\"{pdf_word}\"")
+                            if pdf_word == header_word:
+                                # Case 1
+                                # word = date, header = date
+                                # Case 2
+                                # word = paidout, header = paid out
+                                # word = paidin, header = paid in
+                                # header_word_dict[word['text']] = {
+                                header_word_dict[pdf_word] = {
+                                    'x0': word['x0'],
+                                    'x1': word['x1'],
+                                    'top': word['top'],
+                                    'bottom': word['bottom']
+                                }
+                                partial_word_list = []
+                                patternNotFound = False
+                            elif pdf_word in header_word:
+                                # Case 3
+                                # word = payment, header = payment type and details
+                                # word = type, header = payment type and details
+                                # word = and, header = payment type and details
+                                # word = details,  header = payment type and details
+                                partial_word_list.append({
+                                    # 'text': word['text'],
+                                    'text': pdf_word,
+                                    'x0': word['x0'],
+                                    'x1': word['x1'],
+                                    'top': word['top'],
+                                    'bottom': word['bottom']
+                                })
+                                combined_text = "".join(w.get('text') for w in partial_word_list)
+                                if combined_text == header_word:
+                                    header_word_dict[combined_text] = {
+                                        'x0': partial_word_list[0].get('x0'),
+                                        'x1': partial_word_list[len(partial_word_list)-1].get('x1'),
+                                        'top': word['top'],
+                                        'bottom': word['bottom']
+                                    }
+                                    partial_word_list = []
+                                patternNotFound = False
+                        if patternNotFound:
+                            header_word_dict.clear()
+                            partial_word_list = []
+    
+                logger.debug("header_word_dict=", header_word_dict)
+                explicit_lines = []
+                for ch in column_headers:
+                    explicit_lines.append(header_word_dict.get(format_comparable_word(ch)).get('x0')-5)
+                explicit_lines.append(header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('x1')+5)
+                bbox_top = header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('top')
+                logger.debug("explicit_lines=", explicit_lines)
+    
+                pdf_table_settings['explicit_vertical_lines'] = explicit_lines
+                # bounding box (x0, y0, x1, y1)
+                bounding_box = [50, bbox_top, 580, page.height]
+                crop_area = page.crop(bounding_box)
+                crop_table = crop_area.extract_table(pdf_table_settings)
+                logger.trace("crop_table=", crop_table)
+    
+                # Returning best match table by filtering unwanted rows
+                grace_search = 3
+                # Skip the table header row
+                for row in crop_table[1:]:
+                    if grace_search >= 0:
+                        row_to_check = ' '.join(cell for cell in row)
+                        compiled_date = re.compile(get_regex_str(column_headers, 'date'))
+                        compiled_amt = re.compile(get_regex_str(column_headers, 'amount'))
+                        if re.match(r'^\s*$', row_to_check):
+                            crop_table.remove(row)
+                        elif re.search(compiled_date, row_to_check) or re.search(compiled_amt, row_to_check) :
+                            logger.debug("OOO=\"", row_to_check)
+                            grace_search = 3
+                        else:
+                            logger.debug("XXX=\"", row_to_check)
+                            grace_search -= 1
+                    else:
+                        crop_table.remove(row)
+                logger.trace("new crop_table=", crop_table)
+                result_table += crop_table
+        return result_table

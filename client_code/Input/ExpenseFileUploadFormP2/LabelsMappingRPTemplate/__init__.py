@@ -27,13 +27,13 @@ class LabelsMappingRPTemplate(LabelsMappingRPTemplateTemplate):
     def dropdown_lbl_action_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         action, action_desc = self.dropdown_lbl_action.selected_value if self.dropdown_lbl_action.selected_value is not None else [None, None]
-        if action in (None, const.FileUploadLabelExtraAction.SKIP):
+        if action in (None, const.FileImportLabelExtraAction.SKIP):
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = False
-        elif action == const.FileUploadLabelExtraAction.MAP:
+        elif action == const.FileImportLabelExtraAction.MAP:
             self.dropdown_lbl_map_to.visible = True
             self.input_label.visible = False
-        elif action == const.FileUploadLabelExtraAction.CREATE:
+        elif action == const.FileImportLabelExtraAction.CREATE:
             self.dropdown_lbl_map_to.visible = False
             self.input_label.visible = True
             self.parent.raise_event('x-refresh-label-cache')

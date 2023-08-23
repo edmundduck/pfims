@@ -6,3 +6,4 @@ fuzzywuzzy==0.18.0
 pandas
 certifi==2023.7.22
 pdfplumber
+xlrd
