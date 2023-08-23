@@ -268,13 +268,13 @@ def import_pdf_file(file):
                 explicit_lines = []
                 for ch in column_headers:
                     explicit_lines.append(header_word_dict.get(format_comparable_word(ch)).get('x0')-5)
-                explicit_lines.append(header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('x1')+5)
+                explicit_lines.append(header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('x1'))
                 bbox_top = header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('top')
                 logger.debug("explicit_lines=", explicit_lines)
     
                 pdf_table_settings['explicit_vertical_lines'] = explicit_lines
                 # bounding box (x0, y0, x1, y1)
-                bounding_box = [50, bbox_top, 580, page.height]
+                bounding_box = [explicit_lines[0], bbox_top, explicit_lines[-1]+10, page.height]
                 crop_area = page.crop(bounding_box)
                 crop_table = crop_area.extract_table(pdf_table_settings)
                 logger.trace("crop_table=", crop_table)
