@@ -124,7 +124,9 @@ components:
     layout_properties: {width: 511.6}
     components:
     - type: RepeatingPanel
-      properties: {spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
+      properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
+        visible: true, spacing_above: none, spacing_below: none, item_template: Input.ExpenseFilePDFImportForm.PDFColumnsMappingRPTemplate,
+        background: ''}
       name: labels_mapping_panel
       layout_properties: {}
 - type: FlowPanel

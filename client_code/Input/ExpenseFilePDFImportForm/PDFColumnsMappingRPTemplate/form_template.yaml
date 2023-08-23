@@ -10,7 +10,7 @@ components:
     role: null
     align: full
     tooltip: ''
-    placeholder: Choose mapping label
+    placeholder: Choose mapping column
     border: ''
     enabled: true
     foreground: ''
@@ -25,36 +25,22 @@ components:
     bold: false
     underline: false
     include_placeholder: true
-  name: dropdown_lbl_map_to
+  name: dropdown_col_map_to
   layout_properties: {column: WIDMCS}
   data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
-- type: TextBox
-  properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New label name,
-    border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
-    font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
-    background: '', bold: false, underline: false}
-  name: input_label
-  layout_properties: {column: WIDMCS}
-  data_bindings:
-  - {property: text, code: 'self.item[''new'']', writeback: true}
-- type: Label
-  properties: {}
-  name: src_column
-  layout_properties: {column: LFIIUE}
-  data_bindings:
-  - {property: text, code: 'self.item[''srclbl'']'}
+  - {property: selected_value, code: 'self.item[''tgtcol'']', writeback: true}
+  event_bindings: {change: dropdown_col_map_to_change}
 - type: DropDown
   properties:
     role: null
     align: full
     tooltip: ''
-    placeholder: Choose action
+    placeholder: ''
     border: ''
     enabled: true
     foreground: ''
-    items: []
-    visible: true
+    items: [Inflow (+), Outflow (-)]
+    visible: false
     font_size: 12
     font: ''
     spacing_above: small
@@ -63,12 +49,15 @@ components:
     background: ''
     bold: false
     underline: false
-    include_placeholder: true
-  name: dropdown_lbl_action
-  layout_properties: {column: DUOBFI}
-  event_bindings: {change: dropdown_lbl_action_change, show: dropdown_lbl_action_show}
+    include_placeholder: false
+  name: dropdown_sign
+  layout_properties: {column: WIDMCS}
+- type: Label
+  properties: {}
+  name: src_column
+  layout_properties: {column: LFIIUE}
   data_bindings:
-  - {property: selected_value, code: 'self.item[''action'']', writeback: true}
+  - {property: text, code: 'self.item[''srccol'']'}
 - type: Label
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
     text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
