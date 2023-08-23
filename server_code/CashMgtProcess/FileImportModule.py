@@ -305,41 +305,19 @@ def import_pdf_file(file):
 @logger.log_function
 def update_pdf_mapping(data, mapping):
     try:
-        # 1. Get all items with action = 'C', and grab new field to create new labels
-        # DL = Dict of Lists
-        DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
-        # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
-        DL_action = {'id': [dic[0] for dic in DL['action']]}
-        pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
-        logger.debug("pos_create=", pos_create)
-        lbl_mogstr = {
-            'name': [DL['new'][x] for x in pos_create],
-            'keywords': [ None for i in range(len(pos_create)) ],
-            'status': [ True for i in range(len(pos_create)) ]
-        }
-        # labels param is transposed from DL to LD (List of Dicts)
-        lbl_id = lbl_mod.create_label(labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
-        logger.debug("Label created with ID lbl_id=", lbl_id)
-        if lbl_id is None: raise Exception("Fail to create label.")
-    
-        # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-        for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
-        logger.trace("2) Replace labels with action = 'C' to the newly created label codes in step 1")
-        logger.trace("DL['tgtlbl']=", DL['tgtlbl'])
-    
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
         LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
         if df is not None and LD is not None:
-            for lbl_mapping in LD:
-                if lbl_mapping is not None:
-                    if lbl_mapping.get('action')[0] == "S":
-                        df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
-                    elif lbl_mapping.get('tgtlbl') is not None:
+            for col_mapping in LD:
+                if col_mapping is not None:
+                    if col_mapping.get('action')[0] == "S":
+                        df['labels'].replace(col_mapping['srccol'], None, inplace=True)                    
+                    elif col_mapping.get('tgtcol') is not None:
                         # Case 001 - string dict key handling review
-                        id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
-                        df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
+                        id = eval(col_mapping['tgtcol'])['id'] if isinstance(col_mapping.get('tgtcol'), str) else col_mapping['tgtcol']['id']
+                        df['labels'].replace(col_mapping['srccol'], id, inplace=True)
         logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
         logger.trace("df=", df)
         # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
