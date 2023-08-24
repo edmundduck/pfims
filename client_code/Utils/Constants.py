@@ -64,6 +64,7 @@ class Icons:
 
 class ColorSchemes:
     VALID_ERROR = 'rgb(245,135,200)'
+    VALID_NORMAL = 'rgb(250,250,250)'
     BUTTON_FG = 'White'
     BUTTON_BG = 'Blue'
     AMT_NEG = 'Red'

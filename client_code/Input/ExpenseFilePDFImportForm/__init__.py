@@ -19,8 +19,8 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
 
         # Any code you write here will run when the form opens.
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-        # self.tag = {'data': data}
-        # logger.debug("self.tag=", self.tag)
+        self.tag = {'data': data}
+        logger.debug("self.tag=", self.tag)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
         DL = {
@@ -57,6 +57,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
             return
 
         df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items)
+        logger.debug("df=", df)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     # def handle_mapping_count(self, action, prev, **event_args):
