@@ -5,11 +5,13 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ...Utils.Logger import ClientLogger
 
 class form_poc3(form_poc3Template):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
+        self.logger = ClientLogger()
 
         # Any code you write here will run before the form opens.
         self.repeating_panel_1.items = [{} for i in range(2)]
@@ -21,7 +23,7 @@ class form_poc3(form_poc3Template):
     def button_2_click(self, **event_args):
         """This method is called when the button is clicked"""
         for c in self.data_grid_1.columns:
-            print(c['data_key'])
+            logger.debug(c['data_key'])
         # column = [c for c in self.data_grid_1.columns if c['data_key'] == 'column_2'][0]
         column = self.data_grid_1.columns[0]
         self.data_grid_1.columns.remove(column)

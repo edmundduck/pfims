@@ -8,9 +8,12 @@ from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
+from ...Utils.Logger import ClientLogger
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
 from ..ExpenseReportForm import ExpenseReportForm
+
+logger = ClientLogger()
 
 class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     subform = None
@@ -62,6 +65,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
       
     # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
     # Return selected symbols which appear in blue buttons 
+    @logger.log_function
     def _getall_selected_symbols(self):
         symbol_list = []
         for i in self.panel_symbol.get_components():
@@ -71,6 +75,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         return symbol_list
 
     # Remove all symbols selected as blue buttons from dictionary
+    @logger.log_function
     def _rmvall_selected_symbols(self):
         for i in self.panel_symbol.get_components():
             if isinstance(i, Button):
@@ -79,6 +84,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                     self.tag['added_symbols'].pop(i.text)
                     i.remove_from_parent()
 
+    @logger.log_function
     def _upd_scr_enablement(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval in (None, ''):
@@ -88,13 +94,13 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                 self.time_datefrom.enabled = False
                 self.time_dateto.enabled = False
                 self.label_timetotime.enabled = False
-                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', date.today(), 
-                            anvil.server.call('get_start_date', date.today(), interval))
+                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items',
+                            start_date=anvil.server.call('get_start_date', date.today(), interval))
             else:
                 self.time_datefrom.enabled = True
                 self.time_dateto.enabled = True
                 self.label_timetotime.enabled = True
-                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
+                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
             self.button_tranx_gen_csv.enabled = True
             self.button_tranx_search.enabled = True
             self.button_pnl_search.enabled = True
@@ -112,6 +118,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.button_pnl_search.enabled = False
         self.button_exp_search.enabled = False
     
+    @logger.log_function
     def _find_enddate(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval != "SDR" or self.time_dateto.date is None:
@@ -119,6 +126,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         else:
             return self.time_dateto.date
   
+    @logger.log_function
     def _find_startdate(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval != "SDR" or self.time_datefrom.date is None:
@@ -133,12 +141,13 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
 
     def time_datefrom_change(self, **event_args):
         """This method is called when the selected date changes"""
-        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
+        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
 
     def time_dateto_change(self, **event_args):
         """This method is called when the selected date changes"""
-        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_dateto.date, self.time_datefrom.date)
+        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
 
+    @logger.log_function
     def tranx_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.tag['added_symbols'].get(self.dropdown_symbol.selected_value, None) is None:
@@ -152,19 +161,21 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             # Register the added symbol to the dictionary in self.tag to avoid duplication
             self.tag['added_symbols'].update({self.dropdown_symbol.selected_value: 1})
 
+    @logger.log_function
     def tranx_rpt_button_minus_click(self, **event_args):
         b = event_args['sender']
         # Deregister the added symbol from the dictionary in self.tag
         self.tag['added_symbols'].pop(b.text)
         b.remove_from_parent()
 
+    @logger.log_function
     def button_tranx_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
         enddate = self._find_enddate()
         startdate = self._find_startdate()
         
-        self.subform.rpt_panel.items = anvil.server.call('select_journals', enddate, startdate, symbol_list)
+        self.subform.rpt_panel.items = anvil.server.call('select_journals', startdate, enddate, symbol_list)
 
     def button_tranx_gen_csv_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -173,13 +184,14 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         startdate = self._find_startdate()
         
         # Get data from db
-        csv_file = anvil.server.call('generate_csv', enddate, startdate, symbol_list)
+        csv_file = anvil.server.call('generate_csv', startdate, enddate, symbol_list)
         anvil.media.download(csv_file)
 
     def button_tranx_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
         self._reset_search()
     
+    @logger.log_function
     def button_pnl_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
@@ -188,7 +200,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     
         self.subform.hidden_time_datefrom.date = startdate
         self.subform.hidden_symbol.text = symbol_list
-        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', enddate, startdate, symbol_list)
+        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', startdate, enddate, symbol_list)
 
     def button_pnl_reset_click(self, **event_args):
         """This method is called when the button is clicked"""

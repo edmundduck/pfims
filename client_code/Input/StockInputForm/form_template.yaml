@@ -40,7 +40,7 @@ components:
       role: null
       align: full
       tooltip: ''
-      placeholder: ''
+      placeholder: Choose one below
       border: ''
       enabled: true
       foreground: ''
@@ -54,7 +54,7 @@ components:
       background: ''
       bold: false
       underline: false
-      include_placeholder: false
+      include_placeholder: true
     name: dropdown_broker
     layout_properties: {grid_position: 'QZCZKX,QKDMOJ'}
     event_bindings: {show: dropdown_broker_show, change: dropdown_broker_change}

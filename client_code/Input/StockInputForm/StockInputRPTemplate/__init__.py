@@ -8,6 +8,9 @@ from anvil.tables import app_tables
 from ....Utils import Constants as const
 from ....Utils import Caching as cache
 from ....Utils.Validation import Validator
+from ....Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -20,6 +23,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         else:
             self.foreground = const.ColorSchemes.AMT_POS
 
+    @logger.log_function
     def button_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.row_selldate.date = self.item['sell_date']
@@ -37,6 +41,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
 
+    @logger.log_function
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
         v = Validator()
@@ -45,7 +50,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         # self.parent = Repeating Panel
         # self.parent.parent = Data Grid
         # self.parent.parent.parent = Parent Form
-        #print(self.parent.parent.parent.valerror_1.text)
+        logger.trace("self.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
         v.require_date_field(self.row_selldate, self.parent.parent.parent.valerror_1, True)
         v.require_date_field(self.row_buydate, self.parent.parent.parent.valerror_2, True)
@@ -90,6 +95,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
             self.parent.raise_event('x-save-change')
       
+    @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item['iid'] is not None: cache.add_deleted_row(self.item['iid'])

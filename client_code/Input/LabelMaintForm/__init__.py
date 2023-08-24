@@ -8,7 +8,9 @@ from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
 from ...Utils import Constants as const
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):
@@ -37,6 +39,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         # TODO - Enable after Move to logic is implemented
         self.dropdown_moveto.enabled = False
 
+    @logger.log_function
     def dropdown_lbl_list_change(self, **event_args):
         """This method is called when an item is selected"""
         # Case 001 - string dict key handling review
@@ -57,28 +60,35 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
         self.dropdown_status.selected_value = True
 
+    @logger.log_function
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_name = self.text_lbl_name.text
-        lbl_id = anvil.server.call('create_label', labels={'name':lbl_name, 'keywords':self.text_keywords.text, 'status':True})
+        lbl_id = anvil.server.call('create_label', labels=[{'name':lbl_name, 'keywords':self.text_keywords.text, 'status':True}])
 
-        if lbl_id is None or lbl_id[0] <= 0:
+        if lbl_id is None:
             msg = f"ERROR: Fail to create label {lbl_name}."
-            error.log(msg)
+            logger.error(msg)
+        elif len(lbl_id) == 0:
+            msg = f"INFO: No label has been created."
+            logger.info(msg)
         else:
             """ Reflect the change in labels dropdown """
             cache.labels_reset()
             self.dropdown_lbl_list.items = cache.labels_dropdown()
+            logger.debug("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
+            logger.debug("lbl_id=", lbl_id)
             # Case 001 - string dict key handling review
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
-            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
+            self.dropdown_lbl_list.selected_value = repr({"id": lbl_id[0], "text": lbl_name})
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
             self.button_labels_update.enabled = True
             msg = f"Label {lbl_name} has been created successfully."
-            info.log(msg)
+            logger.info(msg)
         Notification(msg).show()
         return
 
+    @logger.log_function
     def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         # Case 001 - string dict key handling review
@@ -95,7 +105,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
 
         if result is None or result <= 0:
             msg = f"ERROR: Fail to update label {lbl_name}."
-            error.log(msg)
+            logger.error(msg)
         else:
             """ Reflect the change in labels dropdown """
             cache.labels_reset()
@@ -104,14 +114,16 @@ class LabelMaintForm(LabelMaintFormTemplate):
             # self.dropdown_lbl_list.selected_value = {"id": lbl_id, "text": lbl_name}
             self.dropdown_lbl_list.selected_value = repr({"id": lbl_id, "text": lbl_name})
             msg = f"Label {lbl_name} has been updated successfully."
-            info.log(msg)
+            logger.info(msg)
         Notification(msg).show()
         return
 
+    @logger.log_function
     def button_labels_move_click(self, **event_args):
         """This method is called when the button is clicked"""
         pass
 
+    @logger.log_function
     def button_labels_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         # Case 001 - string dict key handling review
@@ -129,10 +141,10 @@ class LabelMaintForm(LabelMaintFormTemplate):
                 """ Reflect the change in label dropdown """
                 self.clear()
                 msg = f"Label {selected_lbl_name} has been deleted."
-                info.log(msg)
+                logger.info(msg)
             else:
                 msg = f"ERROR: Fail to delete label {selected_lbl_name}."
-                error.log(msg)
+                logger.error(msg)
             Notification(msg).show()
 
     def clear(self, **event_args):

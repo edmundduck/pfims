@@ -3,27 +3,28 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from .Logging import dump, debug, info, warning, error, critical
+from .Logger import ClientLogger
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 cache_dict = {}
+logger = ClientLogger()
 
 # Return a list for accounts dropdown for Expense Input and Upload
 def accounts_dropdown():
-    return get_cache(key='accounts', func='generate_accounts_dropdown')
+    return get_cache('accounts', 'generate_accounts_dropdown')
 
 # Return a dict for accounts for Expense Input and Upload
 def accounts_dict():
-    return get_cache_dict(key='accounts', func='generate_accounts_dropdown')
+    return get_cache_dict('accounts', 'generate_accounts_dropdown')
 
 def accounts_reset():
-    clear_cache(key='accounts')
+    clear_cache('accounts')
 
 # Return a list for labels dropdown for Expense Input and Upload
 def labels_dropdown():
-    return get_cache(key='labels', func='generate_labels_dropdown')
+    return get_cache('labels', 'generate_labels_dropdown')
 
 # Return a dict for labels for Expense Input and Upload
 # Not using generic get_cache_dict function as it involves eval() issue requiring special handling
@@ -31,21 +32,25 @@ def labels_dict():
     global cache_dict
     key='labels_dict'
     if cache_dict is None: cache_dict = {}
-    result = cache_dict.get(key, {})
+    logger.trace("cache_dict=", cache_dict)
+    result = cache_dict.get(key, {}) or {}
     if not result:
         for i in labels_dropdown():
+            logger.trace("item (i) in labels_dropdown=", i)
+            logger.trace("eval(i[1])['id']=", eval(i[1])['id'])
+            logger.trace("eval(i[1])['text']=", eval(i[1])['text'])
             # Case 001 - string dict key handling review
             result[str(eval(i[1])['id'])] = eval(i[1])['text']
         cache_dict[key] = result
     return result
 
 def labels_list():
-    return get_cache(key='labels_list', func='generate_labels_list')
+    return get_cache('labels_list', 'generate_labels_list')
 
 def labels_reset():
-    clear_cache(key='labels_list')
-    clear_cache(key='labels_dict')
-    clear_cache(key='labels')
+    clear_cache('labels_list')
+    clear_cache('labels_dict')
+    clear_cache('labels')
 
 # Return a list for labels mapping action dropdown for Expense Input and Upload
 def labels_mapping_action_dropdown():
@@ -104,7 +109,6 @@ def add_deleted_row(iid):
         cache_dict[key] = [iid]
     else:
         cache_dict[key].append(iid)
-    debug.log(f"add_deleted_row (key={key})={cache_dict[key]}")
     return cache_dict.get(key, [])
 
 # Return IID of the deletion list for delete journals / delete transactions function to process
@@ -117,38 +121,58 @@ def get_deleted_row():
 def deleted_row_reset():
     clear_cache(key='delete_row_iid')
 
+def set_client_loglevel(level):
+    global cache_dict
+    key = 'cloglevel'
+    if cache_dict is None: cache_dict = {}
+    cache_dict[key] = level
+
+# Return the client logging level
+def get_client_loglevel():
+    global cache_dict
+    key = 'cloglevel'
+    if cache_dict is None: cache_dict = {}
+    return cache_dict.get(key, None)
+
+def client_loglevel_reset():
+    clear_cache(key='cloglevel')
+    
 # Generic get and store database data as cache in a form of dropdown items
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
-def get_cache(key, func):
+def get_cache(key, func, *args):
     global cache_dict
     if cache_dict is None: cache_dict = {}
     if cache_dict.get(key, None) is None:
-        cache_dict[key] = anvil.server.call(func)
-        debug.log(f"get_cache cache loaded (key={key}, func={func})")
+        cache_dict[key] = anvil.server.call(func, *args)
+        logger.debug(f"get_cache cache loaded (key={key}, func={func})")
     return cache_dict.get(key, None)
 
 # Generic get and store database data as cache in a form of dictionary
 # @key = Key in string to access particular cache data
 # @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
-def get_cache_dict(key, func):
+def get_cache_dict(key, func, *args):
     global cache_dict
     dict_key = "".join((key, '_dict'))
     if cache_dict.get(dict_key, None) is None:
         result = {}
-        for i in get_cache(key, func):
+        for i in get_cache(key, func, *args):
             result[i[1][0]] = i[1][1]
         cache_dict[dict_key] = result
-        debug.log(f"get_cache_dict cache loaded (dict_key={dict_key}, func={func})")
+        logger.debug(f"get_cache_dict cache loaded (dict_key={dict_key}, func={func})")
     return cache_dict.get(dict_key, None)
 
 # Generic clear cache
 # @key = Key in string to access particular cache data
 def clear_cache(key):
     global cache_dict
-    cache_dict[key] = None
-    cache_dict["".join((key, '_dict'))] = None
-    debug.log(f"Cache clear (key={key})")
+    key_to_clear = [key, "".join((key, '_dict'))]
+    for k in key_to_clear:
+        if k in cache_dict:
+            del cache_dict[k]
+            logger.debug(f"Cleared cache key={k}")
+        else:
+            logger.debug(f"Cache key={k} does not exist")    
 
 # Generic clear all cache (all keys)
 def clearall_cache():

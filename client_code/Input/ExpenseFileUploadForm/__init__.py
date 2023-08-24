@@ -7,7 +7,9 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def __init__(self, **properties):
@@ -32,13 +34,12 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def dropdown_filetype_change(self, **event_args):
         """This method is called when an item is selected"""
-        userid = anvil.server.call('get_current_userid')
         filetype_id, filetype = self.dropdown_filetype.selected_value
-        debug.log(f"filetype_id={filetype_id}, filetype={filetype}")
+        logger.debug(f"filetype_id={filetype_id}, filetype={filetype}")
         if filetype_id is None:
             self.dropdown_mapping_rule.items = []
         else:
-            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', userid, filetype_id)
+            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', filetype_id)
 
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -47,6 +48,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         else:
             self.file_loader_1.enabled = True
 
+    @logger.log_function
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
         if file is not None:
@@ -74,18 +76,19 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     vis = True
         self.button_next.visible = vis
 
+    @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         tablist = []
         for i in self.sheet_tabs_panel.get_components():
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
-        info.log(f"{len(tablist)} tabs are chosen in {__name__}.")
+        logger.info(f"{len(tablist)} tabs are chosen in {__name__}.")
         matrix = anvil.server.call('select_mapping_matrix', id=self.dropdown_mapping_rule.selected_value)
-        debug.log("matrix=", matrix)
+        logger.debug("matrix=", matrix)
         extra = anvil.server.call('select_mapping_extra_actions', id=self.dropdown_mapping_rule.selected_value)
-        debug.log("extra=", extra)
+        logger.debug("extra=", extra)
         df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
-        dump.log("df=", df)
-        debug.log("lbls=", lbls)
+        logger.trace("df=", df)
+        logger.debug("lbls=", lbls)
         Routing.open_exp_file_upload_form_p2(self, data=df, labels=lbls)

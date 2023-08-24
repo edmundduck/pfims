@@ -7,28 +7,33 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from ..System import SystemModule as sysmod
+from ..SysProcess import SystemModule as sysmod
+from ..SysProcess import LoggingModule
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable
 # Generate mapping dropdown items
-def generate_mapping_dropdown(uid, ftype):
-    conn = sysmod.psqldb_connect()
+@anvil.server.callable("generate_mapping_dropdown")
+@logger.log_function
+def generate_mapping_dropdown(ftype):
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemafin()}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC"
-        stmt = cur.mogrify(sql, (uid, ftype, ))
+        stmt = cur.mogrify(sql, (userid, ftype, ))
         cur.execute(stmt)
         rows = cur.fetchall()
         cur.close()
     content = list((row['name'], row['id']) for row in rows)
     return content
 
-@anvil.server.callable
 # Generate mapping file type dropdown items
+@anvil.server.callable("generate_mapping_type_dropdown")
+@logger.log_function
 def generate_mapping_type_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # TODO change filter_type to mapping_file_type
         sql = f"SELECT * FROM {sysmod.schemarefd()}.filter_type ORDER BY seq ASC"
@@ -38,10 +43,11 @@ def generate_mapping_type_dropdown():
     content = list((row['name'], [row['id'], row['name']]) for row in rows)
     return content
 
-@anvil.server.callable
 # Generate input expense table definition dropdown items
+@anvil.server.callable("generate_expense_tbl_def_dropdown")
+@logger.log_function
 def generate_expense_tbl_def_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
@@ -50,10 +56,11 @@ def generate_expense_tbl_def_dropdown():
     content = list((row['col_name'], [row['col_code'], row['col_name']]) for row in rows)
     return content
 
-@anvil.server.callable
 # Generate input expense table definition dropdown items
+@anvil.server.callable("generate_upload_action_dropdown")
+@logger.log_function
 def generate_upload_action_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.upload_action ORDER BY seq ASC"
         cur.execute(sql)
@@ -63,6 +70,7 @@ def generate_upload_action_dropdown():
     return content
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
+@logger.log_function
 def generate_mapping_matrix(matrix, col_def):
     if len(col_def) < 1:
         return [[]]
@@ -84,11 +92,13 @@ def generate_mapping_matrix(matrix, col_def):
             y.insert(0, '')
             result = [y] + result if result is not None else [y]
     if result is None: result = r
+    logger.trace("result=", result)
     return result
 
 # Select input expense table definition column ID
+@logger.log_function
 def select_expense_tbl_def_id():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
@@ -97,19 +107,22 @@ def select_expense_tbl_def_id():
     content = list(row['col_code'] for row in rows)
     return content
 
-@anvil.server.callable
 # Select the mapping and rules belong to the logged on user, it can be all or particular one only
-def select_mapping_rules(uid, gid=None):
-    conn = sysmod.psqldb_connect()
+@anvil.server.callable("select_mapping_rules")
+@logger.log_function
+def select_mapping_rules(gid=None):
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
-        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} ORDER BY a.id ASC, b.col ASC" \
+        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} ORDER BY a.id ASC, b.col ASC" \
         if gid is None else \
         f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
-        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {uid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
+        fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
+        logger.trace("rows=", rows)
 
         # Group all mapping rules under corresponding mapping group
         result = {}
@@ -129,13 +142,15 @@ def select_mapping_rules(uid, gid=None):
             else:
                 r = result.get(row['id'], None)['rule']
                 r.append([action1, action2, extra1, extra2]) if action1 is not None and action2 is not None else r.append(None)
+        logger.trace("result=", result)
         cur.close()
     return list(result.values())
 
-@anvil.server.callable
 # Select the mapping matrix belong to the logged on user
+@anvil.server.callable("select_mapping_matrix")
+@logger.log_function
 def select_mapping_matrix(id):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT datecol AS trandate, acctcol AS account_id, amtcol AS amount, remarkscol AS remarks, stmtdtlcol AS stmt_dtl, lblcol AS labels \
         FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
@@ -144,15 +159,17 @@ def select_mapping_matrix(id):
         cur.close()
     return rows
 
-@anvil.server.callable
 # Save the mapping and rules
 # Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
-def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
+@anvil.server.callable("save_mapping_rules")
+@logger.log_function
+def save_mapping_rules(id, mapping_rules, del_iid=None):
     conn = None
     count = None
     dcount = None
+    userid = sysmod.get_current_userid()
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(mapping_rules) > 0:
                 # First insert/update mapping group
@@ -163,12 +180,13 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                 if id is not None:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
                     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
-                    stmt = cur.mogrify(sql, (int(uid), id, name, type_id, currenttime))
+                    stmt = cur.mogrify(sql, (int(userid), id, name, type_id, currenttime))
                 else:
                     sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
-                    stmt = cur.mogrify(sql, (int(uid), name, type_id, currenttime))
+                    stmt = cur.mogrify(sql, (int(userid), name, type_id, currenttime))
                 cur.execute(stmt)
                 conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 id = (cur.fetchone())['id']
                 if id < 0:
                     raise psycopg2.OperationalError(f"Fail to save the mapping ({name}).")
@@ -188,12 +206,14 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                     rule = f"{rule[4]}"
                     mogstr.append([id, col_id, column, eaction, etarget, rule])
                     matrixobj[column].append(col_id)
+                logger.trace("matrixobj=", matrixobj)
                 if len(mogstr) > 0:
                     cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                     (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
                     etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col", mogstr)
                     conn.commit()
                     count = cur.rowcount
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if count <= 0: raise psycopg2.OperationalError(f"Fail to save mapping rules (Mapping name={name}).")
                 else:
                     count = 0
@@ -210,6 +230,7 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                     VALUES ({id}, %s, %s, %s, %s, %s, %s)", matrixstr)
                     conn.commit()
                     count = cur.rowcount
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if count <= 0 or dcount < 0: raise psycopg2.OperationalError(f"Fail to save mapping matrix (Mapping name={name}).")
             else:
                 count = 0
@@ -221,20 +242,23 @@ def save_mapping_rules(uid, id, mapping_rules, del_iid=None):
                 cur.execute(sql)
                 conn.commit()
                 dcount = cur.rowcount
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if dcount <= 0: raise psycopg2.OperationalError(f"Fail to remove deleted mapping rules (Mapping name={name}).")
             else:
                 dcount = 0
             cur.close()            
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug(f"OperationalError in {save_mapping_rules.__name__}", err)
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()        
     return {"id": id, "count": count, "dcount": dcount}
 
-@anvil.server.callable
+@anvil.server.callable("select_mapping_extra_actions")
+@logger.log_function
 def select_mapping_extra_actions(id):
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         # TODO in progress
@@ -243,3 +267,23 @@ def select_mapping_extra_actions(id):
         rows = cur.fetchall()
         cur.close()
     return list(rows)
+
+# Delete mapping and its associated rules and matrix
+@anvil.server.callable("delete_mapping")
+@logger.log_function
+def delete_mapping(id):
+    try:
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappinggroup WHERE id = '{id}'")
+            conn.commit()
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete mapping group fail with rowcount <= 0.")
+            return cur.rowcount
+    except (Exception, psycopg2.OperationalError) as err:
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        conn.rollback()
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None

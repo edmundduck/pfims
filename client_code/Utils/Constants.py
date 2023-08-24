@@ -23,11 +23,24 @@ class FileUploadLabelExtraAction:
     MAP = 'M'
     CREATE = 'C'
 
+# Search interval modes used in Report search panel and config
+class SearchInterval:
+    INTERVAL_LAST_1_MTH = 'L1M'
+    INTERVAL_LAST_3_MTH = 'L3M'
+    INTERVAL_LAST_6_MTH = 'L6M'
+    INTERVAL_LAST_1_YR = 'L1Y'
+    INTERVAL_YEAR_TO_DATE = 'YTD'
+    INTERVAL_SELF_DEFINED = 'SDR'
+
 # PnL reports drill mode
 class PNLDrillMode:
     DAY = 'd'
     MONTH = 'm'
     YEAR = 'y'
+
+# Logging levels used in setting
+class LoggingLevel:
+    dropdown = [('TRACE', 5), ('DEBUG', 10), ('INFO', 20), ('WARNING', 30), ('ERROR', 40), ('CRITICAL', 50)]
 
 class Icons:
     BULLETPOINT = 'fa:info'

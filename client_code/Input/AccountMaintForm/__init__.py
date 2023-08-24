@@ -8,7 +8,9 @@ from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 class AccountMaintForm(AccountMaintFormTemplate):
     def __init__(self, **properties):
@@ -50,6 +52,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
         self.dropdown_status.selected_value = True
 
+    @logger.log_function
     def button_accounts_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_name = self.text_acct_name.text
@@ -63,17 +66,18 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
         if acct_id is None or acct_id <= 0:
             msg = f"ERROR: Fail to create account {acct_name} ({acct_id})."
-            error.log(msg)
+            logger.error(msg)
         else:
             """ Reflect the change in accounts dropdown """
             cache.accounts_reset()
             self.dropdown_acct_list.items = cache.accounts_dropdown()
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             msg = f"Account {acct_name} ({acct_id}) has been created successfully."
-            info.log(msg)
+            logger.info(msg)
         Notification(msg).show()
         return
 
+    @logger.log_function
     def button_accounts_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_name = self.text_acct_name.text
@@ -89,17 +93,18 @@ class AccountMaintForm(AccountMaintFormTemplate):
 
         if result is None or result <= 0:
             msg = f"ERROR: Fail to update account {acct_name} ({acct_id})."
-            error.log(msg)
+            logger.error(msg)
         else:
             """ Reflect the change in accounts dropdown """
             cache.accounts_reset()
             self.dropdown_acct_list.items = cache.accounts_dropdown()
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             msg = f"Account {acct_name} ({acct_id}) has been updated successfully."
-            info.log(msg)
+            logger.info(msg)
         Notification(msg).show()
         return
 
+    @logger.log_function
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         acct_id, acct_name = self.dropdown_acct_list.selected_value if self.dropdown_acct_list.selected_value is not None else [None, None]
@@ -115,10 +120,10 @@ class AccountMaintForm(AccountMaintFormTemplate):
                 """ Reflect the change in account dropdown """
                 self.clear()
                 msg = f"Account {acct_name} ({acct_id}) has been deleted."
-                info.log(msg)
+                logger.info(msg)
             else:
                 msg = f"ERROR: Fail to delete account {acct_name} ({acct_id})."
-                error.log(msg)
+                logger.error(msg)
             Notification(msg).show()
 
     def clear(self, **event_args):

@@ -7,7 +7,9 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Caching as cache
-from ...Utils.Logging import dump, debug, info, warning, error, critical
+from ...Utils.Logger import ClientLogger
+
+logger = ClientLogger()
 
 class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
     def __init__(self, data, labels, **properties):
@@ -17,11 +19,11 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         # Any code you write here will run when the form opens.
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.tag = {'data': data}
-        dump.log("self.tag=", self.tag)
+        logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
         # Prefill "labels map to" dropdown by finding high proximity choices
         relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.labels_dict())
-        dump.log("relevant_lbls=", relevant_lbls)
+        logger.debug("relevant_lbls=", relevant_lbls)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
         DL = {
@@ -30,11 +32,12 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
             'tgtlbl': relevant_lbls,
             'new': labels
         }
-        dump.log("DL=", DL)
+        logger.trace("DL=", DL)
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
-        dump.log("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
+        logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
+        self.labels_mapping_panel.add_event_handler('x-refresh-label-cache', self.handle_action_count)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -50,6 +53,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         else:
             self.button_next.visible = False
 
+    @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping=self.labels_mapping_panel.items)
@@ -63,3 +67,6 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         else:
             pass
         self.enable_next_button()
+
+    def refresh_label_cache(self, **event_args):
+        cache.labels_reset()

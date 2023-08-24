@@ -6,130 +6,140 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from ..System import SystemModule as sysmod
+from ..SysProcess import SystemModule as sysmod
+from ..SysProcess import LoggingModule
 from fuzzywuzzy import fuzz
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable
 # Generate labels dropdown items
+@anvil.server.callable("generate_labels_dropdown")
+@logger.log_function
 def generate_labels_dropdown():
-    conn = sysmod.psqldb_connect()
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
     # Case 001 - string dict key handling review
     content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
     return content
 
-@anvil.server.callable
 # Generate labels into list
+@anvil.server.callable("generate_labels_list")
+@logger.log_function
 def generate_labels_list():
-    conn = sysmod.psqldb_connect()
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.labels ORDER BY name ASC".format(schema=sysmod.schemafin())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
     return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
 
-@anvil.server.callable
 # Get selected label attributes
+@anvil.server.callable("get_selected_label_attr")
+@logger.log_function
 def get_selected_label_attr(selected_lbl):
+    userid = sysmod.get_current_userid()
     if selected_lbl is None or selected_lbl == '':
         return [None, None, None, True]
     else:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())   
+            sql = f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} AND id=%s"  
             stmt = cur.mogrify(sql, (selected_lbl, ))
             cur.execute(stmt)
             row = cur.fetchone()
             cur.close()
         return [row['id'], row['name'], row['keywords'], row['status']]
 
-@anvil.server.callable
 # Generate labels dropdown items
+@anvil.server.callable("generate_labels_mapping_action_dropdown")
+@logger.log_function
 def generate_labels_mapping_action_dropdown():
-    conn = sysmod.psqldb_connect()
+    conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.label_mapping_action ORDER BY seq ASC".format(schema=sysmod.schemarefd())
-        cur.execute(sql)
+        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.label_mapping_action ORDER BY seq ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
-@anvil.server.callable
 # Create label
+@anvil.server.callable("create_label")
+@logger.log_function
 def create_label(labels):
+    userid = sysmod.get_current_userid()
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(labels) > 0:
-                mogstr = ', '.join(cur.mogrify("(%s, %s, %s)", (label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
-                stmt = "INSERT INTO {schema}.labels (name, keywords, status) VALUES %s RETURNING id".format(schema=sysmod.schemafin())
+                mogstr = ', '.join(cur.mogrify("(%s, %s, %s, %s)", (userid, label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
+                stmt = f"INSERT INTO {sysmod.schemafin()}.labels (userid, name, keywords, status) VALUES %s RETURNING id"
                 cur.execute(stmt % mogstr)
                 conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 return [r['id'] for r in cur.fetchall()]
             else:
                 return []
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + create_label.__name__, err)
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
 # Update label
+@anvil.server.callable("update_label")
+@logger.log_function
 def update_label(id, name, keywords, status):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s".format(schema=sysmod.schemafin())
+            sql = f"UPDATE {sysmod.schemafin()}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s"
             stmt = cur.mogrify(sql, (name, keywords, status, id))
             cur.execute(stmt)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
-            cur.close()
-        return count
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
+            return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + update_label.__name__, err)
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
 # Delete label
+@anvil.server.callable("delete_label")
+@logger.log_function
 def delete_label(id):
     try:
-        conn = sysmod.psqldb_connect()
+        conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.labels WHERE id=%s".format(schema=sysmod.schemafin())
+            sql = f"DELETE FROM {sysmod.schemafin()}.labels WHERE id=%s"
             stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()
-            count = cur.rowcount
-            if count <= 0:
-                    raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
-            cur.close()
-        return count
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
+            return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        sysmod.print_data_debug("OperationalError in " + delete_label.__name__, err)
+        logger.error(f"{__name__}.{type(err).__name__}: {err}")
         conn.rollback()
     finally:
+        if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable
+@anvil.server.callable("predict_relevant_labels")
+@logger.log_function
 def predict_relevant_labels(srclbl, curlbl):
     # Max 100, min 0
     min_proximity = 40
@@ -138,6 +148,7 @@ def predict_relevant_labels(srclbl, curlbl):
         highscore = [0, None]
         for lbl in curlbl:
             similarity = fuzz.ratio(s, curlbl[lbl])
+            logger.debug(f"lbl={lbl}, similarity={similarity}, highscore[0]={highscore[0]}")
             if similarity > highscore[0]:
                 highscore = [similarity, {'id': int(lbl), 'text': curlbl[lbl]}]
         score.append(highscore[1] if highscore[0] > min_proximity else None)
