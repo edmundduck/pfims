@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from ....Utils import Caching as cache
 from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
+from ....Utils.Validation import Validator
 
 logger = ClientLogger()
 
@@ -37,4 +38,13 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
             self.dropdown_col_map_to.visible = False
             self.dropdown_sign.visible = False
 
+    def _validate(self, **event_args):
+        """This method is called when the button is clicked"""
+        v = Validator()
 
+        logger.trace("self.parent.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.parent.valerror_1.text)
+        v.display_when_invalid(self.parent.parent.parent.parent.valerror_title)
+        v.require_selected_dependent_on_checkbox(self.dropdown_col_map_to, self.cb_required, self.parent.parent.parent.parent.valerror_1, False)
+        v.highlight_when_invalid(self.dropdown_col_map_to, const.ColorSchemes.VALID_ERROR, self.dropdown_col_map_to.background)
+
+        return v.is_valid()
