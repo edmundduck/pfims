@@ -322,9 +322,7 @@ def update_pdf_mapping(data, mapping):
         # logger.trace("df=", df)
         # # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
         # # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        print("XXXXX\n", df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).iloc[1,:])
-        # return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
-        return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).iloc[:,1].to_dict(orient='records')
+        return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
     return None
