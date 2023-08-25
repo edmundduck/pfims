@@ -291,6 +291,8 @@ def import_pdf_file(file):
                             grace_search = 3
                         else:
                             logger.debug("XXX=\"", row_to_check)
+                            # DEBUG
+                            crop_table.remove(row)
                             grace_search -= 1
                     else:
                         crop_table.remove(row)
@@ -302,29 +304,24 @@ def import_pdf_file(file):
 @logger.log_function
 def update_pdf_mapping(data, mapping):
     try:
-        print("data=", data)
-        print("mapping=", mapping)
-        # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-        # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
-        # df = pd.DataFrame({k: [dic[k] for dic in data] for k in mapping[0]})
         column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else None for x in mapping]
         df = pd.DataFrame(data=data, columns=column_headers)
         # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')
         print("df=", df.to_string())
-        print("LD=", LD)
-        if df is not None and LD is not None:
-            for col_mapping in LD:
-                if col_mapping is not None:
-                    if col_mapping.get('action')[0] == "S":
-                        df[exptbl.Labels].replace(col_mapping['srccol'], None, inplace=True)                    
-                    elif col_mapping.get('tgtcol') is not None:
-                        # Case 001 - string dict key handling review
-                        id = eval(col_mapping['tgtcol'])['id'] if isinstance(col_mapping.get('tgtcol'), str) else col_mapping['tgtcol']['id']
-                        df[exptbl.Labels].replace(col_mapping['srccol'], id, inplace=True)
-        logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
-        logger.trace("df=", df)
-        # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
-        # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
+        # if df is not None and LD is not None:
+        #     for col_mapping in LD:
+        #         if col_mapping is not None:
+        #             if col_mapping.get('action')[0] == "S":
+        #                 df[exptbl.Labels].replace(col_mapping['srccol'], None, inplace=True)                    
+        #             elif col_mapping.get('tgtcol') is not None:
+        #                 # Case 001 - string dict key handling review
+        #                 id = eval(col_mapping['tgtcol'])['id'] if isinstance(col_mapping.get('tgtcol'), str) else col_mapping['tgtcol']['id']
+        #                 df[exptbl.Labels].replace(col_mapping['srccol'], id, inplace=True)
+        # logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
+        # logger.trace("df=", df)
+        # # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
+        # # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")

@@ -57,7 +57,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
             return
 
         df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items)
-        logger.debug("df=", df)
+        # logger.debug("df=", df)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     # def handle_mapping_count(self, action, prev, **event_args):
