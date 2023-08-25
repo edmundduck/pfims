@@ -13,11 +13,12 @@ import re
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
 from ..SysProcess import LoggingModule
+from ..Utils import Constants as const
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
-col_name = ['trandate', 'account_id', 'amount', 'remarks', 'stmt_dtl', 'labels']
+col_name = const.ExpenseDBTableDefinion.def_list
 regex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
 regex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy
 regex_mdy = '(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(\d{4}|\d{2})'        # mm-dd-yyyy / mmm-dd-yyyy

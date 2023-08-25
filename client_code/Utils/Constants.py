@@ -19,12 +19,13 @@ class ExpenseConfig:
     BUTTON_DRAFT_TEXT = 'SAVE DRAFT'
 
 class ExpenseDBTableDefinion:
-    Amount = 'AM'
-    Date = 'D'
-    Labels = 'L'
-    StmtDtl = 'SD'
-    Remarks = 'R'
-    Account = 'AC'
+    Date = 'trandate'
+    Account = 'account_id'
+    Amount = 'amount'
+    Remarks = 'remarks'
+    StmtDtl = 'stmt_dtl'
+    Labels = 'labels'
+    def_list = [Date, Account, Amount, Remarks, StmtDtl, Labels]
 
 class FileImportType:
     Excel = 'E'
