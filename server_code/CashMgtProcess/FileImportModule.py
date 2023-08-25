@@ -305,12 +305,10 @@ def import_pdf_file(file):
 def update_pdf_mapping(data, mapping):
     try:
         # column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else None for x in mapping]
-        column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else pd.NaN for x in mapping]
+        column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else 'nan' for x in mapping]
         df = pd.DataFrame(data=data, columns=column_headers)
         # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')
-        df = df.iloc[1:2]
-        print("df=", df.to_string())
         # if df is not None and LD is not None:
         #     for col_mapping in LD:
         #         if col_mapping is not None:
@@ -325,8 +323,8 @@ def update_pdf_mapping(data, mapping):
         # # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
         # # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
         # return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
-        df = df.dropna()
-        print("df1=", df)
+        # df = df.dropna()
+        # print("df1=", df)
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
