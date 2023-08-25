@@ -55,10 +55,6 @@ pdf_table_settings = {
     # "intersection_y_tolerance": 3,
 }
 
-# Internal function to convert column in character ID to number for Pandas read_excel
-def convertCharToLoc(char):
-    return ord(char.lower()) - 97 if 'a' <= char.lower() <= 'z' else None
-
 # Internal function to get the list of included column names in mapping matrix
 @logger.log_function
 def divMappingColumnNameLists(matrix):
@@ -85,9 +81,8 @@ def import_file(file, tablist, rules, extra):
 
     new_df = None
     for i in rules:
-        col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
-               convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
-        logger.debug("col=", col)
+        # Convert column in character ID to number for Pandas read_excel
+        col = list(map(lambda x: ord(i[x].lower()) - 97 if 'a' <= i[x].lower() <= 'z' else None , col_name))
         common_col = set(i.values()).intersection(extra_dl.get('col'))
                 
         nonNanList, nanList = divMappingColumnNameLists(i)
@@ -211,7 +206,6 @@ def import_pdf_file(file):
                 # column_headers = ['Date', 'Pmnt', 'Details', 'Money Out (£)', 'Money In (£)', 'Balance (£)']
                 column_headers = result.group(0).split()
                 logger.debug("column_headers=", column_headers)
-                print(f"column_headers={column_headers}")
                 
                 # Word object comparison
                 header_word_dict = {}
