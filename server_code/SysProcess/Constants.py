@@ -17,3 +17,28 @@ import anvil.server
 #   print("Hello, " + name + "!")
 #   return 42
 #
+
+# Config for Setting page
+# Database col definition change may be required should the values are adjusted here
+class SettingConfig:
+    BROKER_ID_PREFIX = 'BR'
+    BROKER_SUFFIX_LEN = 5
+
+# Expense table definition for data transformation required in expense input file import
+class ExpenseDBTableDefinion:
+    Date = 'trandate'
+    Account = 'account_id'
+    Amount = 'amount'
+    Remarks = 'remarks'
+    StmtDtl = 'stmt_dtl'
+    Labels = 'labels'
+    def_list = [Date, Account, Amount, Remarks, StmtDtl, Labels]
+
+# Search interval modes used in Report search panel and config
+class SearchInterval:
+    INTERVAL_LAST_1_MTH = 'L1M'
+    INTERVAL_LAST_3_MTH = 'L3M'
+    INTERVAL_LAST_6_MTH = 'L6M'
+    INTERVAL_LAST_1_YR = 'L1Y'
+    INTERVAL_YEAR_TO_DATE = 'YTD'
+    INTERVAL_SELF_DEFINED = 'SDR'
