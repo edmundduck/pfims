@@ -18,15 +18,16 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 col_name = ['trandate', 'account_id', 'amount', 'remarks', 'stmt_dtl', 'labels']
-redex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
-redex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy
-redex_mdy = '(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(\d{4}|\d{2})'        # mm-dd-yyyy / mmm-dd-yyyy
-type_fmt = {
-    'date': f"({redex_ymd}|{redex_dmy}|{redex_mdy})*",
+regex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
+regex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy
+regex_mdy = '(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(\d{4}|\d{2})'        # mm-dd-yyyy / mmm-dd-yyyy
+datatype_regex = {
+    'date': f"({regex_ymd}|{regex_dmy}|{regex_mdy})*",
     'amount': '(\d+\.(\d{3}|\d{2}))*',
     'whitespace': '\s*',
     'any': '.*'
 }
+# TODO - Not hard code but dynamic recognition
 column_type_mapping = {
     'date': ['Date'],
     'amount': ['Paid out', 'Paid in', 'Money Out', 'Money In', 'Money Out (£)', 'Money In (£)', 'Balance', 'Balance (£)', 'Withdraw', 'Deposit']
@@ -86,6 +87,7 @@ def import_file(file, tablist, rules, extra):
     for i in rules:
         col = [convertCharToLoc(i['trandate']), convertCharToLoc(i['account_id']), convertCharToLoc(i['amount']),\
                convertCharToLoc(i['remarks']), convertCharToLoc(i['stmt_dtl']), convertCharToLoc(i['labels'])]
+        logger.debug("col=", col)
         common_col = set(i.values()).intersection(extra_dl.get('col'))
                 
         nonNanList, nanList = divMappingColumnNameLists(i)
@@ -184,10 +186,10 @@ def get_regex_str(str_list, mandatory_type=None):
         column_type = next((key for key, value in column_type_mapping.items() if i in list(map(lambda x: x.lower().replace(' ', ''), value))), None)
         logger.trace(f"column_type={column_type}")
         if mandatory_type and not isMandatorySet and column_type == mandatory_type:
-            trx_regex = trx_regex + (type_fmt.get(column_type, type_fmt.get('any')))[:-1] + '+' + type_fmt.get('whitespace')
+            trx_regex = trx_regex + (datatype_regex.get(column_type, datatype_regex.get('any')))[:-1] + '+' + datatype_regex.get('whitespace')
             isMandatorySet = True
         else:
-            trx_regex = trx_regex + type_fmt.get(column_type, type_fmt.get('any')) + type_fmt.get('whitespace')
+            trx_regex = trx_regex + datatype_regex.get(column_type, datatype_regex.get('any')) + datatype_regex.get('whitespace')
     logger.debug(f"trx_regex={trx_regex}")
     return trx_regex
 
