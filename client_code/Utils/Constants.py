@@ -18,7 +18,20 @@ class ExpenseConfig:
     BUTTON_SUBMIT_TEXT = 'SUBMIT TAB'
     BUTTON_DRAFT_TEXT = 'SAVE DRAFT'
 
-class FileUploadLabelExtraAction:
+class ExpenseDBTableDefinion:
+    Date = 'trandate'
+    Account = 'account_id'
+    Amount = 'amount'
+    Remarks = 'remarks'
+    StmtDtl = 'stmt_dtl'
+    Labels = 'labels'
+    def_list = [Date, Account, Amount, Remarks, StmtDtl, Labels]
+
+class FileImportType:
+    Excel = 'E'
+    PDF = 'P'
+
+class FileImportLabelExtraAction:
     SKIP = 'S'
     MAP = 'M'
     CREATE = 'C'
@@ -52,6 +65,7 @@ class Icons:
 
 class ColorSchemes:
     VALID_ERROR = 'rgb(245,135,200)'
+    VALID_NORMAL = 'rgb(250,250,250)'
     BUTTON_FG = 'White'
     BUTTON_BG = 'Blue'
     AMT_NEG = 'Red'
