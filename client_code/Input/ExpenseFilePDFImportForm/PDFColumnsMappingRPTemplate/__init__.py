@@ -24,7 +24,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
     def dropdown_col_map_to_change(self, **event_args):
         """This method is called when an item is selected"""
         logger.debug("self.dropdown_col_map_to.selected_value=", self.dropdown_col_map_to.selected_value)
-        if self.dropdown_col_map_to.selected_value is not None and self.dropdown_col_map_to.selected_value[0] == const.ExpenseDBTableDefinion.Amount:
+        if self.dropdown_col_map_to.selected_value is not None and self.dropdown_col_map_to.selected_value[0] == 'AM':
             self.dropdown_sign.visible = True
         else:
             self.dropdown_sign.visible = False

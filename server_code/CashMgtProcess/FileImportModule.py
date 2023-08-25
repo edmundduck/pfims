@@ -12,13 +12,13 @@ import pdfplumber
 import re
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
-from ..SysProcess import Constants as s_const
+from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import LoggingModule
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
-col_name = s_const.ExpenseDBTableDefinion.def_list
+col_name = exptbl.def_list
 regex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
 regex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy
 regex_mdy = '(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(\d{4}|\d{2})'        # mm-dd-yyyy / mmm-dd-yyyy
@@ -104,9 +104,9 @@ def import_file(file, tablist, rules, extra):
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    tmp_df['account_id'] = int(extra_dl.get('etarget')[extra_dl_pointer])
+                    tmp_df[exptbl.Account] = int(extra_dl.get('etarget')[extra_dl_pointer])
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
-                    tmp_df['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df['labels'] in (None, '') else tmp_df['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
+                    tmp_df[exptbl.Labels] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df[exptbl.Labels] in (None, '') else tmp_df[exptbl.Labels] + extra_dl.get('etarget')[extra_dl_pointer]
                 logger.trace("4) Map extra action logic, tmp_df=", tmp_df)
             
             # 5) Concat temp DF to the resultant DF
@@ -115,9 +115,9 @@ def import_file(file, tablist, rules, extra):
 
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
-    lbl_df = new_df.loc[:, ['labels']]
+    lbl_df = new_df.loc[:, [exptbl.Labels]]
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
-    return (new_df.dropna(subset=['amount', 'trandate'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()
+    return (new_df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)).to_dict(orient='records'), lbl_df[exptbl.Labels].dropna().unique()
 
 @anvil.server.callable("update_mapping")
 @logger.log_function
@@ -153,16 +153,16 @@ def update_mapping(data, mapping):
             for lbl_mapping in LD:
                 if lbl_mapping is not None:
                     if lbl_mapping.get('action')[0] == "S":
-                        df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
+                        df[exptbl.Labels].replace(lbl_mapping['srclbl'], None, inplace=True)                    
                     elif lbl_mapping.get('tgtlbl') is not None:
                         # Case 001 - string dict key handling review
                         id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
-                        df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
+                        df[exptbl.Labels].replace(lbl_mapping['srclbl'], id, inplace=True)
         logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
         logger.trace("df=", df)
-        # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
+        # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.sort_values(by='trandate', key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
     return None
@@ -314,16 +314,16 @@ def update_pdf_mapping(data, mapping):
             for col_mapping in LD:
                 if col_mapping is not None:
                     if col_mapping.get('action')[0] == "S":
-                        df['labels'].replace(col_mapping['srccol'], None, inplace=True)                    
+                        df[exptbl.Labels].replace(col_mapping['srccol'], None, inplace=True)                    
                     elif col_mapping.get('tgtcol') is not None:
                         # Case 001 - string dict key handling review
                         id = eval(col_mapping['tgtcol'])['id'] if isinstance(col_mapping.get('tgtcol'), str) else col_mapping['tgtcol']['id']
-                        df['labels'].replace(col_mapping['srccol'], id, inplace=True)
+                        df[exptbl.Labels].replace(col_mapping['srccol'], id, inplace=True)
         logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
         logger.trace("df=", df)
-        # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
+        # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.sort_values(by='trandate', key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
     return None
