@@ -305,7 +305,7 @@ def import_pdf_file(file):
 def update_pdf_mapping(data, mapping):
     try:
         # column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else None for x in mapping]
-        column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else 'NotRequired' for x in mapping]
+        column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else pd.NaN for x in mapping]
         df = pd.DataFrame(data=data, columns=column_headers)
         # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')
