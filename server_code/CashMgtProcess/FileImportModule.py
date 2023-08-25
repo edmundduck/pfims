@@ -306,9 +306,11 @@ def update_pdf_mapping(data, mapping):
         print("mapping=", mapping)
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
-        df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
-        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
-        print("df=", df)
+        # df = pd.DataFrame({k: [dic[k] for dic in data] for k in mapping[0]})
+        column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else None for x in mapping]
+        df = pd.DataFrame(data=data, columns=column_headers)
+        # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        print("df=", df.to_string())
         print("LD=", LD)
         if df is not None and LD is not None:
             for col_mapping in LD:

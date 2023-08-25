@@ -19,7 +19,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.dropdown_col_map_to.items = [exptbl.def_list[x], cache.expense_tbl_def_dropdown()[x][1] for x in range(len(cache.expense_tbl_def_dropdown()))]
+        self.dropdown_col_map_to.items = cache.expense_tbl_def_dropdown()
         self.dropdown_sign.visible = False
 
     def dropdown_col_map_to_change(self, **event_args):
