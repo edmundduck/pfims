@@ -309,6 +309,9 @@ def update_pdf_mapping(data, mapping):
         df = pd.DataFrame(data=data, columns=column_headers)
         # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')
+        print("df*=", df)
+        df = df.iloc[23:24]
+        print("df=", df)
         # if df is not None and LD is not None:
         #     for col_mapping in LD:
         #         if col_mapping is not None:
