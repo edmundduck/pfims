@@ -37,7 +37,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
-        self.labels_mapping_panel.add_event_handler('x-refresh-label-cache', self.handle_action_count)
+        self.labels_mapping_panel.add_event_handler('x-refresh-label-cache', self.refresh_label_cache)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
