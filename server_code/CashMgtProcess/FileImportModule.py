@@ -305,6 +305,8 @@ def import_pdf_file(file):
 @logger.log_function
 def update_pdf_mapping(data, mapping):
     try:
+        print("data=", data)
+        print("mapping=", mapping)
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
