@@ -1,4 +1,4 @@
-from ._anvil_designer import ExpenseFileUploadFormP2Template
+from ._anvil_designer import ExpenseFileExcelImportFormTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -11,7 +11,7 @@ from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
-class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
+class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     def __init__(self, data, labels, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
@@ -37,7 +37,7 @@ class ExpenseFileUploadFormP2(ExpenseFileUploadFormP2Template):
         logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
-        self.labels_mapping_panel.add_event_handler('x-refresh-label-cache', self.handle_action_count)
+        self.labels_mapping_panel.add_event_handler('x-refresh-label-cache', self.refresh_label_cache)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""

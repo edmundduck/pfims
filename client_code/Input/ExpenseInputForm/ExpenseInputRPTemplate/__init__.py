@@ -115,9 +115,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
         v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
-        v.highlight_when_invalid(self.row_date, const.ColorSchemes.VALID_ERROR, self.row_date.background)
-        v.highlight_when_invalid(self.row_acct, const.ColorSchemes.VALID_ERROR, self.row_acct.background)
-        v.highlight_when_invalid(self.row_amt, const.ColorSchemes.VALID_ERROR, self.row_amt.background)
+        v.highlight_when_invalid(self.row_date, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.row_acct, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.row_amt, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
 
         return v.is_valid()
 
