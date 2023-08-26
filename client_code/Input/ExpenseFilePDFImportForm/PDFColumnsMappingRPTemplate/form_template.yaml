@@ -52,6 +52,8 @@ components:
     include_placeholder: false
   name: dropdown_sign
   layout_properties: {column: WIDMCS}
+  data_bindings:
+  - {property: selected_value, code: 'self.item[''sign'']', writeback: true}
 - type: Label
   properties: {}
   name: src_column

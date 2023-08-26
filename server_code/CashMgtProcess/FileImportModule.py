@@ -56,14 +56,6 @@ pdf_table_settings = {
     # "intersection_y_tolerance": 3,
 }
 
-# Internal function to get the list of included column names in mapping matrix
-@logger.log_function
-def divMappingColumnNameLists(matrix):
-    nanList, nonNanList = [], []
-    for c in col_name: nanList.append(c) if matrix[c] in (None, '') else nonNanList.append(c)
-    logger.trace(f"nonNanList={nonNanList}, nanList={nanList}")
-    return nonNanList, nanList
-
 @anvil.server.callable
 def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
@@ -86,7 +78,7 @@ def import_file(file, tablist, rules, extra):
         col = list(map(lambda x: ord(i[x].lower()) - 97 if 'a' <= i[x].lower() <= 'z' else None , col_name))
         common_col = set(i.values()).intersection(extra_dl.get('col'))
                 
-        nonNanList, nanList = divMappingColumnNameLists(i)
+        nonNanList, nanList = ([c for c in col_name if i[c] not in (None, '')], [c for c in col_name if i[c] in (None, '')])
         for t in tablist:
             # iloc left one is row, right one is column
             # 1) Filter required columns
@@ -304,15 +296,42 @@ def import_pdf_file(file):
 @logger.log_function
 def update_pdf_mapping(data, mapping):
     try:
-        # column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else None for x in mapping]
-        column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else '' for x in mapping]
-        nonNanList, nanList = divMappingColumnNameLists(column_headers)
-        print("nonNanList=", nonNanList)
+        column_headers, nanList = [], []
+        col_num = 0
+        df = pd.DataFrame(data=data)
+        for x in mapping:
+            if x.get('tgtcol') is not None:
+                column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
+            else:
+                nanList.append(col_num)
+            col_num += 1
+
+        # 1) Drop unwanted columns
         print("nanList=", nanList)
-        df = pd.DataFrame(data=data, columns=column_headers)
+        df = df.drop(nanList, axis='columns')
+        print("df1=", df.to_string())
+
+        # 2) Rename columns
+        print("column_headers=", column_headers)
+        df = df.rename(dict([(df.columns[x], column_headers[x]) for x in range(len(column_headers))]), axis='columns')
+        print("df2=", df.to_string())
+        # column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else '' for x in mapping]
+        # nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
         # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+
+        # ** Apply minus to amount first **
+        # ** Combine the duplicated columns **
+
+        # 3) Add 'not in rule' fields to the end
+        # nanList is repurposed here
+        nanList = [c for c in col_name if c not in column_headers]
+        print("nanList=", nanList)
+        df.loc[:, nanList] = None
+        print("df3=", df.to_string())
+
+        # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')
-        print("df*=", df.to_string())
+        print("df4=", df.to_string())
         # df = df.iloc[23:24]
         # print("df=", df.to_string())
         # if df is not None and LD is not None:
