@@ -309,9 +309,9 @@ def update_pdf_mapping(data, mapping):
         df = pd.DataFrame(data=data, columns=column_headers)
         # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')
-        print("df*=", df)
-        df = df.iloc[23:24]
-        print("df=", df)
+        print("df*=", df.to_string())
+        # df = df.iloc[23:24]
+        # print("df=", df.to_string())
         # if df is not None and LD is not None:
         #     for col_mapping in LD:
         #         if col_mapping is not None:
@@ -326,8 +326,8 @@ def update_pdf_mapping(data, mapping):
         # # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
         # # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
         # return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
-        # df = df.dropna()
-        # print("df1=", df)
+        df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
+        print("df1=", df.to_string())
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
