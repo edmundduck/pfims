@@ -300,6 +300,8 @@ def update_pdf_mapping(data, mapping):
         col_num = 0
         df = pd.DataFrame(data=data)
         for x in mapping:
+            if x.get('sign') is not None:
+                df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce'))
             if x.get('tgtcol') is not None:
                 column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
             else:

@@ -39,7 +39,7 @@ components:
     border: ''
     enabled: true
     foreground: ''
-    items: [Inflow (+), Outflow (-)]
+    items: ['']
     visible: false
     font_size: 12
     font: ''
