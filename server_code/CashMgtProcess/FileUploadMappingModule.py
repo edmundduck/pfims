@@ -72,10 +72,11 @@ def generate_upload_action_dropdown():
     return content
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
+# Arguments as follow,
+# matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
+# col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
 @logger.log_function
 def generate_mapping_matrix(matrix, col_def):
-    print("matrix=", matrix)
-    print("col_def=", col_def)
     logger.debug("matrix=", matrix)
     logger.debug("col_def=", col_def)
     if len(col_def) < 1:
