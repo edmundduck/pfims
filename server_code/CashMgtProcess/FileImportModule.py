@@ -14,6 +14,7 @@ from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
 from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import LoggingModule
+from . import FileUploadMappingModule as fummod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -299,24 +300,33 @@ def update_pdf_mapping(data, mapping):
         column_headers, nanList = [], []
         col_num = 0
         df = pd.DataFrame(data=data)
+        matrix = {}
         for x in mapping:
+            print("x=", x)
             if x.get('sign') is not None:
                 df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce'))
             if x.get('tgtcol') is not None:
                 column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
+                if matrix.get(exptbl.defmap.get(x.get('tgtcol')[0]), None) is None:
+                    matrix[exptbl.defmap.get(x.get('tgtcol')[0])] = [col_num]
+                    print("??/", matrix)
+                else:
+                    matrix[exptbl.defmap.get(x.get('tgtcol')[0])].append(col_num)
             else:
                 nanList.append(col_num)
             col_num += 1
-
+        print("matrix=", matrix)
+        
         # 1) Drop unwanted columns
         print("nanList=", nanList)
         df = df.drop(nanList, axis='columns')
         print("df1=", df.to_string())
 
         # 2) Rename columns
-        print("column_headers=", column_headers)
-        df = df.rename(dict([(df.columns[x], column_headers[x]) for x in range(len(column_headers))]), axis='columns')
-        print("df2=", df.to_string())
+        # print("column_headers=", column_headers)
+        # df = df.rename(dict([(df.columns[x], column_headers[x]) for x in range(len(column_headers))]), axis='columns')
+        # print("df2=", df.to_string())
+
         # column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else '' for x in mapping]
         # nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
         # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
@@ -327,7 +337,11 @@ def update_pdf_mapping(data, mapping):
         # 3) Add 'not in rule' fields to the end
         # nanList is repurposed here
         nanList = [c for c in col_name if c not in column_headers]
-        print("nanList=", nanList)
+        for c in nanList: matrix[c] = []
+        print("@@@=", fummod.generate_mapping_matrix(matrix, col_name))
+        
+        
+        # TODO handle after column consolidation
         df.loc[:, nanList] = None
         print("df3=", df.to_string())
 
