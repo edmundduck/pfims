@@ -333,7 +333,7 @@ def update_pdf_mapping(data, mapping):
         df = new_df
 
         # 4) Format date and other columns data accordingly
-        df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')
+        df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
         print("df4=", df.to_string())
         # df = df.iloc[23:24]
         # print("df=", df.to_string())
