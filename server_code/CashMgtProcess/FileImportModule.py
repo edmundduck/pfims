@@ -297,53 +297,40 @@ def import_pdf_file(file):
 @logger.log_function
 def update_pdf_mapping(data, mapping):
     try:
-        column_headers, nanList = [], []
+        column_headers, unwantedList = [], []
         col_num = 0
         df = pd.DataFrame(data=data)
         matrix = {}
         for x in mapping:
-            print("x=", x)
+            # Amount sign handling
             if x.get('sign') is not None:
                 df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce'))
             if x.get('tgtcol') is not None:
                 column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
                 if matrix.get(exptbl.defmap.get(x.get('tgtcol')[0]), None) is None:
                     matrix[exptbl.defmap.get(x.get('tgtcol')[0])] = [col_num]
-                    print("??/", matrix)
                 else:
                     matrix[exptbl.defmap.get(x.get('tgtcol')[0])].append(col_num)
             else:
-                nanList.append(col_num)
+                unwantedList.append(col_num)
             col_num += 1
-        print("matrix=", matrix)
-        
-        # 1) Drop unwanted columns
-        print("nanList=", nanList)
-        df = df.drop(nanList, axis='columns')
-        print("df1=", df.to_string())
 
-        # 2) Rename columns
-        # print("column_headers=", column_headers)
-        # df = df.rename(dict([(df.columns[x], column_headers[x]) for x in range(len(column_headers))]), axis='columns')
-        # print("df2=", df.to_string())
+        print(f"matrix={matrix}, column_headers={column_headers}")
+        nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
+        # Generate mapping matrix which has unique columns each
+        # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
+        mapping_matrix = fummod.generate_mapping_matrix(matrix, nonNanList.copy())
 
-        # column_headers = [exptbl.defmap.get(x.get('tgtcol')[0]) if x.get('tgtcol') is not None else '' for x in mapping]
-        # nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
-        # LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
-
-        # ** Apply minus to amount first **
-        # ** Combine the duplicated columns **
-
-        # 3) Add 'not in rule' fields to the end
-        # nanList is repurposed here
-        nanList = [c for c in col_name if c not in column_headers]
-        for c in nanList: matrix[c] = []
-        print("@@@=", fummod.generate_mapping_matrix(matrix, col_name))
-        
-        
-        # TODO handle after column consolidation
-        df.loc[:, nanList] = None
-        print("df3=", df.to_string())
+        new_df = None
+        for m in mapping_matrix:
+            # 1) Filter required columns per mapping matrix
+            tmp_df = df.iloc[:, m]
+            # 2) Rename columns
+            tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
+            # 3) Add 'not in rule' fields to the end
+            tmp_df.loc[:, nanList] = None
+            new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
+        df = new_df
 
         # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce')

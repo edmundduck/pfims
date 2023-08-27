@@ -85,7 +85,7 @@ def generate_mapping_matrix(matrix, col_def):
     r = generate_mapping_matrix(matrix, col_def)
     result = None
     for ri in r:
-        if len(col_val) > 0:
+        if col_val is not None and len(col_val) > 0:
             for i in col_val:
                 # Duplicate result according to filter param size
                 y = ri.copy()
