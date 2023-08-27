@@ -301,10 +301,15 @@ def update_pdf_mapping(data, mapping):
         col_num = 0
         df = pd.DataFrame(data=data)
         matrix = {}
+        print("mapping=", mapping)
         for x in mapping:
             # Amount sign handling
-            if x.get('sign') is not None:
-                df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num], errors='coerce')
+            if x.get('sign') is not None and x.get('sign') == '-':
+                print("x1=", x)
+                df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce')) 
+            elif x.get('sign') is not None and x.get('sign') == '+':
+                print("x2=", x)
+                df[col_num] = pd.to_numeric(df[col_num], errors='coerce')
             if x.get('tgtcol') is not None:
                 column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
                 if matrix.get(exptbl.defmap.get(x.get('tgtcol')[0]), None) is None:
