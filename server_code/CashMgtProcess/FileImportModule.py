@@ -325,6 +325,7 @@ def update_pdf_mapping(data, mapping):
         for m in mapping_matrix:
             # 1) Filter required columns per mapping matrix
             tmp_df = df.iloc[:, m]
+            print(f"tmp_df={tmp_df.to_string()}")
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
             # 3) Add 'not in rule' fields to the end
