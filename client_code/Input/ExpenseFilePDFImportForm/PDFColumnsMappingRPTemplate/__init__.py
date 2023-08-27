@@ -20,7 +20,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
 
         # Any code you write here will run before the form opens.
         self.dropdown_col_map_to.items = cache.expense_tbl_def_dropdown()
-        self.dropdown_sign.items = (('+ Inflow', None), ('- Outflow', '-'))
+        self.dropdown_sign.items = (('+ Inflow', '+'), ('- Outflow', '-'))
         self.dropdown_sign.visible = False
 
     def dropdown_col_map_to_change(self, **event_args):
