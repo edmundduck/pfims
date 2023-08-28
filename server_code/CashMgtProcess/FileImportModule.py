@@ -307,11 +307,16 @@ def update_pdf_mapping(data, mapping, account, labels):
             if x.get('sign') is not None:
                 df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num], errors='coerce')
             if x.get('tgtcol') is not None:
-                column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
-                if matrix.get(exptbl.defmap.get(x.get('tgtcol')[0]), None) is None:
-                    matrix[exptbl.defmap.get(x.get('tgtcol')[0])] = [col_num]
+                # column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
+                # if matrix.get(exptbl.defmap.get(x.get('tgtcol')[0]), None) is None:
+                #     matrix[exptbl.defmap.get(x.get('tgtcol')[0])] = [col_num]
+                # else:
+                #     matrix[exptbl.defmap.get(x.get('tgtcol')[0])].append(col_num)
+                column_headers.append(x.get('tgtcol')[0])
+                if matrix.get(x.get('tgtcol')[0], None) is None:
+                    matrix[x.get('tgtcol')[0]] = [col_num]
                 else:
-                    matrix[exptbl.defmap.get(x.get('tgtcol')[0])].append(col_num)
+                    matrix[x.get('tgtcol')[0]].append(col_num)
             else:
                 unwantedList.append(col_num)
             col_num += 1

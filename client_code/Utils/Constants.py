@@ -15,12 +15,18 @@ class ExpenseConfig:
 # TODO - This has to be in sync with server one, and to be removed once a consolidated solution is found
 # Expense table definition for data transformation required in expense input file import
 class ExpenseDBTableDefinion:
-    Date = 'trandate'
-    Account = 'account_id'
-    Amount = 'amount'
-    Remarks = 'remarks'
-    StmtDtl = 'stmt_dtl'
-    Labels = 'labels'
+    # Date = 'trandate'
+    # Account = 'account_id'
+    # Amount = 'amount'
+    # Remarks = 'remarks'
+    # StmtDtl = 'stmt_dtl'
+    # Labels = 'labels'
+    Date = 'DTE'
+    Account = 'ACC'
+    Amount = 'AMT'
+    Remarks = 'RMK'
+    StmtDtl = 'STD'
+    Labels = 'LBL'
     def_list = [Date, Account, Amount, Remarks, StmtDtl, Labels]    
 
 class FileImportType:

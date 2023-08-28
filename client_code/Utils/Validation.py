@@ -37,7 +37,7 @@ to check the status of the form.
         
     def require(self, component, event_list, predicate, error_lbl=None, show_errors_immediately=False, dependent=None):
         def check_this_component(**e):
-            result = predicate(component, dependent)
+            result = predicate(component, dependent) if dependent else predicate(component)
             # logger.trace(f"component.text=", component.text)
             # logger.trace(f"predicate(component)=", predicate(component))
             self._validity[component] = result
@@ -57,7 +57,7 @@ to check the status of the form.
             # but we will (eg) disable buttons
             if error_lbl is not None:
                 error_lbl.visible = False
-            self._validity[component] = predicate(component, dependent)
+            self._validity[component] = predicate(component, dependent) if dependent else predicate(component)
             self._check()
     
     def require_text_field(self, text_box, error_lbl=None, show_errors_immediately=False):
