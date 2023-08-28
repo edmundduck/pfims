@@ -159,6 +159,50 @@ components:
       name: cols_mapping_panel
       layout_properties: {}
 - type: FlowPanel
+  properties: {}
+  name: flow_panel_step7
+  layout_properties:
+    col_widths: {}
+    grid_position: YQJCPF,THMILU
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Step 5, font_size: 16, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+      underline: false, icon: 'fa:long-arrow-right'}
+    name: label_step7
+    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Choose existing tab or create new             ', font_size: 16,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: true, underline: false, icon: ''}
+    name: label_step7a
+    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: Create new tab
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: true
+    name: dropdown_tabs_copy
+    layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
+    event_bindings: {}
+- type: FlowPanel
   properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
   name: flow_panel_last
