@@ -336,6 +336,8 @@ def update_pdf_mapping(data, mapping, account, labels):
 
         # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
+        if account is not None: df[exptbl.Account] = account
+        if labels is not None: df[exptbl.Labels] = labels
         print("df=", df.to_string())
         df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
         print("df1=", df.to_string())
