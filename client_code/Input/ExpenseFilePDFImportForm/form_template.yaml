@@ -191,12 +191,13 @@ components:
         background: '', bold: false, checked: false, underline: false}
       name: cb_account
       layout_properties: {grid_position: 'LAELGF,DHTDJG'}
+      event_bindings: {change: cb_account_change}
     - type: DropDown
       properties:
         role: null
         align: full
         tooltip: ''
-        placeholder: Choose a column type
+        placeholder: Choose an account
         border: ''
         enabled: true
         foreground: ''
@@ -223,12 +224,13 @@ components:
       layout_properties:
         col_widths: {}
         grid_position: QPNYXH,XZEBNT
+      event_bindings: {change: cb_labels_change}
     - type: DropDown
       properties:
         role: null
         align: full
         tooltip: ''
-        placeholder: Choose a column type
+        placeholder: Choose label(s)
         border: ''
         enabled: true
         foreground: ''

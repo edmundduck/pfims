@@ -31,8 +31,10 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         logger.trace("DL=", DL)
         self.cols_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         logger.trace("self.cols_mapping_panel.items=", self.cols_mapping_panel.items)
-        # self.hidden_action_count.text = len(labels)
-        # self.cols_mapping_panel.add_event_handler('x-handle-mapping-count', self.handle_mapping_count)
+        self.dropdown_account.items = cache.accounts_dropdown()
+        self.dropdown_account.visible = False
+        self.dropdown_labels.items = cache.labels_dropdown()
+        self.dropdown_labels.visible = False
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -42,12 +44,6 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
 
-    # def enable_next_button(self, **event_args):
-    #     if self.hidden_action_count.text == 0:
-    #         self.button_next.visible = True
-    #     else:
-    #         self.button_next.visible = False
-
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -56,15 +52,23 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         if result is not True:
             return
 
-        df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items)
+        df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items, \
+                              account=self.dropdown_account.selected_value, labels=self.dropdown_labels.selected_value)
         # logger.debug("df=", df)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
-    # def handle_mapping_count(self, action, prev, **event_args):
-    #     if action is None:
-    #         self.hidden_mapping_count.text = int(self.hidden_mapping_count.text) + 1
-    #     elif prev is None:
-    #         self.hidden_mapping_count.text = int(self.hidden_mapping_count.text) - 1
-    #     else:
-    #         pass
-    #     self.enable_next_button()
+    def cb_account_change(self, **event_args):
+        """This method is called when this checkbox is checked or unchecked"""
+        if self.cb_account.checked:
+            self.dropdown_account.visible = True
+        else:
+            self.dropdown_account.visible = False
+            self.dropdown_account.selected_value = None
+
+    def cb_labels_change(self, **event_args):
+        """This method is called when this checkbox is checked or unchecked"""
+        if self.cb_labels.checked:
+            self.dropdown_labels.visible = True
+        else:
+            self.dropdown_labels.visible = False
+            self.dropdown_labels.selected_value = None

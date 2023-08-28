@@ -295,21 +295,17 @@ def import_pdf_file(file):
 
 @anvil.server.callable("update_pdf_mapping")
 @logger.log_function
-def update_pdf_mapping(data, mapping):
+def update_pdf_mapping(data, mapping, account, labels):
     try:
         column_headers, unwantedList = [], []
         col_num = 0
         df = pd.DataFrame(data=data)
         matrix = {}
-        print("mapping=", mapping)
+        logger.debug("mapping=", mapping)
         for x in mapping:
             # Amount sign handling
-            if x.get('sign') is not None and x.get('sign') == '-':
-                print("x1=", x)
-                df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce')) 
-            elif x.get('sign') is not None and x.get('sign') == '+':
-                print("x2=", x)
-                df[col_num] = pd.to_numeric(df[col_num], errors='coerce')
+            if x.get('sign') is not None:
+                df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num], errors='coerce')
             if x.get('tgtcol') is not None:
                 column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
                 if matrix.get(exptbl.defmap.get(x.get('tgtcol')[0]), None) is None:
@@ -320,7 +316,7 @@ def update_pdf_mapping(data, mapping):
                 unwantedList.append(col_num)
             col_num += 1
 
-        print(f"matrix={matrix}, column_headers={column_headers}")
+        logger.debug(f"matrix={matrix}, column_headers={column_headers}")
         nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
         # Generate mapping matrix which has unique columns each
         # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
@@ -330,7 +326,7 @@ def update_pdf_mapping(data, mapping):
         for m in mapping_matrix:
             # 1) Filter required columns per mapping matrix
             tmp_df = df.iloc[:, m]
-            print(f"tmp_df={tmp_df.to_string()}")
+            logger.trace(f"tmp_df={tmp_df.to_string()}")
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
             # 3) Add 'not in rule' fields to the end
@@ -340,23 +336,7 @@ def update_pdf_mapping(data, mapping):
 
         # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
-        print("df4=", df.to_string())
-        # df = df.iloc[23:24]
-        # print("df=", df.to_string())
-        # if df is not None and LD is not None:
-        #     for col_mapping in LD:
-        #         if col_mapping is not None:
-        #             if col_mapping.get('action')[0] == "S":
-        #                 df[exptbl.Labels].replace(col_mapping['srccol'], None, inplace=True)                    
-        #             elif col_mapping.get('tgtcol') is not None:
-        #                 # Case 001 - string dict key handling review
-        #                 id = eval(col_mapping['tgtcol'])['id'] if isinstance(col_mapping.get('tgtcol'), str) else col_mapping['tgtcol']['id']
-        #                 df[exptbl.Labels].replace(col_mapping['srccol'], id, inplace=True)
-        # logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
-        # logger.trace("df=", df)
-        # # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
-        # # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        # return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        print("df=", df.to_string())
         df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
         print("df1=", df.to_string())
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
