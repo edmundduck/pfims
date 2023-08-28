@@ -56,6 +56,16 @@ components:
     col_widths: {}
     grid_position: ENONMA,FNDZWD
   name: valerror_1
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+    visible: false, text: '- Dropdown "Sign" must be chosen when column mapping is
+      "Amount"', font_size: 12, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
+  layout_properties:
+    col_widths: {}
+    grid_position: AMNQWC,BECJUY
+  name: valerror_2
 - type: FlowPanel
   properties: {}
   name: flow_panel_step5

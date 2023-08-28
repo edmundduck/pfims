@@ -84,6 +84,11 @@ to check the status of the form.
                     lambda dd, cb: (cb.checked and dd.selected_value not in ('', None)) or not cb.checked,
                     error_lbl, show_errors_immediately, check_box)
     
+    def require_selected_dependent_on_dropdown(self, dropdown_box, dropdown_box_dep, dep_key, error_lbl=None, show_errors_immediately=False):
+        self.require(dropdown_box, ['change'],
+                    lambda dd, dd_dep: (dd_dep.selected_value == dep_key and dd.selected_value not in ('', None)) or dd_dep.selected_value != dep_key,
+                    error_lbl, show_errors_immediately, dropdown_box_dep)
+    
     def enable_when_valid(self, component):
         def on_change(is_valid):
             component.enabled = is_valid

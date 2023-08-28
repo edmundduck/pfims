@@ -35,7 +35,7 @@ components:
     role: null
     align: full
     tooltip: ''
-    placeholder: ''
+    placeholder: Choose inflow or outflow
     border: ''
     enabled: true
     foreground: ''
@@ -49,7 +49,7 @@ components:
     background: ''
     bold: false
     underline: false
-    include_placeholder: false
+    include_placeholder: true
   name: dropdown_sign
   layout_properties: {column: WIDMCS}
   data_bindings:

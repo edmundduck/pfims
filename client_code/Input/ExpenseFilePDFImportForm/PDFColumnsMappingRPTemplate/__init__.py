@@ -46,6 +46,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
         logger.trace("self.parent.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.parent.valerror_title)
         v.require_selected_dependent_on_checkbox(self.dropdown_col_map_to, self.cb_required, self.parent.parent.parent.parent.valerror_1, False)
+        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, 'AM', self.parent.parent.parent.parent.valerror_2, False)
         v.highlight_when_invalid(self.dropdown_col_map_to, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
 
         return v.is_valid()
