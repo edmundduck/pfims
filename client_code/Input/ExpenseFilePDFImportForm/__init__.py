@@ -52,7 +52,6 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         if result is not True:
             return
 
-        print(f"{self.dropdown_account.selected_value}, {self.dropdown_labels.selected_value}")
         df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items, \
                               account=self.dropdown_account.selected_value[0], labels=eval(self.dropdown_labels.selected_value).get('id'))
         # logger.debug("df=", df)

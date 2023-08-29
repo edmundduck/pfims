@@ -46,8 +46,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
         logger.trace("self.parent.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.parent.valerror_title)
         v.require_selected_dependent_on_checkbox(self.dropdown_col_map_to, self.cb_required, self.parent.parent.parent.parent.valerror_1, True)
-        # TODO replace hardcoded value by constants
-        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, [exptbl.Amount, 'Amount'], self.parent.parent.parent.parent.valerror_2, True)
+        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, cache.expense_tbl_def_getkey(exptbl.Amount), self.parent.parent.parent.parent.valerror_2, True)
         v.highlight_when_invalid(self.dropdown_col_map_to, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
         v.highlight_when_invalid(self.dropdown_sign, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
 
