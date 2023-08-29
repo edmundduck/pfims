@@ -255,6 +255,7 @@ def import_pdf_file(file):
                             partial_word_list = []
     
                 logger.debug("header_word_dict=", header_word_dict)
+                print("header_word_dict=", header_word_dict)
                 explicit_lines = []
                 for ch in column_headers:
                     explicit_lines.append(header_word_dict.get(format_comparable_word(ch)).get('x0')-5)
@@ -281,12 +282,9 @@ def import_pdf_file(file):
                             crop_table.remove(row)
                         elif re.search(compiled_date, row_to_check) or re.search(compiled_amt, row_to_check) :
                             logger.debug("OOO=\"", row_to_check)
-                            print("OOO=\"", row_to_check)
                             grace_search = 3
                         else:
                             logger.debug("XXX=\"", row_to_check)
-                            print("XXX=\"", row_to_check)
-                            # DEBUG
                             crop_table.remove(row)
                             grace_search -= 1
                     else:
@@ -307,13 +305,8 @@ def update_pdf_mapping(data, mapping, account, labels):
         for x in mapping:
             # Amount sign handling
             if x.get('sign') is not None:
-                df[col_num] = -(pd.to_numeric(df[col_num], errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num], errors='coerce')
+                df[col_num] = -(pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')
             if x.get('tgtcol') is not None:
-                # column_headers.append(exptbl.defmap.get(x.get('tgtcol')[0]))
-                # if matrix.get(exptbl.defmap.get(x.get('tgtcol')[0]), None) is None:
-                #     matrix[exptbl.defmap.get(x.get('tgtcol')[0])] = [col_num]
-                # else:
-                #     matrix[exptbl.defmap.get(x.get('tgtcol')[0])].append(col_num)
                 column_headers.append(x.get('tgtcol')[0])
                 if matrix.get(x.get('tgtcol')[0], None) is None:
                     matrix[x.get('tgtcol')[0]] = [col_num]
@@ -347,7 +340,6 @@ def update_pdf_mapping(data, mapping, account, labels):
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
         df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
-        print("df1=", df.to_string())
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
