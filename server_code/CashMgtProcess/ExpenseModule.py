@@ -57,6 +57,15 @@ def select_transactions(tid):
             FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
             logger.trace("rows=", rows)
+            # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
+            # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
+            DL = {}
+            for k in rows[0].keys():
+                if k.upper() in exptbl.def_namelist:
+                    DL[k.upper()] = [row[k] for row in rows]
+                else:
+                    DL[k] = [row[k] for row in rows]
+            rows = [dict(zip(DL, col)) for col in zip(*DL.values())]
             cur.close()
         return list(rows)
     return []

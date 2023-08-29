@@ -9,6 +9,7 @@ from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Routing
 from ...Utils import Caching as cache
+from ...Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ...Utils.Validation import Validator
 from ...Utils.Logger import ClientLogger
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
@@ -108,40 +109,41 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
         if self.cb_hide_remarks.checked:
-            column = [c for c in self.data_grid_1.columns if c['data_key'] == 'remarks'][0]
+            column = [c for c in self.data_grid_1.columns if c['data_key'] == exptbl.Remarks][0]
             self.hidden_data_grid.columns.append(column)
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
             pos = 0
             for c in self.data_grid_1.columns:
-                if c['data_key'] is not 'amount':
+                if c['data_key'] is not exptbl.Amount:
                     pos = pos + 1
                 else:
                     break
             first_half_col = self.data_grid_1.columns[:pos+1]
             second_half_col = self.data_grid_1.columns[pos+1:]
-            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'remarks'][0]
+            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == exptbl.Remarks][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-remarks-visible', vis=not self.cb_hide_remarks.checked)
 
     def cb_hide_stmtdtl_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
         if self.cb_hide_stmtdtl.checked:
-            column = [c for c in self.data_grid_1.columns if c['data_key'] == 'stmt_dtl'][0]
+            logger.debug("self.data_grid_1.columns=", self.data_grid_1.columns)
+            column = [c for c in self.data_grid_1.columns if c['data_key'] == exptbl.StmtDtl][0]
             self.hidden_data_grid.columns.append(column)
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
             pos = 0
             for c in self.data_grid_1.columns:
-                if c['data_key'] is not 'amount':
+                if c['data_key'] is not exptbl.Amount:
                     pos = pos + 1
                 else:
                     break
-            first_half_col = self.data_grid_1.columns[:pos+2] if self.data_grid_1.columns[pos+1]['data_key'] == 'remarks' else self.data_grid_1.columns[:pos+1] 
-            second_half_col = self.data_grid_1.columns[pos+2:] if self.data_grid_1.columns[pos+1]['data_key'] == 'remarks' else self.data_grid_1.columns[pos+1:]
-            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == 'stmt_dtl'][0]
+            first_half_col = self.data_grid_1.columns[:pos+2] if self.data_grid_1.columns[pos+1]['data_key'] == exptbl.Remarks else self.data_grid_1.columns[:pos+1] 
+            second_half_col = self.data_grid_1.columns[pos+2:] if self.data_grid_1.columns[pos+1]['data_key'] == exptbl.Remarks else self.data_grid_1.columns[pos+1:]
+            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == exptbl.StmtDtl][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-stmt-dtl-visible', vis=not self.cb_hide_stmtdtl.checked)
 
