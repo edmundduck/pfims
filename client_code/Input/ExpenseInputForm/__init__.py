@@ -97,6 +97,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when an item is selected"""
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', selected_tid)
+        print(anvil.server.call('select_transactions', selected_tid))
         self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)

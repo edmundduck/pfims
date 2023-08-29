@@ -10,6 +10,7 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..DataObject import FinObject as fobj
+from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 
@@ -51,7 +52,9 @@ def select_transactions(tid):
     if tid is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
+            cur.execute(f"SELECT iid, tab_id, trandate AS {exptbl.Date}, account_id AS {exptbl.Account}, \
+            amount AS {exptbl.Amount}, labels AS {exptbl.Labels}, remarks AS {exptbl.Remarks}, stmt_dtl AS {exptbl.StmtDtl} \
+            FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
             logger.trace("rows=", rows)
             cur.close()

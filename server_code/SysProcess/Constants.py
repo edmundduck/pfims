@@ -26,12 +26,6 @@ class SettingConfig:
 
 # Expense table definition for data transformation required in expense input file import
 class ExpenseDBTableDefinion:
-    # Date = 'trandate'
-    # Account = 'account_id'
-    # Amount = 'amount'
-    # Remarks = 'remarks'
-    # StmtDtl = 'stmt_dtl'
-    # Labels = 'labels'
     Date = 'DTE'
     Account = 'ACC'
     Amount = 'AMT'
@@ -39,14 +33,6 @@ class ExpenseDBTableDefinion:
     StmtDtl = 'STD'
     Labels = 'LBL'
     def_namelist = [Date, Account, Amount, Remarks, StmtDtl, Labels]
-    # defmap = {
-    #     'D': Date, 
-    #     'AC': Account, 
-    #     'AM': Amount, 
-    #     'R': Remarks, 
-    #     'SD': StmtDtl, 
-    #     'L': Labels
-    # }
 
 # Search interval modes used in Report search panel and config
 class SearchInterval:
