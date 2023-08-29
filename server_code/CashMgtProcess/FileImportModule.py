@@ -198,7 +198,8 @@ def import_pdf_file(file):
                 # Finding column headers
                 # column_headers = ['Date', 'Payment type and details', 'Paid out', 'Paid in', 'Balance']
                 # column_headers = ['Date', 'Pmnt', 'Details', 'Money Out (£)', 'Money In (£)', 'Balance (£)']
-                column_headers = result.group(0).split()
+                # column_headers = result.group(0).split()
+                column_headers = list(filter(lambda x: x.strip() not in (None, ''), result.group(0).split('   ')))
                 logger.debug("column_headers=", column_headers)
                 
                 # Word object comparison
