@@ -262,13 +262,15 @@ def import_pdf_file(file):
                 explicit_lines.append(header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('x1'))
                 bbox_top = header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('top')
                 logger.debug("explicit_lines=", explicit_lines)
-    
+                print("explicit_lines=", explicit_lines)
+                
                 pdf_table_settings['explicit_vertical_lines'] = explicit_lines
                 # bounding box (x0, y0, x1, y1)
                 bounding_box = [explicit_lines[0], bbox_top, explicit_lines[-1]+10, page.height]
                 crop_area = page.crop(bounding_box)
                 crop_table = crop_area.extract_table(pdf_table_settings)
                 logger.trace("crop_table=", crop_table)
+                print("crop_table=", crop_table)
     
                 # Returning best match table by filtering unwanted rows
                 grace_search = 3
@@ -282,14 +284,17 @@ def import_pdf_file(file):
                             crop_table.remove(row)
                         elif re.search(compiled_date, row_to_check) or re.search(compiled_amt, row_to_check) :
                             logger.debug("OOO=\"", row_to_check)
+                            print("OOO=\"", row_to_check)
                             grace_search = 3
                         else:
                             logger.debug("XXX=\"", row_to_check)
+                            print("XXX=\"", row_to_check)
                             crop_table.remove(row)
                             grace_search -= 1
                     else:
                         crop_table.remove(row)
                 logger.trace("new crop_table=", crop_table)
+                print("new crop_table=", crop_table)
                 result_table += crop_table
         return result_table
 
