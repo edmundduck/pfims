@@ -210,7 +210,7 @@ def import_pdf_file(file):
                         for header in column_headers:
                             pdf_word = format_comparable_word(word['text'])
                             header_word = format_comparable_word(header)
-                            # print(f"header_word=\"{header_word}\"/pdf_word=\"{pdf_word}\"")
+                            logger.trace(f"header_word=\"{header_word}\"/pdf_word=\"{pdf_word}\"")
                             if pdf_word == header_word:
                                 # Case 1
                                 # word = date, header = date
@@ -281,9 +281,11 @@ def import_pdf_file(file):
                             crop_table.remove(row)
                         elif re.search(compiled_date, row_to_check) or re.search(compiled_amt, row_to_check) :
                             logger.debug("OOO=\"", row_to_check)
+                            print("OOO=\"", row_to_check)
                             grace_search = 3
                         else:
                             logger.debug("XXX=\"", row_to_check)
+                            print("XXX=\"", row_to_check)
                             # DEBUG
                             crop_table.remove(row)
                             grace_search -= 1
@@ -343,7 +345,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
-        print("df=", df.to_string())
+        logger.trace("df=", df.to_string())
         df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
         print("df1=", df.to_string())
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
