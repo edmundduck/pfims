@@ -290,7 +290,7 @@ def import_pdf_file(file):
                         else:
                             logger.debug("XXX=\"", row_to_check)
                             print("XXX=\"", row_to_check)
-                            crop_table.remove(row)
+                            # crop_table.remove(row)
                             grace_search -= 1
                     else:
                         crop_table.remove(row)
