@@ -341,9 +341,10 @@ def update_pdf_mapping(data, mapping, account, labels):
         df = new_df
 
         # 4) Format date and other columns data accordingly
-        empty_cells_isna = df[exptbl.Date].isna()
-        print(empty_cells_isna)
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
+        empty_cells_isnull = df[exptbl.Date].isnull()
+        print(df[exptbl.Date])
+        print(empty_cells_isnull)
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
