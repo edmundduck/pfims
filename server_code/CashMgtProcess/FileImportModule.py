@@ -322,11 +322,16 @@ def update_pdf_mapping(data, mapping, account, labels):
                 unwantedList.append(col_num)
             col_num += 1
 
+        def merge_amt(row):
+            if all(row[c] is np.nan for c in matrix.get(exptbl.Amount, None)):
+                print("skip")
+                
         print(f"matrix={matrix}, column_headers={column_headers}")
         logger.debug(f"matrix={matrix}, column_headers={column_headers}")
         nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
         print(f"dfxxx={[df[c] for c in matrix.get(exptbl.Amount, None)]}")
-        df[exptbl.Amount] = pd.concat([df[c] for c in matrix.get(exptbl.Amount, None)], axis='columns')
+        # df[exptbl.Amount] = pd.concat([df[c] for c in matrix.get(exptbl.Amount, None)], axis='columns')
+        df[exptbl.Amount] = df.apply(merge_amt, axis='columns')
         matrix[exptbl.Amount] = [exptbl.Amount]
         # Generate mapping matrix which has unique columns each
         # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
