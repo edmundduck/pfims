@@ -340,12 +340,13 @@ def update_pdf_mapping(data, mapping, account, labels):
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
         df = new_df
 
+        print("df=", df.to_string())
         # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
-        date_not_null = list(filter(False, df[exptbl.Date].isnull()))
-        amount_not_null = list(filter(False, df[exptbl.Amount].isnull()))
-        print(date_not_null)
-        print(amount_not_null)
+        date_not_null = df[exptbl.Date].notnull()
+        amount_not_null = df[exptbl.Amount].notnull()
+        print(df[date_not_null])
+        print(df[amount_not_null])
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
