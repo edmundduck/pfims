@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 import anvil.server
 from io import BytesIO
 import pandas as pd
+import numpy as np
 import pdfplumber
 import re
 from . import LabelModule as lbl_mod
@@ -323,16 +324,24 @@ def update_pdf_mapping(data, mapping, account, labels):
             col_num += 1
 
         def merge_amt(row):
-            if all(row[c] is np.nan for c in matrix.get(exptbl.Amount, None)):
-                print("skip")
+            logger.trace("row=", row)
+            if all(pd.isna(row[c]) for c in matrix.get(exptbl.Amount, None)):
+                return np.nan
+            else:
+                for c in matrix.get(exptbl.Amount, None):
+                    logger.trace(f"c={c}/row[c]={row[c]}/float(row[c])={float(row[c])}")
+                    if pd.notna(row[c]) and float(row[c]):
+                        return row[c]
                 
         print(f"matrix={matrix}, column_headers={column_headers}")
         logger.debug(f"matrix={matrix}, column_headers={column_headers}")
         nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
         print(f"dfxxx={[df[c] for c in matrix.get(exptbl.Amount, None)]}")
-        # df[exptbl.Amount] = pd.concat([df[c] for c in matrix.get(exptbl.Amount, None)], axis='columns')
+        
+        # Merge all amount columns into one for row merge actions
         df[exptbl.Amount] = df.apply(merge_amt, axis='columns')
         matrix[exptbl.Amount] = [exptbl.Amount]
+        
         # Generate mapping matrix which has unique columns each
         # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
         print(f"nonNanList={nonNanList}, nanList={nanList}")
@@ -342,7 +351,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         new_df = None
         for m in mapping_matrix:
             # 1) Filter required columns per mapping matrix
-            tmp_df = df.iloc[:, m]
+            tmp_df = df.loc[:, m]
             logger.trace(f"tmp_df={tmp_df.to_string()}")
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
