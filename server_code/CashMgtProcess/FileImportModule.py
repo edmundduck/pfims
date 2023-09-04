@@ -323,7 +323,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                 unwantedList.append(col_num)
             col_num += 1
 
-        def merge_amt(row):
+        def merge_amt_cols(row):
             logger.trace("row=", row)
             if all(pd.isna(row[c]) for c in matrix.get(exptbl.Amount, None)):
                 return np.nan
@@ -339,7 +339,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         print(f"dfxxx={[df[c] for c in matrix.get(exptbl.Amount, None)]}")
         
         # Merge all amount columns into one for row merge actions
-        df[exptbl.Amount] = df.apply(merge_amt, axis='columns')
+        df[exptbl.Amount] = df.apply(merge_amt_cols, axis='columns')
         matrix[exptbl.Amount] = [exptbl.Amount]
         
         # Generate mapping matrix which has unique columns each
@@ -372,15 +372,18 @@ def update_pdf_mapping(data, mapping, account, labels):
         for i in range(df[date_not_null].columns.size):
             curRowId = int(df[date_not_null].iloc[i].name)
             nextRowId = int(df[date_not_null].iloc[i+1].name)
+            firstAmtId = int(df[amount_not_null].iloc[0].name)
             print(curRowId)
-            if pd.notna(df[date_not_null].iloc[i][exptbl.Amount]):
-                pass
-            else:
-                if nextRowId == curRowId + 1:
-                    pass
-                else:
+            if firstAmtId <> curRowId and firstAmtId in range(curRowId, nextRowId):
+                
+            # if pd.notna(df[date_not_null].iloc[i][exptbl.Amount]):
+            #     pass
+            # else:
+            #     if nextRowId == curRowId + 1:
+            #         pass
+            #     else:
                     
-            prevRowId = int(df[date_not_null].iloc[i].name)
+            # prevRowId = int(df[date_not_null].iloc[i].name)
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
