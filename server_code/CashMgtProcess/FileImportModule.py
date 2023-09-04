@@ -368,8 +368,19 @@ def update_pdf_mapping(data, mapping, account, labels):
         print(df[date_not_null])
         print(df[amount_not_null])
         print("size=", df[date_not_null].columns.size)
+        prevRowId = None
         for i in range(df[date_not_null].columns.size):
-            print(df[date_not_null].iloc[i].name)
+            curRowId = int(df[date_not_null].iloc[i].name)
+            nextRowId = int(df[date_not_null].iloc[i+1].name)
+            print(curRowId)
+            if pd.notna(df[date_not_null].iloc[i][exptbl.Amount]):
+                pass
+            else:
+                if nextRowId == curRowId + 1:
+                    pass
+                else:
+                    
+            prevRowId = int(df[date_not_null].iloc[i].name)
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
