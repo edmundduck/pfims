@@ -360,6 +360,10 @@ def update_pdf_mapping(data, mapping, account, labels):
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
         df = new_df
 
+        def merge_rows(row):
+            if pd.notna(row.get(exptbl.Date, None)):
+            pass
+            
         print("df=", df.to_string())
         # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
