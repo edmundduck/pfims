@@ -374,7 +374,9 @@ def update_pdf_mapping(data, mapping, account, labels):
             nextRowId = int(df[date_not_null].iloc[i+1].name)
             firstAmtId = int(df[amount_not_null].iloc[0].name)
             print(curRowId)
-            if firstAmtId <> curRowId and firstAmtId in range(curRowId, nextRowId):
+            if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
+                tmp_df = df.apply(merge_rows, axis='index')
+            else:
                 
             # if pd.notna(df[date_not_null].iloc[i][exptbl.Amount]):
             #     pass
