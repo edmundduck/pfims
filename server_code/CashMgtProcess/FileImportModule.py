@@ -366,7 +366,10 @@ def update_pdf_mapping(data, mapping, account, labels):
         date_not_null = df[exptbl.Date].notnull()
         amount_not_null = df[exptbl.Amount].notnull()
         print(df[date_not_null])
-        print(df[amount_not_null][0:2])
+        print(df[amount_not_null])
+        print("size=", df[date_not_null].columns.size)
+        for i in range(df[date_not_null].columns.size):
+            print(df[date_not_null].iloc[i].name)
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
