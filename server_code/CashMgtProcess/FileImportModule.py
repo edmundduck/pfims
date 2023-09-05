@@ -368,7 +368,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                         else:
                             result = c if result is None else ' '.join((result, c))
                     print(f"result=\n{result}")
-                return result
+                return pd.Series(result)
             
         # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
@@ -378,33 +378,35 @@ def update_pdf_mapping(data, mapping, account, labels):
         prevRowId = None
         new_df = None
         for i in range(date_not_null_df.columns.size):
-            logger.debug(f"amt_not_null_df=\n{amt_not_null_df}")
-            curRowId = int(date_not_null_df.iloc[i].name)
-            try:
-                nextRowId = int(date_not_null_df.iloc[i+1].name)
-            except (IndexError) as err:
-                nextRowId = None
-            firstAmtId = int(amt_not_null_df.iloc[0].name)
-            logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
-            if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
-                tmp_df = [df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index')]
-                logger.trace(f"tmp_df=\n{tmp_df}")
-                new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
-            elif firstAmtId == curRowId:
-                # Trim the first row
-                new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
-                amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
-            else:
-                pass
-            logger.trace(f"new_df=\n{new_df}")
-            # if pd.notna(date_not_null_df.iloc[i][exptbl.Amount]):
-            #     pass
-            # else:
-            #     if nextRowId == curRowId + 1:
-            #         pass
-            #     else:
-                    
-            # prevRowId = int(date_not_null_df.iloc[i].name)
+            if amt_not_null_df is not None and amt_not_null_df.size > 0:
+                logger.debug(f"amt_not_null_df=\n{amt_not_null_df}")
+                curRowId = int(date_not_null_df.iloc[i].name)
+                try:
+                    nextRowId = int(date_not_null_df.iloc[i+1].name)
+                except (IndexError) as err:
+                    nextRowId = None
+                firstAmtId = int(amt_not_null_df.iloc[0].name)
+                logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
+                if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
+                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index', result_type='None')
+                    logger.trace(f"tmp_df=\n{tmp_df}")
+                    new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
+                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                elif firstAmtId == curRowId:
+                    # Trim the first row
+                    new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
+                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                else:
+                    pass
+                logger.trace(f"new_df=\n{new_df}")
+                # if pd.notna(date_not_null_df.iloc[i][exptbl.Amount]):
+                #     pass
+                # else:
+                #     if nextRowId == curRowId + 1:
+                #         pass
+                #     else:
+                        
+                # prevRowId = int(date_not_null_df.iloc[i].name)
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
