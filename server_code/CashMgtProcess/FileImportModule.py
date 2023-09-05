@@ -298,6 +298,34 @@ def import_pdf_file(file):
 @anvil.server.callable("update_pdf_mapping")
 @logger.log_function
 def update_pdf_mapping(data, mapping, account, labels):
+    # Logic of merging all amount columns
+    def merge_amt_cols(row):
+        logger.trace(f"merge_amt_cols row={row}")
+        if all(pd.isna(row[c]) for c in matrix.get(exptbl.Amount, None)):
+            return np.nan
+        else:
+            for c in matrix.get(exptbl.Amount, None):
+                logger.trace(f"merge_amt_cols c={c}/row[c]={row[c]}/float(row[c])={float(row[c])}")
+                if pd.notna(row[c]) and float(row[c]):
+                    return row[c]
+
+    # Logic of merging relevant rows into one row
+    def merge_rows(row, start, end):
+        result = None
+        logger.trace(f"merge_rows row=\n{row[start:end+1]}")
+        if all(pd.isna(c) for c in row[start:end+1]):
+            return np.nan
+        else:
+            for c in row[start:end+1]:
+                if pd.notna(c):
+                    if result is None:
+                        result = c
+                    else:
+                        if not isinstance(c, (int, float)) and not isinstance(c, (datetime.date, datetime.datetime)):
+                            result = ' '.join((result, c))
+            logger.trace(f"merge_rows result=\n{result}")
+            return pd.Series(result)
+            
     try:
         column_headers, unwantedList = [], []
         col_num = 0
@@ -317,21 +345,11 @@ def update_pdf_mapping(data, mapping, account, labels):
             else:
                 unwantedList.append(col_num)
             col_num += 1
-
-        def merge_amt_cols(row):
-            logger.trace("row=", row)
-            if all(pd.isna(row[c]) for c in matrix.get(exptbl.Amount, None)):
-                return np.nan
-            else:
-                for c in matrix.get(exptbl.Amount, None):
-                    logger.trace(f"c={c}/row[c]={row[c]}/float(row[c])={float(row[c])}")
-                    if pd.notna(row[c]) and float(row[c]):
-                        return row[c]
                 
         logger.debug(f"matrix={matrix}, column_headers={column_headers}")
         nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
         
-        # Merge all amount columns into one for row merge actions
+        # Merge all amount columns into one for later row merge actions
         df[exptbl.Amount] = df.apply(merge_amt_cols, axis='columns')
         matrix[exptbl.Amount] = [exptbl.Amount]
         
@@ -352,64 +370,39 @@ def update_pdf_mapping(data, mapping, account, labels):
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
         df = new_df
 
-        def merge_rows(row, start, end):
-            result = None
-            logger.trace(f"selection=\n{row[start:end+1]}")
-            if all(pd.isna(c) for c in row[start:end+1]):
-                return np.nan
-            else:
-                for c in row[start:end+1]:
-                    print(f"c={c}")
-                    if pd.notna(c):
-                        print(isinstance(c, (int, float)))
-                        print(isinstance(c, (datetime.date, datetime.datetime)))
-                        if isinstance(c, (int, float)) or isinstance(c, (datetime.date, datetime.datetime)):
-                            result = c if result is None else result
-                        else:
-                            result = c if result is None else ' '.join((result, c))
-                    print(f"result=\n{result}")
-                return pd.Series(result)
-            
-        # 4) Format date and other columns data accordingly
+        # 4) Format date and other columns data accordingly and merge rows
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
         date_not_null_df = df[df[exptbl.Date].notnull()]
         amt_not_null_df = df[df[exptbl.Amount].notnull()]
-        logger.debug(f"date_not_null_df=\n{date_not_null_df}")
-        prevRowId = None
+        logger.trace(f"date_not_null_df=\n{date_not_null_df}")
         new_df = None
+        firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df and amt_not_null_df.size > 0 else None
         for i in range(date_not_null_df.columns.size):
-            if amt_not_null_df is not None and amt_not_null_df.size > 0:
-                logger.debug(f"amt_not_null_df=\n{amt_not_null_df}")
-                curRowId = int(date_not_null_df.iloc[i].name)
-                try:
-                    nextRowId = int(date_not_null_df.iloc[i+1].name)
-                except (IndexError) as err:
-                    nextRowId = None
+            curRowId = int(date_not_null_df.iloc[i].name)
+            try:
+                nextRowId = int(date_not_null_df.iloc[i+1].name)
+            except (IndexError) as err:
+                nextRowId = None
+            if amt_not_null_df and amt_not_null_df.size > 0 and firstAmtId and firstAmtId :
+                logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 firstAmtId = int(amt_not_null_df.iloc[0].name)
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
                 if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
-                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index', result_type='None')
-                    logger.trace(f"tmp_df=\n{tmp_df}")
+                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index', result_type=None)
+                    logger.trace(f"Case 1 - Merging rows - tmp_df=\n{tmp_df.to_string()}")
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
+                    logger.trace(f"Case 1 - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
                 elif firstAmtId == curRowId:
                     # Trim the first row
                     new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
+                    logger.trace(f"Case 2 - Rows in both df equal - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
                 else:
                     pass
-                logger.trace(f"new_df=\n{new_df}")
-                # if pd.notna(date_not_null_df.iloc[i][exptbl.Amount]):
-                #     pass
-                # else:
-                #     if nextRowId == curRowId + 1:
-                #         pass
-                #     else:
-                        
-                # prevRowId = int(date_not_null_df.iloc[i].name)
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
-        logger.trace("df=", df.to_string())
+        logger.debug("df=", df.to_string())
         df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
