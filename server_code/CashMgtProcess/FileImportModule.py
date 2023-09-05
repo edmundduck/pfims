@@ -361,8 +361,9 @@ def update_pdf_mapping(data, mapping, account, labels):
         df = new_df
 
         def merge_rows(row):
+            print(f"row={row}")
             if pd.notna(row.get(exptbl.Date, None)):
-            pass
+                pass
             
         print("df=", df.to_string())
         # 4) Format date and other columns data accordingly
@@ -375,13 +376,16 @@ def update_pdf_mapping(data, mapping, account, labels):
         prevRowId = None
         for i in range(df[date_not_null].columns.size):
             curRowId = int(df[date_not_null].iloc[i].name)
-            nextRowId = int(df[date_not_null].iloc[i+1].name)
+            try:
+                nextRowId = int(df[date_not_null].iloc[i+1].name)
+            except (IndexError) as err:
+                nextRowId = None
             firstAmtId = int(df[amount_not_null].iloc[0].name)
-            print(curRowId)
-            if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
+            print(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
+            if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
                 tmp_df = df.apply(merge_rows, axis='index')
             else:
-                
+                pass
             # if pd.notna(df[date_not_null].iloc[i][exptbl.Amount]):
             #     pass
             # else:
