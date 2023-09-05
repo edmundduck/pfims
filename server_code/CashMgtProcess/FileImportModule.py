@@ -371,6 +371,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         amt_not_null_df = df[df[exptbl.Amount].notnull()]
         logger.debug(f"date_not_null_df=\n{date_not_null_df}")
         prevRowId = None
+        new_df = None
         for i in range(date_not_null_df.columns.size):
             logger.debug(f"amt_not_null_df=\n{amt_not_null_df}")
             curRowId = int(date_not_null_df.iloc[i].name)
@@ -382,11 +383,15 @@ def update_pdf_mapping(data, mapping, account, labels):
             logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
             if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
                 tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index')
+                logger.trace(f"tmp_df=\n{tmp_df}")
+                new_df = pd.concat([tmp_df], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
             elif firstAmtId == curRowId:
                 # Trim the first row
+                new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
                 amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
             else:
                 pass
+            logger.trace(f"new_df=\n{new_df}")
             # if pd.notna(date_not_null_df.iloc[i][exptbl.Amount]):
             #     pass
             # else:
