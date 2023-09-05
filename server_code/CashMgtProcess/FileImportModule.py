@@ -325,7 +325,8 @@ def update_pdf_mapping(data, mapping, account, labels):
                             result = ' '.join((result, c))
                         elif isinstance(c, (datetime.date, datetime.datetime)) and start != dateId:
                             # Special date handling - where multiple rows in amount associate to only one date row
-                            result = row[dateId]
+                            # result = row[dateId]
+                            result = c
             logger.trace(f"merge_rows result=\n{result}")
             return pd.Series(result)
             
