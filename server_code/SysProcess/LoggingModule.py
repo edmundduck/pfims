@@ -24,6 +24,7 @@ class ServerLoggerLevel:
 # Suppose the timezone doesn't have to be configured further as logging is for internal use only
 # Ref: https://stackoverflow.com/questions/32402502/how-to-change-the-time-zone-in-python-logging
 class TimeZoneFormatter(logging.Formatter):
+    print(f"TEST")
     converter = lambda *args: datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
     
 class ServerLoggerConfig:
