@@ -379,14 +379,17 @@ def update_pdf_mapping(data, mapping, account, labels):
         amt_not_null_df = df[df[exptbl.Amount].notnull()]
         logger.trace(f"date_not_null_df=\n{date_not_null_df}")
         new_df = None
-        firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df and amt_not_null_df.size > 0 else None
+        firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df & amt_not_null_df.size > 0 else None
+        print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
         for i in range(date_not_null_df.columns.size):
+            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             curRowId = int(date_not_null_df.iloc[i].name)
             dateId = curRowId
             try:
                 nextRowId = int(date_not_null_df.iloc[i+1].name)
             except (IndexError) as err:
                 nextRowId = None
+            print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
             while amt_not_null_df and amt_not_null_df.size > 0 and firstAmtId and firstAmtId < nextRowId and nextRowId:
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
