@@ -392,7 +392,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
                 if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
-                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
+                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type='expand')
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
                     logger.trace(f"Case 1 - Rows merged - tmp_df=\n{tmp_df.to_string()}")
                     logger.trace(f"Case 1 - Concat - new_df=\n{new_df.to_string()}")
