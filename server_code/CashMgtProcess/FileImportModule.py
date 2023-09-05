@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import pdfplumber
 import re
+import datetime
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
 from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
@@ -257,14 +258,12 @@ def import_pdf_file(file):
                             partial_word_list = []
     
                 logger.debug("header_word_dict=", header_word_dict)
-                print("header_word_dict=", header_word_dict)
                 explicit_lines = []
                 for ch in column_headers:
                     explicit_lines.append(header_word_dict.get(format_comparable_word(ch)).get('x0')-5)
                 explicit_lines.append(header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('x1'))
                 bbox_top = header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('top')
                 logger.debug("explicit_lines=", explicit_lines)
-                print("explicit_lines=", explicit_lines)
                 
                 pdf_table_settings['explicit_vertical_lines'] = explicit_lines
                 # bounding box (x0, y0, x1, y1)
@@ -272,7 +271,6 @@ def import_pdf_file(file):
                 crop_area = page.crop(bounding_box)
                 crop_table = crop_area.extract_table(pdf_table_settings)
                 logger.trace("crop_table=", crop_table)
-                print("crop_table=", crop_table)
     
                 # Returning best match table by filtering unwanted rows
                 grace_search = 3
@@ -286,17 +284,14 @@ def import_pdf_file(file):
                             crop_table.remove(row)
                         elif re.search(compiled_date, row_to_check) or re.search(compiled_amt, row_to_check) :
                             logger.debug("OOO=\"", row_to_check)
-                            print("OOO=\"", row_to_check)
                             grace_search = 3
                         else:
                             logger.debug("XXX=\"", row_to_check)
-                            print("XXX=\"", row_to_check)
                             # crop_table.remove(row)
                             grace_search -= 1
                     else:
                         crop_table.remove(row)
                 logger.trace("new crop_table=", crop_table)
-                print("new crop_table=", crop_table)
                 result_table += crop_table
         return result_table
 
@@ -333,10 +328,8 @@ def update_pdf_mapping(data, mapping, account, labels):
                     if pd.notna(row[c]) and float(row[c]):
                         return row[c]
                 
-        print(f"matrix={matrix}, column_headers={column_headers}")
         logger.debug(f"matrix={matrix}, column_headers={column_headers}")
         nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
-        print(f"dfxxx={[df[c] for c in matrix.get(exptbl.Amount, None)]}")
         
         # Merge all amount columns into one for row merge actions
         df[exptbl.Amount] = df.apply(merge_amt_cols, axis='columns')
@@ -344,7 +337,6 @@ def update_pdf_mapping(data, mapping, account, labels):
         
         # Generate mapping matrix which has unique columns each
         # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
-        print(f"nonNanList={nonNanList}, nanList={nanList}")
         logger.debug(f"nonNanList={nonNanList}, nanList={nanList}")
         mapping_matrix = fummod.generate_mapping_matrix(matrix, nonNanList.copy())
 
@@ -360,40 +352,49 @@ def update_pdf_mapping(data, mapping, account, labels):
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
         df = new_df
 
-        def merge_rows(row):
-            print(f"row={row}")
-            if pd.notna(row.get(exptbl.Date, None)):
-                pass
+        def merge_rows(row, start, end):
+            logger.trace(f"selection=\n{row[start:end+1]}")
+            if all(pd.isna(c for c in row[start:end+1])):
+                return np.nan
+            else:
+                for c in row[start:end+1]:
+                    if pd.notna(c):
+                        if c.replace('.','').isdigit() or isinstance(c, datetime.datetime):
+                            result = c if result is None else result
+                        else:
+                            result = ' '.join(result, c)
+                return result
             
-        print("df=", df.to_string())
         # 4) Format date and other columns data accordingly
         df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
-        date_not_null = df[exptbl.Date].notnull()
-        amount_not_null = df[exptbl.Amount].notnull()
-        print(df[date_not_null])
-        print(df[amount_not_null])
-        print("size=", df[date_not_null].columns.size)
+        date_not_null_df = df[df[exptbl.Date].notnull()]
+        amt_not_null_df = df[df[exptbl.Amount].notnull()]
+        logger.debug(f"date_not_null_df=\n{date_not_null_df}")
         prevRowId = None
-        for i in range(df[date_not_null].columns.size):
-            curRowId = int(df[date_not_null].iloc[i].name)
+        for i in range(date_not_null_df.columns.size):
+            logger.debug(f"amt_not_null_df=\n{amt_not_null_df}")
+            curRowId = int(date_not_null_df.iloc[i].name)
             try:
-                nextRowId = int(df[date_not_null].iloc[i+1].name)
+                nextRowId = int(date_not_null_df.iloc[i+1].name)
             except (IndexError) as err:
                 nextRowId = None
-            firstAmtId = int(df[amount_not_null].iloc[0].name)
-            print(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
+            firstAmtId = int(amt_not_null_df.iloc[0].name)
+            logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
             if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
-                tmp_df = df.apply(merge_rows, axis='index')
+                tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index')
+            elif firstAmtId == curRowId:
+                # Trim the first row
+                amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
             else:
                 pass
-            # if pd.notna(df[date_not_null].iloc[i][exptbl.Amount]):
+            # if pd.notna(date_not_null_df.iloc[i][exptbl.Amount]):
             #     pass
             # else:
             #     if nextRowId == curRowId + 1:
             #         pass
             #     else:
                     
-            # prevRowId = int(df[date_not_null].iloc[i].name)
+            # prevRowId = int(date_not_null_df.iloc[i].name)
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.trace("df=", df.to_string())
