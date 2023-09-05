@@ -23,9 +23,10 @@ class ServerLoggerLevel:
 
 # Suppose the timezone doesn't have to be configured further as logging is for internal use only
 # Ref: https://stackoverflow.com/questions/32402502/how-to-change-the-time-zone-in-python-logging
-class TimeZoneFormatter(logging.Formatter):
-    print(f"TEST")
-    converter = lambda *args: datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
+# class TimeZoneFormatter(logging.Formatter):
+#     print(f"TEST")
+#     # converter = lambda *args: datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
+#     converter = time.localtime
     
 class ServerLoggerConfig:
     DEFAULT_LOGGING_CONFIG = {
@@ -33,7 +34,7 @@ class ServerLoggerConfig:
             'disable_existing_loggers': False,
             'formatters': {
                 'standard': {
-                    '()': TimeZoneFormatter,
+                    # '()': TimeZoneFormatter,
                     'format': '[S] %(asctime)s [%(levelname)s] %(message)s',
                     'datefmt': '%Y-%m-%d %H:%M:%S'
                 }
@@ -47,7 +48,7 @@ class ServerLoggerConfig:
             },
             'loggers': {
                 '': {
-                    'level': 'INFO',
+                    'level': 'TRACE',
                     'handlers': ['console']
                 }
             }
@@ -71,6 +72,7 @@ class ServerLogger:
     def set_level(self):
         userlevel = anvil.server.session.get('loglevel')
         self.logger.setLevel(userlevel if userlevel is not None else self.default_level)
+        print(f"self.logger.level=", self.logger.level)
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
@@ -88,14 +90,17 @@ class ServerLogger:
 
     def trace(self, msg=None, *args, **kwargs):
         if self.logger.level == 0: self.set_level()
+        self.logger.log(ServerLoggerLevel.TRACE.get('val'), "TEST")
         self.logger.log(ServerLoggerLevel.TRACE.get('val'), msg, *args, **kwargs)
 
     def debug(self, msg=None, *args, **kwargs):
         if self.logger.level == 0: self.set_level()
+        self.logger.debug("TEST")
         self.logger.debug(msg, *args, **kwargs)
 
     def info(self, msg=None, *args, **kwargs):
         if self.logger.level == 0: self.set_level()
+        self.logger.info("TEST")
         self.logger.info(msg, *args, **kwargs)
 
     def warning(self, msg=None, *args, **kwargs):
