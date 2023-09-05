@@ -73,7 +73,7 @@ class ServerLogger:
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
-            if self.logger.level == 0: self.set_level()
+            self.set_level()
             # Log the function call
             self.trace("***** Server function %s starts *****" % func.__qualname__)
             start = time.time()
@@ -86,25 +86,25 @@ class ServerLogger:
         return wrapper
 
     def trace(self, msg=None, *args, **kwargs):
-        if self.logger.level == 0: self.set_level()
+        self.set_level()
         self.logger.log(ServerLoggerLevel.TRACE.get('val'), msg, *args, **kwargs)
 
     def debug(self, msg=None, *args, **kwargs):
-        if self.logger.level == 0: self.set_level()
+        self.set_level()
         self.logger.debug(msg, *args, **kwargs)
 
     def info(self, msg=None, *args, **kwargs):
-        if self.logger.level == 0: self.set_level()
+        self.set_level()
         self.logger.info(msg, *args, **kwargs)
 
     def warning(self, msg=None, *args, **kwargs):
-        if self.logger.level == 0: self.set_level()
+        self.set_level()
         self.logger.warning(msg, *args, **kwargs)
 
     def error(self, msg=None, *args, **kwargs):
-        if self.logger.level == 0: self.set_level()
+        self.set_level()
         self.logger.error(msg, *args, **kwargs)
 
     def critical(self, msg=None, *args, **kwargs):
-        if self.logger.level == 0: self.set_level()
+        self.set_level()
         self.logger.critical(msg, *args, **kwargs)
