@@ -1,3 +1,5 @@
+import anvil.files
+from anvil.files import data_files
 import anvil.secrets
 import anvil.users
 import anvil.tables as tables
@@ -44,7 +46,7 @@ class ServerLoggerConfig:
             },
             'loggers': {
                 '': {
-                    'level': 'DEBUG',
+                    'level': 'INFO',
                     'handlers': ['console']
                 }
             }
@@ -57,6 +59,7 @@ class ServerLogger:
         self.default_level = level
         logging.addLevelName(ServerLoggerLevel.TRACE.get('val'), ServerLoggerLevel.TRACE.get('desc'))
         logging.config.dictConfig(config)
+        self.logger.setLevel(self.default_level)
         # ** NOTE **
         # If set level is enabled in __init__, server session is NoneType (but eval it is not None which looks like a bug!!)
         # and cannot proceed forward, thus these 2 lines are placed in a separate function which is called everytime when log happens
