@@ -310,7 +310,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                     return row[c]
 
     # Logic of merging relevant rows into one row
-    def merge_rows(row, start, end):
+    def merge_rows(row, start, end, dateId):
         result = None
         logger.trace(f"merge_rows row=\n{row[start:end+1]}")
         if all(pd.isna(c) for c in row[start:end+1]):
@@ -323,6 +323,9 @@ def update_pdf_mapping(data, mapping, account, labels):
                     else:
                         if not isinstance(c, (int, float)) and not isinstance(c, (datetime.date, datetime.datetime)):
                             result = ' '.join((result, c))
+                        elif isinstance(c, (datetime.date, datetime.datetime)) and start != dateId:
+                            # Special date handling - where multiple rows in amount associate to only one date row
+                            result = row[dateId]
             logger.trace(f"merge_rows result=\n{result}")
             return pd.Series(result)
             
@@ -379,6 +382,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df and amt_not_null_df.size > 0 else None
         for i in range(date_not_null_df.columns.size):
             curRowId = int(date_not_null_df.iloc[i].name)
+            dateId = curRowId
             try:
                 nextRowId = int(date_not_null_df.iloc[i+1].name)
             except (IndexError) as err:
@@ -387,11 +391,12 @@ def update_pdf_mapping(data, mapping, account, labels):
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
                 if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
-                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index', result_type=None)
-                    logger.trace(f"Case 1 - Merging rows - tmp_df=\n{tmp_df.to_string()}")
+                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
-                    logger.trace(f"Case 1 - new_df=\n{new_df.to_string()}")
+                    logger.trace(f"Case 1 - Rows merged - tmp_df=\n{tmp_df.to_string()}")
+                    logger.trace(f"Case 1 - Concat - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                    curRowId = firstAmtId + 1
                     firstAmtId = int(amt_not_null_df.iloc[0].name)
                 elif firstAmtId == curRowId:
                     # Trim the first row
