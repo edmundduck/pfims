@@ -353,16 +353,21 @@ def update_pdf_mapping(data, mapping, account, labels):
         df = new_df
 
         def merge_rows(row, start, end):
+            result = None
             logger.trace(f"selection=\n{row[start:end+1]}")
-            if all(pd.isna(c for c in row[start:end+1])):
+            if all(pd.isna(c) for c in row[start:end+1]):
                 return np.nan
             else:
                 for c in row[start:end+1]:
+                    print(f"c={c}")
                     if pd.notna(c):
-                        if c.replace('.','').isdigit() or isinstance(c, datetime.datetime):
+                        print(isinstance(c, (int, float)))
+                        print(isinstance(c, (datetime.date, datetime.datetime)))
+                        if isinstance(c, (int, float)) or isinstance(c, (datetime.date, datetime.datetime)):
                             result = c if result is None else result
                         else:
-                            result = ' '.join(result, c)
+                            result = c if result is None else ' '.join((result, c))
+                    print(f"result=\n{result}")
                 return result
             
         # 4) Format date and other columns data accordingly
@@ -382,9 +387,9 @@ def update_pdf_mapping(data, mapping, account, labels):
             firstAmtId = int(amt_not_null_df.iloc[0].name)
             logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
             if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
-                tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index')
+                tmp_df = [df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index')]
                 logger.trace(f"tmp_df=\n{tmp_df}")
-                new_df = pd.concat([tmp_df], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
+                new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
             elif firstAmtId == curRowId:
                 # Trim the first row
                 new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
