@@ -383,21 +383,22 @@ def update_pdf_mapping(data, mapping, account, labels):
                 nextRowId = int(date_not_null_df.iloc[i+1].name)
             except (IndexError) as err:
                 nextRowId = None
-            if amt_not_null_df and amt_not_null_df.size > 0 and firstAmtId and firstAmtId :
+            while amt_not_null_df and amt_not_null_df.size > 0 and firstAmtId and firstAmtId < nextRowId and nextRowId:
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
-                firstAmtId = int(amt_not_null_df.iloc[0].name)
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
-                if firstAmtId != curRowId and nextRowId is not None and firstAmtId in range(curRowId, nextRowId):
+                if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
                     tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId), axis='index', result_type=None)
                     logger.trace(f"Case 1 - Merging rows - tmp_df=\n{tmp_df.to_string()}")
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
                     logger.trace(f"Case 1 - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                    firstAmtId = int(amt_not_null_df.iloc[0].name)
                 elif firstAmtId == curRowId:
                     # Trim the first row
                     new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
                     logger.trace(f"Case 2 - Rows in both df equal - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                    firstAmtId = int(amt_not_null_df.iloc[0].name)
                 else:
                     pass
         if account is not None: df[exptbl.Account] = account
