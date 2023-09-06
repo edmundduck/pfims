@@ -326,7 +326,8 @@ def update_pdf_mapping(data, mapping, account, labels):
                         elif isinstance(c, (datetime.date, datetime.datetime)) and start != dateId:
                             # Special date handling - where multiple rows in amount associate to only one date row
                             # result = row[dateId]
-                            result = c
+                            # result = c
+                            pass
             logger.trace(f"merge_rows result=\n{result}")
             return pd.Series(result)
             
@@ -335,7 +336,8 @@ def update_pdf_mapping(data, mapping, account, labels):
         col_num = 0
         df = pd.DataFrame(data=data)
         matrix = {}
-        logger.debug("mapping=", mapping)
+        logger.debug(f"data={data}")
+        logger.debug(f"mapping={mapping}")
         for x in mapping:
             # Amount sign handling
             if x.get('sign') is not None:
