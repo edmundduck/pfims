@@ -325,9 +325,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                             result = ' '.join((result, c))
                         elif isinstance(c, (datetime.date, datetime.datetime)) and start != dateId:
                             # Special date handling - where multiple rows in amount associate to only one date row
-                            # result = row[dateId]
-                            # result = c
-                            pass
+                            result = row[dateId]
             logger.trace(f"merge_rows result=\n{result}")
             return pd.Series(result)
             
@@ -393,6 +391,9 @@ def update_pdf_mapping(data, mapping, account, labels):
             while amt_not_null_df is not None and amt_not_null_df.size > 0 and firstAmtId and firstAmtId < nextRowId and nextRowId:
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
+                # Deal with a row in date_not_null_df without a date (e.g. multiple transactions in one date but only one date found in date column)
+                if pd.isna(df.loc[curRowId, exptbl.Date]):
+                    df.loc[curRowId, exptbl.Date] = df.loc[dateId][exptbl.Date]                
                 if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
                     tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
@@ -400,15 +401,17 @@ def update_pdf_mapping(data, mapping, account, labels):
                     logger.trace(f"Case 1 - Concat - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
                     curRowId = firstAmtId + 1
-                    firstAmtId = int(amt_not_null_df.iloc[0].name)
+                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
                 elif firstAmtId == curRowId:
                     # Trim the first row
                     new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
                     logger.trace(f"Case 2 - Rows in both df equal - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
-                    firstAmtId = int(amt_not_null_df.iloc[0].name)
+                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
                 else:
                     pass
+        df = new_df
+        
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
         logger.debug("df=", df.to_string())
