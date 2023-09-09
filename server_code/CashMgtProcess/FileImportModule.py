@@ -387,6 +387,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                 nextRowId = int(date_not_null_df.iloc[i+1].name)
             except (IndexError) as err:
                 nextRowId = None
+            print(f"firstAmtId={firstAmtId}/nextRowId={nextRowId}/Run loop? {firstAmtId < nextRowId}")
             while amt_not_null_df is not None and amt_not_null_df.size > 0 and firstAmtId and firstAmtId < nextRowId and nextRowId:
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
