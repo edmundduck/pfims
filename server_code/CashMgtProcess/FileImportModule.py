@@ -210,10 +210,10 @@ def import_pdf_file(file):
                 for word in page.extract_words():
                     if len(header_word_dict.keys()) < len(column_headers):
                         patternNotFound = True
+                        pdf_word = format_comparable_word(word['text'])
+                        logger.trace(f"pdf_word=\"{pdf_word}\"")
                         for header in column_headers:
-                            pdf_word = format_comparable_word(word['text'])
                             header_word = format_comparable_word(header)
-                            logger.trace(f"header_word=\"{header_word}\"/pdf_word=\"{pdf_word}\"")
                             if pdf_word == header_word:
                                 # Case 1
                                 # word = date, header = date
