@@ -39,7 +39,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
-            logger.trace(f"trimmed_list={trimmed_list}, lbls={lbls}")
+            logger.trace(f"trimmed_list={trimmed_list}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)

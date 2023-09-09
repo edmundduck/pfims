@@ -175,13 +175,12 @@ def get_regex_str(str_list, mandatory_type=None):
         # This list comprehension is NOT working, to find out why
         # column_type = (key for key, value in column_type_mapping.items() if i in list(map(lambda x: x.lower().replace(' ', ''), value)))
         column_type = next((key for key, value in column_type_mapping.items() if i in list(map(lambda x: x.lower().replace(' ', ''), value))), None)
-        logger.trace(f"column_type={column_type}")
         if mandatory_type and not isMandatorySet and column_type == mandatory_type:
             trx_regex = trx_regex + (datatype_regex.get(column_type, datatype_regex.get('any')))[:-1] + '+' + datatype_regex.get('whitespace')
             isMandatorySet = True
         else:
             trx_regex = trx_regex + datatype_regex.get(column_type, datatype_regex.get('any')) + datatype_regex.get('whitespace')
-    logger.debug(f"trx_regex={trx_regex}")
+    logger.trace(f"trx_regex={trx_regex}")
     return trx_regex
 
 @anvil.server.callable("import_pdf_file")
