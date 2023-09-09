@@ -85,26 +85,27 @@ class ServerLogger:
             return result
         return wrapper
 
-    def trace(self, msg=None, *args, **kwargs):
+    def log(self, level, msg=None, *args, **kwargs):
+        args_repr = [repr(a) for a in args]
+        kwargs_repr = [f"{k}={v!r}" for k, v in kwargs.items()]
+        signature = ", ".join(args_repr + kwargs_repr)
         self.set_level()
-        self.logger.log(ServerLoggerLevel.TRACE.get('val'), msg, *args, **kwargs)
+        self.logger.log(level, "".join((msg, signature)))
+        
+    def trace(self, msg=None, *args, **kwargs):
+        self.log(ServerLoggerLevel.TRACE.get('val'), msg, *args, **kwargs)
 
     def debug(self, msg=None, *args, **kwargs):
-        self.set_level()
-        self.logger.debug(msg, *args, **kwargs)
+        self.log(logging.DEBUG, msg, *args, **kwargs)
 
     def info(self, msg=None, *args, **kwargs):
-        self.set_level()
-        self.logger.info(msg, *args, **kwargs)
+        self.log(logging.INFO, msg, *args, **kwargs)
 
     def warning(self, msg=None, *args, **kwargs):
-        self.set_level()
-        self.logger.warning(msg, *args, **kwargs)
+        self.log(logging.WARNING, msg, *args, **kwargs)
 
     def error(self, msg=None, *args, **kwargs):
-        self.set_level()
-        self.logger.error(msg, *args, **kwargs)
+        self.log(logging.ERROR, msg, *args, **kwargs)
 
     def critical(self, msg=None, *args, **kwargs):
-        self.set_level()
-        self.logger.critical(msg, *args, **kwargs)
+        self.log(logging.CRITICAL, msg, *args, **kwargs)
