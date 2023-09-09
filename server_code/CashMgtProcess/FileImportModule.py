@@ -380,6 +380,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         logger.trace(f"date_not_null_df=\n{date_not_null_df}")
         new_df = None
         firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df is not None and amt_not_null_df.size > 0 else None
+        print(f"date_not_null_df.columns.size={date_not_null_df.columns.size}")
         for i in range(date_not_null_df.columns.size):
             curRowId = int(date_not_null_df.iloc[i].name)
             dateId = curRowId
