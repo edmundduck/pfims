@@ -91,6 +91,8 @@ class ServerLogger:
 
     def debug(self, msg=None, *args, **kwargs):
         self.set_level()
+        print(f"DEBUG debug msg={msg} / *args={args} / **kwargs={kwargs}")
+        print(self.logger.level)
         self.logger.debug(msg, *args, **kwargs)
 
     def info(self, msg=None, *args, **kwargs):
