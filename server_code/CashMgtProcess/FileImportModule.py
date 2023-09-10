@@ -380,7 +380,6 @@ def update_pdf_mapping(data, mapping, account, labels):
         logger.trace(f"date_not_null_df=\n{date_not_null_df}")
         new_df = None
         firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df is not None and amt_not_null_df.size > 0 else None
-        print(f"date_not_null_df.index.size={date_not_null_df.index.size}")
         for i in range(date_not_null_df.index.size):
             curRowId = int(date_not_null_df.iloc[i].name)
             dateId = curRowId
@@ -388,8 +387,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                 nextRowId = int(date_not_null_df.iloc[i+1].name)
             except (IndexError) as err:
                 nextRowId = None
-            print(f"firstAmtId={firstAmtId}/nextRowId={nextRowId}/Run loop? {firstAmtId < nextRowId}")
-            while amt_not_null_df is not None and amt_not_null_df.size > 0 and firstAmtId and firstAmtId < nextRowId and nextRowId:
+            while amt_not_null_df is not None and amt_not_null_df.size > 0 and firstAmtId and nextRowId and firstAmtId < nextRowId:
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
                 # Deal with a row in date_not_null_df without a date (e.g. multiple transactions in one date but only one date found in date column)
@@ -425,5 +423,5 @@ def update_pdf_mapping(data, mapping, account, labels):
         df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err}")
     return None
