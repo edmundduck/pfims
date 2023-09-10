@@ -403,16 +403,17 @@ def update_pdf_mapping(data, mapping, account, labels):
                     firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
                 elif firstAmtId == curRowId:
                     # Trim the first row
-                    new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
-                    logger.trace(f"Case 2 - Rows in both df equal - new_df=\n{new_df.to_string()}")
-                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
-                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
-                    logger.trace("min(firstAmtId, nextRowId) - curRowId, min(firstAmtId, nextRowId), firstAmtId=", min(firstAmtId, nextRowId) - curRowId, min(firstAmtId, nextRowId), firstAmtId)
                     if firstAmtId and min(firstAmtId, nextRowId) - curRowId > 1:
                         tmp_df = df.apply(merge_rows, args=(curRowId, min(firstAmtId, nextRowId)-1, dateId), axis='index', result_type=None)
                         new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
-                        logger.trace(f"Case 2a - Rows merged - tmp_df=\n{tmp_df.to_string()}")
+                        logger.trace(f"Case 2a - Rows in both df equal while merging rows below is required - tmp_df=\n{tmp_df.to_string()}")
                         logger.trace(f"Case 2a - Concat - new_df=\n{new_df.to_string()}")
+                    else:
+                        new_df = pd.concat([df.loc[[firstAmtId]]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, df.loc[[firstAmtId]]], ignore_index=True, join="outer")
+                        logger.trace(f"Case 2b - Rows in both df equal - new_df=\n{new_df.to_string()}")
+                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
+                    logger.trace("min(firstAmtId, nextRowId) - curRowId, min(firstAmtId, nextRowId), firstAmtId=", min(firstAmtId, nextRowId) - curRowId, min(firstAmtId, nextRowId), firstAmtId)
                 else:
                     pass
         df = new_df
