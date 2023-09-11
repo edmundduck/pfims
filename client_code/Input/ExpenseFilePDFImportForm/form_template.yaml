@@ -66,6 +66,26 @@ components:
     col_widths: {}
     grid_position: AMNQWC,BECJUY
   name: valerror_2
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+    visible: false, text: '- Dropdown "Account" must be chosen when the account is
+      required in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
+  layout_properties:
+    col_widths: {}
+    grid_position: JIMKZD,QNUBJR
+  name: valerror_3
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+    visible: false, text: '- Dropdown "Label" must be chosen when the account is required
+      in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left,
+    spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    icon: ''}
+  layout_properties:
+    col_widths: {}
+    grid_position: IWGMYE,XCSHKB
+  name: valerror_4
 - type: FlowPanel
   properties: {}
   name: flow_panel_step5
