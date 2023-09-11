@@ -48,12 +48,23 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         """Validation"""
+        v = Validator()
+
+        logger.trace("self.parent.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.parent.valerror_1.text)
+        v.display_when_invalid(self.parent.parent.parent.parent.valerror_title)
+        v.require_selected_dependent_on_checkbox(self.dropdown_col_map_to, self.cb_required, self.parent.parent.parent.parent.valerror_1, True)
+        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, cache.expense_tbl_def_getkey(exptbl.Amount), self.parent.parent.parent.parent.valerror_2, True)
+        v.highlight_when_invalid(self.dropdown_col_map_to, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.dropdown_sign, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+
         result = all(c._validate() for c in self.cols_mapping_panel.get_components())
         if result is not True:
             return
 
+        selected_account = self.dropdown_account.selected_value[0] if self.dropdown_account.selected_value else None
+        selected_label = eval(self.dropdown_labels.selected_value).get('id') if self.dropdown_labels.selected_value else None
         df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items, \
-                              account=self.dropdown_account.selected_value[0], labels=eval(self.dropdown_labels.selected_value).get('id'))
+                              account=selected_account, labels=selected_label)
         # logger.debug("df=", df)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
