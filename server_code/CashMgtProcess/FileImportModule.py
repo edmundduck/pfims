@@ -417,8 +417,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         
         if account is not None: df[exptbl.Account] = account
         if labels is not None: df[exptbl.Labels] = labels
-        df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)
-        df = df.replace([np.nan], [None])
+        df = df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True).replace([np.nan], [None])
         return df.sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err}")
