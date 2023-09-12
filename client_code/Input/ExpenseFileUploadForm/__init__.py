@@ -18,10 +18,11 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.file_loader_1.enabled = False
         self.button_excel_next.visible = False
         self.button_pdf_next.visible = False
-        self.flow_panel_step4.visible = False
+        self.dropdown_filetype.visible = False
+        self.flow_panel_mappingrule.visible = False
+        self.flow_panel_xlstab.visible = False
         self.valerror_title.visible = False
         self.valerror_1.visible = False
 
@@ -39,29 +40,20 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def dropdown_filetype_change(self, **event_args):
         """This method is called when an item is selected"""
-        filetype_id, filetype = self.dropdown_filetype.selected_value
-        logger.debug(f"filetype_id={filetype_id}, filetype={filetype}")
-        if filetype_id is None:
-            self.dropdown_mapping_rule.items = []
-            self.file_loader_1.clear()
-            self.file_loader_1.enabled = False
-        else:
-            self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', filetype_id)
-            if filetype_id == const.FileImportType.Excel:
-                self.flow_panel_step4.visible = True
-                self.dropdown_mapping_rule.enabled = True
-                self.file_loader_1.enabled = False
-            elif filetype_id == const.FileImportType.PDF:
-                self.flow_panel_step4.visible = False
-                self.dropdown_mapping_rule.enabled = False
-                self.file_loader_1.enabled = True
+        filetype_id = self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None
+        self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', filetype_id)
+
+    def dropdown_mapping_rule_show(self, **event_args):
+        """This method is called when the DropDown is shown on the screen"""
+        filetype_id = self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None
+        self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', filetype_id)
 
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
         if self.dropdown_mapping_rule.selected_value is None:
-            self.file_loader_1.enabled = False
+            self.button_excel_next.enabled = False
         else:
-            self.file_loader_1.enabled = True
+            self.button_excel_next.enabled = True
 
     @logger.log_function
     def file_loader_1_change(self, file, **event_args):
@@ -72,11 +64,16 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
             self.valerror_1.visible = False
             self.label_filename.text = f"Uploaded filename, content type: {file.name}, {file.content_type}"
             if file.content_type == "application/pdf":
+                self.flow_panel_mappingrule.visible = True
                 self.button_excel_next.visible = False
                 self.button_pdf_next.visible = True
+                self.dropdown_filetype.visible = True
+                self.dropdown_filetype.selected_value = cache.mapping_rules_filetype_getkey(const.FileImportType.PDF)
             elif file.content_type in ("application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", \
                                       "application/vnd.ms-excel.sheet.macroEnabled.12", "application/x-excel", "text/csv"):
                 self.button_pdf_next.visible = False
+                self.dropdown_filetype.visible = True
+                self.dropdown_filetype.selected_value = cache.mapping_rules_filetype_getkey(const.FileImportType.Excel)
                 xls = anvil.server.call('preview_file', file=file)
                 for i in xls:
                     cb = CheckBox(
@@ -89,6 +86,10 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     self.sheet_tabs_panel.add_component(cb)
                     cb.set_event_handler('change', self.enable_excel_next_button)
             else:
+                self.flow_panel_mappingrule.visible = False
+                self.flow_panel_xlstab.visible = False
+                self.dropdown_filetype.visible = False
+                self.dropdown_filetype.selected_value = None
                 self.button_excel_next.visible = False
                 self.button_pdf_next.visible = False
                 self.valerror_title.visible = True

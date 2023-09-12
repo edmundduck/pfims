@@ -89,6 +89,10 @@ def mapping_rules_extra_action_reset():
 def mapping_rules_filetype_dropdown():
     return get_cache(key='mapping_rules_filetype', func='generate_mapping_type_dropdown')
 
+# Return a complete tuple key based on ID which is a part of the key in a list for file type dropdown
+def mapping_rules_filetype_getkey(id):
+    return get_key_from_cache(id, get_cache(key='mapping_rules_filetype', func='generate_mapping_type_dropdown'))
+        
 def mapping_rules_filetype_reset():
     clear_cache(key='mapping_rules_filetype')
 
