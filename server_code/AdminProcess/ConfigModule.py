@@ -62,8 +62,10 @@ def psgldb_select_brokers():
 @logger.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
     """
-    Insert or update settings from setting form to a DB table which stores investment brokers' detail.
+    Insert or update settings from setting form to a DB table which stores user's settings detail.
 
+    Row count returned larger than 0 is considered as a successful update. At the same time, logging level is updated into the server user session.
+    
     Parameters:
         def_broker (str): The name of the broker.
         def_interval (str): The ID of the default search interval.
@@ -72,7 +74,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
         logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
 
     Returns:
-        int: Successful update row count, otherwise 
+        int: Successful update row count, otherwise None
     """
     userid = sysmod.get_current_userid()
     if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
@@ -100,6 +102,21 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
 # DB table "brokers" update/insert method into Postgres DB
 @logger.log_function
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
+    """
+    Insert or update investment brokers from setting form to a DB table which stores investment brokers' detail.
+
+    Row count returned larger than 0 is considered as a successful update. At the same time, logging level is updated into the server user session.
+    
+    Parameters:
+        def_broker (str): The name of the broker.
+        def_interval (str): The ID of the default search interval.
+        def_datefrom (date): The date to default search from.
+        def_dateto (date): The date to default search to.
+        logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
+
+    Returns:
+        int: Successful update row count, otherwise None
+    """
     userid = sysmod.get_current_userid()
     try:
         conn = sysmod.db_connect()  
