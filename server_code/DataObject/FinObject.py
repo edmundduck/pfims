@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import LoggingModule
 
 # This is a server module. It runs on the Anvil server,
@@ -56,18 +57,24 @@ class CashTransaction:
             self.__class__,
             self.attr.get('iid'), \
             self.attr.get('tab_id'), \
-            self.attr.get('trandate'), \
-            self.attr.get('account_id'), \
-            self.attr.get('amount'), \
-            self.attr.get('labels'), \
-            self.attr.get('remarks'), \
-            self.attr.get('stmt_dtl')
+            self.attr.get(exptbl.Date), \
+            self.attr.get(exptbl.Account), \
+            self.attr.get(exptbl.Amount), \
+            self.attr.get(exptbl.Labels), \
+            self.attr.get(exptbl.Remarks), \
+            self.attr.get(exptbl.StmtDtl)
         )
 
     # Return a record compatible for database operation in list type
     @logger.log_function
     def getDatabaseRecord(self):
-        param_list = ('iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl')
+        param_list = ('iid', 'tab_id', \
+                      exptbl.Date, \
+                      exptbl.Account, \
+                      exptbl.Amount, \
+                      exptbl.Labels, \
+                      exptbl.Remarks, \
+                      exptbl.StmtDtl)
         tuple_list = []
         for item in param_list:
             i = self.attr.get(item)[0] if isinstance(self.attr.get(item), list) else self.attr.get(item)
@@ -78,7 +85,6 @@ class CashTransaction:
     def assignFromDict(self, dict):
         for key in dict.keys():
             if dict.get(key) is not None:
-                # self.attr[key] = dict.get(key)[0] if key == 'account_id' else dict.get(key)
                 self.attr[key] = dict.get(key)
             else:
                 (0 if key == 'iid' else '')
@@ -87,7 +93,7 @@ class CashTransaction:
     # Return False if any of the mandatory field value is None, otherwise True
     @logger.log_function
     def isValidRecord(self):
-        mandatory_list = ('trandate', 'account_id', 'amount')
+        mandatory_list = (exptbl.Date, exptbl.Account, exptbl.Amount)
         for item in mandatory_list:
             if self.attr.get(item) is None:
                 return False

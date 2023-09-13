@@ -12,6 +12,17 @@ class ExpenseConfig:
     BUTTON_SUBMIT_TEXT = 'SUBMIT TAB'
     BUTTON_DRAFT_TEXT = 'SAVE DRAFT'
 
+# TODO - This has to be in sync with server one, and to be removed once a consolidated solution is found
+# Expense table definition for data transformation required in expense input file import
+class ExpenseDBTableDefinion:
+    Date = 'DTE'
+    Account = 'ACC'
+    Amount = 'AMT'
+    Remarks = 'RMK'
+    StmtDtl = 'STD'
+    Labels = 'LBL'
+    def_list = [Date, Account, Amount, Remarks, StmtDtl, Labels]    
+
 class FileImportType:
     Excel = 'E'
     PDF = 'P'

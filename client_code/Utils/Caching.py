@@ -67,6 +67,10 @@ def expense_tbl_def_dropdown():
 def expense_tbl_def_dict():
     return get_cache_dict(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
 
+# Return a complete tuple key based on ID which is a part of the key in a list for expense table definition dropdown
+def expense_tbl_def_getkey(id):
+    return get_key_from_cache(id, get_cache(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown'))
+        
 def expense_tbl_def_reset():
     clear_cache(key='expense_tbl_def')
 
@@ -85,6 +89,10 @@ def mapping_rules_extra_action_reset():
 def mapping_rules_filetype_dropdown():
     return get_cache(key='mapping_rules_filetype', func='generate_mapping_type_dropdown')
 
+# Return a complete tuple key based on ID which is a part of the key in a list for file type dropdown
+def mapping_rules_filetype_getkey(id):
+    return get_key_from_cache(id, get_cache(key='mapping_rules_filetype', func='generate_mapping_type_dropdown'))
+        
 def mapping_rules_filetype_reset():
     clear_cache(key='mapping_rules_filetype')
 
@@ -178,3 +186,10 @@ def clear_cache(key):
 def clearall_cache():
     global cache_dict
     cache_dict.clear()
+
+# Return a complete tuple key based on ID which is a part of the key in a list
+def get_key_from_cache(id, func):
+    li = func
+    if any(isinstance(i, list) for i in li):
+        return next((item[1] for item in li if id in item[1]), None)
+        

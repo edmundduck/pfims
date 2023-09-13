@@ -8,17 +8,20 @@ from anvil.tables import app_tables
 import anvil.server
 from io import BytesIO
 import pandas as pd
+import numpy as np
 import pdfplumber
 import re
+import datetime
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as mapping_mod
-from ..SysProcess import Constants as s_const
+from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import LoggingModule
+from . import FileUploadMappingModule as fummod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
-col_name = s_const.ExpenseDBTableDefinion.def_list
+col_name = exptbl.def_namelist
 regex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
 regex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy
 regex_mdy = '(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(\d{4}|\d{2})'        # mm-dd-yyyy / mmm-dd-yyyy
@@ -56,14 +59,6 @@ pdf_table_settings = {
     # "intersection_y_tolerance": 3,
 }
 
-# Internal function to get the list of included column names in mapping matrix
-@logger.log_function
-def divMappingColumnNameLists(matrix):
-    nanList, nonNanList = [], []
-    for c in col_name: nanList.append(c) if matrix[c] in (None, '') else nonNanList.append(c)
-    logger.trace(f"nonNanList={nonNanList}, nanList={nanList}")
-    return nonNanList, nanList
-
 @anvil.server.callable
 def preview_file(file):
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
@@ -86,7 +81,7 @@ def import_file(file, tablist, rules, extra):
         col = list(map(lambda x: ord(i[x].lower()) - 97 if 'a' <= i[x].lower() <= 'z' else None , col_name))
         common_col = set(i.values()).intersection(extra_dl.get('col'))
                 
-        nonNanList, nanList = divMappingColumnNameLists(i)
+        nonNanList, nanList = ([c for c in col_name if i[c] not in (None, '')], [c for c in col_name if i[c] in (None, '')])
         for t in tablist:
             # iloc left one is row, right one is column
             # 1) Filter required columns
@@ -104,9 +99,9 @@ def import_file(file, tablist, rules, extra):
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    tmp_df['account_id'] = int(extra_dl.get('etarget')[extra_dl_pointer])
+                    tmp_df[exptbl.Account] = int(extra_dl.get('etarget')[extra_dl_pointer])
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
-                    tmp_df['labels'] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df['labels'] in (None, '') else tmp_df['labels'] + extra_dl.get('etarget')[extra_dl_pointer]
+                    tmp_df[exptbl.Labels] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df[exptbl.Labels] in (None, '') else tmp_df[exptbl.Labels] + extra_dl.get('etarget')[extra_dl_pointer]
                 logger.trace("4) Map extra action logic, tmp_df=", tmp_df)
             
             # 5) Concat temp DF to the resultant DF
@@ -115,9 +110,9 @@ def import_file(file, tablist, rules, extra):
 
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
-    lbl_df = new_df.loc[:, ['labels']]
+    lbl_df = new_df.loc[:, [exptbl.Labels]]
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
-    return (new_df.dropna(subset=['amount', 'trandate'], ignore_index=True)).to_dict(orient='records'), lbl_df['labels'].dropna().unique()
+    return (new_df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True)).to_dict(orient='records'), lbl_df[exptbl.Labels].dropna().unique()
 
 @anvil.server.callable("update_mapping")
 @logger.log_function
@@ -153,16 +148,16 @@ def update_mapping(data, mapping):
             for lbl_mapping in LD:
                 if lbl_mapping is not None:
                     if lbl_mapping.get('action')[0] == "S":
-                        df['labels'].replace(lbl_mapping['srclbl'], None, inplace=True)                    
+                        df[exptbl.Labels].replace(lbl_mapping['srclbl'], None, inplace=True)                    
                     elif lbl_mapping.get('tgtlbl') is not None:
                         # Case 001 - string dict key handling review
                         id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
-                        df['labels'].replace(lbl_mapping['srclbl'], id, inplace=True)
+                        df[exptbl.Labels].replace(lbl_mapping['srclbl'], id, inplace=True)
         logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
         logger.trace("df=", df)
-        # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
+        # df.fillna(value={exptbl.Remarks:None, exptbl.StmtDtl:None, exptbl.Amount:0}, inplace=True)
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.sort_values(by='trandate', key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        return df.replace([np.nan], [None]).sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
     return None
@@ -180,13 +175,12 @@ def get_regex_str(str_list, mandatory_type=None):
         # This list comprehension is NOT working, to find out why
         # column_type = (key for key, value in column_type_mapping.items() if i in list(map(lambda x: x.lower().replace(' ', ''), value)))
         column_type = next((key for key, value in column_type_mapping.items() if i in list(map(lambda x: x.lower().replace(' ', ''), value))), None)
-        logger.trace(f"column_type={column_type}")
         if mandatory_type and not isMandatorySet and column_type == mandatory_type:
             trx_regex = trx_regex + (datatype_regex.get(column_type, datatype_regex.get('any')))[:-1] + '+' + datatype_regex.get('whitespace')
             isMandatorySet = True
         else:
             trx_regex = trx_regex + datatype_regex.get(column_type, datatype_regex.get('any')) + datatype_regex.get('whitespace')
-    logger.debug(f"trx_regex={trx_regex}")
+    logger.trace(f"trx_regex={trx_regex}")
     return trx_regex
 
 @anvil.server.callable("import_pdf_file")
@@ -205,7 +199,8 @@ def import_pdf_file(file):
                 # Finding column headers
                 # column_headers = ['Date', 'Payment type and details', 'Paid out', 'Paid in', 'Balance']
                 # column_headers = ['Date', 'Pmnt', 'Details', 'Money Out (£)', 'Money In (£)', 'Balance (£)']
-                column_headers = result.group(0).split()
+                # column_headers = result.group(0).split()
+                column_headers = list(filter(lambda x: x.strip() not in (None, ''), result.group(0).split('   ')))
                 logger.debug("column_headers=", column_headers)
                 
                 # Word object comparison
@@ -214,10 +209,10 @@ def import_pdf_file(file):
                 for word in page.extract_words():
                     if len(header_word_dict.keys()) < len(column_headers):
                         patternNotFound = True
+                        pdf_word = format_comparable_word(word['text'])
+                        logger.trace(f"pdf_word=\"{pdf_word}\"")
                         for header in column_headers:
-                            pdf_word = format_comparable_word(word['text'])
                             header_word = format_comparable_word(header)
-                            # print(f"header_word=\"{header_word}\"/pdf_word=\"{pdf_word}\"")
                             if pdf_word == header_word:
                                 # Case 1
                                 # word = date, header = date
@@ -268,7 +263,7 @@ def import_pdf_file(file):
                 explicit_lines.append(header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('x1'))
                 bbox_top = header_word_dict.get(format_comparable_word(column_headers[len(column_headers)-1])).get('top')
                 logger.debug("explicit_lines=", explicit_lines)
-    
+                
                 pdf_table_settings['explicit_vertical_lines'] = explicit_lines
                 # bounding box (x0, y0, x1, y1)
                 bounding_box = [explicit_lines[0], bbox_top, explicit_lines[-1]+10, page.height]
@@ -291,6 +286,7 @@ def import_pdf_file(file):
                             grace_search = 3
                         else:
                             logger.debug("XXX=\"", row_to_check)
+                            # crop_table.remove(row)
                             grace_search -= 1
                     else:
                         crop_table.remove(row)
@@ -300,30 +296,129 @@ def import_pdf_file(file):
 
 @anvil.server.callable("update_pdf_mapping")
 @logger.log_function
-def update_pdf_mapping(data, mapping):
+def update_pdf_mapping(data, mapping, account, labels):
+    # Logic of merging all amount columns
+    def merge_amt_cols(row):
+        logger.trace(f"merge_amt_cols row={row}")
+        if all(pd.isna(row[c]) for c in matrix.get(exptbl.Amount, None)):
+            return np.nan
+        else:
+            for c in matrix.get(exptbl.Amount, None):
+                logger.trace(f"merge_amt_cols c={c}/row[c]={row[c]}/float(row[c])={float(row[c])}")
+                if pd.notna(row[c]) and float(row[c]):
+                    return row[c]
+
+    # Logic of merging relevant rows into one row
+    def merge_rows(row, start, end, dateId):
+        result = None
+        logger.trace(f"merge_rows row=\n{row[start:end+1]}")
+        if all(pd.isna(c) for c in row[start:end+1]):
+            return np.nan
+        else:
+            for c in row[start:end+1]:
+                if pd.notna(c):
+                    if result is None:
+                        result = c
+                    else:
+                        if not isinstance(c, (int, float)) and not isinstance(c, (datetime.date, datetime.datetime)):
+                            result = ' '.join((result, c))
+                        elif isinstance(c, (datetime.date, datetime.datetime)) and start != dateId:
+                            # Special date handling - where multiple rows in amount associate to only one date row
+                            result = row[dateId]
+            logger.trace(f"merge_rows result=\n{result}")
+            return pd.Series(result)
+            
     try:
-        print("data=", data)
-        print("mapping=", mapping)
-        # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-        # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
-        df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
-        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
-        print("df=", df)
-        print("LD=", LD)
-        if df is not None and LD is not None:
-            for col_mapping in LD:
-                if col_mapping is not None:
-                    if col_mapping.get('action')[0] == "S":
-                        df['labels'].replace(col_mapping['srccol'], None, inplace=True)                    
-                    elif col_mapping.get('tgtcol') is not None:
-                        # Case 001 - string dict key handling review
-                        id = eval(col_mapping['tgtcol'])['id'] if isinstance(col_mapping.get('tgtcol'), str) else col_mapping['tgtcol']['id']
-                        df['labels'].replace(col_mapping['srccol'], id, inplace=True)
-        logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
-        logger.trace("df=", df)
-        # df.fillna(value={'remarks':None, 'stmt_dtl':None, 'amount':0}, inplace=True)
-        # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.sort_values(by='trandate', key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        column_headers, unwantedList = [], []
+        col_num = 0
+        df = pd.DataFrame(data=data)
+        matrix = {}
+        logger.debug(f"data={data}")
+        logger.debug(f"mapping={mapping}")
+        for x in mapping:
+            # Amount sign handling
+            if x.get('sign') is not None:
+                df[col_num] = -(pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')
+            if x.get('tgtcol') is not None:
+                column_headers.append(x.get('tgtcol')[0])
+                if matrix.get(x.get('tgtcol')[0], None) is None:
+                    matrix[x.get('tgtcol')[0]] = [col_num]
+                else:
+                    matrix[x.get('tgtcol')[0]].append(col_num)
+            else:
+                unwantedList.append(col_num)
+            col_num += 1
+                
+        logger.debug(f"matrix={matrix}, column_headers={column_headers}")
+        nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
+        
+        # Merge all amount columns into one for later row merge actions
+        df[exptbl.Amount] = df.apply(merge_amt_cols, axis='columns')
+        matrix[exptbl.Amount] = [exptbl.Amount]
+        
+        # Generate mapping matrix which has unique columns each
+        # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
+        logger.debug(f"nonNanList={nonNanList}, nanList={nanList}")
+        mapping_matrix = fummod.generate_mapping_matrix(matrix, nonNanList.copy())
+
+        new_df = None
+        for m in mapping_matrix:
+            # 1) Filter required columns per mapping matrix
+            tmp_df = df.loc[:, m]
+            logger.trace(f"tmp_df={tmp_df.to_string()}")
+            # 2) Rename columns
+            tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
+            # 3) Add 'not in rule' fields to the end
+            tmp_df.loc[:, nanList] = None
+            new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
+        df = new_df
+
+        # 4) Format date and other columns data accordingly and merge rows
+        df[exptbl.Date] = pd.to_datetime(df[exptbl.Date], errors='coerce').dt.date
+        date_not_null_df = df[df[exptbl.Date].notnull()]
+        amt_not_null_df = df[df[exptbl.Amount].notnull()]
+        logger.trace(f"date_not_null_df=\n{date_not_null_df}")
+        new_df = None
+        firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df is not None and amt_not_null_df.size > 0 else None
+        for i in range(date_not_null_df.index.size):
+            curRowId = int(date_not_null_df.iloc[i].name)
+            dateId = curRowId
+            try:
+                nextRowId = int(date_not_null_df.iloc[i+1].name)
+            except (IndexError) as err:
+                nextRowId = None
+            while amt_not_null_df is not None and amt_not_null_df.size > 0 and firstAmtId and nextRowId and firstAmtId < nextRowId:
+                logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
+                logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
+                # Deal with a row in date_not_null_df without a date (e.g. multiple transactions in one date but only one date found in date column)
+                if pd.isna(df.loc[curRowId, exptbl.Date]):
+                    df.loc[curRowId, exptbl.Date] = df.loc[dateId][exptbl.Date]                
+                if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
+                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
+                    new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
+                    print(f"Case 1 - Diff index names for 1st date and 1st amt, merge all rows in between - new_df=\n{new_df.to_string()}")
+                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                    curRowId = firstAmtId + 1
+                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
+                elif firstAmtId == curRowId:
+                    oneline_df = df.loc[[firstAmtId]]
+                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
+                    if firstAmtId and min(firstAmtId, nextRowId) - curRowId > 1:
+                        tmp_df = df.apply(merge_rows, args=(curRowId, min(firstAmtId, nextRowId)-1, dateId), axis='index', result_type=None)
+                        new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
+                        print(f"Case 2a - Same index names for both 1st row in date df and amt df (nexN row without date and amt require to merge) - new_df=\n{new_df.to_string()}")
+                    else:
+                        new_df = pd.concat([oneline_df], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, oneline_df], ignore_index=True, join="outer")
+                        print(f"Case 2b - Same index names for both 1st row in date df and amt df (No next row to merge) - new_df=\n{new_df.to_string()}")
+                else:
+                    pass
+        df = new_df
+        
+        if account is not None: df[exptbl.Account] = account
+        if labels is not None: df[exptbl.Labels] = labels
+        return df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True).replace([np.nan], [None])\
+            .sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err}")
     return None

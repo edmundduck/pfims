@@ -7,16 +7,6 @@ import anvil.server
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-#
-# To allow anvil.server.call() to call functions here, we mark
-# them with @anvil.server.callable.
-# Here is an example - you can replace it with your own:
-#
-# @anvil.server.callable
-# def say_hello(name):
-#   print("Hello, " + name + "!")
-#   return 42
-#
 
 # Config for Setting page
 # Database col definition change may be required should the values are adjusted here
@@ -26,13 +16,13 @@ class SettingConfig:
 
 # Expense table definition for data transformation required in expense input file import
 class ExpenseDBTableDefinion:
-    Date = 'trandate'
-    Account = 'account_id'
-    Amount = 'amount'
-    Remarks = 'remarks'
-    StmtDtl = 'stmt_dtl'
-    Labels = 'labels'
-    def_list = [Date, Account, Amount, Remarks, StmtDtl, Labels]
+    Date = 'DTE'
+    Account = 'ACC'
+    Amount = 'AMT'
+    Remarks = 'RMK'
+    StmtDtl = 'STD'
+    Labels = 'LBL'
+    def_namelist = [Date, Account, Amount, Remarks, StmtDtl, Labels]
 
 # Search interval modes used in Report search panel and config
 class SearchInterval:

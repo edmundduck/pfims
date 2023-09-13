@@ -46,7 +46,8 @@ to check the status of the form.
             self._check()
         
         for e in event_list:
-            component.set_event_handler(e, check_this_component)
+            # component.set_event_handler(e, check_this_component)
+            component.add_event_handler(e, check_this_component)
         self._component_checks.append(check_this_component)
     
         if show_errors_immediately:
@@ -83,6 +84,11 @@ to check the status of the form.
         self.require(dropdown_box, ['change'],
                     lambda dd, cb: (cb.checked and dd.selected_value not in ('', None)) or not cb.checked,
                     error_lbl, show_errors_immediately, check_box)
+    
+    def require_selected_dependent_on_dropdown(self, dropdown_box, dropdown_box_dep, dep_key, error_lbl=None, show_errors_immediately=False):
+        self.require(dropdown_box, ['change'],
+                    lambda dd, dd_dep: (dd_dep.selected_value == dep_key and dd.selected_value not in ('', None)) or dd_dep.selected_value != dep_key,
+                    error_lbl, show_errors_immediately, dropdown_box_dep)
     
     def enable_when_valid(self, component):
         def on_change(is_valid):

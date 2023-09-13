@@ -57,106 +57,22 @@ components:
     grid_position: EROHIT,HFUOGS
 - type: FlowPanel
   properties: {}
-  name: flow_panel_step1
-  layout_properties: {grid_position: 'JLMDAX,VUAUXR'}
+  name: flow_panel_uploadfile
+  layout_properties: {grid_position: 'BZYDBC,KRUBSF'}
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: Step 1, font_size: 16, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: 'fa:long-arrow-right'}
-    name: label_step1
-    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Choose a file type                                      ',
-      font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-      italic: false, background: '', bold: true, underline: false, icon: ''}
-    name: label_step1a
-    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: Choose file type
-      border: ''
-      enabled: true
-      foreground: ''
-      items: []
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: true
-    name: dropdown_filetype
-    layout_properties: {grid_position: 'ZYDOOZ,HXSXTZ'}
-    event_bindings: {show: dropdown_filetype_show, change: dropdown_filetype_change}
-- type: FlowPanel
-  properties: {}
-  name: flow_panel_step2
-  layout_properties: {grid_position: 'GIMLZS,LQOFDI'}
-  components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Step 2, font_size: 16, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
-      underline: false, icon: 'fa:long-arrow-right'}
-    name: label_step2
-    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Choose a mapping rule                             ', font_size: 16,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: true, underline: false, icon: ''}
-    name: label_step2a
-    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: Choose mapping rule
-      border: ''
-      enabled: true
-      foreground: ''
-      items: []
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: true
-    name: dropdown_mapping_rule
-    layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
-    event_bindings: {change: dropdown_mapping_rule_change}
-- type: FlowPanel
-  properties: {}
-  name: flow_panel_step3
-  layout_properties: {grid_position: 'CJQFNU,HWSGXC'}
-  components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Step 3, font_size: 16, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
-      underline: false, icon: 'fa:long-arrow-right'}
-    name: label_step3
+    name: label_step_uploadfile
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: 'Upload a file                                             ',
       font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small,
       italic: false, background: '', bold: true, underline: false, icon: ''}
-    name: label_step3a
+    name: label_step_uploadfile2
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
   - type: FileLoader
     properties:
@@ -186,6 +102,29 @@ components:
     name: file_loader_1
     layout_properties: {grid_position: 'NYUFTO,QFHPHS', width: 164.55}
     event_bindings: {change: file_loader_1_change}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: ''
+      border: ''
+      enabled: false
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: true
+    name: dropdown_filetype
+    layout_properties: {grid_position: 'ZYDOOZ,HXSXTZ'}
+    event_bindings: {show: dropdown_filetype_show}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
@@ -195,22 +134,64 @@ components:
     layout_properties: {grid_position: 'NYUFTO,EAOLZO'}
 - type: FlowPanel
   properties: {}
-  name: flow_panel_step4
-  layout_properties: {grid_position: 'ROSIXV,MDDLFT'}
+  name: flow_panel_mappingrule
+  layout_properties: {grid_position: 'ZKTWAT,XJNNQQ'}
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Step 4, font_size: 16, font: '', spacing_above: small,
+      visible: true, text: Step 2, font_size: 16, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: 'fa:long-arrow-right'}
-    name: label_step4
+    name: label_step_mappingrule
+    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: 'Choose a mapping rule                             ', font_size: 16,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: true, underline: false, icon: ''}
+    name: label_step_mappingrule2
+    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
+  - type: DropDown
+    properties:
+      role: null
+      align: full
+      tooltip: ''
+      placeholder: Choose mapping rule
+      border: ''
+      enabled: true
+      foreground: ''
+      items: []
+      visible: true
+      font_size: 12
+      font: ''
+      spacing_above: small
+      spacing_below: small
+      italic: false
+      background: ''
+      bold: false
+      underline: false
+      include_placeholder: true
+    name: dropdown_mapping_rule
+    layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
+    event_bindings: {change: dropdown_mapping_rule_change}
+- type: FlowPanel
+  properties: {}
+  name: flow_panel_xlstab
+  layout_properties: {grid_position: 'ZLOVHY,UKBUMM'}
+  components:
+  - type: Label
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Step 3, font_size: 16, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+      underline: false, icon: 'fa:long-arrow-right'}
+    name: label_step_xlstab
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: 'Select Excel tabs to import                       ', font_size: 16,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: true, underline: false, icon: ''}
-    name: label_step4a
+    name: label_step_xlstab2
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
   - type: FlowPanel
     properties: {}
