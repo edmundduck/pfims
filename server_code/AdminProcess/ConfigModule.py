@@ -17,9 +17,14 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# DB table "settings" select method from Postgres DB
 @logger.log_function
 def psqldb_select_settings():
+    """
+    Select data from a DB table which stores each user's settings
+
+    Returns:
+        dict: A dictionary containing all user's settings
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     settings = None
@@ -37,9 +42,14 @@ def psqldb_select_settings():
         cur.close()
     return settings
 
-# DB table "brokers" select method from Postgres DB
 @logger.log_function
 def psgldb_select_brokers():
+    """
+    Select data from a DB table which stores investment brokers' detail.
+
+    Returns:
+        list: A dropdown list of broker names and CCY as description, and broker ID as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -49,9 +59,21 @@ def psgldb_select_brokers():
     logger.debug("broker_list=", broker_list)
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
-# DB table "settings" update/insert method into Postgres DB
 @logger.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+    """
+    Insert or update settings from setting form to a DB table which stores investment brokers' detail.
+
+    Parameters:
+        def_broker (str): The name of the broker.
+        def_interval (str): The ID of the default search interval.
+        def_datefrom (date): The date to default search from.
+        def_dateto (date): The date to default search to.
+        logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
+
+    Returns:
+        int: Successful update row count, otherwise 
+    """
     userid = sysmod.get_current_userid()
     if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
     try:
