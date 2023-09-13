@@ -168,15 +168,14 @@ components:
     role: null
     columns:
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '15', $$hashKey: 'object:40092'}
-    - {id: TOZXSD, title: '', data_key: labels, width: '8', $$hashKey: 'object:40093'}
+    - {id: TOZXSD, title: '', data_key: LBL, width: '8', $$hashKey: 'object:40093'}
     - {id: JNEVXO, title: '', data_key: iid, width: '8', $$hashKey: 'object:40081'}
     - {id: SBYHGF, title: '', data_key: cb, $$hashKey: 'object:131320', width: '15'}
-    - {id: DNGCRO, title: Date, data_key: trandate, width: '110', $$hashKey: 'object:40082'}
-    - {id: RMITXR, title: Account, data_key: account_id, width: '150', $$hashKey: 'object:40084'}
-    - {id: JRLRWP, title: Amount, data_key: amount, width: '70', $$hashKey: 'object:40086'}
-    - {id: DGKRSZ, title: Remarks, data_key: remarks, expand: false, width: '150',
-      $$hashKey: 'object:40089'}
-    - {id: ROQBQR, title: Statement Detail, data_key: stmt_dtl, $$hashKey: 'object:57645',
+    - {id: DNGCRO, title: Date, data_key: DTE, width: '110', $$hashKey: 'object:40082'}
+    - {id: RMITXR, title: Account, data_key: ACC, width: '150', $$hashKey: 'object:40084'}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: '70', $$hashKey: 'object:40086'}
+    - {id: DGKRSZ, title: Remarks, data_key: RMK, expand: false, width: '150', $$hashKey: 'object:40089'}
+    - {id: ROQBQR, title: Statement Detail, data_key: STD, $$hashKey: 'object:57645',
       width: '150'}
     - {id: HHYTTP, title: Labels, data_key: labels_button, $$hashKey: 'object:57643',
       width: '280'}

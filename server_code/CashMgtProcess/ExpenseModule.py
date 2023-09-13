@@ -10,6 +10,8 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..DataObject import FinObject as fobj
+from ..ServerUtils import HelperModule as helper
+from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 
@@ -51,9 +53,14 @@ def select_transactions(tid):
     if tid is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
+            cur.execute(f"SELECT iid, tab_id, trandate AS {exptbl.Date}, account_id AS {exptbl.Account}, \
+            amount AS {exptbl.Amount}, labels AS {exptbl.Labels}, remarks AS {exptbl.Remarks}, stmt_dtl AS {exptbl.StmtDtl} \
+            FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
             logger.trace("rows=", rows)
+            # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
+            # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
+            rows = helper.upper_dict_keys(rows, exptbl.def_namelist)
             cur.close()
         return list(rows)
     return []

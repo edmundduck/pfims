@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
+from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ....Utils import Caching as cache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
@@ -38,7 +39,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
-            logger.trace(f"trimmed_list={trimmed_list}, lbls={lbls}")
+            logger.trace(f"trimmed_list={trimmed_list}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
@@ -71,8 +72,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc]
         else:
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[(loc+len(str(b.tag))+1):]
-        # Without self.item['labels'] assignment the data binding won't work
-        self.item['labels'] = self.hidden_lbls_id.text
+        # Without self.item[exptbl.Labels] assignment the data binding won't work
+        self.item[exptbl.Labels] = self.hidden_lbls_id.text
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
@@ -93,8 +94,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             if self.hidden_lbls_id.text not in (None, '') and self.hidden_lbls_id.text[-1] != ',':
                 self.hidden_lbls_id.text = self.hidden_lbls_id.text + ','
             self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ','
-            # Without self.item['labels'] assignment the data binding won't work
-            self.item['labels'] = self.hidden_lbls_id.text
+            # Without self.item[exptbl.Labels] assignment the data binding won't work
+            self.item[exptbl.Labels] = self.hidden_lbls_id.text
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             self.row_panel_labels.add_component(b, False, name=selected_lid)
             b.set_event_handler('click', self.label_button_minus_click)

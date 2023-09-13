@@ -9,6 +9,8 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
+from ..ServerUtils import HelperModule as helper
+from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 
@@ -37,8 +39,7 @@ def generate_mapping_dropdown(ftype):
 def generate_mapping_type_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        # TODO change filter_type to mapping_file_type
-        sql = f"SELECT * FROM {sysmod.schemarefd()}.filter_type ORDER BY seq ASC"
+        sql = f"SELECT * FROM {sysmod.schemarefd()}.import_filetype ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
@@ -72,15 +73,20 @@ def generate_upload_action_dropdown():
     return content
 
 # Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
+# Arguments as follow,
+# matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
+# col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
 @logger.log_function
 def generate_mapping_matrix(matrix, col_def):
+    logger.debug("matrix=", matrix)
+    logger.debug("col_def=", col_def)
     if len(col_def) < 1:
         return [[]]
     col_val = matrix.get(col_def.pop(0))
     r = generate_mapping_matrix(matrix, col_def)
     result = None
     for ri in r:
-        if len(col_val) > 0:
+        if col_val is not None and len(col_val) > 0:
             for i in col_val:
                 # Duplicate result according to filter param size
                 y = ri.copy()
@@ -154,10 +160,13 @@ def select_mapping_rules(gid=None):
 def select_mapping_matrix(id):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT datecol AS trandate, acctcol AS account_id, amtcol AS amount, remarkscol AS remarks, stmtdtlcol AS stmt_dtl, lblcol AS labels \
-        FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
+        sql = f"SELECT datecol AS {exptbl.Date}, acctcol AS {exptbl.Account}, amtcol AS {exptbl.Amount}, remarkscol AS {exptbl.Remarks}, \
+        stmtdtlcol AS {exptbl.StmtDtl}, lblcol AS {exptbl.Labels} FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
         cur.execute(sql)
         rows = cur.fetchall()
+        # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
+        # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
+        rows = helper.upper_dict_keys(rows, exptbl.def_namelist)
         cur.close()
     return rows
 

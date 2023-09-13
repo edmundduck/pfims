@@ -27,7 +27,7 @@ components:
     name: row_stmt_dtl
     layout_properties: {column: ROQBQR}
     data_bindings:
-    - {property: text, code: 'self.item[''stmt_dtl'']', writeback: true}
+    - {property: text, code: 'self.item[''STD'']', writeback: true}
     event_bindings: {change: row_stmt_dtl_change}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
@@ -54,7 +54,7 @@ components:
     name: row_remarks
     layout_properties: {column: DGKRSZ}
     data_bindings:
-    - {property: text, code: 'self.item[''remarks'']', writeback: true}
+    - {property: text, code: 'self.item[''RMK'']', writeback: true}
     event_bindings: {change: row_remarks_change}
   - type: DatePicker
     properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
@@ -64,7 +64,7 @@ components:
     name: row_date
     layout_properties: {column: DNGCRO}
     data_bindings:
-    - {property: date, code: 'self.item[''trandate'']', writeback: true}
+    - {property: date, code: 'self.item[''DTE'']', writeback: true}
     event_bindings: {change: row_date_change}
   - type: DropDown
     properties:
@@ -89,7 +89,7 @@ components:
     name: row_acct
     layout_properties: {column: RMITXR}
     data_bindings:
-    - {property: selected_value, code: 'self.item[''account_id'']', writeback: true}
+    - {property: selected_value, code: 'self.item[''ACC'']', writeback: true}
     event_bindings: {change: row_acct_change}
   - type: TextBox
     properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
@@ -99,7 +99,7 @@ components:
     name: row_amt
     layout_properties: {column: JRLRWP}
     data_bindings:
-    - {property: text, code: 'self.item[''amount'']', writeback: true}
+    - {property: text, code: 'self.item[''AMT'']', writeback: true}
     event_bindings: {change: row_amt_change}
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
@@ -109,7 +109,7 @@ components:
     name: hidden_lbls_id
     layout_properties: {column: TOZXSD}
     data_bindings:
-    - {property: text, code: 'self.item[''labels'']', writeback: true}
+    - {property: text, code: 'self.item[''LBL'']', writeback: true}
   - type: FlowPanel
     properties: {}
     name: row_panel_labels

@@ -35,11 +35,11 @@ components:
     role: null
     align: full
     tooltip: ''
-    placeholder: ''
+    placeholder: Choose inflow or outflow
     border: ''
     enabled: true
     foreground: ''
-    items: [Inflow (+), Outflow (-)]
+    items: ['']
     visible: false
     font_size: 12
     font: ''
@@ -49,9 +49,11 @@ components:
     background: ''
     bold: false
     underline: false
-    include_placeholder: false
+    include_placeholder: true
   name: dropdown_sign
   layout_properties: {column: WIDMCS}
+  data_bindings:
+  - {property: selected_value, code: 'self.item[''sign'']', writeback: true}
 - type: Label
   properties: {}
   name: src_column
@@ -66,10 +68,4 @@ components:
   name: cb_required
   layout_properties: {column: DUOBFI}
   event_bindings: {change: cb_required_change}
-- type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
-    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-    italic: false, background: '', bold: false, underline: false, icon: ''}
-  name: hidden_lbl_action
-  layout_properties: {column: DUOBFI}
 is_package: true
