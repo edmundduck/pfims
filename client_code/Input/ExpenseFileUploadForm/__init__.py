@@ -38,22 +38,9 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_filetype.items = cache.mapping_rules_filetype_dropdown()
 
-    def dropdown_filetype_change(self, **event_args):
-        """This method is called when an item is selected"""
-        filetype_id = self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None
-        self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', filetype_id)
-
-    def dropdown_mapping_rule_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        filetype_id = self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None
-        self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', filetype_id)
-
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
-        if self.dropdown_mapping_rule.selected_value is None:
-            self.button_excel_next.enabled = False
-        else:
-            self.button_excel_next.enabled = True
+        self.flow_panel_xlstab.visible = True if self.dropdown_mapping_rule.selected_value is not None else False
 
     @logger.log_function
     def file_loader_1_change(self, file, **event_args):
@@ -64,7 +51,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
             self.valerror_1.visible = False
             self.label_filename.text = f"Uploaded filename, content type: {file.name}, {file.content_type}"
             if file.content_type == "application/pdf":
-                self.flow_panel_mappingrule.visible = True
+                self.flow_panel_mappingrule.visible = False
                 self.button_excel_next.visible = False
                 self.button_pdf_next.visible = True
                 self.dropdown_filetype.visible = True
@@ -85,6 +72,8 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     )
                     self.sheet_tabs_panel.add_component(cb)
                     cb.set_event_handler('change', self.enable_excel_next_button)
+                self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None)
+                self.flow_panel_mappingrule.visible = True
             else:
                 self.flow_panel_mappingrule.visible = False
                 self.flow_panel_xlstab.visible = False

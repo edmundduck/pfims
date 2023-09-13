@@ -124,7 +124,7 @@ components:
       include_placeholder: true
     name: dropdown_filetype
     layout_properties: {grid_position: 'ZYDOOZ,HXSXTZ'}
-    event_bindings: {show: dropdown_filetype_show, change: dropdown_filetype_change}
+    event_bindings: {show: dropdown_filetype_show}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
@@ -173,7 +173,7 @@ components:
       include_placeholder: true
     name: dropdown_mapping_rule
     layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
-    event_bindings: {change: dropdown_mapping_rule_change, show: dropdown_mapping_rule_show}
+    event_bindings: {change: dropdown_mapping_rule_change}
 - type: FlowPanel
   properties: {}
   name: flow_panel_xlstab

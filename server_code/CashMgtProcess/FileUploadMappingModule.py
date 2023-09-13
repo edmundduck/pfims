@@ -39,8 +39,7 @@ def generate_mapping_dropdown(ftype):
 def generate_mapping_type_dropdown():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        # TODO change filter_type to mapping_file_type
-        sql = f"SELECT * FROM {sysmod.schemarefd()}.filter_type ORDER BY seq ASC"
+        sql = f"SELECT * FROM {sysmod.schemarefd()}.import_filetype ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
