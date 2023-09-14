@@ -15,12 +15,17 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# Generate accounts dropdown items for account maintenance form
 # For callable decorator to be used with other decorator, refer to following,
 # https://anvil.works/forum/t/fixed-multiple-decorators-in-forms/3582/5
 @anvil.server.callable("generate_accounts_dropdown")
 @logger.log_function
 def generate_accounts_dropdown():
+    """
+    Select accounts data from a DB table which stores accounts' detail to generate a dropdown list.
+
+    Returns:
+        list: A dropdown list of accounts names and IDs as description, and account names and IDs as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -30,10 +35,17 @@ def generate_accounts_dropdown():
         cur.close()
     return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
 
-# Generate currency dropdown items
 @anvil.server.callable("generate_ccy_dropdown")
 @logger.log_function
 def generate_ccy_dropdown():
+    """
+    Select CCY data from a DB table which stores currencies' detail to generate a dropdown list.
+
+    Not all currencies have symbols, so they can be empty.
+    
+    Returns:
+        list: A dropdown list of currency abbreviations, names and symbols as description, and currency abbreviations as ID.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.ccy ORDER BY common_seq ASC, abbv ASC")
