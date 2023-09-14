@@ -55,10 +55,18 @@ def generate_ccy_dropdown():
     content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
     return content
 
-# Get selected account attributes
 @anvil.server.callable("get_selected_account_attr")
 @logger.log_function
 def get_selected_account_attr(selected_acct):
+    """
+    Select one particular account attributes from a DB table which stores accounts' detail.
+
+    Parameters:
+        selected_acct (int): The ID of a selected account.
+
+    Returns:
+        list: A row of accounts attributes including ID, name, base currency, date valid from, date valid to and status.
+    """
     if selected_acct in (None, ''):
         return [None, None, None, None, None, True]
     else:
@@ -72,10 +80,24 @@ def get_selected_account_attr(selected_acct):
             cur.close()
         return [row['id'], row['name'], row['ccy'], row['valid_from'], row['valid_to'], row['status']]
 
-# Create account
 @anvil.server.callable("create_account")
 @logger.log_function
 def create_account(name, ccy, valid_from, valid_to, status):
+    """
+    Create an account from account form to a DB table which stores accounts' detail.
+
+    In a successful update, a newly created account with new ID will be returned.
+    
+    Parameters:
+        name (str): The name of the account.
+        ccy (str): The base currency of the account.
+        valid_from (date): The date when account becomes valid.
+        valid_to (date): The date when account is no longer valid.
+        status (boolean): Current status of the account.
+
+    Returns:
+        id['id'] (int): The ID of the newly created or existing account, otherwise None
+    """
     try:
         userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
@@ -97,10 +119,25 @@ def create_account(name, ccy, valid_from, valid_to, status):
         if conn is not None: conn.close()
     return None
 
-# Update account
 @anvil.server.callable("update_account")
 @logger.log_function
 def update_account(id, name, ccy, valid_from, valid_to, status):
+    """
+    Update an existing account from account form to a DB table which stores accounts' detail.
+
+    Row count returned larger than 0 is considered as a successful update. 
+    
+    Parameters:
+        id (int): The ID of the account.
+        name (str): The name of the account.
+        ccy (str): The base currency of the account.
+        valid_from (date): The date when account becomes valid.
+        valid_to (date): The date when account is no longer valid.
+        status (boolean): Current status of the account.
+
+    Returns:
+        cur.rowcount (int): Successful update row count, otherwise None
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -119,10 +156,20 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
         if conn is not None: conn.close()
     return None
 
-# Delete account
 @anvil.server.callable("delete_account")
 @logger.log_function
 def delete_account(id):
+    """
+    Delete an account from a DB table which stores accounts' detail.
+
+    Row count returned larger than 0 is considered as a successful update.
+    
+    Parameters:
+        id (int): The ID of the account.
+
+    Returns:
+        cur.rowcount (int): Successful update row count, otherwise None
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
