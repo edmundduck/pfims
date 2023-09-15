@@ -61,16 +61,33 @@ pdf_table_settings = {
 
 @anvil.server.callable
 def preview_file(file):
+    """
+    Return all tabs in the uploaded Excel file.
+
+    Parameters:
+        file (object): The uploaded file object.
+
+    Returns:
+        ef.sheet_names (list): List of tab names in the uploaded Excel file.
+    """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     return list(ef.sheet_names)
 
-@anvil.server.callable
-def get_labels_list(file, lblcol):
-    ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    
 @anvil.server.callable("import_file")
 @logger.log_function
 def import_file(file, tablist, rules, extra):
+    """
+    Import Excel file data into a Dataframe for further processing.
+
+    Parameters:
+        file (object): The uploaded file object.
+        tablist (list): The list of Excel tabs to be imported.
+        rules (list of list): A mapping matrix for how Excel columns map to Expense module repeating panel to display.
+        extra (list of dict): Extra mapping action per rule.
+
+    Returns:
+        new_df (dataframe): Processed dataframe.
+    """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = {k: [dic[k] for dic in extra] for k in extra[0]}
