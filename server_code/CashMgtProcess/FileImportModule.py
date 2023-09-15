@@ -134,6 +134,16 @@ def import_file(file, tablist, rules, extra):
 @anvil.server.callable("update_mapping")
 @logger.log_function
 def update_mapping(data, mapping):
+    """
+    Update labels mapping from the imported Dataframe.
+
+    Parameters:
+        data (dataframe): The dataframe to be updated with the mapping.
+        mapping (list): The list of labels mapping from user's input.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
     try:
         # 1. Get all items with action = 'C', and grab new field to create new labels
         # DL = Dict of Lists
@@ -179,12 +189,28 @@ def update_mapping(data, mapping):
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
     return None
 
-# Internal function to format words in column headers and pdf lines to be single comparable format
 def format_comparable_word(word):
+    """
+    Format words in column headers and pdf lines to be single comparable format.
+
+    Parameters:
+        word (string): The word to be formatted.
+
+    Returns:
+        word (string): Formatted word for comparison.
+    """
     return word.lower().replace(' ', '')
 
-# Internal function to generate a dynamic regular expression string based on pdf table column type
 def get_regex_str(str_list, mandatory_type=None):
+    """
+    Generate a dynamic regular expression string based on pdf table column type.
+
+    Parameters:
+        str_list (string): ?
+
+    Returns:
+        trx_regex (string): ?
+    """
     trimmed_str_list = list(map(lambda x: x.lower().replace(' ', ''), str_list))
     trx_regex = ""
     isMandatorySet = False
