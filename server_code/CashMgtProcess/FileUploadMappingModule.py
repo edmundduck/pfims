@@ -137,24 +137,13 @@ def generate_mapping_matrix(matrix, col_def):
     logger.trace("result=", result)
     return result
 
-# Select input expense table definition column ID
 @logger.log_function
 def select_expense_tbl_def_id():
     """
-    ????? pending ???????
-    Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules.
-
-    Examples as follow,
-    matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
-    col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
-    result= [{'DTE': 'J', 'ACC': '', 'AMT': 'C', 'RMK': 'H', 'STD': '', 'LBL': 'B'}, {'DTE': 'J', 'ACC': '', 'AMT': 'F', 'RMK': 'H', 'STD': '', 'LBL': 'B'}]
-
-    Parameters:
-        matrix (dict of list): The matrix of Excel column ID and column type mapping.
-        col_def (list): The column type definition.
+    Select all expense table definition column code.
 
     Returns:
-        result (list of dict): The matrix of all Excel column ID combinations under the single column type definition (each column type occurs only onces).
+        content (list): The list of all column codes.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -165,10 +154,18 @@ def select_expense_tbl_def_id():
     content = list(row['col_code'] for row in rows)
     return content
 
-# Select the mapping and rules belong to the logged on user, it can be all or particular one only
 @anvil.server.callable("select_mapping_rules")
 @logger.log_function
 def select_mapping_rules(gid=None):
+    """
+    Select the mapping and rules belong to the logged on user, it can be all or particular one only.
+
+    Parameters:
+        gid (int): The ID of the mapping group.
+
+    Returns:
+        result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -204,10 +201,18 @@ def select_mapping_rules(gid=None):
         cur.close()
     return list(result.values())
 
-# Select the mapping matrix belong to the logged on user
 @anvil.server.callable("select_mapping_matrix")
 @logger.log_function
 def select_mapping_matrix(id):
+    """
+    Select the mapping matrix belong to the logged on user.
+
+    Parameters:
+        id (int): The group ID of the mapping matrix, which also equal to the ID of the corresponding mapping group.
+
+    Returns:
+        rows (list of dict): All the mapping matrix which belongs to the logged on user.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT datecol AS {exptbl.Date}, acctcol AS {exptbl.Account}, amtcol AS {exptbl.Amount}, remarkscol AS {exptbl.Remarks}, \
@@ -220,11 +225,22 @@ def select_mapping_matrix(id):
         cur.close()
     return rows
 
-# Save the mapping and rules
-# Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 @anvil.server.callable("save_mapping_rules")
 @logger.log_function
 def save_mapping_rules(id, mapping_rules, del_iid=None):
+    """
+    Save the mapping and rules.
+
+    Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
+
+    Parameters:
+        id (int): The ID of the mapping group.
+        mapping_rules (dict): The data of mapping group and corresponding mapping rules. 
+        del_iid (string): The string of IID concatenated by comma to be deleted
+
+    Returns:
+        dict: Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
+    """
     conn = None
     count = None
     dcount = None
@@ -319,20 +335,36 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
 @anvil.server.callable("select_mapping_extra_actions")
 @logger.log_function
 def select_mapping_extra_actions(id):
+    """
+    Select the extra mapping actions from mapping rules.
+
+    Parameters:
+        id (int): The group ID of the mapping matrix, which also equal to the ID of the corresponding mapping group.
+
+    Returns:
+        rows (list): The list of column, column code, extra action and extra action target.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
-        # TODO in progress
         sql = f"SELECT col, col_code, eaction, etarget FROM fin.mappingrules WHERE gid = {id} AND eaction is not NULL"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
     return list(rows)
 
-# Delete mapping and its associated rules and matrix
 @anvil.server.callable("delete_mapping")
 @logger.log_function
 def delete_mapping(id):
+    """
+    Delete mapping group and its associated rules and matrix.
+
+    Parameters:
+        id (int): The ID of the mapping group.
+
+    Returns:
+        cur.rowcount (int): Successful delete row count, otherwise None.
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:

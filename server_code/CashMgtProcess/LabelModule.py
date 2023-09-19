@@ -16,10 +16,15 @@ from fuzzywuzzy import fuzz
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# Generate labels dropdown items
 @anvil.server.callable("generate_labels_dropdown")
 @logger.log_function
 def generate_labels_dropdown():
+    """
+    Select data from a DB table which stores labels' detail to generate a dropdown list.
+
+    Returns:
+        content (list): A dropdown list of label names and IDs as description, and the same data formation in dict as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -30,10 +35,15 @@ def generate_labels_dropdown():
     content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
     return content
 
-# Generate labels into list
 @anvil.server.callable("generate_labels_list")
 @logger.log_function
 def generate_labels_list():
+    """
+    Select data from a DB table which stores labels' detail to list.
+
+    Returns:
+        list: A full list of label IDs, names and status.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -42,10 +52,18 @@ def generate_labels_list():
         cur.close()
     return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
 
-# Get selected label attributes
 @anvil.server.callable("get_selected_label_attr")
 @logger.log_function
 def get_selected_label_attr(selected_lbl):
+    """
+    Select corresponding data from a DB table which stores labels' detail based on a selected label.
+
+    Parameters:
+        selected_lbl (int): The selected label ID.
+
+    Returns:
+        list: A list of label ID, name, keywords and status based on a selected label.
+    """
     userid = sysmod.get_current_userid()
     if selected_lbl is None or selected_lbl == '':
         return [None, None, None, True]
@@ -59,10 +77,19 @@ def get_selected_label_attr(selected_lbl):
             cur.close()
         return [row['id'], row['name'], row['keywords'], row['status']]
 
-# Generate labels dropdown items
+# 
 @anvil.server.callable("generate_labels_mapping_action_dropdown")
 @logger.log_function
 def generate_labels_mapping_action_dropdown():
+    """
+    Select Generate labels dropdown items from a DB table which stores labels' detail based on a selected label.
+
+    Parameters:
+        selected_lbl (int): The selected label ID.
+
+    Returns:
+        list: A list of label ID, name, keywords and status based on a selected label.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.label_mapping_action ORDER BY seq ASC")
