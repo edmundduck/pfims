@@ -20,7 +20,7 @@ logger = LoggingModule.ServerLogger()
 @logger.log_function
 def psqldb_select_settings():
     """
-    Select data from a DB table which stores each user's settings
+    Select data from the DB table which stores each user's settings
 
     Returns:
         dict: A dictionary containing all user's settings
@@ -45,7 +45,7 @@ def psqldb_select_settings():
 @logger.log_function
 def psgldb_select_brokers():
     """
-    Select broker data from a DB table which stores investment brokers' detail to generate a dropdown list.
+    Select broker data from the DB table which stores investment brokers' detail to generate a dropdown list.
 
     Returns:
         list: A dropdown list of broker names and CCY as description, and broker ID as ID.
@@ -102,7 +102,7 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
 @logger.log_function
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     """
-    Insert or update an investment broker from setting form to a DB table which stores investment brokers' detail.
+    Insert or update an investment broker from setting form to the DB table which stores investment brokers' detail.
 
     Row count returned larger than 0 is considered as a successful update. At the same time, logging level is updated into the server user session.
     
@@ -143,7 +143,7 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
 @logger.log_function
 def psgldb_get_broker_name(choice):
     """
-    Select broker name from a DB table which stores investment brokers' detail.
+    Select broker name from the DB table which stores investment brokers' detail.
 
     Parameters:
         choice (str): The ID of the broker.
@@ -161,7 +161,7 @@ def psgldb_get_broker_name(choice):
 @logger.log_function
 def psgldb_get_broker_ccy(choice):
     """
-    Select broker base CCY from a DB table which stores investment brokers' detail.
+    Select broker base CCY from the DB table which stores investment brokers' detail.
 
     Parameters:
         choice (str): The ID of the broker.
@@ -179,7 +179,7 @@ def psgldb_get_broker_ccy(choice):
 @logger.log_function
 def psgldb_delete_brokers(b_id):
     """
-    Delete an investment broker from a DB table which stores investment brokers' detail.
+    Delete an investment broker from the DB table which stores investment brokers' detail.
 
     Row count returned larger than 0 is considered as a successful update.
     
@@ -187,7 +187,7 @@ def psgldb_delete_brokers(b_id):
         b_id (str): The ID of the broker.
 
     Returns:
-        cur.rowcount (int): Successful update row count, otherwise None
+        cur.rowcount (int): Successful update row count, otherwise None.
     """
     try:
         conn = sysmod.db_connect()
@@ -209,7 +209,7 @@ def psgldb_delete_brokers(b_id):
 @logger.log_function
 def psgldb_get_submitted_templ_list():
     """
-    Select "Submitted" templates from a DB table which stores templates' detail to generate a dropdown list.
+    Select "Submitted" templates from the DB table which stores templates' detail to generate a dropdown list.
 
     Returns:
         result (list): A dropdown list of submitted template names as description, and submitted template IDs as ID.

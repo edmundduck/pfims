@@ -19,22 +19,47 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# Retrieve template ID by splitting template dropdown value
 @anvil.server.callable("get_template_id")
 @logger.log_function
 def get_template_id(selected_template):
+    """
+    Retrieve template ID by splitting template dropdown value.
+
+    Parameters:
+        selected_template (string): The selected template's name.
+
+    Returns:
+        string: A template's ID.
+    """
     return selected_template[:selected_template.find("-")].strip() if selected_template is not None and selected_template.find("-") >= 0 else None
   
-# Generate template dropdown text for display
 @anvil.server.callable("generate_template_dropdown_item")
 @logger.log_function
 def generate_template_dropdown_item(templ_id, templ_name):
+    """
+    Generate template dropdown text for display in a dropdown list.
+
+    Parameters:
+        templ_id (string): The template's ID.
+        templ_name (string): The template's name.
+
+    Returns:
+        string: A template's dropdown item which comprises the template's ID and name.
+    """
     return str(templ_id) + " - " + templ_name
 
-# Return template journals for repeating panel to display based on template selection dropdown
 @anvil.server.callable("select_template_journals")
 @logger.log_function
 def select_template_journals(templ_choice_str):
+    """
+    Return template journals for repeating panel to display based on template selection dropdown.
+
+    Parameters:
+        templ_choice_str (string): Selected value from the template's dropdown.
+
+    Returns:
+        rows (list): All template journals detail corresponding to the selected template.
+    """
     if templ_choice_str is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -44,11 +69,22 @@ def select_template_journals(templ_choice_str):
             return list(rows)
     return None
 
-# Insert or update journals into "templ_journals" DB table
-# Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 @anvil.server.callable("upsert_journals")
 @logger.log_function
 def upsert_journals(tid, rows):
+    """
+    Insert or update journals into the DB table which stores template journals.
+
+    Column IID is not generated in application side, it's handled by DB function instead, 
+    hence running SQL scripts in DB is required beforehand.
+    
+    Parameters:
+        tid (int): The ID of the template. All journals under the same template share the same TID.
+        rows (list): The rows of journal data from the repeating panel.
+
+    Returns:
+        cur.rowcount (int): Successful update row count, otherwise None.
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -92,10 +128,19 @@ def upsert_journals(tid, rows):
         if conn is not None: conn.close()
     return None
     
-# Delete journals from "templ_journals" DB table
 @anvil.server.callable("delete_journals")
 @logger.log_function
 def delete_journals(template_id, iid_list):
+    """
+    Delete journals from the DB table which stores template journals.
+
+    Parameters:
+        template_id (int): The ID of the template. All journals under the same template share the same TID.
+        iid_list (list): The list of IID requiring deletion.
+
+    Returns:
+        cur.rowcount (int): Successful delete row count, otherwise None.
+    """
     try:
         if len(iid_list) > 0:
             conn = sysmod.db_connect()
@@ -115,10 +160,21 @@ def delete_journals(template_id, iid_list):
         if conn is not None: conn.close()
     return None
 
-# Insert or update templates into "templates" DB table with time handling logic
 @anvil.server.callable("save_templates")
 @logger.log_function
 def save_templates(template_id, template_name, broker_id, del_iid = []):
+    """
+    Insert or update templates into the DB table which stores templates detail with time handling logic.
+
+    Parameters:
+        template_id (int): The ID of the template. All journals under the same template share the same TID.
+        template_name (string): The name of the template.
+        broker_id (string): The broker ID which corresponds to the template.
+        del_iid (list): The list of IID requiring deletion.
+
+    Returns:
+        tid['template_id'] (int): Template ID if save is successful, otherwise None.
+    """
     userid = sysmod.get_current_userid()
     try:
         currenttime = datetime.now()
