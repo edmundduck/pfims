@@ -11,6 +11,17 @@ import anvil.server
 # rather than in the user's browser.
 
 def upper_dict_keys(rows, key_list=None):
+    """
+    Change the key(s) in a dict to be upper case.
+
+    If key_list is None, then all keys in a dict will be changed to upper case, otherwise only change those found in key_list.
+
+    Parameters:
+        key_list (list): List of key requiring to be upper case.
+
+    Returns:
+        result (list of dict): List of dict containing keys in upper case.
+    """
     DL = {}
     for k in rows[0].keys():
         if k.upper() in key_list or not key_list:

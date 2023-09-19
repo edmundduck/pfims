@@ -19,10 +19,15 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# Generate expense tabs dropdown items
 @anvil.server.callable("generate_expensetabs_dropdown")
 @logger.log_function
 def generate_expensetabs_dropdown():
+    """
+    Select data from a DB table which stores expense tabs' detail to generate a dropdown list.
+
+    Returns:
+        list: A dropdown list of expense tab names and IDs as description, and also as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -32,10 +37,18 @@ def generate_expensetabs_dropdown():
     content = list((row['tab_name'] + " (" + str(row['tab_id']) + ")", [row['tab_id'], row['tab_name']]) for row in rows)
     return content
 
-# Get selected expense tab attributes
 @anvil.server.callable("get_selected_expensetab_attr")
 @logger.log_function
 def get_selected_expensetab_attr(selected_tab):
+    """
+    Select one particular expense tab attributes from a DB table which stores expense tabs' detail.
+
+    Parameters:
+        selected_tab (int): The ID of a selected expense tab.
+
+    Returns:
+        list: A row of expense tab attributes including ID and name.
+    """
     if selected_tab is None or selected_tab == '':
         return [None, None]
     else:
@@ -46,10 +59,20 @@ def get_selected_expensetab_attr(selected_tab):
             cur.close()
         return [row['tab_id'], row['tab_name']]
 
-# Return transactions for repeating panel to display based on expense tab selection dropdown
 @anvil.server.callable("select_transactions")
 @logger.log_function
 def select_transactions(tid):
+    """
+    Select all transactions under one particular expense tab from a DB table which stores expense tabs' detail.
+
+    Some keys under ExpenseDBTableDefinion require upper cases and convert explicitly as lower cases is default.
+    
+    Parameters:
+        tid (int): The ID of a selected expense tab.
+
+    Returns:
+        rows (list): A list of transactions.
+    """
     if tid is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -65,11 +88,21 @@ def select_transactions(tid):
         return list(rows)
     return []
 
-# Insert or update transactions into "exp_transactions" DB table
-# Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
 @anvil.server.callable("upsert_transactions")
 @logger.log_function
 def upsert_transactions(tid, rows):
+    """
+    Insert of update transactions under one particular expense tab into a DB table.
+
+    Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
+    
+    Parameters:
+        tid (int): The ID of a selected expense tab.
+        rows (list): A list of transactions to be inserted or updated.
+
+    Returns:
+        count (int): Successful update row count, otherwise None.
+    """
     conn = None
     count = None
     try:
@@ -117,10 +150,22 @@ def upsert_transactions(tid, rows):
         if conn is not None: conn.close()        
     return count
     
-# Delete transactions from "exp_transactions" DB table
 @anvil.server.callable("delete_transactions")
 @logger.log_function
 def delete_transactions(tid, iid_list):
+    """
+    Delete transactions under one particular expense tab from a DB table.
+
+    One TID contains many transactions, so do many IID. 
+    In order to remove some particular transactionsfrom one tab, add these IID into the iid_list.
+
+    Parameters:
+        tid (int): The ID of a selected expense tab.
+        iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
+
+    Returns:
+        count (int): Successful update row count, otherwise None.
+    """
     conn, cur, count = [None, None, None]
     try:
         logger.debug("delete iid_list=", iid_list)
@@ -143,10 +188,21 @@ def delete_transactions(tid, iid_list):
         if conn is not None: conn.close()        
     return count
 
-# Save expense tab
 @anvil.server.callable("save_expensetab")
 @logger.log_function
 def save_expensetab(id, name):
+    """
+    Save a newly created or existing expense tab detail into a DB table which stores expense tabs' detail.
+
+    This function only saves expense tab's owner ID, name, creation time and last saved time. Does not contain any transactions.
+    
+    Parameters:
+        id (int): The ID of a selected expense tab.
+        name (string): The name of a selected expense tab.
+
+    Returns:
+        tid['tab_id'] (int): The ID of the newly created or existing expense tab, otherwise None.
+    """
     userid = sysmod.get_current_userid()
     try:
         currenttime = datetime.now()
@@ -172,10 +228,21 @@ def save_expensetab(id, name):
         if conn is not None: conn.close()        
     return None
 
-# Submit expense tab
 @anvil.server.callable("submit_expensetab")
 @logger.log_function
 def submit_expensetab(id, submitted):
+    """
+    Change an expense tab to either "Submitted" or "Not Submitted" in a DB table which stores expense tabs' detail.
+
+    This function only updates expense tab's submit status and last saved time. Does not contain any transactions.
+    
+    Parameters:
+        id (int): The ID of a selected expense tab.
+        submitted (boolean): The to-be-updated submit status of a selected expense tab.
+
+    Returns:
+        tid['tab_id'] (int): The ID of the expense tab, otherwise None.
+    """
     try:
         currenttime = datetime.now()
         conn = sysmod.db_connect()
@@ -199,11 +266,21 @@ def submit_expensetab(id, submitted):
         if conn is not None: conn.close()
     return None
 
-# Delete expense tab
-# Delete cascade is implemented in "exp_transactions" DB table "tab_id" column, hence transactions under particular tab will be deleted automatically
 @anvil.server.callable("delete_expensetab")
 @logger.log_function
 def delete_expensetab(tab_id):
+    """
+    Delete an expense tab from a DB table which stores expense tabs' detail.
+
+    Delete cascade is implemented in expense tabs DB table "tab_id" column, hence transactions under particular tab will be deleted automatically.
+    This function only updates expense tab's submit status and last saved time. Does not contain any transactions.
+    
+    Parameters:
+        tab_id (int): The ID of a selected expense tab.
+
+    Returns:
+        cur.rowcount (int): Successful update row count, otherwise None.
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:

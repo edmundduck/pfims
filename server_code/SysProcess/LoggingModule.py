@@ -18,15 +18,25 @@ import psycopg2.extras
 # rather than in the user's browser.
 
 class ServerLoggerLevel:
+    """
+    All the server logger level relevant settings are stored here.
+    """
     DEFAULT_LVL = logging.INFO
     TRACE = {'val':logging.DEBUG-5, 'desc':'TRACE'}
 
-# Suppose the timezone doesn't have to be configured further as logging is for internal use only
 # Ref: https://stackoverflow.com/questions/32402502/how-to-change-the-time-zone-in-python-logging
 class TimeZoneFormatter(logging.Formatter):
+    """
+    Time zone converter.
+    
+    Suppose the timezone doesn't have to be configured further as logging is for internal use only
+    """
     converter = lambda *args: datetime.datetime.now(pytz.timezone('Europe/London')).timetuple()
     
 class ServerLoggerConfig:
+    """
+    All the server logger configuration are stored here.
+    """
     DEFAULT_LOGGING_CONFIG = {
             'version': 1,
             'disable_existing_loggers': False,
@@ -53,6 +63,9 @@ class ServerLoggerConfig:
         }
 
 class ServerLogger:
+    """
+    Server logger logic which is written based on Python logger.
+    """
     # Cannot put function loglevel in level argument otherwise will cause nested loop (reason unknown)
     def __init__(self, config=ServerLoggerConfig.DEFAULT_LOGGING_CONFIG, level=ServerLoggerLevel.DEFAULT_LVL):
         self.logger = logging.getLogger(__name__)
@@ -68,10 +81,22 @@ class ServerLogger:
         # self.logger.setLevel(userlevel if userlevel is not None else self.default_level)
 
     def set_level(self):
+        """
+        Set the logger level from Anvil server session which was loaded when user logs on.
+        """
         userlevel = anvil.server.session.get('loglevel')
         self.logger.setLevel(userlevel if userlevel is not None else self.default_level)
 
     def log_function(self, func):
+        """
+        A wrapper function to be used as decorator to log a function entry and exit with elapsed time.
+    
+        Parameters:
+            func (function): The actual function to execute.
+    
+        Returns:
+            wrapper (function): The wrapper function.
+        """
         def wrapper(*args, **kwargs):
             self.set_level()
             # Log the function call
@@ -86,6 +111,13 @@ class ServerLogger:
         return wrapper
 
     def log(self, level, msg=None, *args, **kwargs):
+        """
+        Log the message together with list arguments and/or key arguments.
+    
+        Parameters:
+            level (string): Log level.
+            msg (string): Log message.
+        """
         args_repr = [repr(a) for a in args]
         kwargs_repr = [f"{k}={v!r}" for k, v in kwargs.items()]
         signature = ", ".join(args_repr + kwargs_repr)
@@ -93,19 +125,55 @@ class ServerLogger:
         self.logger.log(level, "".join((msg, signature)))
         
     def trace(self, msg=None, *args, **kwargs):
+        """
+        Log message in trace level.
+    
+        Parameters:
+            msg (string): Log message.
+        """
         self.log(ServerLoggerLevel.TRACE.get('val'), msg, *args, **kwargs)
 
     def debug(self, msg=None, *args, **kwargs):
+        """
+        Log message in debug level.
+    
+        Parameters:
+            msg (string): Log message.
+        """
         self.log(logging.DEBUG, msg, *args, **kwargs)
 
     def info(self, msg=None, *args, **kwargs):
+        """
+        Log message in info level.
+    
+        Parameters:
+            msg (string): Log message.
+        """
         self.log(logging.INFO, msg, *args, **kwargs)
 
     def warning(self, msg=None, *args, **kwargs):
+        """
+        Log message in warning level.
+    
+        Parameters:
+            msg (string): Log message.
+        """
         self.log(logging.WARNING, msg, *args, **kwargs)
 
     def error(self, msg=None, *args, **kwargs):
+        """
+        Log message in error level.
+    
+        Parameters:
+            msg (string): Log message.
+        """
         self.log(logging.ERROR, msg, *args, **kwargs)
 
     def critical(self, msg=None, *args, **kwargs):
+        """
+        Log message in critical level.
+    
+        Parameters:
+            msg (string): Log message.
+        """
         self.log(logging.CRITICAL, msg, *args, **kwargs)
