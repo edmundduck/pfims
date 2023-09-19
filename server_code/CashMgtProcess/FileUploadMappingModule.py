@@ -18,10 +18,18 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# Generate mapping dropdown items
 @anvil.server.callable("generate_mapping_dropdown")
 @logger.log_function
 def generate_mapping_dropdown(ftype):
+    """
+    Select mapping rules from a DB table which stores mapping groups' detail to generate a dropdown list for data mapping logic.
+
+    Parameters:
+        ftype (string): The selected file type for mapping rules.
+    
+    Returns:
+        list: A dropdown list of mapping group names as description, and mapping group IDs as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -33,10 +41,15 @@ def generate_mapping_dropdown(ftype):
     content = list((row['name'], row['id']) for row in rows)
     return content
 
-# Generate mapping file type dropdown items
 @anvil.server.callable("generate_mapping_type_dropdown")
 @logger.log_function
 def generate_mapping_type_dropdown():
+    """
+    Select mapping file types from a DB table which stores import file types' detail to generate a dropdown list.
+
+    Returns:
+        list: A dropdown list of mapping file type names as description, and mapping file type IDs and names as ID.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.import_filetype ORDER BY seq ASC"
@@ -46,10 +59,15 @@ def generate_mapping_type_dropdown():
     content = list((row['name'], [row['id'], row['name']]) for row in rows)
     return content
 
-# Generate input expense table definition dropdown items
 @anvil.server.callable("generate_expense_tbl_def_dropdown")
 @logger.log_function
 def generate_expense_tbl_def_dropdown():
+    """
+    Select expense table definition data from a DB table to generate each column type as dropdown list.
+
+    Returns:
+        list: A dropdown list of column type names as description, and column type codes and names as ID.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
@@ -59,10 +77,15 @@ def generate_expense_tbl_def_dropdown():
     content = list((row['col_name'], [row['col_code'], row['col_name']]) for row in rows)
     return content
 
-# Generate input expense table definition dropdown items
 @anvil.server.callable("generate_upload_action_dropdown")
 @logger.log_function
 def generate_upload_action_dropdown():
+    """
+    Select import file upload action data which is static data from a DB table to generate a dropdown list.
+
+    Returns:
+        list: A dropdown list of upload action names as description, and upload action IDs and names as ID.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.upload_action ORDER BY seq ASC"
@@ -72,12 +95,23 @@ def generate_upload_action_dropdown():
     content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
-# Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules
-# Arguments as follow,
-# matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
-# col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
 @logger.log_function
 def generate_mapping_matrix(matrix, col_def):
+    """
+    Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules.
+
+    Examples as follow,
+    matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
+    col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
+    result= [{'DTE': 'J', 'ACC': '', 'AMT': 'C', 'RMK': 'H', 'STD': '', 'LBL': 'B'}, {'DTE': 'J', 'ACC': '', 'AMT': 'F', 'RMK': 'H', 'STD': '', 'LBL': 'B'}]
+
+    Parameters:
+        matrix (dict of list): The matrix of Excel column ID and column type mapping.
+        col_def (list): The column type definition.
+
+    Returns:
+        result (list of dict): The matrix of all Excel column ID combinations under the single column type definition (each column type occurs only onces).
+    """
     logger.debug("matrix=", matrix)
     logger.debug("col_def=", col_def)
     if len(col_def) < 1:
@@ -106,6 +140,22 @@ def generate_mapping_matrix(matrix, col_def):
 # Select input expense table definition column ID
 @logger.log_function
 def select_expense_tbl_def_id():
+    """
+    ????? pending ???????
+    Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules.
+
+    Examples as follow,
+    matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
+    col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
+    result= [{'DTE': 'J', 'ACC': '', 'AMT': 'C', 'RMK': 'H', 'STD': '', 'LBL': 'B'}, {'DTE': 'J', 'ACC': '', 'AMT': 'F', 'RMK': 'H', 'STD': '', 'LBL': 'B'}]
+
+    Parameters:
+        matrix (dict of list): The matrix of Excel column ID and column type mapping.
+        col_def (list): The column type definition.
+
+    Returns:
+        result (list of dict): The matrix of all Excel column ID combinations under the single column type definition (each column type occurs only onces).
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"

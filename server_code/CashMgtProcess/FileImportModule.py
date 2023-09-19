@@ -206,10 +206,11 @@ def get_regex_str(str_list, mandatory_type=None):
     Generate a dynamic regular expression string based on pdf table column type.
 
     Parameters:
-        str_list (string): ?
+        str_list (string): PDF column names to be diagnosed.
+        mandatory_type (string): Data type to be checked which regular expression to be added to the result.
 
     Returns:
-        trx_regex (string): ?
+        trx_regex (string): Resultant regular expression which will be used for finding the column header in the imported file.
     """
     trimmed_str_list = list(map(lambda x: x.lower().replace(' ', ''), str_list))
     trx_regex = ""
@@ -228,6 +229,15 @@ def get_regex_str(str_list, mandatory_type=None):
 
 @anvil.server.callable("import_pdf_file")
 def import_pdf_file(file):
+    """
+    Import PDF file data into a Dataframe for further processing.
+
+    Parameters:
+        file (object): The uploaded file object.
+
+    Returns:
+        result_table (pdfplumber.PDF): Processed pdfplumber.PDF object.
+    """
     with pdfplumber.open(BytesIO(file.get_bytes())) as pdf:
         # compiled_column_headers = re.compile('.*'.join(ch.replace(' ', '.*') for ch in column_headers))
         result_table = []
@@ -340,6 +350,18 @@ def import_pdf_file(file):
 @anvil.server.callable("update_pdf_mapping")
 @logger.log_function
 def update_pdf_mapping(data, mapping, account, labels):
+    """
+    Update various data mapping from the imported Dataframe.
+
+    Parameters:
+        data (dataframe/pdfplumber.PDF): The dataframe or PDF object to be updated with the mapping.
+        mapping (list): The list of column headers mapping from user's input.
+        account (int): The selected account ID requiring extra mapping.
+        labels (int): The selected label ID requiring extra mapping.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
     # Logic of merging all amount columns
     def merge_amt_cols(row):
         logger.trace(f"merge_amt_cols row={row}")
