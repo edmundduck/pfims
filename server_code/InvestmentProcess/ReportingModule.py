@@ -18,36 +18,75 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# Internal function - Return start date of last 1 month
 @logger.log_function
 def get_L1M_start_date(end_date):
+    """
+    Internal function - Return start date of last 1 month.
+
+    Parameters:
+        end_date (date): End date of the search.
+
+    Returns:
+        date: 1 month ago from end date.
+    """
     return date(end_date.year-1, end_date.month+12-1, end_date.day) if end_date.month-1 < 1 else date(end_date.year, end_date.month-1, end_date.day)
 
-# Internal function - Return start date of last 3 months
 @logger.log_function
 def get_L3M_start_date(end_date):
+    """
+    Internal function - Return start date of last 3 months.
+
+    Parameters:
+        end_date (date): End date of the search.
+
+    Returns:
+        date: 3 months ago from end date.
+    """
     return date(end_date.year-1, end_date.month+12-3, end_date.day) if end_date.month-3 < 1 else date(end_date.year, end_date.month-3, end_date.day)
 
-# Internal function - Return start date of last 6 months
 @logger.log_function
 def get_L6M_start_date(end_date):
+    """
+    Internal function - Return start date of last 6 months.
+
+    Parameters:
+        end_date (date): End date of the search.
+
+    Returns:
+        date: 6 months ago from end date.
+    """
     return date(end_date.year-1, end_date.month+12-6, end_date.day) if end_date.month-6 < 1 else date(end_date.year, end_date.month-6, end_date.day)
 
-# Internal function - Return start date of last 1 year
 @logger.log_function
 def get_L1Y_start_date(end_date):
+    """
+    Internal function - Return start date of last 1 year.
+
+    Parameters:
+        end_date (date): End date of the search.
+
+    Returns:
+        date: 1 year ago from end date.
+    """
     return date(end_date.year-1, end_date.month, end_date.day)
 
-# Internal function - Return the 1st date of the current year
 @logger.log_function
 def get_YTD_start_date(end_date):
+    """
+    Internal function - Return the 1st date of the current year.
+
+    Parameters:
+        end_date (date): End date of the search.
+
+    Returns:
+        date: The first day of the current year.
+    """
     return date(end_date.year, 1, 1)
 
-# Internal function - Return None if it's not date
 @logger.log_function
 def interval_default(end_date):
     """
-    Get all symbols which were transacted between start and end date into the dropdown.
+    Internal function - Return None if it's not date.
 
     Parameters:
         end_date (date): End date of the search.

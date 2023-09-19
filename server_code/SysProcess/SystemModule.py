@@ -12,8 +12,13 @@ import psycopg2.extras
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-# Get user logon name
 def get_current_username():
+    """
+    Get logged on user name.
+
+    Returns:
+        row (list of dict): List of dict containing keys in upper case.
+    """
     userid = anvil.users.get_user().get_id()
     row = (app_tables.users.get_by_id(userid))['email']
     return row if row is not None else None
