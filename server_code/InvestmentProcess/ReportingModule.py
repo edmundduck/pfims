@@ -98,7 +98,6 @@ def generate_csv(start_date, end_date, symbols):
 
 # Internal function - Format P&L dictionary
 # rowitem = Items in rows returned from DB table 'templ_journals' search result
-@logger.log_function
 def format_pnl_dict(rowitem, dictupdate, key, mode):
     numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
     if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
@@ -112,7 +111,6 @@ def format_pnl_dict(rowitem, dictupdate, key, mode):
     dictupdate.update({key: [numtrade, numdaytrade, sales, cost, fee, pnl, mode]})
 
 # Internal function - Format a parent: child mapping into dictionary
-@logger.log_function
 def format_pnl_child(dictupdate, parent, child):
     childset = dictupdate.get(parent, set())
     childset.add(child)
@@ -122,7 +120,7 @@ def format_pnl_child(dictupdate, parent, child):
 @logger.log_function
 def build_pnl_data(start_date, end_date, symbols):
     userid = sysmod.get_current_userid()
-    rows = select_journals(userid, start_date, end_date, symbols)
+    rows = select_journals(start_date, end_date, symbols)
     
     # Prepare the data in dictionary structure
     dictstruct_day = {}
@@ -162,7 +160,7 @@ def generate_init_pnl_list(start_date, end_date, symbols):
     userid = sysmod.get_current_userid()
     rowstruct = []
     
-    dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(userid, start_date, end_date, symbols)
+    dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(start_date, end_date, symbols)
     
     for j in dictstruct_yr.keys():
         numtrade, numdaytrade, sales, cost, fee, pnl, mode = dictstruct_yr.get(j)
@@ -181,10 +179,24 @@ def generate_init_pnl_list(start_date, end_date, symbols):
     
     return sorted(rowstruct, key=lambda x: x.get('sell_date'))
 
-# Update P&L data according to expand/shrink action and reformat into repeatingpanel compatible data (dict in list)
 @anvil.server.callable("update_pnl_list")
 @logger.log_function
 def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, action):
+    """
+    Update P&L data according to expand/shrink action and reformat into repeating panel compatible data (dict in list).
+
+    Parameters:
+        start_date (date): Start date of the search.
+        end_date (date): End date of the search.
+        symbols (): ?
+        pnl_list (): ?
+        date_value (): ?
+        mode (): ?
+        action (): ?        
+
+    Returns:
+        rowstruct (list of dict): The row structure for P&L data.
+    """
     userid = sysmod.get_current_userid()
     logger.debug(f"param list={start_date} / {end_date} / {symbols} / {pnl_list} / {date_value} / {mode} / {action}")
     

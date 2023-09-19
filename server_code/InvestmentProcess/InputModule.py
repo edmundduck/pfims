@@ -204,10 +204,19 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
         if conn is not None: conn.close()
     return None
 
-# Update journals into "templ_journals" DB table to change template submitted/unsubmitted status and timestamp
 @anvil.server.callable("submit_templates")
 @logger.log_function
 def submit_templates(template_id, submitted):
+    """
+    Update journals into the DB table which stores templates detail to change template submitted/unsubmitted status and timestamp.
+
+    Parameters:
+        template_id (int): The ID of the template. All journals under the same template share the same TID.
+        submitted (boolean): The to-be-updated submit status of a selected template.
+
+    Returns:
+        cur.rowcount (int): Successful submit row count, otherwise None.
+    """
     try:
         currenttime = datetime.now()
         conn = sysmod.db_connect()
@@ -231,11 +240,21 @@ def submit_templates(template_id, submitted):
         if conn is not None: conn.close()
     return None
   
-# Delete templates from "templates" DB table
-# Delete cascade is implemented in "templ_journals" DB table "template_id" column, hence journals under particular template will be deleted automatically
 @anvil.server.callable("delete_templates")
 @logger.log_function
 def delete_templates(template_id):
+    """
+    Delete templates from the DB table which stores templates detail.
+    
+    Delete cascade is implemented in the DB table (which stores template journals detail)"template_id" column, 
+    hence journals under particular template will be deleted automatically.
+
+    Parameters:
+        template_id (int): The ID of the template. All journals under the same template share the same TID.
+
+    Returns:
+        cur.rowcount (int): Successful delete row count, otherwise None.
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -252,10 +271,18 @@ def delete_templates(template_id):
         if conn is not None: conn.close()
     return None
 
-# Return selected template name and selected broker based on template dropdown selection
 @anvil.server.callable("get_selected_template_attr")
 @logger.log_function
 def get_selected_template_attr(templ_choice_str):
+    """
+    Return selected template name and selected broker based on template dropdown selection.
+    
+    Parameters:
+        templ_choice_str (string): Selected value from the template's dropdown.
+
+    Returns:
+        row (list): A list of template name and broker ID if select is successful, otherwise None.
+    """
     if templ_choice_str in (None, ''):
         row = cfmod.select_settings()
         return [None, row['default_broker'] if row is not None else '']
@@ -268,10 +295,15 @@ def get_selected_template_attr(templ_choice_str):
             cur.close()
         return [row['template_name'] if row is not None else None, row['broker_id'] if row is not None else '']
   
-# Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items
 @anvil.server.callable("generate_template_dropdown")
 @logger.log_function
 def generate_template_dropdown():
+    """
+    Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items.
+    
+    Returns:
+        row (list): A list of unsubmitted template item formed by template IDs and names.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -280,14 +312,33 @@ def generate_template_dropdown():
         cur.close()
     return list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
 
-# Set precision
 @anvil.server.callable("cal_profit")
 @logger.log_function
 def cal_profit(sell, buy, fee):
+    """
+    Calculate stock profit.
+    
+    Parameters:
+        sell (float): Stock sell price.
+        buy (float): Stock buy price.
+        fee (float): Fee incurred after stock buy and sell.
+
+    Returns:
+        float: Profit of a stock.
+    """
     return round(float(sell) - float(buy) - float(fee), 2)
 
-# Calculate stock sell/buy price
 @anvil.server.callable("cal_price")
 @logger.log_function
 def cal_price(amt, qty):
+    """
+    Calculate stock unit price during sell or buy
+    
+    Parameters:
+        amt (float): Stock amount.
+        qty (float): Stock quantity.
+
+    Returns:
+        float: Unit price of a stock.
+    """
     return round(float(amt) / float(qty), 2)
