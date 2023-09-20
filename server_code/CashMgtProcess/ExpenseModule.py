@@ -124,8 +124,9 @@ def upsert_transactions(tid, rows):
                     # mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
                     if tj.isValidRecord(): mogstr.append(tj.getDatabaseRecord())
                 logger.trace("mogstr=", mogstr)
+                args = ','.join(mogstr)
                 if len(mogstr) > 0:
-                    cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
+                    cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
                     remarks, stmt_dtl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
                     trandate=EXCLUDED.trandate, \
                     account_id=EXCLUDED.account_id, \
@@ -133,9 +134,11 @@ def upsert_transactions(tid, rows):
                     labels=EXCLUDED.labels, \
                     remarks=EXCLUDED.remarks, \
                     stmt_dtl=EXCLUDED.stmt_dtl \
-                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(schema=sysmod.schemafin()), mogstr)
+                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id RETURNING id".format(schema=sysmod.schemafin()), args)
                     conn.commit()
+                    iid = cur.fetchall()
                     count = cur.rowcount
+                    logger.trace("iid=", iid)
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
                 else:
