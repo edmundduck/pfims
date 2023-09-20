@@ -8,14 +8,19 @@ import anvil.server
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-# Config for Setting page
-# Database col definition change may be required should the values are adjusted here
 class SettingConfig:
+    """
+    Config for Setting page.
+
+    Database col definition change may be required should the values are adjusted here.
+    """
     BROKER_ID_PREFIX = 'BR'
     BROKER_SUFFIX_LEN = 5
 
-# Expense table definition for data transformation required in expense input file import
 class ExpenseDBTableDefinion:
+    """
+    Expense table definition for data transformation required in expense input file import.
+    """
     Date = 'DTE'
     Account = 'ACC'
     Amount = 'AMT'
@@ -24,8 +29,10 @@ class ExpenseDBTableDefinion:
     Labels = 'LBL'
     def_namelist = [Date, Account, Amount, Remarks, StmtDtl, Labels]
 
-# Search interval modes used in Report search panel and config
 class SearchInterval:
+    """
+    Search interval modes used in Report search panel and config.
+    """
     INTERVAL_LAST_1_MTH = 'L1M'
     INTERVAL_LAST_3_MTH = 'L3M'
     INTERVAL_LAST_6_MTH = 'L6M'

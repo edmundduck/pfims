@@ -61,16 +61,33 @@ pdf_table_settings = {
 
 @anvil.server.callable
 def preview_file(file):
+    """
+    Return all tabs in the uploaded Excel file.
+
+    Parameters:
+        file (object): The uploaded file object.
+
+    Returns:
+        ef.sheet_names (list): List of tab names in the uploaded Excel file.
+    """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     return list(ef.sheet_names)
 
-@anvil.server.callable
-def get_labels_list(file, lblcol):
-    ef = pd.ExcelFile(BytesIO(file.get_bytes()))
-    
 @anvil.server.callable("import_file")
 @logger.log_function
 def import_file(file, tablist, rules, extra):
+    """
+    Import Excel file data into a Dataframe for further processing.
+
+    Parameters:
+        file (object): The uploaded file object.
+        tablist (list): The list of Excel tabs to be imported.
+        rules (list of list): A mapping matrix for how Excel columns map to Expense module repeating panel to display.
+        extra (list of dict): Extra mapping action per rule.
+
+    Returns:
+        new_df (dataframe): Processed dataframe.
+    """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = {k: [dic[k] for dic in extra] for k in extra[0]}
@@ -117,6 +134,16 @@ def import_file(file, tablist, rules, extra):
 @anvil.server.callable("update_mapping")
 @logger.log_function
 def update_mapping(data, mapping):
+    """
+    Update labels mapping from the imported Dataframe.
+
+    Parameters:
+        data (dataframe): The dataframe to be updated with the mapping.
+        mapping (list): The list of labels mapping from user's input.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
     try:
         # 1. Get all items with action = 'C', and grab new field to create new labels
         # DL = Dict of Lists
@@ -162,12 +189,29 @@ def update_mapping(data, mapping):
         logger.error(f"{__name__}.{type(err).__name__}: {err}")
     return None
 
-# Internal function to format words in column headers and pdf lines to be single comparable format
 def format_comparable_word(word):
+    """
+    Format words in column headers and pdf lines to be single comparable format.
+
+    Parameters:
+        word (string): The word to be formatted.
+
+    Returns:
+        word (string): Formatted word for comparison.
+    """
     return word.lower().replace(' ', '')
 
-# Internal function to generate a dynamic regular expression string based on pdf table column type
 def get_regex_str(str_list, mandatory_type=None):
+    """
+    Generate a dynamic regular expression string based on pdf table column type.
+
+    Parameters:
+        str_list (string): PDF column names to be diagnosed.
+        mandatory_type (string): Data type to be checked which regular expression to be added to the result.
+
+    Returns:
+        trx_regex (string): Resultant regular expression which will be used for finding the column header in the imported file.
+    """
     trimmed_str_list = list(map(lambda x: x.lower().replace(' ', ''), str_list))
     trx_regex = ""
     isMandatorySet = False
@@ -185,6 +229,15 @@ def get_regex_str(str_list, mandatory_type=None):
 
 @anvil.server.callable("import_pdf_file")
 def import_pdf_file(file):
+    """
+    Import PDF file data into a Dataframe for further processing.
+
+    Parameters:
+        file (object): The uploaded file object.
+
+    Returns:
+        result_table (pdfplumber.PDF): Processed pdfplumber.PDF object.
+    """
     with pdfplumber.open(BytesIO(file.get_bytes())) as pdf:
         # compiled_column_headers = re.compile('.*'.join(ch.replace(' ', '.*') for ch in column_headers))
         result_table = []
@@ -297,6 +350,18 @@ def import_pdf_file(file):
 @anvil.server.callable("update_pdf_mapping")
 @logger.log_function
 def update_pdf_mapping(data, mapping, account, labels):
+    """
+    Update various data mapping from the imported Dataframe.
+
+    Parameters:
+        data (dataframe/pdfplumber.PDF): The dataframe or PDF object to be updated with the mapping.
+        mapping (list): The list of column headers mapping from user's input.
+        account (int): The selected account ID requiring extra mapping.
+        labels (int): The selected label ID requiring extra mapping.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
     # Logic of merging all amount columns
     def merge_amt_cols(row):
         logger.trace(f"merge_amt_cols row={row}")

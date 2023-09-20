@@ -38,6 +38,8 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
         else:    
             self.dropdown_col_map_to.selected_value = None
             self.dropdown_col_map_to.visible = False
+            self.dropdown_sign.selected_value = None
+            self.dropdown_sign.visible = False
 
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""

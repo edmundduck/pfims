@@ -16,10 +16,15 @@ from fuzzywuzzy import fuzz
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# Generate labels dropdown items
 @anvil.server.callable("generate_labels_dropdown")
 @logger.log_function
 def generate_labels_dropdown():
+    """
+    Select data from a DB table which stores labels' detail to generate a dropdown list.
+
+    Returns:
+        content (list): A dropdown list of label names and IDs as description, and the same data formation in dict as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -30,10 +35,15 @@ def generate_labels_dropdown():
     content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
     return content
 
-# Generate labels into list
 @anvil.server.callable("generate_labels_list")
 @logger.log_function
 def generate_labels_list():
+    """
+    Select data from a DB table which stores labels' detail to list.
+
+    Returns:
+        list: A full list of label IDs, names and status.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -42,10 +52,18 @@ def generate_labels_list():
         cur.close()
     return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
 
-# Get selected label attributes
 @anvil.server.callable("get_selected_label_attr")
 @logger.log_function
 def get_selected_label_attr(selected_lbl):
+    """
+    Select corresponding data from a DB table which stores labels' detail based on a selected label.
+
+    Parameters:
+        selected_lbl (int): The selected label ID.
+
+    Returns:
+        list: A list of label ID, name, keywords and status based on a selected label.
+    """
     userid = sysmod.get_current_userid()
     if selected_lbl is None or selected_lbl == '':
         return [None, None, None, True]
@@ -59,10 +77,15 @@ def get_selected_label_attr(selected_lbl):
             cur.close()
         return [row['id'], row['name'], row['keywords'], row['status']]
 
-# Generate labels dropdown items
 @anvil.server.callable("generate_labels_mapping_action_dropdown")
 @logger.log_function
 def generate_labels_mapping_action_dropdown():
+    """
+    Select data from the DB table which stores label mapping actions' detail to generate a dropdown list.
+
+    Returns:
+        content (list): A list of label mapping action name as description, and ID and name as ID.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.label_mapping_action ORDER BY seq ASC")
@@ -71,10 +94,18 @@ def generate_labels_mapping_action_dropdown():
     content = list((row['action'], [row['id'], row['action']]) for row in rows)
     return content
 
-# Create label
 @anvil.server.callable("create_label")
 @logger.log_function
 def create_label(labels):
+    """
+    Create new label into the DB table which stores labels' detail.
+
+    Parameters:
+        labels (list of dict): Contains label name, its keywords and status.
+
+    Returns:
+        list: A list of successful created label IDs, otherwise None.
+    """
     userid = sysmod.get_current_userid()
     try:
         conn = sysmod.db_connect()
@@ -96,10 +127,21 @@ def create_label(labels):
         if conn is not None: conn.close()
     return None
 
-# Update label
 @anvil.server.callable("update_label")
 @logger.log_function
 def update_label(id, name, keywords, status):
+    """
+    Update existing label into the DB table which stores labels' detail.
+
+    Parameters:
+        id (int): The label ID to be updated.
+        name (string): The label name to be updated.
+        keywords (list): The keywords relevant to the label.
+        status (boolean): The active status of the label.
+
+    Returns:
+        cur.rowcount (int): Successful update row count, otherwise None.
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -118,10 +160,18 @@ def update_label(id, name, keywords, status):
         if conn is not None: conn.close()
     return None
 
-# Delete label
 @anvil.server.callable("delete_label")
 @logger.log_function
 def delete_label(id):
+    """
+    Delete a label from the DB table which stores labels' detail.
+
+    Parameters:
+        id (int): The label ID to be deleted.
+
+    Returns:
+        cur.rowcount (int): Successful delete row count, otherwise None.
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -143,6 +193,16 @@ def delete_label(id):
 @anvil.server.callable("predict_relevant_labels")
 @logger.log_function
 def predict_relevant_labels(srclbl, curlbl):
+    """
+    Return a label which has the highest proximity (a.k.a. the most matched) from the DB from the source label.
+
+    Parameters:
+        srclbl (dict): The labels extracted from Excel to be compared.
+        curlbl (dict): The labels from the DB labels table.
+
+    Returns:
+        score (list): Proximity score of each label, its order follows the order of the srclbl.
+    """
     # Max 100, min 0
     min_proximity = 40
     score = []

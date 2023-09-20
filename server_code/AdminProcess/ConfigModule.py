@@ -17,9 +17,14 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-# DB table "settings" select method from Postgres DB
 @logger.log_function
 def psqldb_select_settings():
+    """
+    Select data from the DB table which stores each user's settings
+
+    Returns:
+        dict: A dictionary containing all user's settings
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     settings = None
@@ -37,9 +42,14 @@ def psqldb_select_settings():
         cur.close()
     return settings
 
-# DB table "brokers" select method from Postgres DB
 @logger.log_function
 def psgldb_select_brokers():
+    """
+    Select broker data from the DB table which stores investment brokers' detail to generate a dropdown list.
+
+    Returns:
+        list: A dropdown list of broker names and CCY as description, and broker ID as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -49,9 +59,23 @@ def psgldb_select_brokers():
     logger.debug("broker_list=", broker_list)
     return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
 
-# DB table "settings" update/insert method into Postgres DB
 @logger.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+    """
+    Insert or update settings from setting form to a DB table which stores user's settings detail.
+
+    Row count returned larger than 0 is considered as a successful update. At the same time, logging level is updated into the server user session.
+    
+    Parameters:
+        def_broker (str): The name of the broker.
+        def_interval (str): The ID of the default search interval.
+        def_datefrom (date): The date to default search from.
+        def_dateto (date): The date to default search to.
+        logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
+
+    Returns:
+        int: Successful update row count, otherwise None
+    """
     userid = sysmod.get_current_userid()
     if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
     try:
@@ -75,9 +99,22 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
         if conn is not None: conn.close()
     return None
 
-# DB table "brokers" update/insert method into Postgres DB
 @logger.log_function
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
+    """
+    Insert or update an investment broker from setting form to the DB table which stores investment brokers' detail.
+
+    Row count returned larger than 0 is considered as a successful update. At the same time, logging level is updated into the server user session.
+    
+    Parameters:
+        b_id (str): The ID of the broker.
+        prefix (str): The prefix of the broker ID.
+        name (str): The name of the broker.
+        ccy (str): The base CCY of the broker.
+
+    Returns:
+        b_id (int): The ID of the newly created or existing broker, otherwise None
+    """
     userid = sysmod.get_current_userid()
     try:
         conn = sysmod.db_connect()  
@@ -103,9 +140,17 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
         if conn is not None: conn.close()
     return None
       
-# Return selected broker name by querying DB table "brokers" from Postgres DB
 @logger.log_function
 def psgldb_get_broker_name(choice):
+    """
+    Select broker name from the DB table which stores investment brokers' detail.
+
+    Parameters:
+        choice (str): The ID of the broker.
+
+    Returns:
+        result['name'] (str): The name of the broker.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT name FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
@@ -113,9 +158,17 @@ def psgldb_get_broker_name(choice):
         logger.debug("result=", result)
     return result['name'] if result is not None else ''
 
-# Return selected broker CCY by querying DB table "brokers" from Postgres DB
 @logger.log_function
 def psgldb_get_broker_ccy(choice):
+    """
+    Select broker base CCY from the DB table which stores investment brokers' detail.
+
+    Parameters:
+        choice (str): The ID of the broker.
+
+    Returns:
+        result['ccy'] (str): The CCY of the broker.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT ccy FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
@@ -123,9 +176,19 @@ def psgldb_get_broker_ccy(choice):
         logger.debug("result=", result)
     return result['ccy'] if result is not None else ''
 
-# DB table "brokers" delete method in Postgres DB
 @logger.log_function
 def psgldb_delete_brokers(b_id):
+    """
+    Delete an investment broker from the DB table which stores investment brokers' detail.
+
+    Row count returned larger than 0 is considered as a successful update.
+    
+    Parameters:
+        b_id (str): The ID of the broker.
+
+    Returns:
+        cur.rowcount (int): Successful update row count, otherwise None.
+    """
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -142,10 +205,15 @@ def psgldb_delete_brokers(b_id):
         if conn is not None: conn.close()
     return None
 
-# Generate SUBMITTED template selection dropdown items from Postgres DB
 @anvil.server.callable("psgldb_get_submitted_templ_list")
 @logger.log_function
 def psgldb_get_submitted_templ_list():
+    """
+    Select "Submitted" templates from the DB table which stores templates' detail to generate a dropdown list.
+
+    Returns:
+        result (list): A dropdown list of submitted template names as description, and submitted template IDs as ID.
+    """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -156,9 +224,14 @@ def psgldb_get_submitted_templ_list():
     result.insert(0, '')
     return result
         
-# Return search interval dropdown by querying DB table "search_interval" from Postgres DB
 @logger.log_function
 def psgldb_select_search_interval():
+    """
+    Select data from a DB table which stores search intervals' detail to generate a dropdown list.
+
+    Returns:
+        list: A dropdown list of search interval name as description, and search interval ID as ID.
+    """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
@@ -170,48 +243,118 @@ def psgldb_select_search_interval():
 # Postgres impl END
 
 @anvil.server.callable
-# DB table "settings" select method callable by client modules
 def select_settings():
+    """
+    A wrapper function to select user settings detail to generate a dropdown list.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psqldb_select_settings()
 
 @anvil.server.callable
-# DB table "brokers" select method callable by client modules
 def select_brokers():
+    """
+    A wrapper function to select brokers detail to generate a dropdown list.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_select_brokers()
 
 @anvil.server.callable
-# DB table "settings" update/insert method callable by client modules
 def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+    """
+    A wrapper function to insert or update user settings detail.
+
+    Parameters:
+        def_broker (str): The name of the broker.
+        def_interval (str): The ID of the default search interval.
+        def_datefrom (date): The date to default search from.
+        def_dateto (date): The date to default search to.
+        logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
 
 @anvil.server.callable
-# DB table "brokers" update/insert method callable by client modules
 def upsert_brokers(b_id, name, ccy):
+    """
+    A wrapper function to insert or update brokers detail.
+
+    The prefix of a broker ID is currently predefined in a constant file and used here.
+    
+    Parameters:
+        b_id (str): The ID of the broker.
+        name (str): The name of the broker.
+        ccy (str): The base CCY of the broker.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_upsert_brokers(b_id, s_const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
       
 @anvil.server.callable
-# DB table "brokers" delete method callable by client modules
 def delete_brokers(b_id):
+    """
+    A wrapper function to delete brokers detail.
+
+    Parameters:
+        b_id (str): The ID of the broker.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_delete_brokers(b_id)
     
 @anvil.server.callable
-# Return selected broker name callable by client modules
 def get_broker_name(choice):
+    """
+    A wrapper function to select a broker name.
+
+    Parameters:
+        choice (str): The ID of the broker.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_get_broker_name(choice)
 
 @anvil.server.callable
-# Return selected broker CCY callable by client modules
 def get_broker_ccy(choice):
+    """
+    A wrapper function to select a broker base CCY.
+
+    Parameters:
+        choice (str): The ID of the broker.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_get_broker_ccy(choice)
 
 @anvil.server.callable
 # Generate SUBMITTED template selection dropdown items
 def get_submitted_templ_list():
+    """
+    A wrapper function to select submitted templates to generate a dropdown list.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_get_submitted_templ_list()
 
 @anvil.server.callable
 # DB table "search_interval" select method callable by client modules
 def select_search_interval():
+    """
+    A wrapper function to select search interval to generate a dropdown list.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
     return psgldb_select_search_interval()
 
 ###################################################################
