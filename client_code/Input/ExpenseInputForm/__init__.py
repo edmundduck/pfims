@@ -176,6 +176,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if result_d is not None and result_u is not None:
             cache.deleted_row_reset()
             self._switch_to_submit_button()
+            self.input_repeating_panel.items['iid'] = result_u
             msg2 = f"Expense tab {tab_name} has been saved successfully."
             logger.info(msg2)
         else:

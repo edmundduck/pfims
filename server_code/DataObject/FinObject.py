@@ -78,7 +78,10 @@ class CashTransaction:
         tuple_list = []
         for item in param_list:
             i = self.attr.get(item)[0] if isinstance(self.attr.get(item), list) else self.attr.get(item)
-            tuple_list.append(i)
+            if i is None:
+                tuple_list.append(i)
+            else:
+                tuple_list.append(str(i))
         return tuple_list
 
     @logger.log_function
