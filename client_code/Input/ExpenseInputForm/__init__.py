@@ -176,7 +176,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if result_d is not None and result_u is not None:
             cache.deleted_row_reset()
             self._switch_to_submit_button()
-            self.input_repeating_panel.items['iid'] = result_u
+            self._replace_iid(result_u)
             msg2 = f"Expense tab {tab_name} has been saved successfully."
             logger.info(msg2)
         else:
@@ -237,3 +237,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def reload_rp_data(self, **event_args):
         for d in self.input_repeating_panel.get_components(): logger.trace("reload_rp_data d.item=", d.item)
         self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
+
+    def _replace_iid(self, iid, **event_args):
+        DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
+        DL['iid'] = iid
+        self.input_repeating_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
