@@ -73,19 +73,20 @@ class ExpenseRecord:
         return {c: None for c in ExpenseRecord.column_list}
     
     def __init__(self, attr=None):
-        self.attr = self.assign(attr)
+        self.record = {}
+        self.record = self.assign(attr)
 
     def __str__(self):
         return "{0} (iid:{1}, tid:{2}) - {3}, {4}, {5}, {6}, {7}, {8}".format(
             self.__class__,
-            self.attr.get(self.IID), \
-            self.attr.get(self.TID), \
-            self.attr.get(self.Date), \
-            self.attr.get(self.Account), \
-            self.attr.get(self.Amount), \
-            self.attr.get(self.Labels), \
-            self.attr.get(self.Remarks), \
-            self.attr.get(self.StmtDtl)
+            self.record.get(self.IID), \
+            self.record.get(self.TID), \
+            self.record.get(self.Date), \
+            self.record.get(self.Account), \
+            self.record.get(self.Amount), \
+            self.record.get(self.Labels), \
+            self.record.get(self.Remarks), \
+            self.record.get(self.StmtDtl)
         )
 
     # Return a record compatible for database operation in list type
@@ -93,7 +94,7 @@ class ExpenseRecord:
     def getDatabaseRecord(self):
         tuple_list = []
         for item in self.column_list:
-            i = self.attr.get(item)[0] if isinstance(self.attr.get(item), list) else self.attr.get(item)
+            i = self.record.get(item)[0] if isinstance(self.record.get(item), list) else self.record.get(item)
             if i is None:
                 tuple_list.append(i)
             else:
@@ -110,19 +111,19 @@ class ExpenseRecord:
             dict (dict): A dictionary containing keys which is/are one of the column definitions.
     
         Returns:
-            ?: Return True only when all the mandatory field values are not None.
+            record_copy (dict): Return a copy of the updated ExpenseRecord record.
         """
-        attr_copy = self.attr.copy() if self.attr is not None else {}
+        record_copy = self.record.copy() if self.record is not None else {}
         if dict is not None:
             for key in dict.keys():
-                if key in column_list:
+                if key in self.column_list:
                     if key == self.IID:
-                        attr_copy[key] = dict.get(key) if dict.get(key) is not None else 0
+                        record_copy[key] = dict.get(key) if dict.get(key) is not None else 0
                     else:
-                        attr_copy[key] = dict.get(key)
+                        record_copy[key] = dict.get(key)
                 else:
-                    raise KeyException(f"Key not belonging to ")
-        return attr_copy
+                    raise KeyException(f"Input contains key(s) not belonging to Expense Record column definition.")
+        return record_copy
 
     def isvalid(self):
         """
@@ -133,6 +134,6 @@ class ExpenseRecord:
         """
         mandatory_list = (exptbl.Date, exptbl.Account, exptbl.Amount)
         for item in mandatory_list:
-            if self.attr.get(item) is None:
+            if self.record.get(item) is None:
                 return False
         return True
