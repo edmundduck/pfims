@@ -133,9 +133,8 @@ def upsert_transactions(tid, rows):
                     stmt_dtl=EXCLUDED.stmt_dtl \
                     WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=sysmod.schemafin(), p1=args))
                     conn.commit()
-                    iid = cur.fetchall()
-                    iid = iid[1] if iid is not None and isinstance(iid, list) else iid
-                    logger.trace("iid=", iid)
+                    result = cur.fetchall()
+                    iid = list(r['iid'] for r in result)
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if cur.rowcount != len(rows): raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
                 else:

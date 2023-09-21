@@ -184,6 +184,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 cache.deleted_row_reset()
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
             elif result_u is not None:
+                self._replace_iid(result_u)
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
             else:
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
