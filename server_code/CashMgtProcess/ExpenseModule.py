@@ -117,9 +117,9 @@ def upsert_transactions(tid, rows):
                 mogstr = []
                 for row in rows:
                     tj = fobj.ExpenseRecord()
-                    tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
+                    tj.assign({'tab_id': tid}).assign(row)
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
-                    if tj.isValidRecord(): mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
+                    if tj.isvalid(): mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
                 logger.trace("mogstr=", mogstr)
                 args = ','.join(mogstr)
                 if len(mogstr) > 0:

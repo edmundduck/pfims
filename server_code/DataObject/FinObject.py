@@ -42,7 +42,6 @@ class TradeJournal:
             tuple_list.append(str(self.attr.get(item)))
         return tuple_list
 
-    @logger.log_function
     def assignFromDict(self, dict):
         for key in dict.keys():
             self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
@@ -65,6 +64,12 @@ class ExpenseRecord:
     @staticmethod
     @anvil.server.callable
     def blankexprecord():
+        """
+        Return a blank record with all keys required by an expense record exist and None in value in dict.
+    
+        Returns:
+            dict: A dict with all keys exist, while value are None.
+        """
         return {c: None for c in ExpenseRecord.column_list}
     
     def __init__(self, attr=None):
@@ -95,18 +100,21 @@ class ExpenseRecord:
                 tuple_list.append(str(i))
         return tuple_list
 
-    @logger.log_function
-    def assignFromDict(self, dict):
+    def assign(self, dict):
         for key in dict.keys():
             if dict.get(key) is not None:
                 self.attr[key] = dict.get(key)
             else:
-                (0 if key == 'iid' else '')
+                (0 if key == self.IID else '')
         return self
 
-    # Return False if any of the mandatory field value is None, otherwise True
-    @logger.log_function
-    def isValidRecord(self):
+    def isvalid(self):
+        """
+        Return False if any of the mandatory field value is None, otherwise True.
+    
+        Returns:
+            boolean: Return True only when all the mandatory field values are not None.
+        """
         mandatory_list = (exptbl.Date, exptbl.Account, exptbl.Amount)
         for item in mandatory_list:
             if self.attr.get(item) is None:
