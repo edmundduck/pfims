@@ -44,8 +44,7 @@ components:
       bold: false, checked: false, underline: false}
     name: row_cb_datarow
     layout_properties: {column: SBYHGF}
-    data_bindings:
-    - {property: checked, code: 'self.item[''cb'']', writeback: true}
+    data_bindings: []
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,

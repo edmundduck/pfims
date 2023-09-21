@@ -65,7 +65,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = [{'iid': None, 'tab_id': None} for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
+        exprec = anvil.server.call('blankexprecord')
+        self.input_repeating_panel.items = [exprec for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""

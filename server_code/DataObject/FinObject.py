@@ -49,34 +49,45 @@ class TradeJournal:
         return self
 
 class ExpenseRecord:
+
+    # Class variables
+    IID = 'iid'
+    TID = 'tab_id'
+    Date = 'DTE'
+    Account = 'ACC'
+    Amount = 'AMT'
+    Remarks = 'RMK'
+    StmtDtl = 'STD'
+    Labels = 'LBL'
+    data_list = (Date, Account, Amount, Remarks, StmtDtl, Labels)
+    column_list = (IID, TID, Date, Account, Amount, Labels, Remarks, StmtDtl)
+
+    @staticmethod
+    @anvil.server.callable
+    def blankexprecord():
+        return {c: None for c in ExpenseRecord.column_list}
+    
     def __init__(self, attr=None):
         self.attr = attr if attr is not None else {}
 
     def __str__(self):
         return "{0} (iid:{1}, tid:{2}) - {3}, {4}, {5}, {6}, {7}, {8}".format(
             self.__class__,
-            self.attr.get('iid'), \
-            self.attr.get('tab_id'), \
-            self.attr.get(exptbl.Date), \
-            self.attr.get(exptbl.Account), \
-            self.attr.get(exptbl.Amount), \
-            self.attr.get(exptbl.Labels), \
-            self.attr.get(exptbl.Remarks), \
-            self.attr.get(exptbl.StmtDtl)
+            self.attr.get(self.IID), \
+            self.attr.get(self.TID), \
+            self.attr.get(self.Date), \
+            self.attr.get(self.Account), \
+            self.attr.get(self.Amount), \
+            self.attr.get(self.Labels), \
+            self.attr.get(self.Remarks), \
+            self.attr.get(self.StmtDtl)
         )
 
     # Return a record compatible for database operation in list type
     @logger.log_function
     def getDatabaseRecord(self):
-        param_list = ('iid', 'tab_id', \
-                      exptbl.Date, \
-                      exptbl.Account, \
-                      exptbl.Amount, \
-                      exptbl.Labels, \
-                      exptbl.Remarks, \
-                      exptbl.StmtDtl)
         tuple_list = []
-        for item in param_list:
+        for item in self.column_list:
             i = self.attr.get(item)[0] if isinstance(self.attr.get(item), list) else self.attr.get(item)
             if i is None:
                 tuple_list.append(i)
