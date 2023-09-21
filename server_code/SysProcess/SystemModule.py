@@ -17,7 +17,7 @@ def get_current_username():
     Get logged on user name.
 
     Returns:
-        row (list of dict): List of dict containing keys in upper case.
+        row (string): List of dict containing keys in upper case.
     """
     userid = anvil.users.get_user().get_id()
     row = (app_tables.users.get_by_id(userid))['email']

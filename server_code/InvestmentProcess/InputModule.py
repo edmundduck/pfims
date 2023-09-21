@@ -121,7 +121,7 @@ def upsert_journals(tid, rows):
                 return cur.rowcount
             return 0
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -153,7 +153,7 @@ def delete_journals(template_id, iid_list):
                 return cur.rowcount
         return 0
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -197,7 +197,7 @@ def save_templates(template_id, template_name, broker_id, del_iid = []):
             if tid['template_id'] < 0: raise psycopg2.OperationalError("Template (id:{0}) creation or update fail.".format(template_id))
             return tid['template_id']
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -233,7 +233,7 @@ def submit_templates(template_id, submitted):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Templates (id:{0}) submission or reversal fail.".format(template_id))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -264,7 +264,7 @@ def delete_templates(template_id):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Template (id:{0}) deletion fail.".format(template_id))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()

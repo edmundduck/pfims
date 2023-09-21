@@ -325,7 +325,7 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                 dcount = 0
             cur.close()            
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -374,7 +374,7 @@ def delete_mapping(id):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete mapping group fail with rowcount <= 0.")
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()

@@ -186,7 +186,7 @@ def update_mapping(data, mapping):
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
         return df.replace([np.nan], [None]).sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
     return None
 
 def format_comparable_word(word):
@@ -485,5 +485,5 @@ def update_pdf_mapping(data, mapping, account, labels):
         return df.dropna(subset=[exptbl.Amount, exptbl.Date], ignore_index=True).replace([np.nan], [None])\
             .sort_values(by=exptbl.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
-        logger.error(f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
     return None
