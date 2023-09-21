@@ -65,7 +65,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = [{} for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
+        exprec = anvil.server.call('blankexprecord')
+        self.input_repeating_panel.items = [exprec for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -176,6 +177,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if result_d is not None and result_u is not None:
             cache.deleted_row_reset()
             self._switch_to_submit_button()
+            self._replace_iid(result_u)
             msg2 = f"Expense tab {tab_name} has been saved successfully."
             logger.info(msg2)
         else:
@@ -183,6 +185,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 cache.deleted_row_reset()
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
             elif result_u is not None:
+                self._replace_iid(result_u)
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
             else:
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
@@ -236,3 +239,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def reload_rp_data(self, **event_args):
         for d in self.input_repeating_panel.get_components(): logger.trace("reload_rp_data d.item=", d.item)
         self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
+
+    def _replace_iid(self, iid, **event_args):
+        DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
+        DL['iid'] = iid
+        self.input_repeating_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
