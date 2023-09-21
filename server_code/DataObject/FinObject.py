@@ -74,7 +74,7 @@ class ExpenseRecord:
     
     def __init__(self, attr=None):
         self.attr = {}
-        self.attr = self.assign(attr)
+        self.attr = self.assignval(attr)
 
     def __str__(self):
         return "{0} (iid:{1}, tid:{2}) - {3}, {4}, {5}, {6}, {7}, {8}".format(
@@ -101,7 +101,7 @@ class ExpenseRecord:
                 tuple_list.append(str(i))
         return tuple_list
 
-    def assign(self, dict):
+    def assignval(self, dict):
         """
         Assign value according to the key.
 
