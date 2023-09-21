@@ -65,7 +65,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = [{} for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
+        self.input_repeating_panel.items = [{'iid': None, 'tab_id': None} for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -239,6 +239,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
 
     def _replace_iid(self, iid, **event_args):
+        print("0=", self.input_repeating_panel.items)
         DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
+        print("1,DL=", DL)
         DL['iid'] = iid
+        print("2,DL=", DL)
         self.input_repeating_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
