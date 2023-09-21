@@ -73,6 +73,7 @@ class ExpenseRecord:
         return {c: None for c in ExpenseRecord.column_list}
     
     def __init__(self, attr=None):
+        self.attr = {}
         self.attr = self.assign(attr)
 
     def __str__(self):
@@ -110,12 +111,12 @@ class ExpenseRecord:
             dict (dict): A dictionary containing keys which is/are one of the column definitions.
     
         Returns:
-            ?: Return True only when all the mandatory field values are not None.
+            attr_copy (dict): Return a copy of the updated ExpenseRecord record.
         """
         attr_copy = self.attr.copy() if self.attr is not None else {}
         if dict is not None:
             for key in dict.keys():
-                if key in column_list:
+                if key in self.column_list:
                     if key == self.IID:
                         attr_copy[key] = dict.get(key) if dict.get(key) is not None else 0
                     else:
