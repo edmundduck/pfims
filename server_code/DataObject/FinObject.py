@@ -48,7 +48,7 @@ class TradeJournal:
             self.attr[key] = dict.get(key) if dict.get(key) is not None else (0 if key == 'iid' else '')
         return self
 
-class CashTransaction:
+class ExpenseRecord:
     def __init__(self, attr=None):
         self.attr = attr if attr is not None else {}
 
