@@ -120,7 +120,7 @@ def create_label(labels):
             else:
                 return []
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -153,7 +153,7 @@ def update_label(id, name, keywords, status):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) update fail.".format(name))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -183,7 +183,7 @@ def delete_label(id):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()

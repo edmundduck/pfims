@@ -160,14 +160,18 @@ class ServerLogger:
         """
         self.log(logging.WARNING, msg, *args, **kwargs)
 
-    def error(self, msg=None, *args, **kwargs):
+    def error(self, err, msg=None, *args, **kwargs):
         """
         Log message in error level.
     
         Parameters:
-            msg (string): Log message.
+            err (Exception): Exception.
         """
-        self.log(logging.ERROR, msg, *args, **kwargs)
+        if msg:
+            errmsg = f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err} {msg}"
+        else:
+            errmsg = f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err}"
+        self.log(logging.ERROR, errmsg, *args, **kwargs)
 
     def critical(self, msg=None, *args, **kwargs):
         """
