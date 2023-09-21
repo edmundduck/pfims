@@ -142,7 +142,7 @@ def upsert_transactions(tid, rows):
             else:
                 iid = []
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -180,7 +180,7 @@ def delete_transactions(tid, iid_list):
         else:
             count = 0
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -220,7 +220,7 @@ def save_expensetab(id, name):
             if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))
             return tid['tab_id']
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -258,7 +258,7 @@ def submit_expensetab(id, submitted):
             if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) submission fail.".format(template_id))
             return tid['tab_id']
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
@@ -289,7 +289,7 @@ def delete_expensetab(tab_id):
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Expense tab (id:{0}) deletion fail.".format(tab_id))
             return cur.rowcount
     except (Exception, psycopg2.OperationalError) as err:
-        logger.error(f"{__name__}.{type(err).__name__}: {err}")
+        logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
