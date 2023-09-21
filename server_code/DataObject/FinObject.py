@@ -113,17 +113,22 @@ class ExpenseRecord:
         Returns:
             attr_copy (dict): Return a copy of the updated ExpenseRecord record.
         """
+        self_copy = self.copy()
         attr_copy = self.attr.copy() if self.attr is not None else {}
         if dict is not None:
+            print("XXX=", dict)
             for key in dict.keys():
+                print("key=", key)
                 if key in self.column_list:
                     if key == self.IID:
+                        print("attr_copy (a)=", attr_copy)
                         attr_copy[key] = dict.get(key) if dict.get(key) is not None else 0
                     else:
+                        print("attr_copy (b)=", attr_copy)
                         attr_copy[key] = dict.get(key)
                 else:
                     raise KeyException(f"Key not belonging to ")
-        return attr_copy
+        return self
 
     def isvalid(self):
         """
