@@ -101,6 +101,15 @@ class ExpenseRecord:
         return tuple_list
 
     def assign(self, dict):
+        """
+        Assign value according to the key.
+
+        Parameters:
+            dict (dict): A dictionary containing keys which is/are one of the column definitions.
+    
+        Returns:
+            ?: Return True only when all the mandatory field values are not None.
+        """
         for key in dict.keys():
             if dict.get(key) is not None:
                 self.attr[key] = dict.get(key)
