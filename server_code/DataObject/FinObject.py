@@ -73,7 +73,7 @@ class ExpenseRecord:
         return {c: None for c in ExpenseRecord.column_list}
     
     def __init__(self, attr=None):
-        self.attr = attr if attr is not None else {}
+        self.attr = self.assign(attr)
 
     def __str__(self):
         return "{0} (iid:{1}, tid:{2}) - {3}, {4}, {5}, {6}, {7}, {8}".format(
@@ -104,18 +104,25 @@ class ExpenseRecord:
         """
         Assign value according to the key.
 
+        If a key not belonging to the column definition, KeyError will be raised.
+        
         Parameters:
             dict (dict): A dictionary containing keys which is/are one of the column definitions.
     
         Returns:
             ?: Return True only when all the mandatory field values are not None.
         """
-        for key in dict.keys():
-            if dict.get(key) is not None:
-                self.attr[key] = dict.get(key)
-            else:
-                (0 if key == self.IID else '')
-        return self
+        attr_copy = self.attr.copy() if self.attr is not None else {}
+        if dict is not None:
+            for key in dict.keys():
+                if key in column_list:
+                    if key == self.IID:
+                        attr_copy[key] = dict.get(key) if dict.get(key) is not None else 0
+                    else:
+                        attr_copy[key] = dict.get(key)
+                else:
+                    raise KeyException(f"Key not belonging to ")
+        return attr_copy
 
     def isvalid(self):
         """
