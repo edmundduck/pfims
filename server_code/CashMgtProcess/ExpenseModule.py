@@ -9,9 +9,8 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from ..DataObject import FinObject as fobj
+from ..DataObject.FinObject import ExpenseRecord as exprcd
 from ..ServerUtils import HelperModule as helper
-from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 
@@ -76,14 +75,14 @@ def select_transactions(tid):
     if tid is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT iid, tab_id, trandate AS {exptbl.Date}, account_id AS {exptbl.Account}, \
-            amount AS {exptbl.Amount}, labels AS {exptbl.Labels}, remarks AS {exptbl.Remarks}, stmt_dtl AS {exptbl.StmtDtl} \
+            cur.execute(f"SELECT iid, tab_id, trandate AS {exprcd.Date}, account_id AS {exprcd.Account}, \
+            amount AS {exprcd.Amount}, labels AS {exprcd.Labels}, remarks AS {exprcd.Remarks}, stmt_dtl AS {exprcd.StmtDtl} \
             FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
             logger.trace("rows=", rows)
             # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
             # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-            rows = helper.upper_dict_keys(rows, exptbl.def_namelist)
+            rows = helper.upper_dict_keys(rows, exprcd.data_list)
             cur.close()
         return list(rows)
     return []
@@ -116,9 +115,9 @@ def upsert_transactions(tid, rows):
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
                 for row in rows:
-                    exprcd = fobj.ExpenseRecord(row).assign({'tab_id': tid})
+                    record = exprcd(row).assign({'tab_id': tid})
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
-                    if exprcd.isvalid(): mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", exprcd.to_list()).decode('utf-8'))
+                    if record.isvalid(): mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", record.to_list()).decode('utf-8'))
                 logger.trace("mogstr=", mogstr)
                 args = ','.join(mogstr)
                 if len(mogstr) > 0:

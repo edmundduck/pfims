@@ -17,18 +17,6 @@ class SettingConfig:
     BROKER_ID_PREFIX = 'BR'
     BROKER_SUFFIX_LEN = 5
 
-class ExpenseDBTableDefinion:
-    """
-    Expense table definition for data transformation required in expense input file import.
-    """
-    Date = 'DTE'
-    Account = 'ACC'
-    Amount = 'AMT'
-    Remarks = 'RMK'
-    StmtDtl = 'STD'
-    Labels = 'LBL'
-    def_namelist = [Date, Account, Amount, Remarks, StmtDtl, Labels]
-
 class SearchInterval:
     """
     Search interval modes used in Report search panel and config.
