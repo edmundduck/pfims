@@ -168,6 +168,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """ Reflect the change in template dropdown """
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.dropdown_tabs.selected_value = [tab_id, tab_name]
+        print("???=", self.input_repeating_panel.items)
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
         # """ Delete """
