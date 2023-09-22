@@ -122,7 +122,7 @@ class ExpenseRecord:
             dict (dict): A dictionary containing keys which is/are one of the column definitions.
     
         Returns:
-            ExpenseRecord object: Return a copy of the updated ExpenseRecord record.
+            ExpenseRecord object: Return a copy of the updated ExpenseRecord object.
         """
         attr_copy = self.attr.copy()
         if dict is not None:

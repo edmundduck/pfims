@@ -31,10 +31,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.tab_name.text = tab_id[1]
             logger.debug("self.dropdown_tabs.selected_value=", self.dropdown_tabs.selected_value)
 
-        self.tag = {'exprcd': anvil.server.call('emptyexprecord')}
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-            self.input_repeating_panel.items = [self.tag['exprcd'] for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
+            self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
         else:
             logger.info(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
@@ -67,7 +66,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = [self.tag['exprcd'] for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
+        self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -156,6 +155,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
+        self.reload_rp_data()
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
