@@ -101,10 +101,10 @@ def upsert_transactions(tid, rows):
         rows (list): A list of transactions to be inserted or updated.
 
     Returns:
-        count (int): Successful update row count, otherwise None.
+        iid (list): List of IID following the same sequence as rows when updated successfully, otherwise None. If nothing to update (not error update) then empty list.
     """
     conn = None
-    count = None
+    iid = None
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -116,39 +116,37 @@ def upsert_transactions(tid, rows):
                 # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                 mogstr = []
                 for row in rows:
-                    tj = fobj.CashTransaction()
-                    tj.assignFromDict({'tab_id': tid}).assignFromDict(row)
+                    exprcd = fobj.ExpenseRecord(row).assign({'tab_id': tid})
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
-                    # mogrify makes the tuple double quoted as string, causing "TypeError: not all arguments converted during string formatting"
-                    # also makes None becomes string so cannot be auto converted to NULL when execute
-                    # mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", tj.getDatabaseRecord()).decode('utf-8'))
-                    if tj.isValidRecord(): mogstr.append(tj.getDatabaseRecord())
+                    if exprcd.isvalid(): mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", exprcd.to_list()).decode('utf-8'))
                 logger.trace("mogstr=", mogstr)
+                args = ','.join(mogstr)
                 if len(mogstr) > 0:
-                    cur.executemany("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                    remarks, stmt_dtl) VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT (iid, tab_id) DO UPDATE SET \
+                    cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
+                    remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
                     trandate=EXCLUDED.trandate, \
                     account_id=EXCLUDED.account_id, \
                     amount=EXCLUDED.amount, \
                     labels=EXCLUDED.labels, \
                     remarks=EXCLUDED.remarks, \
                     stmt_dtl=EXCLUDED.stmt_dtl \
-                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id".format(schema=sysmod.schemafin()), mogstr)
+                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=sysmod.schemafin(), p1=args))
                     conn.commit()
-                    count = cur.rowcount
+                    result = cur.fetchall()
+                    iid = list(r['iid'] for r in result)
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                    if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
+                    if cur.rowcount != len(rows): raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
                 else:
-                    count = 0
+                    iid = []
             else:
-                count = 0
+                iid = []
     except (Exception, psycopg2.OperationalError) as err:
         logger.error(err)
         conn.rollback()
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()        
-    return count
+    return iid
     
 @anvil.server.callable("delete_transactions")
 @logger.log_function

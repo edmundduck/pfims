@@ -98,6 +98,7 @@ def upsert_journals(tid, rows):
                     tj.assignFromDict({'template_id': tid}).assignFromDict(row)
                     # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
+                logger.trace("mogstr=", mogstr)
                 args = ",".join(mogstr)
                 cur.execute("INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, \
                 sales, cost, fee, sell_price, buy_price, pnl) VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET \
