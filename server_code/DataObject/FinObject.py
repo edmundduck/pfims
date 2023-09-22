@@ -63,9 +63,9 @@ class ExpenseRecord:
 
     @staticmethod
     @anvil.server.callable
-    def blankexprecord():
+    def emptyexprecord():
         """
-        Return a blank record with all keys required by an expense record exist and None in value in dict.
+        Return an empty record with all keys required by an expense record exist and None in value in dict.
     
         Returns:
             dict: A dict with all keys exist, while value are None.
@@ -73,8 +73,7 @@ class ExpenseRecord:
         return {c: None for c in ExpenseRecord.column_list}
     
     def __init__(self, attr=None):
-        self.attr = {}
-        self.attr = self.assignval(attr)
+        self.attr = {} if attr is None else attr
 
     def __str__(self):
         return "{0} (iid:{1}, tid:{2}) - {3}, {4}, {5}, {6}, {7}, {8}".format(
@@ -89,19 +88,32 @@ class ExpenseRecord:
             self.attr.get(self.StmtDtl)
         )
 
-    # Return a record compatible for database operation in list type
-    @logger.log_function
-    def getDatabaseRecord(self):
-        tuple_list = []
+    def to_list(self):
+        """
+        Convert the attr dict to a list.
+
+        Returns:
+            result (list): Return a list without keys.
+        """
+        result = []
         for item in self.column_list:
             i = self.attr.get(item)[0] if isinstance(self.attr.get(item), list) else self.attr.get(item)
-            if i is None:
-                tuple_list.append(i)
+            if i:
+                result.append(str(i))
             else:
-                tuple_list.append(str(i))
-        return tuple_list
+                result.append(i)
+        return result
 
-    def assignval(self, dict):
+    def to_dict(self):
+        """
+        Output the attr dict.
+
+        Returns:
+            result (dict): Return a dict.
+        """
+        return self.attr
+
+    def assign(self, dict):
         """
         Assign value according to the key.
 
@@ -111,24 +123,28 @@ class ExpenseRecord:
             dict (dict): A dictionary containing keys which is/are one of the column definitions.
     
         Returns:
-            attr_copy (dict): Return a copy of the updated ExpenseRecord record.
+            ExpenseRecord object: Return a copy of the updated ExpenseRecord record.
         """
-        self_copy = self.copy()
-        attr_copy = self.attr.copy() if self.attr is not None else {}
+        attr_copy = self.attr.copy()
         if dict is not None:
-            print("XXX=", dict)
             for key in dict.keys():
-                print("key=", key)
                 if key in self.column_list:
                     if key == self.IID:
-                        print("attr_copy (a)=", attr_copy)
                         attr_copy[key] = dict.get(key) if dict.get(key) is not None else 0
                     else:
-                        print("attr_copy (b)=", attr_copy)
                         attr_copy[key] = dict.get(key)
                 else:
-                    raise KeyException(f"Key not belonging to ")
-        return self
+                    raise KeyException(f"Key not belonging to any column definitions.")
+        return ExpenseRecord(attr_copy)
+
+    def copy(self):
+        """
+        Make a copy of ExpenseRecord object.
+
+        Returns:
+            ExpenseRecord object: Return a copy of the updated ExpenseRecord record.
+        """
+        return ExpenseRecord(self.attr)
 
     def isvalid(self):
         """
