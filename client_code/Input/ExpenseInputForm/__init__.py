@@ -24,6 +24,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # Any code you write here will run when the form opens.
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
+        self.input_repeating_panel.add_event_handler('x-reload-rp-data', self.reload_rp_data)
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
@@ -155,8 +156,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
-        # Reload to allow changed rows (deleted, added or updated) to reflect properly
-        self.reload_rp_data()
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
@@ -237,7 +236,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self._switch_to_save_button()
 
     def reload_rp_data(self, **event_args):
-        for d in self.input_repeating_panel.get_components(): logger.trace("reload_rp_data d.item=", d.item)
+        """
+        Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
+        """
         self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
 
     def _replace_iid(self, iid, **event_args):
