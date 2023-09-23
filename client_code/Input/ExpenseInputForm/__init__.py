@@ -103,6 +103,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
+        print("??1=", self.input_repeating_panel.items)
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         cache.deleted_row_reset()
 
@@ -169,6 +170,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.dropdown_tabs.selected_value = [tab_id, tab_name]
         print("???=", self.input_repeating_panel.items)
+        # Get the items on the current page
+        current_page = 2
+        page_items = self.input_repeating_panel.get_page_items(current_page)
+        print("page_items=", page_items)
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
         # """ Delete """
