@@ -24,7 +24,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # Any code you write here will run when the form opens.
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
-        self.input_repeating_panel.add_event_handler('x-deleted-row', self._deleted_row)
+        self.input_repeating_panel.add_event_handler('x-deleted-row', self._deleted_iid_row_active)
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
@@ -37,15 +37,22 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             logger.info(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
+        self._deleted_iid_row_reset()
         cache.deleted_row_reset()
 
     def _switch_to_submit_button(self, **event_args):
+        """
+        Change the save button to submit.
+        """
         self.button_save_exptab.text = const.ExpenseConfig.BUTTON_SUBMIT_TEXT
         self.button_save_exptab.background = const.ColorSchemes.THEME_PRIM
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_submit_click)
 
     def _switch_to_save_button(self, **event_args):
+        """
+        Change the submit button to save.
+        """
         self.button_save_exptab.text = const.ExpenseConfig.BUTTON_DRAFT_TEXT
         self.button_save_exptab.background = const.ColorSchemes.THEME_SEC
         self.button_save_exptab.remove_event_handler('click')
@@ -66,8 +73,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.tag['reload'] == True:
-            self.reload_rp_data([cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)])
+        if self.tag['reload']:
+            self.reload_rp_data(extra=[cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)])
+            self.tag['reload'] = False
         else:
             self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
 
@@ -107,6 +115,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [cache.expense_empty_record() for i in range(diff)]
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
+        self._deleted_iid_row_reset()
         cache.deleted_row_reset()
 
     def cb_hide_remarks_change(self, **event_args):
@@ -177,6 +186,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         result_d = anvil.server.call('delete_transactions', tab_id, cache.get_deleted_row())
 
         if result_d is not None and result_u is not None:
+            self._deleted_iid_row_reset()
             cache.deleted_row_reset()
             self._switch_to_submit_button()
             self._replace_iid(result_u)
@@ -184,6 +194,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             logger.info(msg2)
         else:
             if result_d is not None:
+                self._deleted_iid_row_reset()
                 cache.deleted_row_reset()
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
             elif result_u is not None:
@@ -226,6 +237,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs_show()
                 self.dropdown_tabs.raise_event('change')
+                self._deleted_iid_row_reset()
                 cache.deleted_row_reset()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 logger.info(msg2)
@@ -241,6 +253,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def reload_rp_data(self, extra=[], **event_args):
         """
         Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
+
+        Parameters:
+            extra (list): Extra list to add to resultant repeating panel.
         """
         def filter_valid_rows(row):
             if row.get('iid', None) and row.get('iid') in cache.get_deleted_row():
@@ -251,15 +266,30 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 return False
             return True
         
-        self.input_repeating_panel.items = list(filter(filter_valid_rows, self.input_repeating_panel.items)) + extra
+        self.input_repeating_panel.items = extra + list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
     def _replace_iid(self, iid, **event_args):
+        """
+        Replace repeating panel items IID.
+
+        Parameters:
+            iid (int): New IID.
+        """
         DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
         DL['iid'] = iid
         self.input_repeating_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
 
-    def _deleted_row(self):
+    def _deleted_iid_row_active(self, **event_args):
+        """
+        Mark reload tag as True as row with IID has been deleted, reload repeating panel is required.
+        """
         self.tag = {'reload': True}
 
-    def _deleted_reset(self):
+    def _deleted_iid_row_reset(self, **event_args):
+        """
+        Reset reload tag (i.e. False) as not required to reload repeating panel.
+
+        Scenario 1 - Repeating panel reload has already been completed.
+        Scenario 2 - Page/Tab has just been loaded or refreshed.
+        """
         self.tag = {'reload': False}
