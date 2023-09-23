@@ -103,7 +103,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
-        print(f"AAA ({len(self.input_repeating_panel.items)})={self.input_repeating_panel.items}")
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         cache.deleted_row_reset()
 
@@ -156,10 +155,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
-        print(f"BBB ({len(self.input_repeating_panel.items)})={self.input_repeating_panel.items}")
-        print(f"LEN ={len(self.input_repeating_panel.get_components())}")
         self.reload_rp_data()
-        print(f"CCC ({len(self.input_repeating_panel.items)})={self.input_repeating_panel.items}")
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
@@ -244,19 +240,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
         """
         def filter_valid_rows(row):
-            print(f"row.get('iid', None)={row.get('iid', None)}")
-            print(f"cache.get_deleted_row()={cache.get_deleted_row()}")
-            if row.get('iid', None) and row.get('iid') not in cache.get_deleted_row():
+            if row.get('iid', None) and row.get('iid') in cache.get_deleted_row():
                 # Filter out all rows in get_deleted_row()
-                print("CASE 1")
-                return True
-            elif not all(v is None for v in row.values()):
-                # Filter out all None rows
-                print("CASE 2")
-                return True
-            else:
-                print("CASE 3")
                 return False
+            if all(v is None for v in row.values()):
+                # Filter out all None rows
+                return False
+            return True
         self.input_repeating_panel.items = list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
     def _replace_iid(self, iid, **event_args):
