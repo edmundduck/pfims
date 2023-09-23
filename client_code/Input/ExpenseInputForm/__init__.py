@@ -243,20 +243,21 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
         """
-        # self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
-        # 1. Filter all None rows
-        # 2. Filter all rows in get_deleted_row()
-        # 3. Combine rows in current view with the repeating panel items
         def filter_valid_rows(row):
+            print(f"row.get('iid', None)={row.get('iid', None)}")
+            print(f"cache.get_deleted_row()={cache.get_deleted_row()}")
             if row.get('iid', None) and row.get('iid') not in cache.get_deleted_row():
+                # Filter out all rows in get_deleted_row()
+                print("CASE 1")
                 return True
             elif not all(v is None for v in row.values()):
+                # Filter out all None rows
+                print("CASE 2")
                 return True
             else:
+                print("CASE 3")
                 return False
-        rows_in_screen = filter(filter_valid_rows, self.input_repeating_panel.items)
-        rows_not_in_screen = set(self.input_repeating_panel.items).symmetric_difference(rows_in_screen)
-        self.input_repeating_panel.items = rows_in_screen + rows_not_in_screen
+        self.input_repeating_panel.items = list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
     def _replace_iid(self, iid, **event_args):
         DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
