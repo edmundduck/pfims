@@ -24,7 +24,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # Any code you write here will run when the form opens.
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
-        self.input_repeating_panel.add_event_handler('x-reload-rp-data', self.reload_rp_data)
+        self.input_repeating_panel.add_event_handler('x-deleted-row', self._deleted_row)
 
         if tab_id is not None:
             self.dropdown_tabs.selected_value = tab_id
@@ -66,7 +66,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
+        if self.tag['reload'] == True:
+            self.reload_rp_data([cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)])
+        else:
+            self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -235,7 +238,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the text in this text box is edited"""
         self._switch_to_save_button()
 
-    def reload_rp_data(self, **event_args):
+    def reload_rp_data(self, extra=[], **event_args):
         """
         Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
         """
@@ -248,9 +251,15 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 return False
             return True
         
-        self.input_repeating_panel.items = list(filter(filter_valid_rows, self.input_repeating_panel.items))
+        self.input_repeating_panel.items = list(filter(filter_valid_rows, self.input_repeating_panel.items)) + extra
 
     def _replace_iid(self, iid, **event_args):
         DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
         DL['iid'] = iid
         self.input_repeating_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
+
+    def _deleted_row(self):
+        self.tag = {'reload': True}
+
+    def _deleted_reset(self):
+        self.tag = {'reload': False}

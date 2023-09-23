@@ -129,13 +129,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        iid = self.item.get('iid')
-        parent_obj = self.parent
+        if self.item.get('iid') is not None: cache.add_deleted_row(self.item.get('iid'))
         self.parent.raise_event('x-switch-to-save-button')
+        self.parent.raise_event('x-deleted-row')
         self.remove_from_parent()
-        if iid is not None:
-            cache.add_deleted_row(iid)
-            parent_obj.raise_event('x-reload-rp-data', iid=iid)
 
     def row_date_change(self, **event_args):
         """This method is called when the selected date changes"""
