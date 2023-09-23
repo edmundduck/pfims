@@ -102,7 +102,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
-            self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
+            self.input_repeating_panel.items = self.input_repeating_panel.items + [cache.expense_empty_record() for i in range(diff)]
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         cache.deleted_row_reset()
 
@@ -247,6 +247,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 # Filter out all None rows
                 return False
             return True
+        
         self.input_repeating_panel.items = list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
     def _replace_iid(self, iid, **event_args):

@@ -135,7 +135,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.remove_from_parent()
         if iid is not None:
             cache.add_deleted_row(iid)
-            parent_obj.raise_event('x-reload-rp-data')
+            parent_obj.raise_event('x-reload-rp-data', iid=iid)
 
     def row_date_change(self, **event_args):
         """This method is called when the selected date changes"""
