@@ -103,7 +103,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + [{} for i in range(diff)]
-        print("??1=", self.input_repeating_panel.items)
+        print(f"AAA ({len(self.input_repeating_panel.items)})={self.input_repeating_panel.items}")
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         cache.deleted_row_reset()
 
@@ -156,7 +156,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
+        print(f"BBB ({len(self.input_repeating_panel.items)})={self.input_repeating_panel.items}")
+        print(f"LEN ={len(self.input_repeating_panel.get_components())}")
         self.reload_rp_data()
+        print(f"CCC ({len(self.input_repeating_panel.items)})={self.input_repeating_panel.items}")
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
@@ -169,11 +172,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """ Reflect the change in template dropdown """
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.dropdown_tabs.selected_value = [tab_id, tab_name]
-        print("???=", self.input_repeating_panel.items)
-        # Get the items on the current page
-        current_page = 2
-        page_items = self.input_repeating_panel.get_page_items(current_page)
-        print("page_items=", page_items)
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
         # """ Delete """
@@ -245,7 +243,20 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
         """
-        self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
+        # self.input_repeating_panel.items = [c.item for c in self.input_repeating_panel.get_components() if c.item.get('iid', None) not in cache.get_deleted_row()]
+        # 1. Filter all None rows
+        # 2. Filter all rows in get_deleted_row()
+        # 3. Combine rows in current view with the repeating panel items
+        def filter_valid_rows(row):
+            if row.get('iid', None) and row.get('iid') not in cache.get_deleted_row():
+                return True
+            elif not all(v is None for v in row.values()):
+                return True
+            else:
+                return False
+        rows_in_screen = filter(filter_valid_rows, self.input_repeating_panel.items)
+        rows_not_in_screen = set(self.input_repeating_panel.items).symmetric_difference(rows_in_screen)
+        self.input_repeating_panel.items = rows_in_screen + rows_not_in_screen
 
     def _replace_iid(self, iid, **event_args):
         DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
