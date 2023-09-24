@@ -393,12 +393,12 @@ def proc_broker_delete(b_id):
     Returns:
         list: A list of all functions return required by the broker deletion.
     """
-    broker_id = delete_brokers(b_id)
-    if broker_id > 0:
+    count = delete_brokers(b_id)
+    if count > 0:
         brokers_dropdown = select_brokers()
-        return [broker_id, brokers_dropdown]
+        return [count, brokers_dropdown]
     else:
-        return [broker_id, None]
+        return [count, None]
 
 @anvil.server.callable
 def proc_submitted_template_update(template):
