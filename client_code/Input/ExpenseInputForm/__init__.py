@@ -58,15 +58,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_save_click)
         
-    @logger.log_function
-    # def _getall_selected_labels(self):
-    #     label_list = []
-    #     for i in self.panel_labels.get_components():
-    #         if isinstance(i, Button):
-    #             if i.icon == const.Icons.REMOVE:
-    #                 label_list += [i.tag]
-    #     return label_list
-
     def button_file_import_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_exp_file_upload_form(self)
