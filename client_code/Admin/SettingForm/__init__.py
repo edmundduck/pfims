@@ -19,7 +19,13 @@ class SettingForm(SettingFormTemplate):
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
         self.dropdown_logging_level.items = const.LoggingLevel.dropdown
-        settings = anvil.server.call('select_settings')
+        settings, search_interval, brokers, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
+        self.dropdown_default_broker.items = brokers
+        # Not use client cache to load search interval and CCY to reduce server calls turnaround
+        self.dropdown_interval.items = search_interval
+        self.dropdown_ccy.items = ccy
+        self.dropdown_broker_list.items = brokers
+        self.dropdown_sub_templ_list.items = submitted_templ_list
         if settings is not None and len(settings) > 0:
             self.dropdown_default_broker.selected_value = settings.get('default_broker')
             self.dropdown_interval.selected_value = settings.get('default_interval')
@@ -36,18 +42,6 @@ class SettingForm(SettingFormTemplate):
         self.button_broker_update.enabled = False
         self.button_broker_delete.enabled = False
     
-    def dropdown_default_broker_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_default_broker.items = anvil.server.call('select_brokers')
-
-    def dropdown_interval_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_interval.items = cache.search_interval_dropdown()
-
-    def dropdown_ccy_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_ccy.items = cache.ccy_dropdown()
-
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
@@ -84,13 +78,14 @@ class SettingForm(SettingFormTemplate):
     @logger.log_function
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
+        default_broker = self.dropdown_default_broker.selected_value
         b_id = anvil.server.call('upsert_brokers', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         logger.debug("b_id=", b_id)
-        self.dropdown_broker_list_show()
+        brokers_dropdown = anvil.server.call('select_brokers')
+        self.dropdown_broker_list.items = brokers_dropdown
+        self.dropdown_default_broker.items = brokers_dropdown
         self.dropdown_broker_list.selected_value = b_id
-        self.dropdown_default_broker_show()
-        settings = anvil.server.call('select_settings')
-        self.dropdown_default_broker.selected_value = settings.get('default_broker') if settings is not None else None
+        self.dropdown_default_broker.selected_value = default_broker
 
     def text_broker_name_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
@@ -99,25 +94,26 @@ class SettingForm(SettingFormTemplate):
     @logger.log_function
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
+        default_broker = self.dropdown_default_broker.selected_value
         b_id = anvil.server.call('upsert_brokers', self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        self.dropdown_broker_list_show()
+        brokers_dropdown = anvil.server.call('select_brokers')
+        self.dropdown_broker_list.items = brokers_dropdown
+        self.dropdown_default_broker.items = brokers_dropdown
         self.dropdown_broker_list.selected_value = b_id
-        self.dropdown_default_broker_show()
-        settings = anvil.server.call('select_settings')
-        self.dropdown_default_broker.selected_value = settings.get('default_broker') if settings is not None else None
+        self.dropdown_default_broker.selected_value = default_broker
 
     @logger.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         count = anvil.server.call('delete_brokers', self.hidden_b_id.text)
         if (count > 0):
+            brokers_dropdown = anvil.server.call('select_brokers')
+            self.dropdown_broker_list.items = brokers_dropdown
+            self.dropdown_default_broker.items = brokers_dropdown
             n = Notification("Broker ID ({b_id}) deleted successfully.".format(b_id=self.hidden_b_id.text))
         else:
             n = Notification("ERROR: Fail to delete broker ID ({b_id}).".format(b_id=self.hidden_b_id.text))
         n.show()
-
-        self.dropdown_broker_list_show()
-        self.dropdown_default_broker_show()
 
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -135,19 +131,6 @@ class SettingForm(SettingFormTemplate):
             self.text_broker_name.text = anvil.server.call('get_broker_name', self.dropdown_broker_list.selected_value)
             self.dropdown_ccy.selected_value = anvil.server.call('get_broker_ccy', self.dropdown_broker_list.selected_value)
   
-    def dropdown_broker_list_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker_list.items = anvil.server.call('select_brokers')
-        self.dropdown_broker_list.raise_event('change')
-
-    def dropdown_sub_templ_list_change(self, **event_args):
-        """This method is called when an item is selected"""
-        self.dropdown_sub_templ_list.items = anvil.server.call('get_submitted_templ_list')
-
-    def dropdown_sub_templ_list_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_sub_templ_list.raise_event('change')
-
     @logger.log_function
     def button_templ_edit_click(self, **event_args):
         """This method is called when the button is clicked"""

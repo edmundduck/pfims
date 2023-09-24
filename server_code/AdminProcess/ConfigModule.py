@@ -12,6 +12,7 @@ from ..InvestmentProcess import InputModule as imod
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..CashMgtProcess import AccountModule
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -356,6 +357,21 @@ def select_search_interval():
         function: A function to actual execute the logic in DB.
     """
     return psgldb_select_search_interval()
+
+@anvil.server.callable
+def proc_init_settings():
+    """
+    Consolidated process for setting form initialization.
+
+    Returns:
+        list: A list of all functions return required by the form initialization.
+    """
+    settings = select_settings()
+    search_interval = select_search_interval()
+    brokers = select_brokers()
+    ccy = AccountModule.generate_ccy_dropdown()
+    submitted_templ_list = get_submitted_templ_list()
+    return [settings, search_interval, brokers, ccy, submitted_templ_list]
 
 ###################################################################
 # AnvilDB access methods - Archival START
