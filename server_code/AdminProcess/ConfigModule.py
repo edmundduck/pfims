@@ -373,6 +373,33 @@ def proc_init_settings():
     submitted_templ_list = get_submitted_templ_list()
     return [settings, search_interval, brokers, ccy, submitted_templ_list]
 
+@anvil.server.callable
+def proc_broker_create_update(b_id, name, ccy):
+    """
+    Consolidated process for broker creation and update.
+
+    Returns:
+        list: A list of all functions return required by the broker creation and update.
+    """
+    broker_id = upsert_brokers(b_id, name, ccy)
+    brokers_dropdown = select_brokers()
+    return [broker_id, brokers_dropdown]
+
+@anvil.server.callable
+def proc_broker_delete(b_id):
+    """
+    Consolidated process for broker deletion.
+
+    Returns:
+        list: A list of all functions return required by the broker deletion.
+    """
+    broker_id = delete_brokers(b_id)
+    if broker_id > 0:
+        brokers_dropdown = select_brokers()
+        return [broker_id, brokers_dropdown]
+    else:
+        return [broker_id, None]
+
 ###################################################################
 # AnvilDB access methods - Archival START
 

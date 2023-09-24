@@ -79,9 +79,7 @@ class SettingForm(SettingFormTemplate):
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        b_id = anvil.server.call('upsert_brokers', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        logger.debug("b_id=", b_id)
-        brokers_dropdown = anvil.server.call('select_brokers')
+        b_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         self.dropdown_broker_list.items = brokers_dropdown
         self.dropdown_default_broker.items = brokers_dropdown
         self.dropdown_broker_list.selected_value = b_id
@@ -95,8 +93,7 @@ class SettingForm(SettingFormTemplate):
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        b_id = anvil.server.call('upsert_brokers', self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        brokers_dropdown = anvil.server.call('select_brokers')
+        b_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         self.dropdown_broker_list.items = brokers_dropdown
         self.dropdown_default_broker.items = brokers_dropdown
         self.dropdown_broker_list.selected_value = b_id
@@ -105,9 +102,8 @@ class SettingForm(SettingFormTemplate):
     @logger.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        count = anvil.server.call('delete_brokers', self.hidden_b_id.text)
+        count, brokers_dropdown = anvil.server.call('proc_broker_delete', self.hidden_b_id.text)
         if (count > 0):
-            brokers_dropdown = anvil.server.call('select_brokers')
             self.dropdown_broker_list.items = brokers_dropdown
             self.dropdown_default_broker.items = brokers_dropdown
             n = Notification("Broker ID ({b_id}) deleted successfully.".format(b_id=self.hidden_b_id.text))
