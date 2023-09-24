@@ -22,7 +22,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.accounts_dropdown()
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
         acct_dict = cache.accounts_dict()
-        logger.debug("self.row_acct.selected_value=", self.row_acct.selected_value)
+        logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
         
@@ -110,7 +110,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # self.parent = Repeating Panel
         # self.parent.parent = Data Grid
         # self.parent.parent.parent = Parent Form
-        logger.trace("self.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
@@ -130,8 +129,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        if self.item.get('iid') is not None: 
+            cache.add_deleted_row(self.item.get('iid'))
+            self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
-        if self.item.get('iid') is not None: cache.add_deleted_row(self.item['iid'])
         self.remove_from_parent()
 
     def row_date_change(self, **event_args):

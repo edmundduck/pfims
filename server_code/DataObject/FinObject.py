@@ -6,7 +6,6 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
-from ..SysProcess.Constants import ExpenseDBTableDefinion as exptbl
 from ..SysProcess import LoggingModule
 
 # This is a server module. It runs on the Anvil server,
@@ -123,7 +122,7 @@ class ExpenseRecord:
             dict (dict): A dictionary containing keys which is/are one of the column definitions.
     
         Returns:
-            ExpenseRecord object: Return a copy of the updated ExpenseRecord record.
+            ExpenseRecord object: Return a copy of the updated ExpenseRecord object.
         """
         attr_copy = self.attr.copy()
         if dict is not None:
@@ -153,7 +152,7 @@ class ExpenseRecord:
         Returns:
             boolean: Return True only when all the mandatory field values are not None.
         """
-        mandatory_list = (exptbl.Date, exptbl.Account, exptbl.Amount)
+        mandatory_list = (self.Date, self.Account, self.Amount)
         for item in mandatory_list:
             if self.attr.get(item) is None:
                 return False
