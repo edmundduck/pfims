@@ -400,6 +400,23 @@ def proc_broker_delete(b_id):
     else:
         return [broker_id, None]
 
+@anvil.server.callable
+def proc_submitted_template_update(template):
+    """
+    Consolidated process for submitted template dropdown update.
+
+    Returns:
+        list: A list of all functions return required by the submitted template dropdown update.
+    """
+    templ_id = imod.get_template_id(template)
+    result = imod.submit_templates(templ_id, False)
+
+    if result is not None and result > 0:
+        submitted_templ_list = get_submitted_templ_list()
+        return [templ_id, result, submitted_templ_list]
+    else:
+        return [templ_id, result, None]
+
 ###################################################################
 # AnvilDB access methods - Archival START
 
