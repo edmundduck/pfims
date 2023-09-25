@@ -45,12 +45,11 @@ def psqldb_select_settings():
     return settings
 
 @logger.log_function
-def psgldb_select_brokers():
+def psgldb_generate_brokers_dropdown():
     """
-    Select broker data from the DB table which stores investment brokers' detail to generate a data set and dropdown list.
+    Select broker data from the DB table which stores investment brokers' detail to generate a dropdown list.
 
     Returns:
-        broker_list (list of dict): a list of dict of broker data for front end to access.
         broker_dropdown (list): A dropdown list of broker names and CCY as description, and broker ID as ID.
     """
     userid = sysmod.get_current_userid()
@@ -60,19 +59,8 @@ def psgldb_select_brokers():
         result = cur.fetchall()
         cur.close()
     logger.debug("result=", result)
-    broker_list = helper.to_list_of_dict(result)
-    broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in result)
-    return [broker_list, broker_dropdown]
-
-@logger.log_function
-def psgldb_generate_brokers_dropdown():
-    """
-    Select broker data from the DB table which stores investment brokers' detail to generate a dropdown list.
-
-    Returns:
-        list: A dropdown list of broker names and CCY as description, and broker ID as ID.
-    """
-    return select_brokers()[1]
+    broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in result)
+    return broker_dropdown
 
 @logger.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
@@ -268,16 +256,6 @@ def select_settings():
     return psqldb_select_settings()
 
 @anvil.server.callable
-def select_brokers():
-    """
-    A wrapper function to select brokers detail to generate a data set and dropdown list.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_select_brokers()
-
-@anvil.server.callable
 def generate_brokers_dropdown():
     """
     A wrapper function to select brokers detail to generate a dropdown list.
@@ -392,10 +370,10 @@ def proc_init_settings():
     """
     settings = select_settings()
     search_interval = select_search_interval()
-    brokers_list, brokers_dropdown = select_brokers()
+    brokers_dropdown = generate_brokers_dropdown()
     ccy = AccountModule.generate_ccy_dropdown()
     submitted_templ_list = get_submitted_templ_list()
-    return [settings, search_interval, brokers_list, brokers_dropdown, ccy, submitted_templ_list]
+    return [settings, search_interval, brokers_dropdown, ccy, submitted_templ_list]
 
 @anvil.server.callable
 def proc_broker_create_update(b_id, name, ccy):
@@ -406,7 +384,7 @@ def proc_broker_create_update(b_id, name, ccy):
         list: A list of all functions return required by the broker creation and update.
     """
     broker_id = upsert_brokers(b_id, name, ccy)
-    brokers_dropdown = select_brokers()
+    brokers_dropdown = generate_brokers_dropdown()
     return [broker_id, brokers_dropdown]
 
 @anvil.server.callable
@@ -419,7 +397,7 @@ def proc_broker_delete(b_id):
     """
     count = delete_brokers(b_id)
     if count > 0:
-        brokers_dropdown = select_brokers()
+        brokers_dropdown = generate_brokers_dropdown()
         return [count, brokers_dropdown]
     else:
         return [count, None]
@@ -440,80 +418,3 @@ def proc_submitted_template_update(template):
         return [templ_id, result, submitted_templ_list]
     else:
         return [templ_id, result, None]
-
-###################################################################
-# AnvilDB access methods - Archival START
-
-# DB table "settings" select method from Anvil DB
-def anvildb_select_settings():
-    row = app_tables.settings.search()
-    settings = {}
-    for i in row:
-        settings = {
-            'default_broker': i['default_broker'],
-            'default_interval': i['default_interval'],
-            'default_datefrom': i['default_datefrom'],
-            'default_dateto': i['default_dateto']
-        }
-    return settings
-
-# DB table "brokers" select method from Anvil DB
-def anvildb_select_brokers():
-    return list((''.join([r['name'], ' [', r['ccy'], ']']), r['id']) for r in app_tables.brokers.search())
-
-# DB table "settings" update/insert method into Anvil DB
-def anvildb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto):
-    rows = app_tables.settings.search()
-    if len(list(rows)) != 0:
-        for r in rows:
-            r.delete()
-    app_tables.settings.add_row(
-        app_uid=anvil.users.get_user()['app_uid'],
-        default_broker=def_broker, 
-        default_interval=def_interval, 
-        default_datefrom=def_datefrom,
-        default_dateto=def_dateto)
-
-# DB table "brokers" update/insert method into Anvil DB
-# NOTE: As the DB table structure is changed, this method is no longer valid
-def anvildb_upsert_brokers(b_id, name, ccy):
-    if b_id is None or b_id == '':
-        # Generate new broker ID
-        id_list = list(r['id'] for r in app_tables.brokers.search(tables.order_by('id', ascending=False)))
-        if len(id_list) == 0:
-            b_id = s_const.SettingConfig.BROKER_ID_PREFIX +  '1'.zfill(s_const.SettingConfig.BROKER_SUFFIX_LEN)
-        else:
-            b_id = s_const.SettingConfig.BROKER_ID_PREFIX + str(int((id_list[:1][0])[2:]) + 1).zfill(s_const.SettingConfig.BROKER_SUFFIX_LEN)
-        app_tables.brokers.add_row(id=b_id, name=name, ccy=ccy)
-    else:
-        rows = app_tables.brokers.search(id=b_id)
-        for r in rows:
-            r.update(name=name, ccy=ccy)
-    return b_id
-      
-# Return selected broker name from Anvil DB
-def anvildb_get_broker_name(choice):
-    result = app_tables.brokers.get(id=choice)
-    return result['name'] if result is not None else ''
-
-# Return selected broker CCY from Anvil DB
-def anvildb_get_broker_ccy(choice):
-    result = app_tables.brokers.get(id=choice)
-    return result['ccy'] if result is not None else ''
-
-# DB table "brokers" delete method in Anvil DB
-def anvildb_delete_brokers(b_id):
-    rows = app_tables.brokers.search(id=b_id)
-    for r in rows:
-        r.delete()    
-
-@anvil.server.callable
-# Generate SUBMITTED template selection dropdown items from Anvil DB
-def anvildb_get_submitted_templ_list():
-    #content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in app_tables.templates.search())
-    content = list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in app_tables.templates.search(submitted=True))
-    content.insert(0, '')
-    return content
-
-# Archival END
-###################################################################

@@ -19,8 +19,7 @@ class SettingForm(SettingFormTemplate):
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
         self.dropdown_logging_level.items = const.LoggingLevel.dropdown
-        settings, search_interval, brokers_data, brokers_dropdown, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
-        cache.set_brokers_data(brokers_data)
+        settings, search_interval, brokers_dropdown, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
         self.dropdown_default_broker.items = brokers_dropdown
         # Not use client cache to load search interval and CCY to reduce server calls turnaround
         self.dropdown_interval.items = search_interval
@@ -28,7 +27,7 @@ class SettingForm(SettingFormTemplate):
         self.dropdown_broker_list.items = brokers_dropdown
         self.dropdown_sub_templ_list.items = submitted_templ_list
         if settings is not None and len(settings) > 0:
-            self.dropdown_default_broker.selected_value = settings.get('default_broker')
+            self.dropdown_default_broker.selected_value = cache.get_key_from_cache(settings.get('default_broker'), self.dropdown_default_broker.items)
             self.dropdown_interval.selected_value = settings.get('default_interval')
             self.time_datefrom.date = settings.get('default_datefrom')
             self.time_dateto.date = settings.get('default_dateto')
@@ -61,8 +60,9 @@ class SettingForm(SettingFormTemplate):
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
+        broker_id, broker_name, broker_ccy = self.dropdown_default_broker.selected_value
         count = anvil.server.call('upsert_settings', 
-                                  def_broker=self.dropdown_default_broker.selected_value, 
+                                  def_broker=broker_id, 
                                   def_interval=interval, 
                                   def_datefrom=self.time_datefrom.date, 
                                   def_dateto=self.time_dateto.date,
@@ -114,8 +114,9 @@ class SettingForm(SettingFormTemplate):
 
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.hidden_b_id.text = self.dropdown_broker_list.selected_value
-        if self.dropdown_broker_list.selected_value in (None, ''):
+        broker_id, broker_name, broker_ccy = self.dropdown_broker_list.selected_value
+        self.hidden_b_id.text = broker_id
+        if broker_id in (None, ''):
             self.button_broker_update.enabled = False
             self.button_broker_delete.enabled = False
             self.button_broker_create.enabled = False
@@ -124,9 +125,8 @@ class SettingForm(SettingFormTemplate):
             self.button_broker_update.enabled = True
             self.button_broker_delete.enabled = True
             self.button_broker_create.enabled = True
-            # TODO -- caching offline is required
-            self.text_broker_name.text = anvil.server.call('get_broker_name', self.dropdown_broker_list.selected_value)
-            self.dropdown_ccy.selected_value = anvil.server.call('get_broker_ccy', self.dropdown_broker_list.selected_value)
+            self.text_broker_name.text = broker_name
+            self.dropdown_ccy.selected_value = broker_ccy
   
     @logger.log_function
     def button_templ_edit_click(self, **event_args):
