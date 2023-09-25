@@ -55,10 +55,13 @@ def psgldb_select_brokers():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
-        broker_list = cur.fetchall()
+        result = cur.fetchall()
         cur.close()
-    logger.debug("broker_list=", broker_list)
-    return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
+    logger.debug("result=", result)
+    broker_list, broker_dropdown = [(), ()]
+    for r in result:
+        broker_list.append()
+    return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in result)
 
 @logger.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
