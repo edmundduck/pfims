@@ -119,7 +119,16 @@ def ccy_dropdown():
 
 def ccy_reset():
     clear_cache(key='ccy')
+
+def set_brokers_data(data):
+    set_cache(key='brokers', data=data)
+
+def brokers_dropdown():
+    return get_cache(key='brokers', func='generate_brokers_dropdown')
     
+def brokers_reset():
+    clear_cache(key='brokers')
+
 # Add IID into the deletion list for delete journals / delete transactions function to process
 def add_deleted_row(iid):
     global cache_dict
@@ -157,29 +166,55 @@ def get_client_loglevel():
 def client_loglevel_reset():
     clear_cache(key='cloglevel')
     
-# Generic get and store database data as cache in a form of dropdown items
-# @key = Key in string to access particular cache data
-# @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
-def get_cache(key, func, *args):
+def set_cache(key, data, *args):
+    """
+    Generic store data as cache.
+
+    Parameters:
+        key (string): Key in string to store particular cache data.
+        data (list): Data to store inside cache.
+    """
     global cache_dict
     if cache_dict is None: cache_dict = {}
+    cache_dict[key] = data
+    logger.trace(f"Cache loaded by set_cache (key={key}) - List? {isinstance(data, list)}")
+        
+def get_cache(key, func, *args):
+    """
+    Generic get and store data in a form of list per function call as cache.
+
+    Parameters:
+        key (string): Key in string to access and store particular cache data.
+        func (function): Function name in string which maps to a function in server module to get database data if corresponding cache is not found.
+
+    Returns:
+        cache_dict.get (list): Cache in list given the provided key
+    """
+    global cache_dict
     if cache_dict.get(key, None) is None:
-        cache_dict[key] = anvil.server.call(func, *args)
-        logger.debug(f"get_cache cache loaded (key={key}, func={func})")
+        set_cache(key, data=anvil.server.call(func, *args))
+        logger.debug(f"Cache loaded by get_cache (key={key}, func={func})")
     return cache_dict.get(key, None)
 
-# Generic get and store database data as cache in a form of dictionary
-# @key = Key in string to access particular cache data
-# @func = Function name in string which maps to a function in server module to get database data if corresponding cache is not found
 def get_cache_dict(key, func, *args):
+    """
+    Generic get and store data in a form of dictionary per function call as cache.
+
+    Parameters:
+        key (string): Key in string to access and store particular cache data. Suffix for dictionary will be auto appended to distinguish from cache in list.
+        func (function): Function name in string which maps to a function in server module to get database data if corresponding cache is not found.
+
+    Returns:
+        cache_dict.get (dict): Cache in dict given the provided key
+    """
     global cache_dict
     dict_key = "".join((key, '_dict'))
     if cache_dict.get(dict_key, None) is None:
         result = {}
         for i in get_cache(key, func, *args):
             result[i[1][0]] = i[1][1]
-        cache_dict[dict_key] = result
-        logger.debug(f"get_cache_dict cache loaded (dict_key={dict_key}, func={func})")
+        set_cache(dict_key, result)
+        logger.debug(f"Cache loaded by get_cache_dict (dict_key={dict_key}, func={func})")
     return cache_dict.get(dict_key, None)
 
 # Generic clear cache

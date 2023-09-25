@@ -27,6 +27,32 @@ def upper_dict_keys(rows, key_list=None):
         if k.upper() in key_list or not key_list:
             DL[k.upper()] = [row[k] for row in rows]
         else:
-            DL[k] = [row[k] for row in rows]
-    result = [dict(zip(DL, col)) for col in zip(*DL.values())]
+            DL[k] = [row[k] for row in rows]  
+    result = to_list_of_dict(DL)
     return result
+
+def to_list_of_dict(DL):
+    """
+    Convert the structure of dict of list (DL) to list of dict (LD).
+
+    Parameters:
+        DL (dict of list): Dict of list.
+
+    Returns:
+        LD (list of dict): List of dict.
+    """
+    LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    return LD
+
+def to_dict_of_list(LD):
+    """
+    Convert the structure of list of dict (LD) to dict of list (DL).
+
+    Parameters:
+        LD (list of dict): List of dict.
+
+    Returns:
+        DL (dict of list): Dict of list.
+    """
+    DL = {k: [dic[k] for dic in LD] for k in LD[0]}
+    return DL

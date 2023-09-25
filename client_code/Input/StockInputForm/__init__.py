@@ -97,7 +97,7 @@ class StockInputForm(StockInputFormTemplate):
     
     def dropdown_broker_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker.items = anvil.server.call('select_brokers')
+        self.dropdown_broker.items = anvil.server.call('generate_brokers_dropdown')
 
     @logger.log_function
     def button_save_templ_click(self, **event_args):

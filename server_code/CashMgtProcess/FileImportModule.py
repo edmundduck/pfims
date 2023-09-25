@@ -14,6 +14,7 @@ import re
 import datetime
 from . import LabelModule as lbl_mod
 from . import FileUploadMappingModule as fummod
+from ..ServerUtils import HelperModule as helper
 from ..SysProcess import LoggingModule
 from ..DataObject.FinObject import ExpenseRecord as exprcd
 
@@ -89,7 +90,8 @@ def import_file(file, tablist, rules, extra):
     """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
-    extra_dl = {k: [dic[k] for dic in extra] for k in extra[0]}
+    extra_dl = helper.to_dict_of_list(extra)
+
 
     new_df = None
     for i in rules:
@@ -146,7 +148,7 @@ def update_mapping(data, mapping):
     try:
         # 1. Get all items with action = 'C', and grab new field to create new labels
         # DL = Dict of Lists
-        DL = {k: [dic[k] for dic in mapping] for k in mapping[0]}
+        DL = helper.to_dict_of_list(mapping)
         # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
         DL_action = {'id': [dic[0] for dic in DL['action']]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
@@ -169,7 +171,8 @@ def update_mapping(data, mapping):
         # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
-        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        
+        LD = helper.to_list_of_dict(DL)
         if df is not None and LD is not None:
             for lbl_mapping in LD:
                 if lbl_mapping is not None:
