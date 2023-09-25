@@ -144,42 +144,6 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     return None
       
 @logger.log_function
-def psgldb_get_broker_name(choice):
-    """
-    Select broker name from the DB table which stores investment brokers' detail.
-
-    Parameters:
-        choice (str): The ID of the broker.
-
-    Returns:
-        result['name'] (str): The name of the broker.
-    """
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT name FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
-        result = cur.fetchone()
-        logger.debug("result=", result)
-    return result['name'] if result is not None else ''
-
-@logger.log_function
-def psgldb_get_broker_ccy(choice):
-    """
-    Select broker base CCY from the DB table which stores investment brokers' detail.
-
-    Parameters:
-        choice (str): The ID of the broker.
-
-    Returns:
-        result['ccy'] (str): The CCY of the broker.
-    """
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT ccy FROM {sysmod.schemafin()}.brokers WHERE broker_id='{choice}'")
-        result = cur.fetchone()
-        logger.debug("result=", result)
-    return result['ccy'] if result is not None else ''
-
-@logger.log_function
 def psgldb_delete_brokers(b_id):
     """
     Delete an investment broker from the DB table which stores investment brokers' detail.
@@ -313,32 +277,6 @@ def delete_brokers(b_id):
     return psgldb_delete_brokers(b_id)
     
 @anvil.server.callable
-def get_broker_name(choice):
-    """
-    A wrapper function to select a broker name.
-
-    Parameters:
-        choice (str): The ID of the broker.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_get_broker_name(choice)
-
-@anvil.server.callable
-def get_broker_ccy(choice):
-    """
-    A wrapper function to select a broker base CCY.
-
-    Parameters:
-        choice (str): The ID of the broker.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_get_broker_ccy(choice)
-
-@anvil.server.callable
 # Generate SUBMITTED template selection dropdown items
 def get_submitted_templ_list():
     """
@@ -377,6 +315,19 @@ def proc_init_settings():
 
 @anvil.server.callable
 def proc_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+    """
+    Consolidated process for settings update.
+
+    Parameters:
+        def_broker (str): The name of the broker.
+        def_interval (str): The ID of the default search interval.
+        def_datefrom (date): The date to default search from.
+        def_dateto (date): The date to default search to.
+        logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
+
+    Returns:
+        int: Successful update row count, otherwise None
+    """
     count = upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
     sysmod.set_user_logging_level()
     return count
