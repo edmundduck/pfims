@@ -61,16 +61,9 @@ class SettingForm(SettingFormTemplate):
         """This method is called when the button is clicked"""
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         broker_id, broker_name, broker_ccy = self.dropdown_default_broker.selected_value
-        count = anvil.server.call('upsert_settings', 
-                                  def_broker=broker_id, 
-                                  def_interval=interval, 
-                                  def_datefrom=self.time_datefrom.date, 
-                                  def_dateto=self.time_dateto.date,
-                                  logging_level=self.dropdown_logging_level.selected_value
-                                 )
-        anvil.server.call('set_user_logging_level')
+        count = anvil.server.call('proc_upsert_settings', broker_id, interval, self.time_datefrom.date, self.time_dateto.date, self.dropdown_logging_level.selected_value)
         logger.set_level()
-        if (count > 0):
+        if count is not None and count > 0:
             n = Notification("{count} row updated successfully.".format(count=count))
         else:
             n = Notification("ERROR: Fail to insert or update.")
@@ -80,11 +73,12 @@ class SettingForm(SettingFormTemplate):
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        b_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        broker_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         self.dropdown_broker_list.items = brokers_dropdown
         self.dropdown_default_broker.items = brokers_dropdown
-        self.dropdown_broker_list.selected_value = b_id
+        self.dropdown_broker_list.selected_value = cache.get_key_from_cache(broker_id, self.dropdown_broker_list.items)
         self.dropdown_default_broker.selected_value = default_broker
+        self.hidden_b_id.text = broker_id
 
     def text_broker_name_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
@@ -94,17 +88,19 @@ class SettingForm(SettingFormTemplate):
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        b_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        broker_id, broker_name, broker_ccy = self.dropdown_broker_list.selected_value
+        broker_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', broker_id, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         self.dropdown_broker_list.items = brokers_dropdown
         self.dropdown_default_broker.items = brokers_dropdown
-        self.dropdown_broker_list.selected_value = b_id
+        self.dropdown_broker_list.selected_value = cache.get_key_from_cache(broker_id, self.dropdown_broker_list.items)
         self.dropdown_default_broker.selected_value = default_broker
+        self.hidden_b_id.text = broker_id
 
     @logger.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         count, brokers_dropdown = anvil.server.call('proc_broker_delete', self.hidden_b_id.text)
-        if (count > 0):
+        if count is not None and count > 0:
             self.dropdown_broker_list.items = brokers_dropdown
             self.dropdown_default_broker.items = brokers_dropdown
             n = Notification("Broker ID ({b_id}) deleted successfully.".format(b_id=self.hidden_b_id.text))

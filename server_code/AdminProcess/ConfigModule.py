@@ -376,6 +376,12 @@ def proc_init_settings():
     return [settings, search_interval, brokers_dropdown, ccy, submitted_templ_list]
 
 @anvil.server.callable
+def proc_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+    count = upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
+    sysmod.set_user_logging_level()
+    return count
+
+@anvil.server.callable
 def proc_broker_create_update(b_id, name, ccy):
     """
     Consolidated process for broker creation and update.
@@ -396,7 +402,7 @@ def proc_broker_delete(b_id):
         list: A list of all functions return required by the broker deletion.
     """
     count = delete_brokers(b_id)
-    if count > 0:
+    if count is not None and count > 0:
         brokers_dropdown = generate_brokers_dropdown()
         return [count, brokers_dropdown]
     else:
