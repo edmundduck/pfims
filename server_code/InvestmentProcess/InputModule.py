@@ -58,7 +58,7 @@ def select_template_journals(templ_choice_str):
         templ_choice_str (string): Selected value from the template's dropdown.
 
     Returns:
-        rows (list): All template journals detail corresponding to the selected template.
+        rows (list): All template journals detail corresponding to the selected template, return empty list otherwise.
     """
     if templ_choice_str is not None:
         conn = sysmod.db_connect()
@@ -67,7 +67,7 @@ def select_template_journals(templ_choice_str):
             rows = cur.fetchall()
             cur.close()
             return list(rows)
-    return None
+    return []
 
 @anvil.server.callable("upsert_journals")
 @logger.log_function

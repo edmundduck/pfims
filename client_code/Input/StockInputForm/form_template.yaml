@@ -57,7 +57,7 @@ components:
       include_placeholder: true
     name: dropdown_broker
     layout_properties: {grid_position: 'QZCZKX,QKDMOJ'}
-    event_bindings: {show: dropdown_broker_show, change: dropdown_broker_change}
+    event_bindings: {change: dropdown_broker_change}
 - type: ColumnPanel
   properties: {col_widths: '{"SIIRIQ":20,"FPTCAC":40}'}
   name: column_panel_2

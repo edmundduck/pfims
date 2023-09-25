@@ -298,7 +298,8 @@ def select_search_interval():
     """
     return psgldb_select_search_interval()
 
-@anvil.server.callable
+@anvil.server.callable("proc_init_settings")
+@logger.log_function
 def proc_init_settings():
     """
     Consolidated process for setting form initialization.
@@ -313,7 +314,8 @@ def proc_init_settings():
     submitted_templ_list = get_submitted_templ_list()
     return [settings, search_interval, brokers_dropdown, ccy, submitted_templ_list]
 
-@anvil.server.callable
+@anvil.server.callable("proc_upsert_settings")
+@logger.log_function
 def proc_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
     """
     Consolidated process for settings update.
@@ -332,7 +334,8 @@ def proc_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, log
     sysmod.set_user_logging_level()
     return count
 
-@anvil.server.callable
+@anvil.server.callable("proc_broker_create_update")
+@logger.log_function
 def proc_broker_create_update(b_id, name, ccy):
     """
     Consolidated process for broker creation and update.
@@ -344,7 +347,8 @@ def proc_broker_create_update(b_id, name, ccy):
     brokers_dropdown = generate_brokers_dropdown()
     return [broker_id, brokers_dropdown]
 
-@anvil.server.callable
+@anvil.server.callable("proc_broker_delete")
+@logger.log_function
 def proc_broker_delete(b_id):
     """
     Consolidated process for broker deletion.
@@ -359,7 +363,8 @@ def proc_broker_delete(b_id):
     else:
         return [count, None]
 
-@anvil.server.callable
+@anvil.server.callable("proc_submitted_template_update")
+@logger.log_function
 def proc_submitted_template_update(template):
     """
     Consolidated process for submitted template dropdown update.
