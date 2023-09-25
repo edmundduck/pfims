@@ -119,7 +119,16 @@ def ccy_dropdown():
 
 def ccy_reset():
     clear_cache(key='ccy')
+
+def set_brokers_data(data):
+    set_cache(key='brokers', data=data)
+
+def brokers_dropdown():
+    return get_cache(key='brokers', func='generate_brokers_dropdown')
     
+def brokers_reset():
+    clear_cache(key='brokers')
+
 # Add IID into the deletion list for delete journals / delete transactions function to process
 def add_deleted_row(iid):
     global cache_dict

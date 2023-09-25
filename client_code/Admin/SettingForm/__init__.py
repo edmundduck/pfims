@@ -19,12 +19,13 @@ class SettingForm(SettingFormTemplate):
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
         self.dropdown_logging_level.items = const.LoggingLevel.dropdown
-        settings, search_interval, brokers, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
-        self.dropdown_default_broker.items = brokers
+        settings, search_interval, brokers_data, brokers_dropdown, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
+        cache.set_brokers_data(brokers_data)
+        self.dropdown_default_broker.items = brokers_dropdown
         # Not use client cache to load search interval and CCY to reduce server calls turnaround
         self.dropdown_interval.items = search_interval
         self.dropdown_ccy.items = ccy
-        self.dropdown_broker_list.items = brokers
+        self.dropdown_broker_list.items = brokers_dropdown
         self.dropdown_sub_templ_list.items = submitted_templ_list
         if settings is not None and len(settings) > 0:
             self.dropdown_default_broker.selected_value = settings.get('default_broker')

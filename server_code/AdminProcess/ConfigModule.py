@@ -9,6 +9,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from ..InvestmentProcess import InputModule as imod
+from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
@@ -46,19 +47,32 @@ def psqldb_select_settings():
 @logger.log_function
 def psgldb_select_brokers():
     """
-    Select broker data from the DB table which stores investment brokers' detail to generate a dropdown list.
+    Select broker data from the DB table which stores investment brokers' detail to generate a data set and dropdown list.
 
     Returns:
-        list: A dropdown list of broker names and CCY as description, and broker ID as ID.
+        broker_list (list of dict): a list of dict of broker data for front end to access.
+        broker_dropdown (list): A dropdown list of broker names and CCY as description, and broker ID as ID.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
-        broker_list = cur.fetchall()
+        result = cur.fetchall()
         cur.close()
-    logger.debug("broker_list=", broker_list)
-    return list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in broker_list)
+    logger.debug("result=", result)
+    broker_list = helper.to_list_of_dict(result)
+    broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), r['broker_id']) for r in result)
+    return [broker_list, broker_dropdown]
+
+@logger.log_function
+def psgldb_generate_brokers_dropdown():
+    """
+    Select broker data from the DB table which stores investment brokers' detail to generate a dropdown list.
+
+    Returns:
+        list: A dropdown list of broker names and CCY as description, and broker ID as ID.
+    """
+    return select_brokers()[1]
 
 @logger.log_function
 def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
@@ -256,12 +270,22 @@ def select_settings():
 @anvil.server.callable
 def select_brokers():
     """
-    A wrapper function to select brokers detail to generate a dropdown list.
+    A wrapper function to select brokers detail to generate a data set and dropdown list.
 
     Returns:
         function: A function to actual execute the logic in DB.
     """
     return psgldb_select_brokers()
+
+@anvil.server.callable
+def generate_brokers_dropdown():
+    """
+    A wrapper function to select brokers detail to generate a dropdown list.
+
+    Returns:
+        function: A function to actual execute the logic in DB.
+    """
+    return psgldb_generate_brokers_dropdown()
 
 @anvil.server.callable
 def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
@@ -368,10 +392,10 @@ def proc_init_settings():
     """
     settings = select_settings()
     search_interval = select_search_interval()
-    brokers = select_brokers()
+    brokers_list, brokers_dropdown = select_brokers()
     ccy = AccountModule.generate_ccy_dropdown()
     submitted_templ_list = get_submitted_templ_list()
-    return [settings, search_interval, brokers, ccy, submitted_templ_list]
+    return [settings, search_interval, brokers_list, brokers_dropdown, ccy, submitted_templ_list]
 
 @anvil.server.callable
 def proc_broker_create_update(b_id, name, ccy):
