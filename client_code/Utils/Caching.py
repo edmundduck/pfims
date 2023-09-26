@@ -59,10 +59,6 @@ def labels_mapping_action_dropdown():
 def labels_mapping_action_reset():
     clear_cache(key='labels_mapping_action')
 
-# Return a list for expense table definition dropdown for Expense Input and Upload
-def expense_tbl_def_dropdown():
-    return get_cache(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
-
 def expense_empty_record():
     """
     Return a copy of an empty ExpenseRecord object.
@@ -75,28 +71,6 @@ def expense_empty_record():
     emptyrcd = get_cache(key='expense_empty_rcd', func='emptyexprecord')
     return emptyrcd.copy()
     
-# Return a dict for expense table definition for Expense Input and Upload
-def expense_tbl_def_dict():
-    return get_cache_dict(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown')
-
-# Return a complete tuple key based on ID which is a part of the key in a list for expense table definition dropdown
-def expense_tbl_def_getkey(id):
-    return get_key_from_cache(id, get_cache(key='expense_tbl_def', func='generate_expense_tbl_def_dropdown'))
-        
-def expense_tbl_def_reset():
-    clear_cache(key='expense_tbl_def')
-
-# Return a list for extra action dropdown for Expense Input and Upload
-def mapping_rules_extra_action_dropdown():
-    return get_cache(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
-
-# Return a dict for extra action for Expense Input and Upload
-def mapping_rules_extra_action_dict():
-    return get_cache_dict(key='mapping_rules_extra_action', func='generate_upload_action_dropdown')
-    
-def mapping_rules_extra_action_reset():
-    clear_cache(key='mapping_rules_extra_action')
-
 # Add IID into the deletion list for delete journals / delete transactions function to process
 def add_deleted_row(iid):
     global cache_dict

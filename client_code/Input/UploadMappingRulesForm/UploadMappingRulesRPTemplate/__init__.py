@@ -18,10 +18,11 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
+        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
         cache_filetype = ClientCache('generate_mapping_type_dropdown')
         cache_extraaction = ClientCache('generate_upload_action_dropdown')
         self.row_dropdown_type.items = cache_filetype.get_cache()
-        self.row_dropdown_datacol.items = cache.expense_tbl_def_dropdown()
+        self.row_dropdown_datacol.items = cache_exp_tbl_def.get_cache()
         self.row_dropdown_extraact.items = cache_extraaction.get_cache()
         self.row_dropdown_lbl.items = cache.labels_dropdown()
         self.row_dropdown_acct.items = cache.accounts_dropdown()
@@ -124,8 +125,10 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
         logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
-        dict_exp_tbl_def = cache.expense_tbl_def_dict()
-        dict_extraact = cache.mapping_rules_extra_action_dict()
+        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
+        cache_extraact = ClientCache('generate_upload_action_dropdown')
+        dict_exp_tbl_def = {k[1][0]: k[1][1] for k in cache_exp_tbl_def.get_cache()}
+        dict_extraact = {k[1][0]: k[1][1] for k in cache_extraact.get_cache()}
         dict_lbl = cache.labels_dict()
         dict_acct = cache.accounts_dict()
         datacol = dict_exp_tbl_def.get(datacol_id, None)
