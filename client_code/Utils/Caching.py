@@ -98,6 +98,7 @@ def set_client_loglevel(level):
     if cache_dict is None: cache_dict = {}
     cache_dict[key] = level
 
+
 # Return the client logging level
 def get_client_loglevel():
     global cache_dict
