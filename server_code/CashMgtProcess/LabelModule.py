@@ -31,8 +31,7 @@ def generate_labels_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
-    # Case 001 - string dict key handling review
-    content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
+    content = list((row['name'] + " (" + str(row['id']) + ")", (row['id'], row['name'])) for row in rows)
     return content
 
 @anvil.server.callable("generate_labels_list")

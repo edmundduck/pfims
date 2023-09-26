@@ -40,8 +40,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_hidden_del_fid.text = ",".join([x for x in self.row_hidden_del_fid.text.split(",") if x != excelcol])
         datacol_id, datacol = self.row_dropdown_datacol.selected_value if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value if self.row_dropdown_extraact.selected_value is not None else [None, None]
-        # Case 001 - string dict key handling review
-        lbl_id, lbl = eval(self.row_dropdown_lbl.selected_value).values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
+        lbl_id, lbl = self.row_dropdown_lbl.selected_value if self.row_dropdown_lbl.selected_value is not None else [None, None]
         acct_id, acct = self.row_dropdown_acct.selected_value if self.row_dropdown_acct.selected_value is not None else [None, None]
         extratgt_id = lbl_id if extraact_id == "L" else acct_id
         self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, True)
