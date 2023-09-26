@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Constants as const
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -18,14 +18,18 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-    
+        cache_ccy = ClientCache('generate_ccy_dropdown')
+        self.dropdown_ccy.items = cache_ccy.get_cache()
+        self.dropdown_ccy.selected_value = None
+
     def button_exp_input_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
 
     def dropdown_acct_list_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_acct_list.items = cache.accounts_dropdown()
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        self.dropdown_acct_list.items = cache_acct.get_cache()
         self.dropdown_acct_list.selected_value = None
         self.button_accounts_update.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
         self.button_accounts_delete.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
@@ -42,11 +46,6 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.button_accounts_update.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
         self.button_accounts_delete.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
 
-    def dropdown_ccy_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_ccy.items = cache.ccy_dropdown()
-        self.dropdown_ccy.selected_value = None
-
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
@@ -55,6 +54,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
     @logger.log_function
     def button_accounts_create_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_acct = ClientCache('generate_accounts_dropdown')
         acct_name = self.text_acct_name.text
         acct_id = anvil.server.call('create_account',
                                     name=acct_name,
@@ -69,8 +69,8 @@ class AccountMaintForm(AccountMaintFormTemplate):
             logger.error(msg)
         else:
             """ Reflect the change in accounts dropdown """
-            cache.accounts_reset()
-            self.dropdown_acct_list.items = cache.accounts_dropdown()
+            cache_acct.clear_cache()
+            self.dropdown_acct_list.items = cache_acct.get_cache()
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             msg = f"Account {acct_name} ({acct_id}) has been created successfully."
             logger.info(msg)
@@ -80,6 +80,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
     @logger.log_function
     def button_accounts_update_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_acct = ClientCache('generate_accounts_dropdown')
         acct_name = self.text_acct_name.text
         acct_id = self.hidden_acct_id.text
         result = anvil.server.call('update_account',
@@ -96,8 +97,8 @@ class AccountMaintForm(AccountMaintFormTemplate):
             logger.error(msg)
         else:
             """ Reflect the change in accounts dropdown """
-            cache.accounts_reset()
-            self.dropdown_acct_list.items = cache.accounts_dropdown()
+            cache_acct.clear_cache()
+            self.dropdown_acct_list.items = cache_acct.get_cache()
             self.dropdown_acct_list.selected_value = [acct_id, acct_name]
             msg = f"Account {acct_name} ({acct_id}) has been updated successfully."
             logger.info(msg)
@@ -107,6 +108,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
     @logger.log_function
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_acct = ClientCache('generate_accounts_dropdown')
         acct_id, acct_name = self.dropdown_acct_list.selected_value if self.dropdown_acct_list.selected_value is not None else [None, None]
         confirm = Label(text=f"Proceed account <{acct_name}> ({acct_id}) deletion by clicking DELETE.")
         userconf = alert(content=confirm, 
@@ -114,7 +116,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
                         buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
     
         if userconf == const.Alerts.CONFIRM:
-            cache.accounts_reset()
+            cache_acct.clear_cache()
             result = anvil.server.call('delete_account', acct_id)
             if result is not None and result > 0:
                 """ Reflect the change in account dropdown """

@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
@@ -23,7 +23,8 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.dropdown_interval.items = cache.search_interval_dropdown()
+        cache_interval = ClientCache('select_search_interval')
+        self.dropdown_interval.items = cache_interval.get_cache()
         self.dropdown_symbol.items = []
     
         settings = anvil.server.call('select_settings')
@@ -109,7 +110,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def _reset_search(self):
         self.time_datefrom.date = ""
         self.time_dateto.date = ""
-        self.dropdown_interval.items = cache.search_interval_dropdown()
+        self.dropdown_interval.items = cache_interval.get_cache()
         self.dropdown_symbol.items = []
         self._rmvall_selected_symbols()
         self.subform.rpt_panel.items = []

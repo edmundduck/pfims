@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Validation import Validator
 from ...Utils.Logger import ClientLogger
 
@@ -23,11 +24,12 @@ class StockInputForm(StockInputFormTemplate):
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
+        cache_brokers = ClientCache('generate_brokers_dropdown')
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
         self.templ_name.text, broker_id = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-        self.dropdown_broker.items = cache.brokers_dropdown()
-        self.dropdown_broker.selected_value = cache.get_key_from_cache(broker_id, cache.brokers_dropdown())
+        self.dropdown_broker.items = cache_brokers.get_cache()
+        self.dropdown_broker.selected_value = cache_brokers.get_complete_key(broker_id)
         # Reset on screen change status
         self.disable_submit_button()
         
@@ -83,8 +85,9 @@ class StockInputForm(StockInputFormTemplate):
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
+        cache_brokers = ClientCache('generate_brokers_dropdown')
         self.templ_name.text, broker_id = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-        self.dropdown_broker.selected_value = cache.get_key_from_cache(broker_id, cache.brokers_dropdown())
+        self.dropdown_broker.selected_value = cache_brokers.get_complete_key(broker_id)
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
         if self.dropdown_templ.selected_value is not None:
             self.button_submit.enabled = True
@@ -151,6 +154,7 @@ class StockInputForm(StockInputFormTemplate):
     @logger.log_function
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_brokers = ClientCache('generate_brokers_dropdown')
         to_be_del_templ_name = self.dropdown_templ.selected_value
         confirm = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
         userconf = alert(content=confirm, 
@@ -166,7 +170,7 @@ class StockInputForm(StockInputFormTemplate):
             
                 """ Reflect the change in template dropdown """
                 self.dropdown_templ_show()
-                self.dropdown_broker.items = cache.brokers_dropdown()
+                self.dropdown_broker.items = cache_brokers.get_cache()
                 self.input_repeating_panel.items = []
                 
                 msg = f"Template {to_be_del_templ_name} has been deleted."

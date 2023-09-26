@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils import Constants as const
 from ...Utils.Logger import ClientLogger
 
@@ -36,7 +36,8 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def dropdown_filetype_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_filetype.items = cache.mapping_rules_filetype_dropdown()
+        cache_filetype = ClientCache('generate_mapping_type_dropdown')
+        self.dropdown_filetype.items = cache_filetype.get_cache()
 
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -45,6 +46,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     @logger.log_function
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
+        cache_filetype = ClientCache('generate_mapping_type_dropdown')
         self.sheet_tabs_panel.clear()
         if file is not None:
             self.valerror_title.visible = False
@@ -55,12 +57,12 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                 self.button_excel_next.visible = False
                 self.button_pdf_next.visible = True
                 self.dropdown_filetype.visible = True
-                self.dropdown_filetype.selected_value = cache.mapping_rules_filetype_getkey(const.FileImportType.PDF)
+                self.dropdown_filetype.selected_value = cache_filetype.get_complete_key(const.FileImportType.PDF)
             elif file.content_type in ("application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", \
                                       "application/vnd.ms-excel.sheet.macroEnabled.12", "application/x-excel", "text/csv"):
                 self.button_pdf_next.visible = False
                 self.dropdown_filetype.visible = True
-                self.dropdown_filetype.selected_value = cache.mapping_rules_filetype_getkey(const.FileImportType.Excel)
+                self.dropdown_filetype.selected_value = cache_filetype.get_complete_key(const.FileImportType.Excel)
                 xls = anvil.server.call('preview_file', file=file)
                 for i in xls:
                     cb = CheckBox(

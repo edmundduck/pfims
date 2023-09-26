@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from ....Utils import Constants as const
 from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ....Utils import Caching as cache
+from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
@@ -19,9 +20,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.row_acct.items = cache.accounts_dropdown()
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        cache_dict_acct = ClientCache('dict_generate_accounts_dropdown', {k[1][0]: k[1][1] for k in cache_acct.get_cache()})
+        self.row_acct.items = cache_acct.get_cache()
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
-        acct_dict = cache.accounts_dict()
+        acct_dict = cache_dict_acct.get_cache()
         logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]

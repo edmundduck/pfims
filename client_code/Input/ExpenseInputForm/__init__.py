@@ -9,6 +9,7 @@ from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Routing
 from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ...Utils.Validation import Validator
 from ...Utils.Logger import ClientLogger
@@ -33,7 +34,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-            self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
+            self.input_repeating_panel.items = self._generate_blank_records()
         else:
             logger.info(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
@@ -65,10 +66,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.tag['reload']:
-            self.reload_rp_data(extra=[cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)])
+            self.reload_rp_data(extra=self._generate_blank_records())
             self.tag['reload'] = False
         else:
-            self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
+            self.input_repeating_panel.items = self._generate_blank_records() + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -104,7 +105,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
-            self.input_repeating_panel.items = self.input_repeating_panel.items + [cache.expense_empty_record() for i in range(diff)]
+            self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records()
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self._deleted_iid_row_reset()
         cache.deleted_row_reset()
@@ -284,3 +285,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         Scenario 2 - Page/Tab has just been loaded or refreshed.
         """
         self.tag = {'reload': False}
+
+    def _generate_blank_records(self, **event_args):
+        """
+        Generate a list of blank records.
+
+        Returns:
+            list: A list of blank records for repeating panel.
+        """
+        cache_blank = ClientCache('emptyexprecord')
+        return [cache_blank.get_cache().copy() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
+        
