@@ -97,38 +97,6 @@ def mapping_rules_extra_action_dict():
 def mapping_rules_extra_action_reset():
     clear_cache(key='mapping_rules_extra_action')
 
-# Return a list for file type dropdown for Expense Input and Upload
-def mapping_rules_filetype_dropdown():
-    return get_cache(key='mapping_rules_filetype', func='generate_mapping_type_dropdown')
-
-# Return a complete tuple key based on ID which is a part of the key in a list for file type dropdown
-def mapping_rules_filetype_getkey(id):
-    return get_key_from_cache(id, get_cache(key='mapping_rules_filetype', func='generate_mapping_type_dropdown'))
-        
-def mapping_rules_filetype_reset():
-    clear_cache(key='mapping_rules_filetype')
-
-def search_interval_dropdown():
-    return get_cache(key='search_interval', func='select_search_interval')
-
-def search_interval_reset():
-    clear_cache(key='search_interval')
-
-def ccy_dropdown():
-    return get_cache(key='ccy', func='generate_ccy_dropdown')
-
-def ccy_reset():
-    clear_cache(key='ccy')
-
-def set_brokers_data(data):
-    set_cache(key='brokers', data=data)
-
-def brokers_dropdown():
-    return get_cache(key='brokers', func='generate_brokers_dropdown')
-    
-def brokers_reset():
-    clear_cache(key='brokers')
-
 # Add IID into the deletion list for delete journals / delete transactions function to process
 def add_deleted_row(iid):
     global cache_dict

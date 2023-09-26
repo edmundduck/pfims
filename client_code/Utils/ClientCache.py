@@ -10,67 +10,57 @@ from .Logger import ClientLogger
 
 class ClientCache:
 
+    # Class variable to store cache
     cache_dict = {}
-    logger = ClientLogger()
-    
-    def __init__(self, funcname):
-        self.funcname = funcname
-        if cache_dict.get(funcname, None) is None:
-            self.cache_dict[funcname] = anvil.server.call(funcname)
 
-    def set_cache(self, key, data, *args):
+    def __init__(self, funcname):
+        self.name = funcname
+        self.logger = ClientLogger()
+        if ClientCache.cache_dict.get(funcname, None) is None:
+            self.logger.debug(f"Cache {self.name} initiated.")
+            ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
+
+    def is_empty(self):
         """
-        Generic store data as cache.
+        Check if the cache is empty.
     
-        Parameters:
-            key (string): Key in string to store particular cache data.
-            data (list): Data to store inside cache.
+        Returns:
+            boolean: Return True if the cache is empty.
         """
-        global cache_dict
-        if cache_dict is None: cache_dict = {}
-        cache_dict[key] = data
-        logger.trace(f"Cache loaded by set_cache (key={key}) - List? {isinstance(data, list)}")
-            
+        if self.name is None or ClientCache.cache_dict.get(self.name, None) is None:
+            return True
+        return False
+    
     def get_cache(self):
         """
-        Generic get cache data in a form of list.
+        Generic get cache data.
     
         Returns:
-            cache_dict.get (list): Cache in list given the provided key.
+            ClientCache.cache_dict.get (list): Cache in list given the provided key.
         """
-        global cache_dict
-        return cache_dict.get(self.funcname, None)
+        if ClientCache.cache_dict.get(self.name, None) is None:
+            ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
+            self.logger.debug(f"Cache {self.name} loaded.")
+        return ClientCache.cache_dict.get(self.name, None)
     
-    def get_cache_dict(self, key, func, *args):
+    def clear_cache(self):
         """
-        Generic get and store data in a form of dictionary per function call as cache.
-    
-        Parameters:
-            key (string): Key in string to access and store particular cache data. Suffix for dictionary will be auto appended to distinguish from cache in list.
-            func (function): Function name in string which maps to a function in server module to get database data if corresponding cache is not found.
+        Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
+        """
+        del ClientCache.cache_dict[self.name]
+        self.logger.debug(f"Cache {self.name} cleared.")
+
+    def get_complete_key(self, partial_key):
+        """
+        Return a complete key based on a partial key which is a part of the key in a list.
     
         Returns:
-            cache_dict.get (dict): Cache in dict given the provided key
+            string: A complete key, otherwise the original partial key if not found.
         """
-        global cache_dict
-        dict_key = "".join((key, '_dict'))
-        if cache_dict.get(dict_key, None) is None:
-            result = {}
-            for i in get_cache(key, func, *args):
-                result[i[1][0]] = i[1][1]
-            set_cache(dict_key, result)
-            logger.debug(f"Cache loaded by get_cache_dict (dict_key={dict_key}, func={func})")
-        return cache_dict.get(dict_key, None)
-    
-    # Generic clear cache
-    # @key = Key in string to access particular cache data
-    def clear_cache(self, key):
-        global cache_dict
-        key_to_clear = [key, "".join((key, '_dict'))]
-        for k in key_to_clear:
-            if k in cache_dict:
-                del cache_dict[k]
-                logger.debug(f"Cleared cache key={k}")
+        if ClientCache.cache_dict.get(self.name, None) is not None:
+            cache = ClientCache.cache_dict.get(self.name, None)
+            if any(isinstance(i, list) for i in cache):
+                return next((item[1] for item in cache if partial_key in item[1]), None)
             else:
-                logger.debug(f"Cache key={k} does not exist")    
-    
+                return partial_key
+        return partial_key        

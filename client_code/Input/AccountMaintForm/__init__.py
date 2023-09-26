@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Constants as const
 from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -18,7 +19,10 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-    
+        cache_ccy = ClientCache('generate_ccy_dropdown')
+        self.dropdown_ccy.items = cache_ccy.get_cache()
+        self.dropdown_ccy.selected_value = None
+
     def button_exp_input_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
@@ -41,11 +45,6 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.dropdown_status.selected_value = anvil.server.call('get_selected_account_attr', selected_acct_id)
         self.button_accounts_update.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
         self.button_accounts_delete.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
-
-    def dropdown_ccy_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_ccy.items = cache.ccy_dropdown()
-        self.dropdown_ccy.selected_value = None
 
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

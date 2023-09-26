@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Caching as cache
+from ....Utils.ClientCache import ClientCache
 from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
 
@@ -17,9 +18,11 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.row_dropdown_type.items = cache.mapping_rules_filetype_dropdown()
+        cache_filetype = ClientCache('generate_mapping_type_dropdown')
+        cache_extraaction = ClientCache('generate_upload_action_dropdown')
+        self.row_dropdown_type.items = cache_filetype.get_cache()
         self.row_dropdown_datacol.items = cache.expense_tbl_def_dropdown()
-        self.row_dropdown_extraact.items = cache.mapping_rules_extra_action_dropdown()
+        self.row_dropdown_extraact.items = cache_extraaction.get_cache()
         self.row_dropdown_lbl.items = cache.labels_dropdown()
         self.row_dropdown_acct.items = cache.accounts_dropdown()
 
