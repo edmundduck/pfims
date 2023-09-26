@@ -50,7 +50,6 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         # self.parent = Repeating Panel
         # self.parent.parent = Data Grid
         # self.parent.parent.parent = Parent Form
-        logger.trace("self.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
         v.require_date_field(self.row_selldate, self.parent.parent.parent.valerror_1, True)
         v.require_date_field(self.row_buydate, self.parent.parent.parent.valerror_2, True)

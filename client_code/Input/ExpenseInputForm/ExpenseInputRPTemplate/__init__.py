@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
+from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ....Utils import Caching as cache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
@@ -21,7 +22,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache.accounts_dropdown()
         # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
         acct_dict = cache.accounts_dict()
-        logger.debug("self.row_acct.selected_value=", self.row_acct.selected_value)
+        logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
         if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
             self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
         
@@ -33,12 +34,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
-    @logger.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.labels_list()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
-            logger.trace(f"trimmed_list={trimmed_list}, lbls={lbls}")
+            logger.trace(f"trimmed_list={trimmed_list}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
@@ -71,8 +71,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc]
         else:
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[(loc+len(str(b.tag))+1):]
-        # Without self.item['labels'] assignment the data binding won't work
-        self.item['labels'] = self.hidden_lbls_id.text
+        # Without self.item[exptbl.Labels] assignment the data binding won't work
+        self.item[exptbl.Labels] = self.hidden_lbls_id.text
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
@@ -93,8 +93,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             if self.hidden_lbls_id.text not in (None, '') and self.hidden_lbls_id.text[-1] != ',':
                 self.hidden_lbls_id.text = self.hidden_lbls_id.text + ','
             self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ','
-            # Without self.item['labels'] assignment the data binding won't work
-            self.item['labels'] = self.hidden_lbls_id.text
+            # Without self.item[exptbl.Labels] assignment the data binding won't work
+            self.item[exptbl.Labels] = self.hidden_lbls_id.text
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             self.row_panel_labels.add_component(b, False, name=selected_lid)
             b.set_event_handler('click', self.label_button_minus_click)
@@ -110,7 +110,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # self.parent = Repeating Panel
         # self.parent.parent = Data Grid
         # self.parent.parent.parent = Parent Form
-        logger.trace("self.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.valerror_title)
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
@@ -130,8 +129,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        if self.item.get('iid') is not None: 
+            cache.add_deleted_row(self.item.get('iid'))
+            self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
-        if self.item.get('iid') is not None: cache.add_deleted_row(self.item['iid'])
         self.remove_from_parent()
 
     def row_date_change(self, **event_args):

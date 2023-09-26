@@ -25,10 +25,9 @@ class StockInputForm(StockInputFormTemplate):
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
-        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', \
-                                                                                      templ_choice_str=self.dropdown_templ.selected_value, \
-                                                                                     )
-
+        self.templ_name.text, broker_id = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
+        self.dropdown_broker.items = cache.brokers_dropdown()
+        self.dropdown_broker.selected_value = cache.get_key_from_cache(broker_id, cache.brokers_dropdown())
         # Reset on screen change status
         self.disable_submit_button()
         
@@ -84,9 +83,8 @@ class StockInputForm(StockInputFormTemplate):
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.templ_name.text, self.dropdown_broker.selected_value = anvil.server.call('get_selected_template_attr', \
-                                                                                      templ_choice_str=self.dropdown_templ.selected_value, \
-                                                                                     )
+        self.templ_name.text, broker_id = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
+        self.dropdown_broker.selected_value = cache.get_key_from_cache(broker_id, cache.brokers_dropdown())
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
         if self.dropdown_templ.selected_value is not None:
             self.button_submit.enabled = True
@@ -95,16 +93,12 @@ class StockInputForm(StockInputFormTemplate):
         """This method is called when the DropDown is shown on the screen"""
         self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
     
-    def dropdown_broker_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_broker.items = anvil.server.call('select_brokers')
-
     @logger.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
         templ_name = self.templ_name.text
-        broker_id = self.dropdown_broker.selected_value
+        broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
         templ_id = anvil.server.call('save_templates',
                                      template_id=templ_id,
                                      template_name=templ_name, 
@@ -172,7 +166,7 @@ class StockInputForm(StockInputFormTemplate):
             
                 """ Reflect the change in template dropdown """
                 self.dropdown_templ_show()
-                self.dropdown_broker_show()
+                self.dropdown_broker.items = cache.brokers_dropdown()
                 self.input_repeating_panel.items = []
                 
                 msg = f"Template {to_be_del_templ_name} has been deleted."
@@ -188,7 +182,7 @@ class StockInputForm(StockInputFormTemplate):
         to_be_submitted_templ_name = self.dropdown_templ.selected_value
         templ_id = anvil.server.call('get_template_id', to_be_submitted_templ_name)
         templ_name = self.templ_name.text
-        broker_id = self.dropdown_broker.selected_value
+        broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
         result = anvil.server.call('submit_templates', templ_id, True)
 
         if result is not None and result > 0:

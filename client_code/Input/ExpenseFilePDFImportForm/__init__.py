@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
+from ...Utils import Constants as const
 from ...Utils import Caching as cache
 from ...Utils.Logger import ClientLogger
 from ...Utils.Validation import Validator
@@ -31,8 +32,10 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         logger.trace("DL=", DL)
         self.cols_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         logger.trace("self.cols_mapping_panel.items=", self.cols_mapping_panel.items)
-        # self.hidden_action_count.text = len(labels)
-        # self.cols_mapping_panel.add_event_handler('x-handle-mapping-count', self.handle_mapping_count)
+        self.dropdown_account.items = cache.accounts_dropdown()
+        self.dropdown_account.visible = False
+        self.dropdown_labels.items = cache.labels_dropdown()
+        self.dropdown_labels.visible = False
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -42,29 +45,41 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
 
-    # def enable_next_button(self, **event_args):
-    #     if self.hidden_action_count.text == 0:
-    #         self.button_next.visible = True
-    #     else:
-    #         self.button_next.visible = False
-
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         """Validation"""
+        v = Validator()
+
+        v.display_when_invalid(self.valerror_title)
+        v.require_selected_dependent_on_checkbox(self.dropdown_account, self.cb_account, self.valerror_3, True)
+        v.require_selected_dependent_on_checkbox(self.dropdown_labels, self.cb_labels, self.valerror_4, True)
+        v.highlight_when_invalid(self.dropdown_account, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.dropdown_labels, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+
         result = all(c._validate() for c in self.cols_mapping_panel.get_components())
         if result is not True:
             return
 
-        df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items)
-        logger.debug("df=", df)
-        Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
+        if v.is_valid():
+            selected_account = self.dropdown_account.selected_value[0] if self.dropdown_account.selected_value else None
+            selected_label = eval(self.dropdown_labels.selected_value).get('id') if self.dropdown_labels.selected_value else None
+            df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items, \
+                                account=selected_account, labels=selected_label)
+            Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
-    # def handle_mapping_count(self, action, prev, **event_args):
-    #     if action is None:
-    #         self.hidden_mapping_count.text = int(self.hidden_mapping_count.text) + 1
-    #     elif prev is None:
-    #         self.hidden_mapping_count.text = int(self.hidden_mapping_count.text) - 1
-    #     else:
-    #         pass
-    #     self.enable_next_button()
+    def cb_account_change(self, **event_args):
+        """This method is called when this checkbox is checked or unchecked"""
+        if self.cb_account.checked:
+            self.dropdown_account.visible = True
+        else:
+            self.dropdown_account.visible = False
+            self.dropdown_account.selected_value = None
+
+    def cb_labels_change(self, **event_args):
+        """This method is called when this checkbox is checked or unchecked"""
+        if self.cb_labels.checked:
+            self.dropdown_labels.visible = True
+        else:
+            self.dropdown_labels.visible = False
+            self.dropdown_labels.selected_value = None

@@ -37,7 +37,7 @@ to check the status of the form.
         
     def require(self, component, event_list, predicate, error_lbl=None, show_errors_immediately=False, dependent=None):
         def check_this_component(**e):
-            result = predicate(component, dependent)
+            result = predicate(component, dependent) if dependent else predicate(component)
             # logger.trace(f"component.text=", component.text)
             # logger.trace(f"predicate(component)=", predicate(component))
             self._validity[component] = result
@@ -46,7 +46,8 @@ to check the status of the form.
             self._check()
         
         for e in event_list:
-            component.set_event_handler(e, check_this_component)
+            # component.set_event_handler(e, check_this_component)
+            component.add_event_handler(e, check_this_component)
         self._component_checks.append(check_this_component)
     
         if show_errors_immediately:
@@ -56,7 +57,7 @@ to check the status of the form.
             # but we will (eg) disable buttons
             if error_lbl is not None:
                 error_lbl.visible = False
-            self._validity[component] = predicate(component, dependent)
+            self._validity[component] = predicate(component, dependent) if dependent else predicate(component)
             self._check()
     
     def require_text_field(self, text_box, error_lbl=None, show_errors_immediately=False):
@@ -83,6 +84,11 @@ to check the status of the form.
         self.require(dropdown_box, ['change'],
                     lambda dd, cb: (cb.checked and dd.selected_value not in ('', None)) or not cb.checked,
                     error_lbl, show_errors_immediately, check_box)
+    
+    def require_selected_dependent_on_dropdown(self, dropdown_box, dropdown_box_dep, dep_key, error_lbl=None, show_errors_immediately=False):
+        self.require(dropdown_box, ['change'],
+                    lambda dd, dd_dep: (dd_dep.selected_value == dep_key and dd.selected_value not in ('', None)) or dd_dep.selected_value != dep_key,
+                    error_lbl, show_errors_immediately, dropdown_box_dep)
     
     def enable_when_valid(self, component):
         def on_change(is_valid):
