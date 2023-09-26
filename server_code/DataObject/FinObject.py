@@ -69,7 +69,7 @@ class ExpenseRecord:
         Returns:
             dict: A dict with all keys exist, while value are None.
         """
-        return {c: None for c in ExpenseRecord.column_list}
+        return {c: None for c in ExpenseRecord.column_list}.copy()
     
     def __init__(self, attr=None):
         self.attr = {} if attr is None else attr

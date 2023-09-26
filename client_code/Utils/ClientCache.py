@@ -13,12 +13,16 @@ class ClientCache:
     # Class variable to store cache
     cache_dict = {}
 
-    def __init__(self, funcname):
+    def __init__(self, funcname, data=None):
         self.name = funcname
         self.logger = ClientLogger()
         if ClientCache.cache_dict.get(funcname, None) is None:
-            self.logger.debug(f"Cache {self.name} initiated.")
-            ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
+            try:
+                ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
+                self.logger.debug(f"Cache {self.name} (function) initiated.")
+            except (anvil.server.NoServerFunctionError) as err:
+                ClientCache.cache_dict[funcname] = data
+                self.logger.debug(f"Cache {self.name} (manual) initiated.")
 
     def is_empty(self):
         """

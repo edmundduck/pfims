@@ -11,17 +11,6 @@ from .Logger import ClientLogger
 cache_dict = {}
 logger = ClientLogger()
 
-# Return a list for accounts dropdown for Expense Input and Upload
-def accounts_dropdown():
-    return get_cache('accounts', 'generate_accounts_dropdown')
-
-# Return a dict for accounts for Expense Input and Upload
-def accounts_dict():
-    return get_cache_dict('accounts', 'generate_accounts_dropdown')
-
-def accounts_reset():
-    clear_cache('accounts')
-
 # Return a list for labels dropdown for Expense Input and Upload
 def labels_dropdown():
     return get_cache('labels', 'generate_labels_dropdown')
@@ -51,13 +40,6 @@ def labels_reset():
     clear_cache('labels_list')
     clear_cache('labels_dict')
     clear_cache('labels')
-
-# Return a list for labels mapping action dropdown for Expense Input and Upload
-def labels_mapping_action_dropdown():
-    return get_cache(key='labels_mapping_action', func='generate_labels_mapping_action_dropdown')
-
-def labels_mapping_action_reset():
-    clear_cache(key='labels_mapping_action')
 
 def expense_empty_record():
     """
