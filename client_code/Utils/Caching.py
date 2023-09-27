@@ -28,8 +28,7 @@ def labels_dict():
             logger.trace("item (i) in labels_dropdown=", i)
             logger.trace("eval(i[1])['id']=", eval(i[1])['id'])
             logger.trace("eval(i[1])['text']=", eval(i[1])['text'])
-            # Case 001 - string dict key handling review
-            result[str(eval(i[1])['id'])] = eval(i[1])['text']
+            result[i[1]['id']] = i[1]['text']
         cache_dict[key] = result
     return result
 

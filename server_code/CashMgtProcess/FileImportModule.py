@@ -179,8 +179,7 @@ def update_mapping(data, mapping):
                     if lbl_mapping.get('action')[0] == "S":
                         df[exprcd.Labels].replace(lbl_mapping['srclbl'], None, inplace=True)                    
                     elif lbl_mapping.get('tgtlbl') is not None:
-                        # Case 001 - string dict key handling review
-                        id = eval(lbl_mapping['tgtlbl'])['id'] if isinstance(lbl_mapping.get('tgtlbl'), str) else lbl_mapping['tgtlbl']['id']
+                        id = lbl_mapping['tgtlbl']['id']
                         df[exprcd.Labels].replace(lbl_mapping['srclbl'], id, inplace=True)
         logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
         logger.trace("df=", df)
