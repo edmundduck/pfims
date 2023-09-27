@@ -8,22 +8,41 @@ from .Logger import ClientLogger
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+# The logger cannot be placed inside __init__, otherwise performance will be dragged down dramatically.
+logger = ClientLogger()
+
 class ClientCache:
 
     # Class variable to store cache
     cache_dict = {}
 
     def __init__(self, funcname, data=None):
+        """
+        Initialize the cache by either running as a server function or creating data manually.
+
+        If the function name which is a parameter is not a valid server function name, NoServerFunctionError will throw.
+        Then the cache will use the invalid 'function name' as the key of cache and load data which is an optional parameter into it.
+
+        Parameters:
+            funcname (string): A server function name or a string as cache key (invalid function name).
+            data (any Object): Data to load manually if funcname is an invalid function name.
+        """
         self.name = funcname
-        self.logger = ClientLogger()
         if ClientCache.cache_dict.get(funcname, None) is None:
             try:
                 ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
-                self.logger.debug(f"Cache {self.name} (function) initiated.")
+                logger.debug(f"Cache {self.name} (function) initiated.")
             except (anvil.server.NoServerFunctionError) as err:
                 ClientCache.cache_dict[funcname] = data
-                self.logger.debug(f"Cache {self.name} (manual) initiated.")
+                logger.debug(f"Cache {self.name} (manual) initiated.")
 
+    def __str__(self):
+        return "Cache {0} name:{1} includes -\n{2}".format(
+            self.__class__,
+            self.name,
+            ClientCache.cache_dict
+        )
+        
     def is_empty(self):
         """
         Check if the cache is empty.
@@ -43,16 +62,29 @@ class ClientCache:
             ClientCache.cache_dict.get (list): Cache in list given the provided key.
         """
         if ClientCache.cache_dict.get(self.name, None) is None:
-            ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
-            self.logger.debug(f"Cache {self.name} loaded.")
+            try:
+                ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
+                logger.debug(f"Cache {self.name} initiated from get_cache.")
+            except (anvil.server.NoServerFunctionError) as err:
+                logger.debug(f"Cache {self.name} cannot be initiated as function. No data retrieved.")
         return ClientCache.cache_dict.get(self.name, None)
+    
+    def set_cache(self, data):
+        """
+        Generic set cache data.
+    
+        Parameters:
+            data (any Object): Data to load manually.
+        """
+        ClientCache.cache_dict[self.name] = data
+        logger.debug(f"Cache {self.name} set manually from set_cache.")
     
     def clear_cache(self):
         """
         Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
         """
         del ClientCache.cache_dict[self.name]
-        self.logger.debug(f"Cache {self.name} cleared.")
+        logger.debug(f"Cache {self.name} cleared.")
 
     def get_complete_key(self, partial_key):
         """

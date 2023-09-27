@@ -5,7 +5,6 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....Utils import Caching as cache
 from ....Utils.ClientCache import ClientCache
 from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
@@ -21,11 +20,12 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
         cache_filetype = ClientCache('generate_mapping_type_dropdown')
         cache_extraaction = ClientCache('generate_upload_action_dropdown')
+        cache_labels = ClientCache('generate_labels_dropdown')
         cache_acct = ClientCache('generate_accounts_dropdown')
         self.row_dropdown_type.items = cache_filetype.get_cache()
         self.row_dropdown_datacol.items = cache_exp_tbl_def.get_cache()
         self.row_dropdown_extraact.items = cache_extraaction.get_cache()
-        self.row_dropdown_lbl.items = cache.labels_dropdown()
+        self.row_dropdown_lbl.items = cache_labels.get_cache()
         self.row_dropdown_acct.items = cache_acct.get_cache()
 
         # Generate all rules in a mapping
@@ -129,11 +129,13 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         cache_dict_exp_tbl_def = ClientCache('dict_generate_expense_tbl_def_dropdown', {k[1][0]: k[1][1] for k in cache_exp_tbl_def.get_cache()})
         cache_extraact = ClientCache('generate_upload_action_dropdown')
         cache_dict_extraact = ClientCache('dict_generate_upload_action_dropdown', {k[1][0]: k[1][1] for k in cache_extraact.get_cache()})
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_dict_labels = ClientCache('dict_generate_labels_dropdown', {k[1][0]: k[1][1] for k in cache_labels.get_cache()})
         cache_acct = ClientCache('generate_accounts_dropdown')        
         cache_dict_acct = ClientCache('dict_generate_accounts_dropdown', {k[1][0]: k[1][1] for k in cache_acct.get_cache()})
         dict_exp_tbl_def = cache_dict_exp_tbl_def.get_cache()
         dict_extraact = cache_dict_extraact.get_cache()
-        dict_lbl = cache.labels_dict()
+        dict_lbl = cache_dict_labels.get_cache()
         dict_acct = cache_dict_acct.get_cache()
         datacol = dict_exp_tbl_def.get(datacol_id, None)
         extraact = dict_extraact.get(extraact_id, None)
