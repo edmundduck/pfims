@@ -156,43 +156,31 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.reload_rp_data()
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
-        if tab_id is None or tab_id <= 0:
-            msg = f"ERROR: Fail to save expense tab {tab_name}."
-            logger.error(msg)
-            Notification(msg).show()
-            return
-
-        """ Reflect the change in template dropdown """
-        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
-        cache_exptabs.clear_cache()
-        self.dropdown_tabs.items = cache_exptabs.get_cache()
-        self.dropdown_tabs.selected_value = [tab_id, tab_name]
-        # """ Add/Update """
-        result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
-        # """ Delete """
         cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
-        result_d = anvil.server.call('delete_transactions', tab_id, cache_del_iid.get_cache())
-
-        if result_d is not None and result_u is not None:
+        try:
+            tab_id, result_u, result_d = anvil.server.call('save_expensetab', tab_id, tab_name, self.input_repeating_panel.items, cache_del_iid.get_cache())
+            cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+            cache_exptabs.clear_cache()
+            self.dropdown_tabs.items = cache_exptabs.get_cache()
+            self.dropdown_tabs.selected_value = [tab_id, tab_name]
             self._deleted_iid_row_reset()
             cache_del_iid.clear_cache()
             self._switch_to_submit_button()
             self._replace_iid(result_u)
-            msg2 = f"Expense tab {tab_name} has been saved successfully."
-            logger.info(msg2)
-        else:
+            logger.debug(f"Tab ID={tab_id}, Updated count={result_u}, Deleted count={result_d}")
+            msg = f"Expense tab {tab_name} has been saved successfully."
+            logger.info(msg)
+        except OperationException as err:
+            logger.error(err)
+            Notification(err).show()
+        except Warning as warn:
+            logger.warning(warn)
+            Notification(warn).show()
             if result_d is not None:
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
-                msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
             elif result_u is not None:
                 self._replace_iid(result_u)
-                msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
-            else:
-                msg2 = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
-            logger.warning(msg2)
-        Notification(msg2).show()
 
     @logger.log_function
     def button_submit_click(self, **event_args):
