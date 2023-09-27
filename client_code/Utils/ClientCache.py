@@ -8,6 +8,9 @@ from .Logger import ClientLogger
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+# The logger cannot be placed inside __init__, otherwise performance will be dragged down dramatically.
+logger = ClientLogger()
+
 class ClientCache:
 
     # Class variable to store cache
@@ -15,14 +18,13 @@ class ClientCache:
 
     def __init__(self, funcname, data=None):
         self.name = funcname
-        self.logger = ClientLogger()
         if ClientCache.cache_dict.get(funcname, None) is None:
             try:
                 ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
-                self.logger.debug(f"Cache {self.name} (function) initiated.")
+                logger.debug(f"Cache {self.name} (function) initiated.")
             except (anvil.server.NoServerFunctionError) as err:
                 ClientCache.cache_dict[funcname] = data
-                self.logger.debug(f"Cache {self.name} (manual) initiated.")
+                logger.debug(f"Cache {self.name} (manual) initiated.")
 
     def is_empty(self):
         """
@@ -45,7 +47,7 @@ class ClientCache:
         print("//DEBUG// cache_dict=", ClientCache.cache_dict)
         if ClientCache.cache_dict.get(self.name, None) is None:
             ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
-            self.logger.debug(f"Cache {self.name} initiated from get_cache.")
+            logger.debug(f"Cache {self.name} initiated from get_cache.")
         return ClientCache.cache_dict.get(self.name, None)
     
     def clear_cache(self):
@@ -53,7 +55,7 @@ class ClientCache:
         Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
         """
         del ClientCache.cache_dict[self.name]
-        self.logger.debug(f"Cache {self.name} cleared.")
+        logger.debug(f"Cache {self.name} cleared.")
 
     def get_complete_key(self, partial_key):
         """
