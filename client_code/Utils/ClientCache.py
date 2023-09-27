@@ -42,9 +42,10 @@ class ClientCache:
         Returns:
             ClientCache.cache_dict.get (list): Cache in list given the provided key.
         """
+        print("//DEBUG// cache_dict=", ClientCache.cache_dict)
         if ClientCache.cache_dict.get(self.name, None) is None:
             ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
-            self.logger.debug(f"Cache {self.name} loaded.")
+            self.logger.debug(f"Cache {self.name} initiated from get_cache.")
         return ClientCache.cache_dict.get(self.name, None)
     
     def clear_cache(self):

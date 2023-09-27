@@ -23,11 +23,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         cache_acct = ClientCache('generate_accounts_dropdown')
         cache_dict_acct = ClientCache('dict_generate_accounts_dropdown', {k[1][0]: k[1][1] for k in cache_acct.get_cache()})
         self.row_acct.items = cache_acct.get_cache()
-        # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
-        acct_dict = cache_dict_acct.get_cache()
         logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
-        if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
-            self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
+        self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
