@@ -22,6 +22,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        self.dropdown_labels.items = cache_labels.get_cache()
+        self.dropdown_tabs.items = cache_exptabs.get_cache()
+        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
         self.input_repeating_panel.add_event_handler('x-deleted-row', self._deleted_iid_row_active)
@@ -79,11 +84,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         Routing.open_acct_maint_form(self)
 
-    def dropdown_labels_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_labels.items = cache_labels.get_cache()
-
     @logger.log_function
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -91,18 +91,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if selected_lid is not None:
             self.input_repeating_panel.raise_event_on_children('x-create-lbl-button', selected_lid=selected_lid, selected_lname=selected_lname)
         
-    def dropdown_tabs_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
-
     @logger.log_function
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
         cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', selected_tid)
-        self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
+        tab_id, self.tab_name.text, self.input_repeating_panel.items = anvil.server.call('proc_exp_tab_change', selected_tid)
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records()
@@ -170,7 +164,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """ Reflect the change in template dropdown """
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        cache_exptabs.clear_cache()
+        self.dropdown_tabs.items = cache_exptabs.get_cache()
         self.dropdown_tabs.selected_value = [tab_id, tab_name]
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
@@ -207,7 +203,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+            cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+            cache_exptabs.clear_cache()
+            self.dropdown_tabs.items = cache_exptabs.get_cache()
             self.dropdown_tabs.raise_event('change')
             msg = f"Expense tab {tab_name} has been submitted."
             logger.info(msg)
@@ -229,7 +227,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             if result is not None and result > 0:
                 """ Reflect the change in tab dropdown """
                 cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
-                self.dropdown_tabs_show()
+                cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+                cache_exptabs.clear_cache()
+                self.dropdown_tabs.items = cache_exptabs.get_cache()
                 self.dropdown_tabs.raise_event('change')
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()

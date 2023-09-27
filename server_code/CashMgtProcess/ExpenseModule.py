@@ -293,3 +293,19 @@ def delete_expensetab(tab_id):
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
+
+@anvil.server.callable("proc_exp_tab_change")
+@logger.log_function
+def proc_exp_tab_change(tab_id):
+    """
+    Consolidated process for changing expense tab selection.
+
+    Parameters:
+        tab_id (int): The ID of a selected expense tab.
+
+    Returns:
+        list: A list of all functions return required by the selection change.
+    """
+    id, name = get_selected_expensetab_attr(tab_id)
+    trx_list = select_transactions(tab_id)
+    return [id, name, trx_list]

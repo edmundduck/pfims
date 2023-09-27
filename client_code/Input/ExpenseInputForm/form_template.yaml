@@ -105,7 +105,7 @@ components:
       underline: false
       include_placeholder: true
     layout_properties: {grid_position: 'IUMTEJ,JYSALR'}
-    event_bindings: {show: dropdown_labels_show, change: dropdown_labels_change}
+    event_bindings: {change: dropdown_labels_change}
     name: dropdown_labels
   - type: DropDown
     properties:
@@ -128,7 +128,7 @@ components:
       underline: false
       include_placeholder: true
     layout_properties: {grid_position: 'IUMTEJ,FPTCAC'}
-    event_bindings: {change: dropdown_tabs_change, show: dropdown_tabs_show}
+    event_bindings: {change: dropdown_tabs_change}
     name: dropdown_tabs
 - type: ColumnPanel
   properties: {col_widths: '{}'}

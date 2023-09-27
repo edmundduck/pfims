@@ -135,7 +135,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 cache_del_iid.set_cache([self.item.get('iid')])
             else:
                 cache_del_iid.get_cache().append(self.item.get('iid'))
-            print(cache_del_iid)
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
         self.remove_from_parent()
