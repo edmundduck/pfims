@@ -36,7 +36,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @logger.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
-            lbls = cache.labels_list()
+            cache_labels_list = ClientCache('generate_labels_list')
+            lbls = cache_labels_list.get_cache()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
             logger.trace(f"trimmed_list={trimmed_list}")
             for i in trimmed_list:

@@ -81,7 +81,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_labels.items = cache.labels_dropdown()
+        cache_labels = ClientCache('generate_labels_dropdown')
+        self.dropdown_labels.items = cache_labels.get_cache()
 
     @logger.log_function
     def dropdown_labels_change(self, **event_args):

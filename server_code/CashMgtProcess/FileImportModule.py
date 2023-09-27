@@ -462,7 +462,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                 if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
                     tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
-                    print(f"Case 1 - Diff index names for 1st date and 1st amt, merge all rows in between - new_df=\n{new_df.to_string()}")
+                    logger.debug(f"Case 1 - Diff index names for 1st date and 1st amt, merge all rows in between - new_df=\n{new_df.to_string()}")
                     amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
                     curRowId = firstAmtId + 1
                     firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
@@ -473,10 +473,10 @@ def update_pdf_mapping(data, mapping, account, labels):
                     if firstAmtId and min(firstAmtId, nextRowId) - curRowId > 1:
                         tmp_df = df.apply(merge_rows, args=(curRowId, min(firstAmtId, nextRowId)-1, dateId), axis='index', result_type=None)
                         new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
-                        print(f"Case 2a - Same index names for both 1st row in date df and amt df (nexN row without date and amt require to merge) - new_df=\n{new_df.to_string()}")
+                        logger.debug(f"Case 2a - Same index names for both 1st row in date df and amt df (nexN row without date and amt require to merge) - new_df=\n{new_df.to_string()}")
                     else:
                         new_df = pd.concat([oneline_df], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, oneline_df], ignore_index=True, join="outer")
-                        print(f"Case 2b - Same index names for both 1st row in date df and amt df (No next row to merge) - new_df=\n{new_df.to_string()}")
+                        logger.debug(f"Case 2b - Same index names for both 1st row in date df and amt df (No next row to merge) - new_df=\n{new_df.to_string()}")
                 else:
                     pass
         df = new_df

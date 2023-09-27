@@ -11,33 +11,6 @@ from .Logger import ClientLogger
 cache_dict = {}
 logger = ClientLogger()
 
-# Return a list for labels dropdown for Expense Input and Upload
-def labels_dropdown():
-    return get_cache('labels', 'generate_labels_dropdown')
-
-# Return a dict for labels for Expense Input and Upload
-# Not using generic get_cache_dict function as it involves eval() issue requiring special handling
-def labels_dict():
-    global cache_dict
-    key='labels_dict'
-    if cache_dict is None: cache_dict = {}
-    logger.trace("cache_dict=", cache_dict)
-    result = cache_dict.get(key, {}) or {}
-    if not result:
-        for i in labels_dropdown():
-            logger.trace("item (i) in labels_dropdown=", i)
-            result[i[1][0]] = i[1][1]
-        cache_dict[key] = result
-    return result
-
-def labels_list():
-    return get_cache('labels_list', 'generate_labels_list')
-
-def labels_reset():
-    clear_cache('labels_list')
-    clear_cache('labels_dict')
-    clear_cache('labels')
-
 # Add IID into the deletion list for delete journals / delete transactions function to process
 def add_deleted_row(iid):
     global cache_dict
