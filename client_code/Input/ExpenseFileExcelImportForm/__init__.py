@@ -22,7 +22,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
         # Prefill "labels map to" dropdown by finding high proximity choices
-        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.labels_dict())
+        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.labels_dropdown())
         logger.debug("relevant_lbls=", relevant_lbls)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python

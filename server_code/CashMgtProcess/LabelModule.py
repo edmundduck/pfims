@@ -196,8 +196,8 @@ def predict_relevant_labels(srclbl, curlbl):
     Return a label which has the highest proximity (a.k.a. the most matched) from the DB from the source label.
 
     Parameters:
-        srclbl (dict): The labels extracted from Excel to be compared.
-        curlbl (dict): The labels from the DB labels table.
+        srclbl (list): The labels extracted from Excel to be compared.
+        curlbl (list): The label dropdown from the DB labels table.
 
     Returns:
         score (list): Proximity score of each label, its order follows the order of the srclbl.
@@ -208,9 +208,9 @@ def predict_relevant_labels(srclbl, curlbl):
     for s in srclbl:
         highscore = [0, None]
         for lbl in curlbl:
-            similarity = fuzz.ratio(s, curlbl[lbl])
-            logger.trace(f"lbl={lbl}, similarity={similarity}, highscore[0]={highscore[0]}")
+            similarity = fuzz.ratio(s, lbl[1][1])
+            logger.trace(f"lbl={lbl[1][1]}, similarity={similarity}, highscore[0]={highscore[0]}")
             if similarity > highscore[0]:
-                highscore = [similarity, {'id': int(lbl), 'text': curlbl[lbl]}]
+                highscore = [similarity, [int(lbl[1][0]), lbl[1][1]]]
         score.append(highscore[1] if highscore[0] > min_proximity else None)
     return score
