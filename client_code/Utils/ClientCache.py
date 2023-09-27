@@ -36,6 +36,13 @@ class ClientCache:
                 ClientCache.cache_dict[funcname] = data
                 logger.debug(f"Cache {self.name} (manual) initiated.")
 
+    def __str__(self):
+        return "Cache {0} name:{1} includes -\n{2}".format(
+            self.__class__,
+            self.name,
+            ClientCache.cache_dict
+        )
+        
     def is_empty(self):
         """
         Check if the cache is empty.
@@ -66,16 +73,11 @@ class ClientCache:
         """
         Generic set cache data.
     
-        Returns:
-            ClientCache.cache_dict.get (list): Cache in list given the provided key.
+        Parameters:
+            data (any Object): Data to load manually.
         """
-        if ClientCache.cache_dict.get(self.name, None) is None:
-            try:
-                ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
-                logger.debug(f"Cache {self.name} initiated from get_cache.")
-            except (anvil.server.NoServerFunctionError) as err:
-                logger.debug(f"Cache {self.name} cannot be initiated as function. No data retrieved.")
-        return ClientCache.cache_dict.get(self.name, None)
+        ClientCache.cache_dict[self.name] = data
+        logger.debug(f"Cache {self.name} set manually from set_cache.")
     
     def clear_cache(self):
         """

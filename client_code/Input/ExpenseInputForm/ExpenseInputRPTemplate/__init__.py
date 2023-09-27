@@ -7,7 +7,6 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
 from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
-from ....Utils import Caching as cache
 from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
@@ -131,7 +130,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item.get('iid') is not None: 
-            cache.add_deleted_row(self.item.get('iid'))
+            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+            if cache_del_iid.is_empty():
+                cache_del_iid.set_cache([self.item.get('iid')])
+            else:
+                cache_del_iid.get_cache().append(self.item.get('iid'))
+            print(cache_del_iid)
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
         self.remove_from_parent()
