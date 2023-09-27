@@ -96,7 +96,6 @@ class LabelMaintForm(LabelMaintFormTemplate):
             """ Reflect the change in labels dropdown """
             cache.labels_reset()
             self.dropdown_lbl_list.items = cache.labels_dropdown()
-            print((lbl_id, lbl_name))
             self.dropdown_lbl_list.selected_value = [lbl_id, lbl_name]
             msg = f"Label {lbl_name} has been updated successfully."
             logger.info(msg)

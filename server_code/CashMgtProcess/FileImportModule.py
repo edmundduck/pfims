@@ -175,6 +175,7 @@ def update_mapping(data, mapping):
         LD = helper.to_list_of_dict(DL)
         if df is not None and LD is not None:
             for lbl_mapping in LD:
+                print("//DEBUG// lbl_mapping=", lbl_mapping)
                 if lbl_mapping is not None:
                     if lbl_mapping.get('action')[0] == "S":
                         df[exprcd.Labels].replace(lbl_mapping['srclbl'], None, inplace=True)                    
