@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Validation import Validator
 from ...Utils.Logger import ClientLogger
 
@@ -23,11 +23,12 @@ class StockInputForm(StockInputFormTemplate):
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
+        cache_brokers = ClientCache('generate_brokers_dropdown')
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
         self.templ_name.text, broker_id = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-        self.dropdown_broker.items = cache.brokers_dropdown()
-        self.dropdown_broker.selected_value = cache.get_key_from_cache(broker_id, cache.brokers_dropdown())
+        self.dropdown_broker.items = cache_brokers.get_cache()
+        self.dropdown_broker.selected_value = cache_brokers.get_complete_key(broker_id)
         # Reset on screen change status
         self.disable_submit_button()
         
@@ -83,8 +84,9 @@ class StockInputForm(StockInputFormTemplate):
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
+        cache_brokers = ClientCache('generate_brokers_dropdown')
         self.templ_name.text, broker_id = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-        self.dropdown_broker.selected_value = cache.get_key_from_cache(broker_id, cache.brokers_dropdown())
+        self.dropdown_broker.selected_value = cache_brokers.get_complete_key(broker_id)
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', self.dropdown_templ.selected_value)
         if self.dropdown_templ.selected_value is not None:
             self.button_submit.enabled = True
@@ -96,15 +98,11 @@ class StockInputForm(StockInputFormTemplate):
     @logger.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
         templ_id = anvil.server.call('get_template_id', self.dropdown_templ.selected_value)
         templ_name = self.templ_name.text
         broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
-        templ_id = anvil.server.call('save_templates',
-                                     template_id=templ_id,
-                                     template_name=templ_name, 
-                                     broker_id=broker_id,
-                                     del_iid=cache.get_deleted_row()
-                                    )
+        templ_id = anvil.server.call('save_templates', templ_id, templ_name, broker_id, cache_del_iid.get_cache())
 
         if templ_id is None or templ_id <= 0:
             msg = f"ERROR: Fail to save template {templ_name}."
@@ -113,9 +111,9 @@ class StockInputForm(StockInputFormTemplate):
             return
         
         """ Trigger save_row_change if del_iid is not empty """
-        if len(cache.get_deleted_row()) > 0:
+        if len(cache_del_iid.get_cache()) > 0:
             self.save_row_change()
-            cache.deleted_row_reset()
+            cache_del_iid.clear_cache()
         
         """ Add/Update """
         result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
@@ -146,11 +144,14 @@ class StockInputForm(StockInputFormTemplate):
         self.input_buy_price.text = ""
         self.input_pnl.text = ""
         """ Reset row delete flag """
-        cache.deleted_row_reset()
+        cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
+        cache_del_iid.clear_cache()
     
     @logger.log_function
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
         to_be_del_templ_name = self.dropdown_templ.selected_value
         confirm = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=to_be_del_templ_name))
         userconf = alert(content=confirm, 
@@ -162,11 +163,11 @@ class StockInputForm(StockInputFormTemplate):
             result = anvil.server.call('delete_templates', template_id=templ_id)
             if result is not None and result > 0:
                 """ Reset row delete flag """
-                cache.deleted_row_reset()
+                cache_del_iid.clear_cache()
             
                 """ Reflect the change in template dropdown """
                 self.dropdown_templ_show()
-                self.dropdown_broker.items = cache.brokers_dropdown()
+                self.dropdown_broker.items = cache_brokers.get_cache()
                 self.input_repeating_panel.items = []
                 
                 msg = f"Template {to_be_del_templ_name} has been deleted."

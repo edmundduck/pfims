@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -18,16 +18,18 @@ class SettingForm(SettingFormTemplate):
         
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
+        cache_brokers = ClientCache('generate_brokers_dropdown')
+        
         self.dropdown_logging_level.items = const.LoggingLevel.dropdown
-        settings, search_interval, brokers_dropdown, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
-        self.dropdown_default_broker.items = brokers_dropdown
+        settings, search_interval, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
+        self.dropdown_default_broker.items = cache_brokers.get_cache()
         # Not use client cache to load search interval and CCY to reduce server calls turnaround
         self.dropdown_interval.items = search_interval
         self.dropdown_ccy.items = ccy
-        self.dropdown_broker_list.items = brokers_dropdown
+        self.dropdown_broker_list.items = cache_brokers.get_cache()
         self.dropdown_sub_templ_list.items = submitted_templ_list
         if settings is not None and len(settings) > 0:
-            self.dropdown_default_broker.selected_value = cache.get_key_from_cache(settings.get('default_broker'), self.dropdown_default_broker.items)
+            self.dropdown_default_broker.selected_value = cache_brokers.get_complete_key(settings.get('default_broker'))
             self.dropdown_interval.selected_value = settings.get('default_interval')
             self.time_datefrom.date = settings.get('default_datefrom')
             self.time_dateto.date = settings.get('default_dateto')
@@ -73,10 +75,12 @@ class SettingForm(SettingFormTemplate):
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        broker_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        self.dropdown_broker_list.items = brokers_dropdown
-        self.dropdown_default_broker.items = brokers_dropdown
-        self.dropdown_broker_list.selected_value = cache.get_key_from_cache(broker_id, self.dropdown_broker_list.items)
+        cache_brokers = ClientCache('generate_brokers_dropdown')
+        broker_id, dummy = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        cache_brokers.clear_cache()
+        self.dropdown_broker_list.items = cache_brokers.get_cache()
+        self.dropdown_default_broker.items = cache_brokers.get_cache()
+        self.dropdown_broker_list.selected_value = cache_brokers.get_complete_key(broker_id)
         self.dropdown_default_broker.selected_value = default_broker
         self.hidden_b_id.text = broker_id
 
@@ -89,20 +93,24 @@ class SettingForm(SettingFormTemplate):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
         broker_id, broker_name, broker_ccy = self.dropdown_broker_list.selected_value
-        broker_id, brokers_dropdown = anvil.server.call('proc_broker_create_update', broker_id, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        self.dropdown_broker_list.items = brokers_dropdown
-        self.dropdown_default_broker.items = brokers_dropdown
-        self.dropdown_broker_list.selected_value = cache.get_key_from_cache(broker_id, self.dropdown_broker_list.items)
+        cache_brokers = ClientCache('generate_brokers_dropdown')
+        broker_id, dummy = anvil.server.call('proc_broker_create_update', broker_id, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        cache_brokers.clear_cache()
+        self.dropdown_broker_list.items = cache_brokers.get_cache()
+        self.dropdown_default_broker.items = cache_brokers.get_cache()
+        self.dropdown_broker_list.selected_value = cache_brokers.get_complete_key(broker_id)
         self.dropdown_default_broker.selected_value = default_broker
         self.hidden_b_id.text = broker_id
 
     @logger.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        count, brokers_dropdown = anvil.server.call('proc_broker_delete', self.hidden_b_id.text)
+        cache_brokers = ClientCache('generate_brokers_dropdown')
+        count, dummy = anvil.server.call('proc_broker_delete', self.hidden_b_id.text)
+        cache_brokers.clear_cache()
         if count is not None and count > 0:
-            self.dropdown_broker_list.items = brokers_dropdown
-            self.dropdown_default_broker.items = brokers_dropdown
+            self.dropdown_broker_list.items = cache_brokers.get_cache()
+            self.dropdown_default_broker.items = cache_brokers.get_cache()
             n = Notification("Broker ID ({b_id}) deleted successfully.".format(b_id=self.hidden_b_id.text))
         else:
             n = Notification("ERROR: Fail to delete broker ID ({b_id}).".format(b_id=self.hidden_b_id.text))

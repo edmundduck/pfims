@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Routing
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ...Utils.Validation import Validator
 from ...Utils.Logger import ClientLogger
@@ -33,12 +33,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if data is None:
             # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-            self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
+            self.input_repeating_panel.items = self._generate_blank_records()
         else:
             logger.info(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
         self._deleted_iid_row_reset()
-        cache.deleted_row_reset()
+        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+        cache_del_iid.clear_cache()
 
     def _switch_to_submit_button(self, **event_args):
         """
@@ -65,10 +66,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.tag['reload']:
-            self.reload_rp_data(extra=[cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)])
+            self.reload_rp_data(extra=self._generate_blank_records())
             self.tag['reload'] = False
         else:
-            self.input_repeating_panel.items = [cache.expense_empty_record() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)] + self.input_repeating_panel.items
+            self.input_repeating_panel.items = self._generate_blank_records() + self.input_repeating_panel.items
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -80,14 +81,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def dropdown_labels_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_labels.items = cache.labels_dropdown()
+        cache_labels = ClientCache('generate_labels_dropdown')
+        self.dropdown_labels.items = cache_labels.get_cache()
 
     @logger.log_function
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
-        # Case 001 - string dict key handling review
-        # selected_lid, selected_lname = self.dropdown_labels.selected_value.values() if self.dropdown_labels.selected_value is not None else [None, None]
-        selected_lid, selected_lname = eval(self.dropdown_labels.selected_value).values() if self.dropdown_labels.selected_value is not None else [None, None]
+        selected_lid, selected_lname = self.dropdown_labels.selected_value if self.dropdown_labels.selected_value is not None else [None, None]
         if selected_lid is not None:
             self.input_repeating_panel.raise_event_on_children('x-create-lbl-button', selected_lid=selected_lid, selected_lname=selected_lname)
         
@@ -99,15 +99,16 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     @logger.log_function
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
+        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', selected_tid)
         self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
-            self.input_repeating_panel.items = self.input_repeating_panel.items + [cache.expense_empty_record() for i in range(diff)]
+            self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records()
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self._deleted_iid_row_reset()
-        cache.deleted_row_reset()
+        cache_del_iid.clear_cache()
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -174,11 +175,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # """ Add/Update """
         result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
         # """ Delete """
-        result_d = anvil.server.call('delete_transactions', tab_id, cache.get_deleted_row())
+        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+        result_d = anvil.server.call('delete_transactions', tab_id, cache_del_iid.get_cache())
 
         if result_d is not None and result_u is not None:
             self._deleted_iid_row_reset()
-            cache.deleted_row_reset()
+            cache_del_iid.clear_cache()
             self._switch_to_submit_button()
             self._replace_iid(result_u)
             msg2 = f"Expense tab {tab_name} has been saved successfully."
@@ -186,7 +188,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             if result_d is not None:
                 self._deleted_iid_row_reset()
-                cache.deleted_row_reset()
+                cache_del_iid.clear_cache()
                 msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
             elif result_u is not None:
                 self._replace_iid(result_u)
@@ -226,10 +228,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             result = anvil.server.call('delete_expensetab', tab_id=to_be_del_tab_id)
             if result is not None and result > 0:
                 """ Reflect the change in tab dropdown """
+                cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
                 self.dropdown_tabs_show()
                 self.dropdown_tabs.raise_event('change')
                 self._deleted_iid_row_reset()
-                cache.deleted_row_reset()
+                cache_del_iid.clear_cache()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 logger.info(msg2)
             else:
@@ -249,8 +252,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             extra (list): Extra list to add to resultant repeating panel.
         """
         def filter_valid_rows(row):
-            if row.get('iid', None) and row.get('iid') in cache.get_deleted_row():
-                # Filter out all rows in get_deleted_row()
+            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)            
+            if row.get('iid', None) and row.get('iid') in cache_del_iid.get_cache():
+                # Filter out all rows in deleted IID cache
                 return False
             if all(v is None for v in row.values()):
                 # Filter out all None rows
@@ -284,3 +288,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         Scenario 2 - Page/Tab has just been loaded or refreshed.
         """
         self.tag = {'reload': False}
+
+    def _generate_blank_records(self, **event_args):
+        """
+        Generate a list of blank records.
+
+        Returns:
+            list: A list of blank records for repeating panel.
+        """
+        cache_blank = ClientCache('emptyexprecord')
+        return [cache_blank.get_cache().copy() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
+        

@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
 from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
-from ....Utils import Caching as cache
+from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
@@ -19,12 +19,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.row_acct.items = cache.accounts_dropdown()
-        # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
-        acct_dict = cache.accounts_dict()
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        self.row_acct.items = cache_acct.get_cache()
         logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
-        if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
-            self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
+        self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
@@ -34,9 +32,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
+    @logger.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
-            lbls = cache.labels_list()
+            cache_labels_list = ClientCache('generate_labels_list')
+            lbls = cache_labels_list.get_cache()
             trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
             logger.trace(f"trimmed_list={trimmed_list}")
             for i in trimmed_list:
@@ -130,7 +130,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item.get('iid') is not None: 
-            cache.add_deleted_row(self.item.get('iid'))
+            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+            if cache_del_iid.is_empty():
+                cache_del_iid.set_cache([self.item.get('iid')])
+            else:
+                cache_del_iid.get_cache().append(self.item.get('iid'))
+            print(cache_del_iid)
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
         self.remove_from_parent()

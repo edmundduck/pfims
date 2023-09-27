@@ -7,7 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Constants as const
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 from ...Utils.Validation import Validator
 
@@ -19,6 +19,8 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        cache_labels = ClientCache('generate_labels_dropdown')
         self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
@@ -32,9 +34,9 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         logger.trace("DL=", DL)
         self.cols_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         logger.trace("self.cols_mapping_panel.items=", self.cols_mapping_panel.items)
-        self.dropdown_account.items = cache.accounts_dropdown()
+        self.dropdown_account.items = cache_acct.get_cache()
         self.dropdown_account.visible = False
-        self.dropdown_labels.items = cache.labels_dropdown()
+        self.dropdown_labels.items = cache_labels.get_cache()
         self.dropdown_labels.visible = False
 
     def button_nav_upload_mapping_click(self, **event_args):
@@ -63,7 +65,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
 
         if v.is_valid():
             selected_account = self.dropdown_account.selected_value[0] if self.dropdown_account.selected_value else None
-            selected_label = eval(self.dropdown_labels.selected_value).get('id') if self.dropdown_labels.selected_value else None
+            selected_label = self.dropdown_labels.selected_value[0] if self.dropdown_labels.selected_value else None
             df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items, \
                                 account=selected_account, labels=selected_label)
             Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)

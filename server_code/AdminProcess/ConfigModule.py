@@ -309,10 +309,9 @@ def proc_init_settings():
     """
     settings = select_settings()
     search_interval = select_search_interval()
-    brokers_dropdown = generate_brokers_dropdown()
     ccy = AccountModule.generate_ccy_dropdown()
     submitted_templ_list = get_submitted_templ_list()
-    return [settings, search_interval, brokers_dropdown, ccy, submitted_templ_list]
+    return [settings, search_interval, ccy, submitted_templ_list]
 
 @anvil.server.callable("proc_upsert_settings")
 @logger.log_function
@@ -344,8 +343,7 @@ def proc_broker_create_update(b_id, name, ccy):
         list: A list of all functions return required by the broker creation and update.
     """
     broker_id = upsert_brokers(b_id, name, ccy)
-    brokers_dropdown = generate_brokers_dropdown()
-    return [broker_id, brokers_dropdown]
+    return [broker_id, None]
 
 @anvil.server.callable("proc_broker_delete")
 @logger.log_function
@@ -357,11 +355,7 @@ def proc_broker_delete(b_id):
         list: A list of all functions return required by the broker deletion.
     """
     count = delete_brokers(b_id)
-    if count is not None and count > 0:
-        brokers_dropdown = generate_brokers_dropdown()
-        return [count, brokers_dropdown]
-    else:
-        return [count, None]
+    return [count, None]
 
 @anvil.server.callable("proc_submitted_template_update")
 @logger.log_function
