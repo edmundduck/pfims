@@ -15,16 +15,16 @@ from ....Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
+    @logger.log_function    
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
         cache_acct = ClientCache('generate_accounts_dropdown')
-        cache_dict_acct = ClientCache('dict_generate_accounts_dropdown', {k[1][0]: k[1][1] for k in cache_acct.get_cache()})
         self.row_acct.items = cache_acct.get_cache()
-        logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
-        self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
+        #logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
+        #self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
@@ -34,6 +34,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
+    @logger.log_function    
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             lbls = cache.labels_list()
