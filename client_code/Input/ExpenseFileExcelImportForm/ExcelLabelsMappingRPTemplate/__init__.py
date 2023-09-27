@@ -25,7 +25,7 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         self.input_label.visible = False
 
         # Prefill "labels map to" dropdown by finding high proximity choices
-        self.dropdown_lbl_map_to.selected_value = repr(self.item['tgtlbl']) if self.item['tgtlbl'] is not None else None
+        self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None
 
     def dropdown_lbl_action_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

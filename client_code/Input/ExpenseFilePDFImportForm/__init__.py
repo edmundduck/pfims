@@ -65,7 +65,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
 
         if v.is_valid():
             selected_account = self.dropdown_account.selected_value[0] if self.dropdown_account.selected_value else None
-            selected_label = eval(self.dropdown_labels.selected_value).get('id') if self.dropdown_labels.selected_value else None
+            selected_label = self.dropdown_labels.selected_value[0] if self.dropdown_labels.selected_value else None
             df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items, \
                                 account=selected_account, labels=selected_label)
             Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
