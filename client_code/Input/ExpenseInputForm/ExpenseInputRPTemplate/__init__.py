@@ -130,7 +130,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item.get('iid') is not None: 
-            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
             if cache_del_iid.is_empty():
                 cache_del_iid.set_cache([self.item.get('iid')])
             else:

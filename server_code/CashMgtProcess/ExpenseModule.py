@@ -327,13 +327,7 @@ def proc_save_exp_tab(tab_id, name, rows, iid_list):
     """
     id = save_expensetab(tab_id, name)
     if tab_id is None or tab_id <= 0:
-        raise OperationException(f"ERROR: Fail to save expense tab {name}, aborting further update.")
+        raise RuntimeError(f"ERROR: Fail to save expense tab {name}, aborting further update.")
     result_u = upsert_transactions(tab_id, rows)
     result_d = delete_transactions(tab_id, iid_list)
-    if result_u is None and result_d is None:
-        raise Warning(f"WARNING: Expense tab {name} has been saved but technical problem occurs in saving transactions. Please try again.")
-    elif result_u is None:
-        raise Warning(f"WARNING: Expense tab {name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again.")
-    elif result_d is None:
-        raise Warning(f"WARNING: Expense tab {name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again.")
     return [tab_id, result_u, result_d]
