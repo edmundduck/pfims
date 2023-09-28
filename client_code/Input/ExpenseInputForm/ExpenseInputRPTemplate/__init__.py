@@ -23,6 +23,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_acct.items = cache_acct.get_cache()
         logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
         self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
+        logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
