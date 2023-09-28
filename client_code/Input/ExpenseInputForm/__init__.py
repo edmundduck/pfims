@@ -99,7 +99,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         tab_id, self.tab_name.text, self.input_repeating_panel.items = anvil.server.call('proc_exp_tab_change', selected_tid)
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
-            self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records()
+            self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records(diff)
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self._deleted_iid_row_reset()
         cache_del_iid.clear_cache()
@@ -159,7 +159,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
         try:
             tab_id, result_u, result_d = anvil.server.call('proc_save_exp_tab', tab_id, tab_name, self.input_repeating_panel.items, cache_del_iid.get_cache())
-            print("X=", self.input_repeating_panel.items)
             if tab_name != tab_original_name or tab_id is None:
                 # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
                 cache_exptabs = ClientCache('generate_expensetabs_dropdown')
@@ -268,7 +267,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             iid (int): New IID.
         """
         DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
-        print(DL)
         DL['iid'] = iid
         self.input_repeating_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
 
@@ -287,13 +285,16 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         self.tag = {'reload': False}
 
-    def _generate_blank_records(self, **event_args):
+    def _generate_blank_records(self, num=const.ExpenseConfig.DEFAULT_ROW_NUM, **event_args):
         """
         Generate a list of blank records.
+
+        Parameters:
+            num: The number of blank records to generate. The default number is defined in Constants file.
 
         Returns:
             list: A list of blank records for repeating panel.
         """
         cache_blank = ClientCache('emptyexprecord')
-        return [cache_blank.get_cache().copy() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
+        return [cache_blank.get_cache().copy() for i in range(num)]
         
