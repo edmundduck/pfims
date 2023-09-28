@@ -159,6 +159,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
         try:
             tab_id, result_u, result_d = anvil.server.call('proc_save_exp_tab', tab_id, tab_name, self.input_repeating_panel.items, cache_del_iid.get_cache())
+            print("X=", self.input_repeating_panel.items)
             if tab_name != tab_original_name or tab_id is None:
                 # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
                 cache_exptabs = ClientCache('generate_expensetabs_dropdown')
