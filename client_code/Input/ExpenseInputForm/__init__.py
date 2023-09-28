@@ -202,7 +202,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             cache_exptabs = ClientCache('generate_expensetabs_dropdown')
             cache_exptabs.clear_cache()
             self.dropdown_tabs.items = cache_exptabs.get_cache()
-            self.dropdown_tabs.raise_event('change')
+            self.dropdown_tabs.selected_value = None
+            tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
+            self.button_delete_exptab.enabled = False
             msg = f"Expense tab {tab_name} has been submitted."
             logger.info(msg)
         else:
@@ -225,7 +227,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 cache_exptabs = ClientCache('generate_expensetabs_dropdown')
                 cache_exptabs.clear_cache()
                 self.dropdown_tabs.items = cache_exptabs.get_cache()
-                self.dropdown_tabs.raise_event('change')
+                self.dropdown_tabs.selected_value = None
+                tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
+                self.button_delete_exptab.enabled = False
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
