@@ -32,9 +32,7 @@ def generate_labels_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
-    # content = helper.to_dict_of_list(list((row['name'] + " (" + str(row['id']) + ")", (row['id'], row['name'])) for row in rows))
-    content = rows
-    print("?????", content)
+    content = list((row['name'] + " (" + str(row['id']) + ")", (row['id'], row['name'])) for row in rows)
     return content
 
 @anvil.server.callable("generate_labels_dict_of_list")
@@ -48,9 +46,12 @@ def generate_labels_dict_of_list():
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    # with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
+        print("1=", cur.fetchone())
         rows = cur.fetchall()
+        print("2=", rows)
         cur.close()
     return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
 
