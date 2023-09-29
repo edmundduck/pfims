@@ -46,14 +46,11 @@ def generate_labels_dict_of_list():
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
-    # with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
     with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
-        print("1=", cur.fetchone())
         rows = cur.fetchall()
-        print("2=", rows)
         cur.close()
-    return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
+    return helper.to_dict_of_list(rows)
 
 @anvil.server.callable("get_selected_label_attr")
 @logger.log_function
