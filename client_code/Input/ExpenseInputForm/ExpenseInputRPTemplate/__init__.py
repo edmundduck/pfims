@@ -38,19 +38,17 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         if label_list not in ('', None):
             cache_labels_list = ClientCache('generate_labels_dict_of_list')
             lbls = cache_labels_list.get_cache()
-            trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            # trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            trimmed_list = list(filter(len, label_list.split(",")))
             logger.trace(f"trimmed_list={trimmed_list}")
-            logger.trace(f"lbls={lbls}")
+            logger.trace(f"cache_labels_list={lbls}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
                 # 2. label ID is not integer
                 # 3. label ID is NaN
                 if i.isdigit() and int(i) != 0:
-                    lbl_name = None
-                    for j in lbls:
-                        if str(j.get("id")).strip() == i:
-                            lbl_name = j.get("name").strip()
+                    lbl_name = lbls[lbls.get('id').index(int(i))]
                     b = Button(text=lbl_name,
                             # icon=const.Icons.REMOVE,
                             foreground=const.ColorSchemes.BUTTON_FG,
