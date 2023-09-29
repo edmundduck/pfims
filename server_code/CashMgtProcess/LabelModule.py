@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from fuzzywuzzy import fuzz
@@ -31,17 +32,19 @@ def generate_labels_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'] + " (" + str(row['id']) + ")", (row['id'], row['name'])) for row in rows)
+    # content = helper.to_dict_of_list(list((row['name'] + " (" + str(row['id']) + ")", (row['id'], row['name'])) for row in rows))
+    content = rows
+    print("?????", content)
     return content
 
-@anvil.server.callable("generate_labels_list")
+@anvil.server.callable("generate_labels_dict_of_list")
 @logger.log_function
-def generate_labels_list():
+def generate_labels_dict_of_list():
     """
-    Select data from a DB table which stores labels' detail to list.
+    Select data from a DB table which stores labels' detail as transformed dictionary of list.
 
     Returns:
-        list: A full list of label IDs, names and status.
+        dict: A dictionary of each column as key, where value is the list of the data belonging to that particular column.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
