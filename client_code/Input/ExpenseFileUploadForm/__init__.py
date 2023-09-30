@@ -26,6 +26,9 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         self.valerror_title.visible = False
         self.valerror_1.visible = False
 
+        cache_filetype = ClientCache('generate_mapping_type_dropdown')
+        self.dropdown_filetype.items = cache_filetype.get_cache()
+
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_upload_mapping_form(self)
@@ -33,11 +36,6 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def button_nav_input_exp_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
-
-    def dropdown_filetype_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        cache_filetype = ClientCache('generate_mapping_type_dropdown')
-        self.dropdown_filetype.items = cache_filetype.get_cache()
 
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -105,11 +103,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
         logger.info(f"{len(tablist)} tabs are chosen in {__name__}.")
-        matrix = anvil.server.call('select_mapping_matrix', id=self.dropdown_mapping_rule.selected_value)
-        logger.debug("matrix=", matrix)
-        extra = anvil.server.call('select_mapping_extra_actions', id=self.dropdown_mapping_rule.selected_value)
-        logger.debug("extra=", extra)
-        df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
+        df, lbls = anvil.server.call('proc_excel_import_1st_stage', self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, tablist)
         logger.trace("df=", df)
         logger.debug("lbls=", lbls)
         Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls)

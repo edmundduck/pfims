@@ -21,7 +21,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         # Any code you write here will run when the form opens.
         cache_acct = ClientCache('generate_accounts_dropdown')
         cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        self.dropdown_tabs.items = ClientCache('generate_expensetabs_dropdown')
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
@@ -66,8 +66,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         if v.is_valid():
             selected_account = self.dropdown_account.selected_value[0] if self.dropdown_account.selected_value else None
             selected_label = self.dropdown_labels.selected_value[0] if self.dropdown_labels.selected_value else None
-            df = anvil.server.call('update_pdf_mapping', data=self.tag.get('data'), mapping=self.cols_mapping_panel.items, \
-                                account=selected_account, labels=selected_label)
+            df = anvil.server.call('update_pdf_mapping', self.tag.get('data'), self.cols_mapping_panel.items, selected_account, selected_label)
             Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def cb_account_change(self, **event_args):
