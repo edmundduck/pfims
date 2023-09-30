@@ -23,7 +23,8 @@ class form_poc5(form_poc5Template):
     def button_1_click(self, **event_args):
         """This method is called when the button is clicked"""
         a1, b1, c1, d1 = self.separate_call()
-        a2, b2, c2, d2 = self.consolidated_call()
+        self.consolidated_call()
+        a2, b2, c2, d2 = [None, None, None, None]
         print(f"\na1={a1}\nb1={b1}\nc1={c1}\nd1={d1}")
         print(f"\na2={a2}\nb2={b2}\nc2={c2}\nd2={d2}")
 
@@ -37,6 +38,11 @@ class form_poc5(form_poc5Template):
 
     @logger.log_function
     def consolidated_call(self):
-        a, b, c, d = anvil.server.call('generate_expense_tbl_def_dropdown', 'generate_upload_action_dropdown', 'generate_labels_dropdown', 'generate_accounts_dropdown')
+        func_list = [
+            'generate_expense_tbl_def_dropdown',
+            'generate_upload_action_dropdown',
+            'generate_labels_dropdown',
+            'generate_accounts_dropdown'
+        ]
+        a, b, c, d = anvil.server.call('proc_call_cache', func_list)
         return [a, b, c, d]
-        
