@@ -40,7 +40,7 @@ class ClientCache:
         return "Cache {0} name:{1} includes -\n{2}".format(
             self.__class__,
             self.name,
-            ClientCache.cache_dict
+            ClientCache.cache_dict.get(self.name, None)
         )
         
     def is_empty(self):

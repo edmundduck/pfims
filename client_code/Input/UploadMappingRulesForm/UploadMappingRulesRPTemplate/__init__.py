@@ -131,7 +131,6 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         cache_dict_extraact = ClientCache('dict_generate_upload_action_dropdown', {k[1][0]: k[1][1] for k in cache_extraact.get_cache()})
         cache_labels = ClientCache('generate_labels_dropdown')
         cache_dict_labels = ClientCache('dict_generate_labels_dropdown', {k[1][0]: k[1][1] for k in cache_labels.get_cache()})
-        print('label cache=', cache_dict_labels)
         cache_acct = ClientCache('generate_accounts_dropdown')        
         cache_dict_acct = ClientCache('dict_generate_accounts_dropdown', {k[1][0]: k[1][1] for k in cache_acct.get_cache()})
         dict_exp_tbl_def = cache_dict_exp_tbl_def.get_cache()
