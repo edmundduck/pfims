@@ -18,7 +18,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
 
         # Any code you write here will run when the form opens.
         cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        self.dropdown_tabs.items = ClientCache('generate_expensetabs_dropdown')
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False

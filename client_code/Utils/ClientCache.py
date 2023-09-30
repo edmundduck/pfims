@@ -40,7 +40,7 @@ class ClientCache:
         return "Cache {0} name:{1} includes -\n{2}".format(
             self.__class__,
             self.name,
-            ClientCache.cache_dict
+            ClientCache.cache_dict.get(self.name, None)
         )
         
     def is_empty(self):
@@ -96,7 +96,7 @@ class ClientCache:
         if ClientCache.cache_dict.get(self.name, None) is not None:
             cache = ClientCache.cache_dict.get(self.name, None)
             if any(isinstance(i, list) for i in cache):
-                return next((item[1] for item in cache if partial_key in item[1]), None)
+                return next((item[1] for item in cache if partial_key in item[1]), partial_key)
             else:
                 return partial_key
         return partial_key        
