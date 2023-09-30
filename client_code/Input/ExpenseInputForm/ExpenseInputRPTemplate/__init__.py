@@ -34,7 +34,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         
     @logger.log_function
     def _generateall_selected_labels(self, label_list):
-        logger.trace(f"label_list={label_list}")
         if label_list not in ('', None):
             cache_labels_list = ClientCache('generate_labels_dict_of_list')
             lbls = cache_labels_list.get_cache()
@@ -48,7 +47,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 # 2. label ID is not integer
                 # 3. label ID is NaN
                 if i.isdigit() and int(i) != 0:
-                    lbl_name = lbls[lbls.get('id').index(int(i))]
+                    lbl_name = lbls.get('name')[lbls.get('id').index(int(i))]
                     b = Button(text=lbl_name,
                             # icon=const.Icons.REMOVE,
                             foreground=const.ColorSchemes.BUTTON_FG,
