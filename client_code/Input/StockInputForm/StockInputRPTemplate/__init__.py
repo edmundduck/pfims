@@ -44,6 +44,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
     @logger.log_function
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
+        print("cost=", self.item['cost'])
         v = Validator()
     
         # To access the parent form, needs to access 3 parent levels ...
@@ -86,6 +87,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
                         "pnl": self.row_pnl.text,
                         "iid": self.row_iid.text}
       
+            print("cost=", self.item['cost'])ll
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
