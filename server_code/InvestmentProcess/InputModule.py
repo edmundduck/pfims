@@ -19,28 +19,14 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("get_template_id")
-@logger.log_function
-def get_template_id(selected_template):
-    """
-    Retrieve template ID by splitting template dropdown value.
-
-    Parameters:
-        selected_template (string): The selected template's name.
-
-    Returns:
-        string: A template's ID.
-    """
-    return selected_template[:selected_template.find("-")].strip() if selected_template is not None and selected_template.find("-") >= 0 else None
-  
 @anvil.server.callable("select_template_journals")
 @logger.log_function
-def select_template_journals(templ_choice_str):
+def select_template_journals(templ_id):
     """
     Return template journals for repeating panel to display based on template selection dropdown.
 
     Parameters:
-        templ_choice_str (string): Selected value from the template's dropdown.
+        templ_id (int): Selected template ID from the template's dropdown.
 
     Returns:
         rows (list): All template journals detail corresponding to the selected template, return empty list otherwise.
@@ -48,7 +34,7 @@ def select_template_journals(templ_choice_str):
     if templ_choice_str is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {get_template_id(templ_choice_str)} ORDER BY sell_date DESC, buy_date DESC, symbol ASC")
+            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {templ_id} ORDER BY sell_date DESC, buy_date DESC, symbol ASC")
             rows = cur.fetchall()
             cur.close()
             return list(rows)
@@ -259,27 +245,23 @@ def delete_templates(template_id):
 
 @anvil.server.callable("get_selected_template_attr")
 @logger.log_function
-def get_selected_template_attr(templ_choice_str):
+def get_selected_template_attr(templ_id):
     """
-    Return selected template name and selected broker based on template dropdown selection.
+    Return selected broker based on template dropdown selection.
     
     Parameters:
-        templ_choice_str (string): Selected value from the template's dropdown.
+        templ_id (int): ID of the template.
 
     Returns:
-        row (list): A list of template name and broker ID if select is successful, otherwise None.
+        row (list): A list of broker ID if select is successful, otherwise None.
     """
-    if templ_choice_str in (None, ''):
-        row = cfmod.select_settings()
-        return [None, row['default_broker'] if row is not None else '']
-    else:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id='{get_template_id(templ_choice_str)}'")
-            row = cur.fetchone()
-            logger.trace("row=", row)
-            cur.close()
-        return [row['template_name'] if row is not None else None, row['broker_id'] if row is not None else '']
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id={templ_id}")
+        row = cur.fetchone()
+        logger.trace("row=", row)
+        cur.close()
+    return row['broker_id'] if row is not None else None
   
 @anvil.server.callable("generate_template_dropdown")
 @logger.log_function
