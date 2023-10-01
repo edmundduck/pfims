@@ -280,33 +280,22 @@ def generate_template_dropdown():
         cur.close()
     return list((''.join([row['template_name'], ' [', str(row['template_id']), ']']), (row['template_id'], row['template_name'])) for row in rows)
 
-@anvil.server.callable("cal_profit")
+@anvil.server.callable("calculate_amount")
 @logger.log_function
-def cal_profit(sell, buy, fee):
+def calculate_amount(sell_amt, buy_amt, fee, qty):
     """
-    Calculate stock profit.
+    Calculate all amount fields including stock profit and stock unit price during sell or buy.
     
     Parameters:
-        sell (float): Stock sell price.
-        buy (float): Stock buy price.
-        fee (float): Fee incurred after stock buy and sell.
-
-    Returns:
-        float: Profit of a stock.
-    """
-    return round(float(sell) - float(buy) - float(fee), 2)
-
-@anvil.server.callable("cal_price")
-@logger.log_function
-def cal_price(amt, qty):
-    """
-    Calculate stock unit price during sell or buy
-    
-    Parameters:
-        amt (float): Stock amount.
+        sell_amt (float): Lump sum of the stock sold.
+        buy_amt (float): Lump sum of the stock purchased.
+        fee (float): Fee incurred after stock purchased and sold.
         qty (float): Stock quantity.
 
     Returns:
-        float: Unit price of a stock.
+        list: A list of stock unit sold price, bought price and profit.
     """
-    return round(float(amt) / float(qty), 2)
+    sell_price = round(float(sell_amt) / float(qty), 2)
+    buy_price = round(float(buy_amt) / float(qty), 2)
+    profit = round(float(sell_amt) - float(buy_amt) - float(fee), 2)
+    return [sell_price, buy_price, profit]

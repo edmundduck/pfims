@@ -49,8 +49,9 @@ class StockInputForm(StockInputFormTemplate):
         https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
         """
         # TODO - Improve the update change logic so that don't have to go through whole list everytime
-        self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
-                                            for c in self.input_repeating_panel.get_components()]
+        # self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
+        #                                     for c in self.input_repeating_panel.get_components()]
+        self.input_repeating_panel.items = self.input_repeating_panel.items
     
     @logger.log_function
     def button_plus_click(self, **event_args):
@@ -71,7 +72,8 @@ class StockInputForm(StockInputFormTemplate):
         #     last_iid = 0
         #     if len(self.input_repeating_panel.items) > 0:
         #         last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
-      
+
+        sell_price, buy_price, pnl = anvil.server.call('calculate_amount' ,self.input_sales.text, self.input_cost.text, self.input_fee.text, self.input_qty.text)
         new_data = {"sell_date": self.input_selldate.date,
                     "buy_date": self.input_buydate.date,
                     "symbol": self.input_symbol.text,
@@ -79,9 +81,9 @@ class StockInputForm(StockInputFormTemplate):
                     "sales": self.input_sales.text,
                     "cost": self.input_cost.text,
                     "fee": self.input_fee.text,
-                    "sell_price": anvil.server.call('cal_price', self.input_sales.text, self.input_qty.text),
-                    "buy_price": anvil.server.call('cal_price', self.input_cost.text, self.input_qty.text),
-                    "pnl": anvil.server.call('cal_profit', self.input_sales.text, self.input_cost.text, self.input_fee.text), 
+                    "sell_price": sell_price,
+                    "buy_price": buy_price,
+                    "pnl": pnl, 
                     #"iid": int(last_iid)+1}
                     "iid": None}
       
@@ -120,8 +122,8 @@ class StockInputForm(StockInputFormTemplate):
             return
         
         """ Trigger save_row_change if del_iid is not empty """
-        if len(cache_del_iid.get_cache()) > 0:
-            self.save_row_change()
+        self.save_row_change()
+        if not cache_del_iid.is_empty() and len(cache_del_iid.get_cache()) > 0:
             cache_del_iid.clear_cache()
         
         """ Add/Update """
@@ -131,7 +133,7 @@ class StockInputForm(StockInputFormTemplate):
             """ Reflect the change in template dropdown """
             cache_template.clear_cache()
             self.dropdown_templ.items = cache_template.get_cache()
-            self.dropdown_templ.selected_value = (templ_id, templ_name)
+            self.dropdown_templ.selected_value = [templ_id, templ_name]
             self.input_repeating_panel.items = anvil.server.call('select_template_journals', templ_id)
             self.button_submit.enabled = True
             msg = f"Template {templ_name} has been saved successfully."

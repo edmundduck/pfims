@@ -60,9 +60,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         v.require_text_field(self.row_fee, self.parent.parent.parent.valerror_7, True)
     
         if v.is_valid():
-            self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
-            self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
-            self.row_pnl.text = anvil.server.call('cal_profit', self.row_sales.text, self.row_cost.text, self.row_fee.text)
+            self.row_sell_price.text, self.row_buy_price.text, self.row_pnl.text = anvil.server.call('calculate_amount' ,self.row_sales.text, self.row_cost.text, self.row_fee.text, self.row_qty.text)
       
             # Lesson learnt ... THIS LINE DOESN'T WORK!!
             # new_data = {"sell_date": self.row_selldate.date,
@@ -91,8 +89,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
-            #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
-            self.parent.raise_event('x-save-change')
+            #self.parent.raise_event('x-save-change')
       
     @logger.log_function
     def button_delete_click(self, **event_args):
