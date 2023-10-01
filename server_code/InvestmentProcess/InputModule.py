@@ -33,21 +33,6 @@ def get_template_id(selected_template):
     """
     return selected_template[:selected_template.find("-")].strip() if selected_template is not None and selected_template.find("-") >= 0 else None
   
-@anvil.server.callable("generate_template_dropdown_item")
-@logger.log_function
-def generate_template_dropdown_item(templ_id, templ_name):
-    """
-    Generate template dropdown text for display in a dropdown list.
-
-    Parameters:
-        templ_id (string): The template's ID.
-        templ_name (string): The template's name.
-
-    Returns:
-        string: A template's dropdown item which comprises the template's ID and name.
-    """
-    return str(templ_id) + " - " + templ_name
-
 @anvil.server.callable("select_template_journals")
 @logger.log_function
 def select_template_journals(templ_choice_str):
@@ -311,7 +296,7 @@ def generate_template_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
         rows = cur.fetchall()
         cur.close()
-    return list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
+    return list((''.join([row['template_name'], ' [', row['template_id'], ']']), (row['template_id'], row['template_name'])) for row in rows)
 
 @anvil.server.callable("cal_profit")
 @logger.log_function
