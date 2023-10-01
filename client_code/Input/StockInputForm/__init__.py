@@ -24,12 +24,15 @@ class StockInputForm(StockInputFormTemplate):
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_user_settings = ClientCache('select_settings')
         templ_id, templ_name = self.dropdown_templ.selected_value if self.dropdown_templ.selected_value is not None else [None, None]
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
-        broker_id = anvil.server.call('get_selected_template_attr', templ_id)
         self.dropdown_broker.items = cache_brokers.get_cache()
-        self.dropdown_broker.selected_value = cache_brokers.get_complete_key(broker_id)
+        if templ_id is not None:
+            self.dropdown_broker.selected_value = cache_brokers.get_complete_key(anvil.server.call('get_selected_template_attr', templ_id))
+        else:
+            self.dropdown_broker.selected_value = cache_user_settings.get_cache()['default_broker']
         # Reset on screen change status
         self.disable_submit_button()
         
