@@ -31,7 +31,7 @@ def select_template_journals(templ_id):
     Returns:
         rows (list): All template journals detail corresponding to the selected template, return empty list otherwise.
     """
-    if templ_choice_str is not None:
+    if templ_id is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {templ_id} ORDER BY sell_date DESC, buy_date DESC, symbol ASC")
@@ -278,7 +278,7 @@ def generate_template_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
         rows = cur.fetchall()
         cur.close()
-    return list((''.join([row['template_name'], ' [', row['template_id'], ']']), (row['template_id'], row['template_name'])) for row in rows)
+    return list((''.join([row['template_name'], ' [', str(row['template_id']), ']']), (row['template_id'], row['template_name'])) for row in rows)
 
 @anvil.server.callable("cal_profit")
 @logger.log_function

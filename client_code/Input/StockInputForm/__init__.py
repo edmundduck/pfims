@@ -24,15 +24,17 @@ class StockInputForm(StockInputFormTemplate):
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_template = ClientCache('generate_template_dropdown')
         cache_user_settings = ClientCache('select_settings')
         templ_id, templ_name = self.dropdown_templ.selected_value if self.dropdown_templ.selected_value is not None else [None, None]
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
+        self.dropdown_templ.items = cache_template.get_cache()
         self.dropdown_broker.items = cache_brokers.get_cache()
         if templ_id is not None:
             self.dropdown_broker.selected_value = cache_brokers.get_complete_key(anvil.server.call('get_selected_template_attr', templ_id))
         else:
-            self.dropdown_broker.selected_value = cache_user_settings.get_cache()['default_broker']
+            self.dropdown_broker.selected_value = cache_brokers.get_complete_key(cache_user_settings.get_cache()['default_broker'])
         # Reset on screen change status
         self.disable_submit_button()
         
@@ -89,20 +91,18 @@ class StockInputForm(StockInputFormTemplate):
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
         cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_user_settings = ClientCache('select_settings')
         if self.dropdown_templ.selected_value is not None:
             templ_id, templ_name = self.dropdown_templ.selected_value
+            self.templ_name.text = templ_name
+            self.dropdown_broker.selected_value = cache_brokers.get_complete_key(anvil.server.call('get_selected_template_attr', templ_id))
             self.button_submit.enabled = True
         else:
             templ_id, templ_name = [None, None]
-        broker_id = anvil.server.call('get_selected_template_attr', self.dropdown_templ.selected_value)
-        self.dropdown_broker.selected_value = cache_brokers.get_complete_key(broker_id)
+            self.templ_name.text = templ_name
+            self.dropdown_broker.selected_value = cache_brokers.get_complete_key(cache_user_settings.get_cache()['default_broker'])
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', templ_id)
             
-
-    def dropdown_templ_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
-    
     @logger.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -129,7 +129,8 @@ class StockInputForm(StockInputFormTemplate):
 
         if result is not None:
             """ Reflect the change in template dropdown """
-            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+            cache_template.clear_cache()
+            self.dropdown_templ.items = cache_template.get_cache()
             self.dropdown_templ.selected_value = (templ_id, templ_name)
             self.input_repeating_panel.items = anvil.server.call('select_template_journals', templ_id)
             self.button_submit.enabled = True
@@ -189,6 +190,7 @@ class StockInputForm(StockInputFormTemplate):
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_template = ClientCache('generate_template_dropdown')
         templ_id, templ_name = self.dropdown_templ.selected_value
         templ_name = self.templ_name.text
         broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
@@ -196,7 +198,8 @@ class StockInputForm(StockInputFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            self.dropdown_templ.items = anvil.server.call('generate_template_dropdown')
+            cache_template.clear_cache()
+            self.dropdown_templ.items = cache_template.get_cache()
             self.dropdown_templ.raise_event('change')
         
             msg = f"Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only."
