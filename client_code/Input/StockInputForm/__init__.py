@@ -100,38 +100,34 @@ class StockInputForm(StockInputFormTemplate):
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
-        cache_template = ClientCache('generate_template_dropdown')
-        templ_id, templ_name = self.dropdown_templ.selected_value if self.dropdown_templ.selected_value is not None else [None, None]
+        templ_original_id, templ_original_name = self.dropdown_templ.selected_value if self.dropdown_templ.selected_value is not None else [None, None]
         templ_name = self.templ_name.text
         broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
-        templ_id = anvil.server.call('save_templates', templ_id, templ_name, broker_id, cache_del_iid.get_cache())
 
-        if templ_id is None or templ_id <= 0:
-            msg = f"ERROR: Fail to save template {templ_name}."
+        try:
+            self.save_row_change()
+            templ_id, journals = anvil.server.call('proc_save_template_and_journals', templ_original_id, templ_name, broker_id, cache_del_iid.get_cache(), self.input_repeating_panel.items)    
+            if not cache_del_iid.is_empty() and len(cache_del_iid.get_cache()) > 0:
+                cache_del_iid.clear_cache()
+            if templ_original_id != templ_id or templ_original_name != templ_name:
+                # Only trigger template dropdown refresh when new template is created or template name is changed
+                cache_template = ClientCache('generate_template_dropdown')
+                cache_template.clear_cache()
+                self.dropdown_templ.items = cache_template.get_cache()
+                self.dropdown_templ.selected_value = [templ_id, templ_name]
+            if journals is not None:
+                """ Reflect the change in template journals """
+                self.input_repeating_panel.items = journals
+                self.button_submit.enabled = True
+                msg = f"Template {templ_name} has been saved successfully."
+                logger.info(msg)
+            else:
+                msg = f"There are issues saving journals in template {templ_name}."
+                logger.warning(msg)
+            Notification(msg).show()
+        except RuntimeError as err:
             logger.error(msg)
             Notification(msg).show()
-            return
-        
-        self.save_row_change()
-        if not cache_del_iid.is_empty() and len(cache_del_iid.get_cache()) > 0:
-            cache_del_iid.clear_cache()
-        
-        """ Add/Update """
-        result = anvil.server.call('upsert_journals', templ_id, self.input_repeating_panel.items)
-
-        if result is not None:
-            """ Reflect the change in template dropdown """
-            cache_template.clear_cache()
-            self.dropdown_templ.items = cache_template.get_cache()
-            self.dropdown_templ.selected_value = [templ_id, templ_name]
-            self.input_repeating_panel.items = anvil.server.call('select_template_journals', templ_id)
-            self.button_submit.enabled = True
-            msg = f"Template {templ_name} has been saved successfully."
-            logger.info(msg)
-        else:
-            msg = f"ERROR: Fail to save template {templ_name}."
-            logger.error(msg)
-        Notification(msg).show()
             
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""

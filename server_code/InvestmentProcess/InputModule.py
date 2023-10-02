@@ -304,13 +304,14 @@ def calculate_amount(sell_amt, buy_amt, fee, qty):
 @logger.log_function
 def proc_save_template_and_journals(template_id, template_name, broker_id, del_iid_list, journals):
     """
-    Consolidated process for saving expense tab.
+    Consolidated process for saving template and journals.
 
     Parameters:
-        tab_id (int): The ID of a selected expense tab.
-        name (string): The name of a selected expense tab.
-        rows (list): A list of transactions to be inserted or updated.
-        iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
+        template_id (int): The ID of a selected template.
+        template_name (string): The name of a selected template.
+        broker_id (string): The broker ID which corresponds to the template.
+        del_iid_list (list): A list of IID (item ID) to be deleted, every journal has an IID.
+        journals (list): A list of journals to be inserted or updated.
 
     Returns:
         list: A list of all functions return required by the save.
@@ -323,4 +324,4 @@ def proc_save_template_and_journals(template_id, template_name, broker_id, del_i
         select_journals = select_template_journals(templ_id)
     else:
         select_journals = None
-    return [tab_id, result_u, result_d]
+    return [templ_id, select_journals]
