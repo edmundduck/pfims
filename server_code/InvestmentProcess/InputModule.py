@@ -299,3 +299,28 @@ def calculate_amount(sell_amt, buy_amt, fee, qty):
     buy_price = round(float(buy_amt) / float(qty), 2)
     profit = round(float(sell_amt) - float(buy_amt) - float(fee), 2)
     return [sell_price, buy_price, profit]
+
+@anvil.server.callable("proc_save_template_and_journals")
+@logger.log_function
+def proc_save_template_and_journals(template_id, template_name, broker_id, del_iid_list, journals):
+    """
+    Consolidated process for saving expense tab.
+
+    Parameters:
+        tab_id (int): The ID of a selected expense tab.
+        name (string): The name of a selected expense tab.
+        rows (list): A list of transactions to be inserted or updated.
+        iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
+
+    Returns:
+        list: A list of all functions return required by the save.
+    """
+    templ_id = save_templates(template_id, template_name, broker_id, del_iid_list)
+    if templ_id is None or templ_id <= 0:
+        raise RuntimeError(f"ERROR: Fail to save template {template_name}, aborting further update.")
+    result = upsert_journals(templ_id, journals)
+    if result is not None:
+        select_journals = select_template_journals(templ_id)
+    else:
+        select_journals = None
+    return [tab_id, result_u, result_d]

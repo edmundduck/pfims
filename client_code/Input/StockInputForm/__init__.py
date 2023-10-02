@@ -19,7 +19,6 @@ class StockInputForm(StockInputFormTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.input_repeating_panel.add_event_handler('x-save-change', self.save_row_change)
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
@@ -48,8 +47,7 @@ class StockInputForm(StockInputFormTemplate):
         https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
         https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
         """
-        self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
-                                            for c in self.input_repeating_panel.get_components()]
+        self.input_repeating_panel.items = [c.input_data_panel_readonly.item for c in self.input_repeating_panel.get_components()]
     
     @logger.log_function
     def button_plus_click(self, **event_args):
@@ -64,26 +62,21 @@ class StockInputForm(StockInputFormTemplate):
         v.require_text_field(self.input_cost, self.valerror_6, True)
         v.require_text_field(self.input_fee, self.valerror_7, True)
 
-        # IID generation logic is moved to database function
-        # When a new row is created, IID is default to be None
-        # if v.is_valid():
-        #     last_iid = 0
-        #     if len(self.input_repeating_panel.items) > 0:
-        #         last_iid = self.input_repeating_panel.items[len(self.input_repeating_panel.items)-1]['iid']
-
-        sell_price, buy_price, pnl = anvil.server.call('calculate_amount' ,self.input_sales.text, self.input_cost.text, self.input_fee.text, self.input_qty.text)
-        new_data = {"sell_date": self.input_selldate.date,
-                    "buy_date": self.input_buydate.date,
-                    "symbol": self.input_symbol.text,
-                    "qty": self.input_qty.text,
-                    "sales": self.input_sales.text,
-                    "cost": self.input_cost.text,
-                    "fee": self.input_fee.text,
-                    "sell_price": sell_price,
-                    "buy_price": buy_price,
-                    "pnl": pnl, 
-                    #"iid": int(last_iid)+1}
-                    "iid": None}
+        sell_price, buy_price, pnl = anvil.server.call('calculate_amount', self.input_sales.text, self.input_cost.text, self.input_fee.text, self.input_qty.text)
+        new_data = {
+            "sell_date": self.input_selldate.date,
+            "buy_date": self.input_buydate.date,
+            "symbol": self.input_symbol.text,
+            "qty": self.input_qty.text,
+            "sales": self.input_sales.text,
+            "cost": self.input_cost.text,
+            "fee": self.input_fee.text,
+            "sell_price": sell_price,
+            "buy_price": buy_price,
+            "pnl": pnl, 
+            #"iid": int(last_iid)+1}
+            "iid": None
+        }
       
         self.input_repeating_panel.items = self.input_repeating_panel.items + [new_data]
         self.disable_submit_button()
@@ -119,7 +112,6 @@ class StockInputForm(StockInputFormTemplate):
             Notification(msg).show()
             return
         
-        """ Trigger save_row_change if del_iid is not empty """
         self.save_row_change()
         if not cache_del_iid.is_empty() and len(cache_del_iid.get_cache()) > 0:
             cache_del_iid.clear_cache()

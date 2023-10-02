@@ -91,7 +91,6 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
-            #self.parent.raise_event('x-save-change')
       
     @logger.log_function
     def button_delete_click(self, **event_args):
