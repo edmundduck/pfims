@@ -94,6 +94,7 @@ class StockInputForm(StockInputFormTemplate):
             templ_id, templ_name = [None, None]
             self.templ_name.text = templ_name
             self.dropdown_broker.selected_value = cache_brokers.get_complete_key(cache_user_settings.get_cache()['default_broker'])
+            self.button_submit.enabled = False
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', templ_id)
             
     @logger.log_function
@@ -116,13 +117,15 @@ class StockInputForm(StockInputFormTemplate):
                 self.dropdown_templ.items = cache_template.get_cache()
                 self.dropdown_templ.selected_value = [templ_id, templ_name]
             if journals is not None:
+                # Result not None means insert/update journals is done successfully
                 """ Reflect the change in template journals """
                 self.input_repeating_panel.items = journals
                 self.button_submit.enabled = True
                 msg = f"Template {templ_name} has been saved successfully."
                 logger.info(msg)
             else:
-                msg = f"There are issues saving journals in template {templ_name}."
+                # Otherwise there are problems occured during insert/update journals
+                msg = f"Warning: There are issues saving journals in template {templ_name}."
                 logger.warning(msg)
             Notification(msg).show()
         except RuntimeError as err:
@@ -131,19 +134,16 @@ class StockInputForm(StockInputFormTemplate):
             
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.input_selldate.date = ""
-        self.input_buydate.date = ""
-        self.input_symbol.text = ""
-        self.input_qty.text = ""
-        self.input_sales.text = ""
-        self.input_cost.text = ""
+        self.input_selldate.date = date.today()
+        self.input_buydate.date = None
+        self.input_symbol.text = None
+        self.input_qty.text = None
+        self.input_sales.text = None
+        self.input_cost.text = None
         self.input_fee.text = 0
-        self.input_sell_price.text = ""
-        self.input_buy_price.text = ""
-        self.input_pnl.text = ""
-        """ Reset row delete flag """
-        cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
-        cache_del_iid.clear_cache()
+        self.input_sell_price.text = None
+        self.input_buy_price.text = None
+        self.input_pnl.text = None
     
     @logger.log_function
     def button_delete_templ_click(self, **event_args):
@@ -151,6 +151,7 @@ class StockInputForm(StockInputFormTemplate):
         cache_brokers = ClientCache('generate_brokers_dropdown')
         cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
         cache_template = ClientCache('generate_template_dropdown')
+        cache_user_settings = ClientCache('select_settings')        
         templ_id, templ_name = self.dropdown_templ.selected_value
         confirm = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=templ_name))
         userconf = alert(content=confirm, 
@@ -164,9 +165,14 @@ class StockInputForm(StockInputFormTemplate):
                 cache_del_iid.clear_cache()
             
                 """ Reflect the change in template dropdown """
-                self.dropdown_templ_show()
-                self.dropdown_broker.items = cache_brokers.get_cache()
+                cache_template.clear_cache()
+                self.dropdown_templ.items = cache_template.get_cache()
+                self.dropdown_broker.selected_value = cache_brokers.get_complete_key(cache_user_settings.get_cache()['default_broker'])
                 self.input_repeating_panel.items = []
+                self.templ_name.text = None
+                self.input_selldate.date = date.today()
+                # Reset on screen change status
+                self.disable_submit_button()
                 
                 msg = f"Template {templ_name} has been deleted."
                 logger.info(msg)
@@ -178,18 +184,16 @@ class StockInputForm(StockInputFormTemplate):
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_template = ClientCache('generate_template_dropdown')
         templ_id, templ_name = self.dropdown_templ.selected_value
-        templ_name = self.templ_name.text
         broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
         result = anvil.server.call('submit_templates', templ_id, True)
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
+            cache_template = ClientCache('generate_template_dropdown')
             cache_template.clear_cache()
             self.dropdown_templ.items = cache_template.get_cache()
-            self.dropdown_templ.raise_event('change')
-        
+            self.dropdown_templ.selected_value = None
             msg = f"Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only."
             logger.info(msg)
         else:

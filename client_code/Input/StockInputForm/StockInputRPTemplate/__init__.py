@@ -18,10 +18,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        if self.item['pnl'] < 0:
-            self.foreground = const.ColorSchemes.AMT_NEG
-        else:
-            self.foreground = const.ColorSchemes.AMT_POS
+        self.foreground = const.ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else const.ColorSchemes.AMT_POS
 
     @logger.log_function
     def button_edit_click(self, **event_args):
@@ -44,7 +41,6 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
     @logger.log_function
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
-        print("cost=", self.item['cost'])
         v = Validator()
     
         # To access the parent form, needs to access 3 parent levels ...
@@ -75,19 +71,20 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             #                "iid": self.row_iid.text}
             # self.item = self.row_symbol.text
             # self.item = new_data
-            self.item = {"sell_date": self.row_selldate.date,
-                        "buy_date": self.row_buydate.date,
-                        "symbol": self.row_symbol.text,
-                        "qty": self.row_qty.text,
-                        "sales": float(self.row_sales.text),
-                        "cost": float(self.row_cost.text),
-                        "fee": float(self.row_fee.text),
-                        "sell_price": self.row_sell_price.text,
-                        "buy_price": self.row_buy_price.text,
-                        "pnl": self.row_pnl.text,
-                        "iid": self.row_iid.text}
+            self.item = {
+                "sell_date": self.row_selldate.date,
+                "buy_date": self.row_buydate.date,
+                "symbol": self.row_symbol.text,
+                "qty": self.row_qty.text,
+                "sales": float(self.row_sales.text),
+                "cost": float(self.row_cost.text),
+                "fee": float(self.row_fee.text),
+                "sell_price": self.row_sell_price.text,
+                "buy_price": self.row_buy_price.text,
+                "pnl": self.row_pnl.text,
+                "iid": self.row_iid.text
+            }
       
-            print("cost=", self.item['cost'])
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
@@ -101,5 +98,5 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
                 cache_del_iid.set_cache([self.item.get('iid')])
             else:
                 cache_del_iid.get_cache().append(self.item.get('iid'))
-        self.parent.raise_event('x-disable-submit-button')
+            self.parent.raise_event('x-disable-submit-button')
         self.remove_from_parent()
