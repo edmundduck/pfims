@@ -48,10 +48,8 @@ class StockInputForm(StockInputFormTemplate):
         https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
         https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
         """
-        # TODO - Improve the update change logic so that don't have to go through whole list everytime
-        # self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
-        #                                     for c in self.input_repeating_panel.get_components()]
-        self.input_repeating_panel.items = self.input_repeating_panel.items
+        self.input_repeating_panel.items = [c.input_data_panel_readonly.item \
+                                            for c in self.input_repeating_panel.get_components()]
     
     @logger.log_function
     def button_plus_click(self, **event_args):

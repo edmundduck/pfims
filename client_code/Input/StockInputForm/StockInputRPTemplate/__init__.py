@@ -87,7 +87,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
                         "pnl": self.row_pnl.text,
                         "iid": self.row_iid.text}
       
-            print("cost=", self.item['cost'])ll
+            print("cost=", self.item['cost'])
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
