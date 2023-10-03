@@ -135,15 +135,15 @@ class SettingForm(SettingFormTemplate):
     @logger.log_function
     def button_templ_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        to_be_enabled_templ_name = self.dropdown_sub_templ_list.selected_value
-        templ_id, result, submitted_templ_list = anvil.server.call('proc_submitted_template_update', to_be_enabled_templ_name)
+        templ_id, templ_name = self.dropdown_sub_templ_list.selected_value if self.dropdown_sub_templ_list.selected_value is not None else [None, None]
+        templ_id, result, submitted_templ_list = anvil.server.call('proc_submitted_template_update', templ_id)
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
             self.dropdown_sub_templ_list.items = submitted_templ_list
-            n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=to_be_enabled_templ_name))
+            n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=templ_name))
         else:
-            n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=to_be_enabled_templ_name))
+            n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=templ_name))
         n.show()
 
     def button_logging_edit_click(self, **event_args):

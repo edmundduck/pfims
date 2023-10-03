@@ -8,7 +8,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from ..InvestmentProcess import InputModule as imod
+from ..InvestmentProcess import InputModule
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
@@ -185,10 +185,9 @@ def psgldb_get_submitted_templ_list():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
-        result = list(imod.generate_template_dropdown_item(str(row['template_id']), row['template_name']) for row in cur.fetchall())
+        result = list((''.join([row['template_name'], ' [', row['template_id'], ']']), (row['template_id'], row['template_name'])) for row in cur.fetchall())
         logger.debug("result=", result)
         cur.close()
-    result.insert(0, '')
     return result
         
 @logger.log_function
@@ -359,15 +358,17 @@ def proc_broker_delete(b_id):
 
 @anvil.server.callable("proc_submitted_template_update")
 @logger.log_function
-def proc_submitted_template_update(template):
+def proc_submitted_template_update(templ_id):
     """
     Consolidated process for submitted template dropdown update.
+
+    Parameters:
+        templ_id (int): ID of the template.
 
     Returns:
         list: A list of all functions return required by the submitted template dropdown update.
     """
-    templ_id = imod.get_template_id(template)
-    result = imod.submit_templates(templ_id, False)
+    result = InputModule.submit_templates(templ_id, False)
 
     if result is not None and result > 0:
         submitted_templ_list = get_submitted_templ_list()

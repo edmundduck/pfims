@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+import psycopg2.extras
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -54,5 +55,10 @@ def to_dict_of_list(LD):
     Returns:
         DL (dict of list): Dict of list.
     """
-    DL = {k: [dic[k] for dic in LD] for k in LD[0]}
+    if isinstance(LD[0], dict):
+        DL = {k: [dic[k] for dic in LD] for k in LD[0]}
+    elif isinstance(LD[0], psycopg2.extras.DictRow):
+        DL = {k: [dic[k] for dic in LD] for k in LD[0].keys()}
+    else:
+        raise TypeError(f"Only list of dict or list of DictCursor is supported.")
     return DL

@@ -19,51 +19,22 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("get_template_id")
-@logger.log_function
-def get_template_id(selected_template):
-    """
-    Retrieve template ID by splitting template dropdown value.
-
-    Parameters:
-        selected_template (string): The selected template's name.
-
-    Returns:
-        string: A template's ID.
-    """
-    return selected_template[:selected_template.find("-")].strip() if selected_template is not None and selected_template.find("-") >= 0 else None
-  
-@anvil.server.callable("generate_template_dropdown_item")
-@logger.log_function
-def generate_template_dropdown_item(templ_id, templ_name):
-    """
-    Generate template dropdown text for display in a dropdown list.
-
-    Parameters:
-        templ_id (string): The template's ID.
-        templ_name (string): The template's name.
-
-    Returns:
-        string: A template's dropdown item which comprises the template's ID and name.
-    """
-    return str(templ_id) + " - " + templ_name
-
 @anvil.server.callable("select_template_journals")
 @logger.log_function
-def select_template_journals(templ_choice_str):
+def select_template_journals(templ_id):
     """
     Return template journals for repeating panel to display based on template selection dropdown.
 
     Parameters:
-        templ_choice_str (string): Selected value from the template's dropdown.
+        templ_id (int): Selected template ID from the template's dropdown.
 
     Returns:
         rows (list): All template journals detail corresponding to the selected template, return empty list otherwise.
     """
-    if templ_choice_str is not None:
+    if templ_id is not None:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {get_template_id(templ_choice_str)} ORDER BY sell_date DESC, buy_date DESC, symbol ASC")
+            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {templ_id} ORDER BY sell_date DESC, buy_date DESC, symbol ASC")
             rows = cur.fetchall()
             cur.close()
             return list(rows)
@@ -274,27 +245,23 @@ def delete_templates(template_id):
 
 @anvil.server.callable("get_selected_template_attr")
 @logger.log_function
-def get_selected_template_attr(templ_choice_str):
+def get_selected_template_attr(templ_id):
     """
-    Return selected template name and selected broker based on template dropdown selection.
+    Return selected broker based on template dropdown selection.
     
     Parameters:
-        templ_choice_str (string): Selected value from the template's dropdown.
+        templ_id (int): ID of the template.
 
     Returns:
-        row (list): A list of template name and broker ID if select is successful, otherwise None.
+        row (list): A list of broker ID if select is successful, otherwise None.
     """
-    if templ_choice_str in (None, ''):
-        row = cfmod.select_settings()
-        return [None, row['default_broker'] if row is not None else '']
-    else:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id='{get_template_id(templ_choice_str)}'")
-            row = cur.fetchone()
-            logger.trace("row=", row)
-            cur.close()
-        return [row['template_name'] if row is not None else None, row['broker_id'] if row is not None else '']
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id={templ_id}")
+        row = cur.fetchone()
+        logger.trace("row=", row)
+        cur.close()
+    return row['broker_id'] if row is not None else None
   
 @anvil.server.callable("generate_template_dropdown")
 @logger.log_function
@@ -311,35 +278,50 @@ def generate_template_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
         rows = cur.fetchall()
         cur.close()
-    return list(generate_template_dropdown_item(row['template_id'], row['template_name']) for row in rows)
+    return list((''.join([row['template_name'], ' [', str(row['template_id']), ']']), (row['template_id'], row['template_name'])) for row in rows)
 
-@anvil.server.callable("cal_profit")
+@anvil.server.callable("calculate_amount")
 @logger.log_function
-def cal_profit(sell, buy, fee):
+def calculate_amount(sell_amt, buy_amt, fee, qty):
     """
-    Calculate stock profit.
+    Calculate all amount fields including stock profit and stock unit price during sell or buy.
     
     Parameters:
-        sell (float): Stock sell price.
-        buy (float): Stock buy price.
-        fee (float): Fee incurred after stock buy and sell.
-
-    Returns:
-        float: Profit of a stock.
-    """
-    return round(float(sell) - float(buy) - float(fee), 2)
-
-@anvil.server.callable("cal_price")
-@logger.log_function
-def cal_price(amt, qty):
-    """
-    Calculate stock unit price during sell or buy
-    
-    Parameters:
-        amt (float): Stock amount.
+        sell_amt (float): Lump sum of the stock sold.
+        buy_amt (float): Lump sum of the stock purchased.
+        fee (float): Fee incurred after stock purchased and sold.
         qty (float): Stock quantity.
 
     Returns:
-        float: Unit price of a stock.
+        list: A list of stock unit sold price, bought price and profit.
     """
-    return round(float(amt) / float(qty), 2)
+    sell_price = round(float(sell_amt) / float(qty), 2)
+    buy_price = round(float(buy_amt) / float(qty), 2)
+    profit = round(float(sell_amt) - float(buy_amt) - float(fee), 2)
+    return [sell_price, buy_price, profit]
+
+@anvil.server.callable("proc_save_template_and_journals")
+@logger.log_function
+def proc_save_template_and_journals(template_id, template_name, broker_id, del_iid_list, journals):
+    """
+    Consolidated process for saving template and journals.
+
+    Parameters:
+        template_id (int): The ID of a selected template.
+        template_name (string): The name of a selected template.
+        broker_id (string): The broker ID which corresponds to the template.
+        del_iid_list (list): A list of IID (item ID) to be deleted, every journal has an IID.
+        journals (list): A list of journals to be inserted or updated.
+
+    Returns:
+        list: A list of all functions return required by the save.
+    """
+    templ_id = save_templates(template_id, template_name, broker_id, del_iid_list)
+    if templ_id is None or templ_id <= 0:
+        raise RuntimeError(f"ERROR: Fail to save template {template_name}, aborting further update.")
+    result = upsert_journals(templ_id, journals)
+    if result is not None:
+        select_journals = select_template_journals(templ_id)
+    else:
+        select_journals = None
+    return [templ_id, select_journals]

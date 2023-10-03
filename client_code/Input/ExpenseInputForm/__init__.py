@@ -22,6 +22,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        self.dropdown_labels.items = cache_labels.get_cache()
+        self.dropdown_tabs.items = cache_exptabs.get_cache()
+        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
         self.input_repeating_panel.add_event_handler('x-deleted-row', self._deleted_iid_row_active)
@@ -38,7 +43,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             logger.info(f"{len(data)} rows are imported to {__name__}.")
             self.input_repeating_panel.items = data
         self._deleted_iid_row_reset()
-        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
         cache_del_iid.clear_cache()
 
     def _switch_to_submit_button(self, **event_args):
@@ -65,11 +70,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_add_rows.enabled = False
         if self.tag['reload']:
             self.reload_rp_data(extra=self._generate_blank_records())
             self.tag['reload'] = False
         else:
             self.input_repeating_panel.items = self._generate_blank_records() + self.input_repeating_panel.items
+        self.button_add_rows.enabled = True
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -79,11 +86,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         Routing.open_acct_maint_form(self)
 
-    def dropdown_labels_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_labels.items = cache_labels.get_cache()
-
     @logger.log_function
     def dropdown_labels_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -91,21 +93,15 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if selected_lid is not None:
             self.input_repeating_panel.raise_event_on_children('x-create-lbl-button', selected_lid=selected_lid, selected_lname=selected_lname)
         
-    def dropdown_tabs_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
-
     @logger.log_function
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
-        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        tab_id, self.tab_name.text = anvil.server.call('get_selected_expensetab_attr', selected_tid)
-        self.input_repeating_panel.items = anvil.server.call('select_transactions', selected_tid)
+        tab_id, self.tab_name.text, self.input_repeating_panel.items = anvil.server.call('proc_exp_tab_change', selected_tid)
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
-            self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records()
+            self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records(diff)
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self._deleted_iid_row_reset()
         cache_del_iid.clear_cache()
@@ -153,6 +149,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     @logger.log_function
     def button_save_click(self, **event_args):
+        self.button_save_exptab.enabled = False
         """Validation"""
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
         if result is not True:
@@ -161,66 +158,71 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         self.reload_rp_data()
         tab_name = self.tab_name.text
-        tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        tab_id = anvil.server.call('save_expensetab', id=tab_id, name=tab_name)
-        if tab_id is None or tab_id <= 0:
-            msg = f"ERROR: Fail to save expense tab {tab_name}."
-            logger.error(msg)
-            Notification(msg).show()
-            return
-
-        """ Reflect the change in template dropdown """
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-        self.dropdown_tabs.selected_value = [tab_id, tab_name]
-        # """ Add/Update """
-        result_u = anvil.server.call('upsert_transactions', tab_id, self.input_repeating_panel.items)
-        # """ Delete """
-        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
-        result_d = anvil.server.call('delete_transactions', tab_id, cache_del_iid.get_cache())
-
-        if result_d is not None and result_u is not None:
-            self._deleted_iid_row_reset()
-            cache_del_iid.clear_cache()
-            self._switch_to_submit_button()
-            self._replace_iid(result_u)
-            msg2 = f"Expense tab {tab_name} has been saved successfully."
-            logger.info(msg2)
-        else:
-            if result_d is not None:
+        tab_id, tab_original_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
+        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
+        try:
+            tab_id, result_u, result_d = anvil.server.call('proc_save_exp_tab', tab_id, tab_name, self.input_repeating_panel.items, cache_del_iid.get_cache())
+            if tab_name != tab_original_name or tab_id is None:
+                # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
+                cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+                cache_exptabs.clear_cache()
+                self.dropdown_tabs.items = cache_exptabs.get_cache()
+                self.dropdown_tabs.selected_value = [tab_id, tab_name]
+            if result_u is None and result_d is None:
+                msg = f"WARNING: Expense tab {name} has been saved but technical problem occurs in saving transactions. Please try again."
+                logger.warning(msg)
+            elif result_u is None:
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
-                msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
-            elif result_u is not None:
+                msg = f"WARNING: Expense tab {name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
+                logger.warning(msg)
+            elif result_d is None:
                 self._replace_iid(result_u)
-                msg2 = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
+                msg = f"WARNING: Expense tab {name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
+                logger.warning(msg)
             else:
-                msg2 = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
-            logger.warning(msg2)
-        Notification(msg2).show()
+                self._deleted_iid_row_reset()
+                cache_del_iid.clear_cache()
+                self._replace_iid(result_u)
+                self._switch_to_submit_button()
+                msg = f"Expense tab {tab_name} has been saved successfully."
+                logger.info(msg)
+            logger.debug(f"Tab ID={tab_id}, IID list={result_u}, Deleted count={result_d}")
+            Notification(msg).show()
+        except RuntimeError as err:
+            logger.error(err)
+            Notification(err).show()
+        self.button_save_exptab.enabled = True
 
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_save_exptab.enabled = False
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         result = anvil.server.call('submit_expensetab', tab_id, True)
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
-            self.dropdown_tabs.raise_event('change')
+            cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+            cache_exptabs.clear_cache()
+            self.dropdown_tabs.items = cache_exptabs.get_cache()
+            self.dropdown_tabs.selected_value = None
+            tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
+            self.button_delete_exptab.enabled = False
             msg = f"Expense tab {tab_name} has been submitted."
             logger.info(msg)
         else:
             msg = f"ERROR: Fail to submit expense tab {tab_name}."
             logger.error(msg)
         Notification(msg).show()
+        self.button_save_exptab.enabled = True
 
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        to_be_del_tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        to_be_del_tab_name = self.dropdown_tabs.selected_value[1] if self.dropdown_tabs.selected_value is not None else None
+        self.button_delete_exptab.enabled = False
+        to_be_del_tab_id, to_be_del_tab_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         msg = Label(text=f"Proceed expense tab <{to_be_del_tab_name}> deletion by clicking DELETE.")
         userconf = alert(content=msg, title="Confirm Expense Tab Deletion", buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
 
@@ -228,16 +230,21 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             result = anvil.server.call('delete_expensetab', tab_id=to_be_del_tab_id)
             if result is not None and result > 0:
                 """ Reflect the change in tab dropdown """
-                cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
-                self.dropdown_tabs_show()
-                self.dropdown_tabs.raise_event('change')
+                cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
+                cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+                cache_exptabs.clear_cache()
+                self.dropdown_tabs.items = cache_exptabs.get_cache()
+                self.dropdown_tabs.selected_value = None
+                tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 logger.info(msg2)
+                self.button_delete_exptab.enabled = False
             else:
                 msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
                 logger.error(msg2)
+                self.button_delete_exptab.enabled = True
             Notification(msg2).show()
 
     def tab_name_change(self, **event_args):
@@ -252,7 +259,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             extra (list): Extra list to add to resultant repeating panel.
         """
         def filter_valid_rows(row):
-            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)            
+            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
             if row.get('iid', None) and row.get('iid') in cache_del_iid.get_cache():
                 # Filter out all rows in deleted IID cache
                 return False
@@ -289,13 +296,16 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         self.tag = {'reload': False}
 
-    def _generate_blank_records(self, **event_args):
+    def _generate_blank_records(self, num=const.ExpenseConfig.DEFAULT_ROW_NUM, **event_args):
         """
         Generate a list of blank records.
+
+        Parameters:
+            num: The number of blank records to generate. The default number is defined in Constants file.
 
         Returns:
             list: A list of blank records for repeating panel.
         """
         cache_blank = ClientCache('emptyexprecord')
-        return [cache_blank.get_cache().copy() for i in range(const.ExpenseConfig.DEFAULT_ROW_NUM)]
+        return [cache_blank.get_cache().copy() for i in range(num)]
         

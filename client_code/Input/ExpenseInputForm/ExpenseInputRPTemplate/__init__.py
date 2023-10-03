@@ -22,7 +22,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         cache_acct = ClientCache('generate_accounts_dropdown')
         self.row_acct.items = cache_acct.get_cache()
         logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
-        self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
+        if self.row_acct.selected_value is not None: self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
@@ -35,20 +35,19 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @logger.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
-            cache_labels_list = ClientCache('generate_labels_list')
+            cache_labels_list = ClientCache('generate_labels_dict_of_list')
             lbls = cache_labels_list.get_cache()
-            trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            # trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            trimmed_list = list(filter(len, label_list.split(",")))
             logger.trace(f"trimmed_list={trimmed_list}")
+            logger.trace(f"cache_labels_list={lbls}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
                 # 2. label ID is not integer
                 # 3. label ID is NaN
                 if i.isdigit() and int(i) != 0:
-                    lbl_name = None
-                    for j in lbls:
-                        if str(j.get("id")).strip() == i:
-                            lbl_name = j.get("name").strip()
+                    lbl_name = lbls.get('name')[lbls.get('id').index(int(i))]
                     b = Button(text=lbl_name,
                             # icon=const.Icons.REMOVE,
                             foreground=const.ColorSchemes.BUTTON_FG,
@@ -129,13 +128,13 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_delete.enabled = False
         if self.item.get('iid') is not None: 
-            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID)
+            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
             if cache_del_iid.is_empty():
                 cache_del_iid.set_cache([self.item.get('iid')])
             else:
                 cache_del_iid.get_cache().append(self.item.get('iid'))
-            print(cache_del_iid)
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
         self.remove_from_parent()

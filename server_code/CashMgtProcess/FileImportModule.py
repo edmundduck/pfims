@@ -13,7 +13,7 @@ import pdfplumber
 import re
 import datetime
 from . import LabelModule as lbl_mod
-from . import FileUploadMappingModule as fummod
+from . import FileUploadMappingModule
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import LoggingModule
 from ..DataObject.FinObject import ExpenseRecord as exprcd
@@ -86,12 +86,12 @@ def import_file(file, tablist, rules, extra):
         extra (list of dict): Extra mapping action per rule.
 
     Returns:
-        new_df (dataframe): Processed dataframe.
+        new_df (dataframe): Processed dataframe containing all transactions.
+        lbl_df (dataframe): Processed dataframe containing all labels.
     """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = helper.to_dict_of_list(extra)
-
 
     new_df = None
     for i in rules:
@@ -104,11 +104,11 @@ def import_file(file, tablist, rules, extra):
             # iloc left one is row, right one is column
             # 1) Filter required columns
             tmp_df = df[t].iloc[:, [x for x in col if x is not None]]
-            logger.trace("1) Filter required columns, tmp_df=", tmp_df)
+            logger.trace("1) Filter required columns\ntmp_df=", tmp_df)
             
             # 2) Rename columns
             tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
-            logger.trace("2) Rename columns, tmp_df=", tmp_df)
+            logger.trace("2) Rename columns\ntmp_df=", tmp_df)
             
             # 3) Add 'not in rule' fields to the end
             tmp_df.loc[:, nanList] = None
@@ -120,11 +120,11 @@ def import_file(file, tablist, rules, extra):
                     tmp_df[exprcd.Account] = int(extra_dl.get('etarget')[extra_dl_pointer])
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
                     tmp_df[exprcd.Labels] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df[exprcd.Labels] in (None, '') else tmp_df[exprcd.Labels] + extra_dl.get('etarget')[extra_dl_pointer]
-                logger.trace("4) Map extra action logic, tmp_df=", tmp_df)
+                logger.trace("4) Map extra action logic\ntmp_df=", tmp_df)
             
             # 5) Concat temp DF to the resultant DF
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
-            logger.trace("5) Concat temp DF to the resultant DF, new_df=", new_df)
+            logger.trace("5) Concat temp DF to the resultant DF\nnew_df=", new_df)
 
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
@@ -425,7 +425,7 @@ def update_pdf_mapping(data, mapping, account, labels):
         # Generate mapping matrix which has unique columns each
         # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
         logger.debug(f"nonNanList={nonNanList}, nanList={nanList}")
-        mapping_matrix = fummod.generate_mapping_matrix(matrix, nonNanList.copy())
+        mapping_matrix = FileUploadMappingModule.generate_mapping_matrix(matrix, nonNanList.copy())
 
         new_df = None
         for m in mapping_matrix:
@@ -488,3 +488,22 @@ def update_pdf_mapping(data, mapping, account, labels):
     except (Exception) as err:
         logger.error(err)
     return None
+
+@anvil.server.callable("proc_excel_import_1st_stage")
+@logger.log_function
+def proc_excel_import_1st_stage(rule_id, file, tablist):
+    """
+    Consolidated process for importing excel in the 1st stage (which is in upload form prior to mapping labels).
+
+    Parameters:
+        rule_id (int): The ID of a mapping rule.
+        file (object): The uploaded file object.
+        tablist (list): A list of selected Excel tabs for processing.
+
+    Returns:
+        list: A list of all functions return required by the selection change.
+    """
+    matrix = FileUploadMappingModule.select_mapping_matrix(rule_id)
+    extra = FileUploadMappingModule.select_mapping_extra_actions(rule_id)
+    data_df, lbls_df = import_file(file, tablist, matrix, extra)
+    return [data_df, lbls_df]
