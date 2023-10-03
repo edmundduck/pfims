@@ -217,7 +217,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     
         self.subform.hidden_time_datefrom.date = startdate
         self.subform.hidden_symbol.text = label_list
-        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', startdate, enddate, label_list)
+        self.subform.rpt_panel.items = anvil.server.call('select_transactions_filter_by_labels', startdate, enddate, label_list)
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""

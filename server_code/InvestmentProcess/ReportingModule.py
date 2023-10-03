@@ -397,3 +397,36 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
 
     logger.trace("rowstruct=", rowstruct)
     return sorted(rowstruct, key=lambda x: x.get('sell_date'))
+
+@anvil.server.callable("select_transactions_filter_by_labels")
+@logger.log_function
+def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
+    """
+    Return transactions for repeating panel to display based on transaction date criteria.
+
+    Parameters:
+        start_date (date): Start date of the search.
+        end_date (date): End date of the search.
+        labels (list): List of selected labels.
+
+    Returns:
+        rows (list): Transactions in list.
+    """
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sell_sql = "j.trandate <= '{0}'".format(end_date) if end_date is not None else ""
+        buy_sql = "j.trandate >= '{0}'".format(start_date) if start_date is not None else ""
+        symbol_sql = "j.symbol IN ({0})".format(",".join("'" + i + "'" for i in symbols)) if len(symbols) > 0 else ""
+        conn_sql1 = " AND " if sell_sql or buy_sql or symbol_sql else ""
+        conn_sql2 = " AND " if sell_sql and (buy_sql or symbol_sql) else ""
+        conn_sql3 = " AND " if (sell_sql or buy_sql) and symbol_sql else ""
+        sql = f"SELECT j.iid, j.tab_id, j.trandate, j.account_id, j.amount, j.labels, j.remarks, j.stmt_dtl \
+        FROM {sysmod.schemafin()}.exp_transactions j, {sysmod.schemafin()}.expensetab t \
+        WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {sell_sql} {conn_sql2} \
+        {buy_sql} {conn_sql3} {symbol_sql} ORDER BY j.trandate DESC, j.iid ASC"
+        cur.execute(sql)
+        rows = cur.fetchall()
+        logger.trace("rows=", rows)
+        cur.close()
+    return list(rows)
