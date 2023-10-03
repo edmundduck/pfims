@@ -24,10 +24,11 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     
         # Any code you write here will run when the form opens.
         cache_interval = ClientCache('select_search_interval')
+        cache_settings = ClientCache('select_settings')
         self.dropdown_interval.items = cache_interval.get_cache()
         self.dropdown_symbol.items = []
     
-        settings = anvil.server.call('select_settings')
+        settings = cache_settings.get_cache()
         self.dropdown_interval.selected_value = settings.get('default_interval')
         self.time_datefrom.date = settings.get('default_datefrom')
         self.time_dateto.date = settings.get('default_dateto')
@@ -209,7 +210,14 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
 
     def button_exp_search_click(self, **event_args):
         """This method is called when the button is clicked"""
-        pass
+        cache_labels = ClientCache('generate_labels_dropdown')
+        label_list = cache_labels.get_cache()
+        enddate = self._find_enddate()
+        startdate = self._find_startdate()
+    
+        self.subform.hidden_time_datefrom.date = startdate
+        self.subform.hidden_symbol.text = label_list
+        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', startdate, enddate, label_list)
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""

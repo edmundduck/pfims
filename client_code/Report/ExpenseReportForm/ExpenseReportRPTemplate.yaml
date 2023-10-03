@@ -47,7 +47,7 @@ components:
     visible: true, text: '', font_size: null, wrap_on: mobile, font: '', col_spacing: medium,
     spacing_above: small, icon_align: left, col_widths: '', spacing_below: small,
     italic: false, background: '', bold: false, underline: false, icon: ''}
-  name: row_label_category
+  name: row_label_labels
   layout_properties: {column: RMITXR}
   data_bindings: []
   event_bindings: {click: row_link_symbol_click}
@@ -72,7 +72,7 @@ components:
     visible: true, text: '', font_size: null, wrap_on: mobile, font: '', col_spacing: medium,
     spacing_above: small, icon_align: left, col_widths: '', spacing_below: small,
     italic: false, background: '', bold: false, underline: false, icon: ''}
-  name: row_label_src
+  name: row_label_acct
   layout_properties: {column: DMKCOL}
   data_bindings: []
 container:

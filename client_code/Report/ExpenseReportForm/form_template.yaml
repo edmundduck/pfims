@@ -20,14 +20,17 @@ components:
   properties:
     role: null
     columns:
-    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
-    - {id: DNGCRO, title: Transaction Date, data_key: tran_date, width: '90'}
-    - {id: RMITXR, title: Category, data_key: category, width: '80'}
-    - {id: DMKCOL, title: Source, data_key: src, width: '80'}
-    - {id: JRLRWP, title: Cash Flow, data_key: amt, width: '100'}
-    - {id: WXPMEY, title: Debt, data_key: debt, width: '100'}
-    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70'}
-    - {id: NMAPTI, title: Remarks, data_key: remarks, expand: false, width: '200'}
+    - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:10648'}
+    - {id: DNGCRO, title: Transaction Date, data_key: tran_date, width: '90', $$hashKey: 'object:10649'}
+    - {id: DMKCOL, title: Account, data_key: acct, width: '80', $$hashKey: 'object:10651'}
+    - {id: JRLRWP, title: Amount, data_key: amt, width: '100', $$hashKey: 'object:10652'}
+    - {id: WXPMEY, title: Debt, data_key: debt, width: '100', $$hashKey: 'object:10653'}
+    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70', $$hashKey: 'object:10654'}
+    - {id: NMAPTI, title: Remarks, data_key: remarks, expand: false, width: '200',
+      $$hashKey: 'object:10655'}
+    - {id: YMODTM, title: Statement Detail, data_key: stmt_dtl, $$hashKey: 'object:10710',
+      width: '200'}
+    - {id: RMITXR, title: Labels, data_key: lbl, width: '80', $$hashKey: 'object:10650'}
     auto_header: true
     tooltip: ''
     border: ''

@@ -16,10 +16,7 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        if self.item['pnl'] < 0:
-            self.foreground = const.ColorSchemes.AMT_NEG
-        else:
-            self.foreground = const.ColorSchemes.AMT_POS
+        self.foreground = const.ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else const.ColorSchemes.AMT_POS
 
     def row_link_symbol_click(self, **event_args):
         """This method is called when the link is clicked"""
