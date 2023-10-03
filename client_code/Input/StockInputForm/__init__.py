@@ -7,11 +7,13 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Validation import Validator
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class StockInputForm(StockInputFormTemplate):
     def __init__(self, **properties):
@@ -49,6 +51,7 @@ class StockInputForm(StockInputFormTemplate):
         """
         self.input_repeating_panel.items = [c.input_data_panel_readonly.item for c in self.input_repeating_panel.get_components()]
     
+    @btnmod.one_click_only
     @logger.log_function
     def button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -97,6 +100,7 @@ class StockInputForm(StockInputFormTemplate):
             self.button_submit.enabled = False
         self.input_repeating_panel.items = anvil.server.call('select_template_journals', templ_id)
             
+    @btnmod.one_click_only
     @logger.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -132,6 +136,7 @@ class StockInputForm(StockInputFormTemplate):
             logger.error(msg)
             Notification(msg).show()
             
+    @btnmod.one_click_only
     def button_erase_click(self, **event_args):
         """This method is called when the button is clicked"""
         self.input_selldate.date = date.today()
@@ -145,6 +150,7 @@ class StockInputForm(StockInputFormTemplate):
         self.input_buy_price.text = None
         self.input_pnl.text = None
     
+    @btnmod.one_click_only
     @logger.log_function
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -181,6 +187,7 @@ class StockInputForm(StockInputFormTemplate):
                 logger.error(msg)
             Notification(msg).show()                
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""

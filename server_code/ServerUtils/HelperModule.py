@@ -24,11 +24,12 @@ def upper_dict_keys(rows, key_list=None):
         result (list of dict): List of dict containing keys in upper case.
     """
     DL = {}
-    for k in rows[0].keys():
-        if k.upper() in key_list or not key_list:
-            DL[k.upper()] = [row[k] for row in rows]
-        else:
-            DL[k] = [row[k] for row in rows]  
+    if rows is not None and len(rows) > 0:
+        for k in rows[0].keys():
+            if k.upper() in key_list or not key_list:
+                DL[k.upper()] = [row[k] for row in rows]
+            else:
+                DL[k] = [row[k] for row in rows]  
     result = to_list_of_dict(DL)
     return result
 
