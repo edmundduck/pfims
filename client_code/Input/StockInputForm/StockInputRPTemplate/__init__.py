@@ -23,6 +23,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
     @logger.log_function
     def button_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_edit.enabled = False
         self.row_selldate.date = self.item['sell_date']
         self.row_buydate.date = self.item['buy_date']
         self.row_symbol.text = self.item['symbol']
@@ -37,10 +38,12 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
+        self.button_edit.enabled = True
 
     @logger.log_function
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_save.enabled = False
         v = Validator()
     
         # To access the parent form, needs to access 3 parent levels ...
@@ -88,10 +91,12 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
+        self.button_save.enabled = True
       
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_delete.enabled = False
         if self.item.get('iid') is not None:
             cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
             if cache_del_iid.is_empty():
