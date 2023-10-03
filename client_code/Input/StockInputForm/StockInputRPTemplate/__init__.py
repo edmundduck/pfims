@@ -6,11 +6,13 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
-from ....Utils import Caching as cache
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -18,11 +20,9 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        if self.item['pnl'] < 0:
-            self.foreground = const.ColorSchemes.AMT_NEG
-        else:
-            self.foreground = const.ColorSchemes.AMT_POS
+        self.foreground = const.ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else const.ColorSchemes.AMT_POS
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -41,6 +41,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -60,9 +61,7 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         v.require_text_field(self.row_fee, self.parent.parent.parent.valerror_7, True)
     
         if v.is_valid():
-            self.row_sell_price.text = anvil.server.call('cal_price' ,self.row_sales.text, self.row_qty.text)
-            self.row_buy_price.text = anvil.server.call('cal_price', self.row_cost.text, self.row_qty.text)
-            self.row_pnl.text = anvil.server.call('cal_profit', self.row_sales.text, self.row_cost.text, self.row_fee.text)
+            self.row_sell_price.text, self.row_buy_price.text, self.row_pnl.text = anvil.server.call('calculate_amount' ,self.row_sales.text, self.row_cost.text, self.row_fee.text, self.row_qty.text)
       
             # Lesson learnt ... THIS LINE DOESN'T WORK!!
             # new_data = {"sell_date": self.row_selldate.date,
@@ -76,27 +75,33 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             #                "iid": self.row_iid.text}
             # self.item = self.row_symbol.text
             # self.item = new_data
-            self.item = {"sell_date": self.row_selldate.date,
-                        "buy_date": self.row_buydate.date,
-                        "symbol": self.row_symbol.text,
-                        "qty": self.row_qty.text,
-                        "sales": float(self.row_sales.text),
-                        "cost": float(self.row_cost.text),
-                        "fee": float(self.row_fee.text),
-                        "sell_price": self.row_sell_price.text,
-                        "buy_price": self.row_buy_price.text,
-                        "pnl": self.row_pnl.text,
-                        "iid": self.row_iid.text}
+            self.item = {
+                "sell_date": self.row_selldate.date,
+                "buy_date": self.row_buydate.date,
+                "symbol": self.row_symbol.text,
+                "qty": self.row_qty.text,
+                "sales": float(self.row_sales.text),
+                "cost": float(self.row_cost.text),
+                "fee": float(self.row_fee.text),
+                "sell_price": self.row_sell_price.text,
+                "buy_price": self.row_buy_price.text,
+                "pnl": self.row_pnl.text,
+                "iid": self.row_iid.text
+            }
       
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
-            #self.parent.raise_event('x-save-change', iid=self.row_iid.text)
-            self.parent.raise_event('x-save-change')
       
+    @btnmod.one_click_only
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.item['iid'] is not None: cache.add_deleted_row(self.item['iid'])
-        const.trarent.raise_event('x-disable-submit-button')
+        if self.item.get('iid') is not None:
+            cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
+            if cache_del_iid.is_empty():
+                cache_del_iid.set_cache([self.item.get('iid')])
+            else:
+                cache_del_iid.get_cache().append(self.item.get('iid'))
+            self.parent.raise_event('x-disable-submit-button')
         self.remove_from_parent()

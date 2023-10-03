@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 import anvil.server
+import psycopg2.extras
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -23,10 +24,42 @@ def upper_dict_keys(rows, key_list=None):
         result (list of dict): List of dict containing keys in upper case.
     """
     DL = {}
-    for k in rows[0].keys():
-        if k.upper() in key_list or not key_list:
-            DL[k.upper()] = [row[k] for row in rows]
-        else:
-            DL[k] = [row[k] for row in rows]
-    result = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    if rows is not None and len(rows) > 0:
+        for k in rows[0].keys():
+            if k.upper() in key_list or not key_list:
+                DL[k.upper()] = [row[k] for row in rows]
+            else:
+                DL[k] = [row[k] for row in rows]  
+    result = to_list_of_dict(DL)
     return result
+
+def to_list_of_dict(DL):
+    """
+    Convert the structure of dict of list (DL) to list of dict (LD).
+
+    Parameters:
+        DL (dict of list): Dict of list.
+
+    Returns:
+        LD (list of dict): List of dict.
+    """
+    LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    return LD
+
+def to_dict_of_list(LD):
+    """
+    Convert the structure of list of dict (LD) to dict of list (DL).
+
+    Parameters:
+        LD (list of dict): List of dict.
+
+    Returns:
+        DL (dict of list): Dict of list.
+    """
+    if isinstance(LD[0], dict):
+        DL = {k: [dic[k] for dic in LD] for k in LD[0]}
+    elif isinstance(LD[0], psycopg2.extras.DictRow):
+        DL = {k: [dic[k] for dic in LD] for k in LD[0].keys()}
+    else:
+        raise TypeError(f"Only list of dict or list of DictCursor is supported.")
+    return DL

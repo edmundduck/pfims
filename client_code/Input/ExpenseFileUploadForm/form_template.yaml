@@ -124,7 +124,7 @@ components:
       include_placeholder: true
     name: dropdown_filetype
     layout_properties: {grid_position: 'ZYDOOZ,HXSXTZ'}
-    event_bindings: {show: dropdown_filetype_show}
+    event_bindings: {}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,

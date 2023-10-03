@@ -6,10 +6,12 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
-from ...Utils import Caching as cache
+from ...Utils.ButtonModerator import ButtonModerator
+from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     def __init__(self, data, labels, **properties):
@@ -17,12 +19,14 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.dropdown_tabs.items = anvil.server.call('generate_expensetabs_dropdown')
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        self.dropdown_tabs.items = cache_exptabs.get_cache()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
         # Prefill "labels map to" dropdown by finding high proximity choices
-        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache.labels_dict())
+        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache_labels.get_cache())
         logger.debug("relevant_lbls=", relevant_lbls)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
@@ -53,6 +57,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         else:
             self.button_next.visible = False
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -69,4 +74,5 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         self.enable_next_button()
 
     def refresh_label_cache(self, **event_args):
-        cache.labels_reset()
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_labels.clear_cache()

@@ -293,3 +293,41 @@ def delete_expensetab(tab_id):
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
+
+@anvil.server.callable("proc_exp_tab_change")
+@logger.log_function
+def proc_exp_tab_change(tab_id):
+    """
+    Consolidated process for changing expense tab selection.
+
+    Parameters:
+        tab_id (int): The ID of a selected expense tab.
+
+    Returns:
+        list: A list of all functions return required by the selection change.
+    """
+    id, name = get_selected_expensetab_attr(tab_id)
+    trx_list = select_transactions(tab_id)
+    return [id, name, trx_list]
+
+@anvil.server.callable("proc_save_exp_tab")
+@logger.log_function
+def proc_save_exp_tab(tab_id, name, rows, iid_list):
+    """
+    Consolidated process for saving expense tab.
+
+    Parameters:
+        tab_id (int): The ID of a selected expense tab.
+        name (string): The name of a selected expense tab.
+        rows (list): A list of transactions to be inserted or updated.
+        iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
+
+    Returns:
+        list: A list of all functions return required by the save.
+    """
+    tab_id = save_expensetab(tab_id, name)
+    if tab_id is None or tab_id <= 0:
+        raise RuntimeError(f"ERROR: Fail to save expense tab {name}, aborting further update.")
+    result_u = upsert_transactions(tab_id, rows)
+    result_d = delete_transactions(tab_id, iid_list)
+    return [tab_id, result_u, result_d]

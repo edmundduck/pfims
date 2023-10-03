@@ -5,11 +5,13 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....Utils import Caching as cache
 from ....Utils import Constants as const
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.ClientCache import ClientCache
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def __init__(self, **properties):
@@ -17,11 +19,16 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.row_dropdown_type.items = cache.mapping_rules_filetype_dropdown()
-        self.row_dropdown_datacol.items = cache.expense_tbl_def_dropdown()
-        self.row_dropdown_extraact.items = cache.mapping_rules_extra_action_dropdown()
-        self.row_dropdown_lbl.items = cache.labels_dropdown()
-        self.row_dropdown_acct.items = cache.accounts_dropdown()
+        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
+        cache_filetype = ClientCache('generate_mapping_type_dropdown')
+        cache_extraaction = ClientCache('generate_upload_action_dropdown')
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        self.row_dropdown_type.items = cache_filetype.get_cache()
+        self.row_dropdown_datacol.items = cache_exp_tbl_def.get_cache()
+        self.row_dropdown_extraact.items = cache_extraaction.get_cache()
+        self.row_dropdown_lbl.items = cache_labels.get_cache()
+        self.row_dropdown_acct.items = cache_acct.get_cache()
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:
@@ -35,8 +42,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_hidden_del_fid.text = ",".join([x for x in self.row_hidden_del_fid.text.split(",") if x != excelcol])
         datacol_id, datacol = self.row_dropdown_datacol.selected_value if self.row_dropdown_datacol.selected_value is not None else [None, None]
         extraact_id, extraact = self.row_dropdown_extraact.selected_value if self.row_dropdown_extraact.selected_value is not None else [None, None]
-        # Case 001 - string dict key handling review
-        lbl_id, lbl = eval(self.row_dropdown_lbl.selected_value).values() if self.row_dropdown_lbl.selected_value is not None else [None, None]
+        lbl_id, lbl = self.row_dropdown_lbl.selected_value if self.row_dropdown_lbl.selected_value is not None else [None, None]
         acct_id, acct = self.row_dropdown_acct.selected_value if self.row_dropdown_acct.selected_value is not None else [None, None]
         extratgt_id = lbl_id if extraact_id == "L" else acct_id
         self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, True)
@@ -48,6 +54,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         if b.parent.tag[0] is not None and not b.parent.tag[-1]: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 
+    @btnmod.one_click_only
     @logger.log_function
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -78,6 +85,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         Notification(msg).show()
         self.parent.raise_event('x-reload-rp')
 
+    @btnmod.one_click_only
     @logger.log_function
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -121,15 +129,17 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
         logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
-        dict_exp_tbl_def = cache.expense_tbl_def_dict()
-        dict_extraact = cache.mapping_rules_extra_action_dict()
-        dict_lbl = cache.labels_dict()
-        dict_acct = cache.accounts_dict()
+        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
+        cache_extraact = ClientCache('generate_upload_action_dropdown')
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_acct = ClientCache('generate_accounts_dropdown')        
+        dict_exp_tbl_def = {k[1][0]: k[1][1] for k in cache_exp_tbl_def.get_cache()}
+        dict_extraact = {k[1][0]: k[1][1] for k in cache_extraact.get_cache()}
+        dict_lbl = {k[1][0]: k[1][1] for k in cache_labels.get_cache()}
+        dict_acct =  {k[1][0]: k[1][1] for k in cache_acct.get_cache()}
         datacol = dict_exp_tbl_def.get(datacol_id, None)
         extraact = dict_extraact.get(extraact_id, None)
-        # Case 001 - string dict key handling review
-        # extratgt = dict_lbl.get(extratgt_id, None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
-        extratgt = dict_lbl.get(str(extratgt_id), None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
+        extratgt = dict_lbl.get(extratgt_id, None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
         rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
         rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
         

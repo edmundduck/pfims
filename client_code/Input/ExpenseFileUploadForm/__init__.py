@@ -6,7 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
-from ...Utils import Caching as cache
+from ...Utils.ClientCache import ClientCache
 from ...Utils import Constants as const
 from ...Utils.Logger import ClientLogger
 
@@ -26,6 +26,9 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         self.valerror_title.visible = False
         self.valerror_1.visible = False
 
+        cache_filetype = ClientCache('generate_mapping_type_dropdown')
+        self.dropdown_filetype.items = cache_filetype.get_cache()
+
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
         Routing.open_upload_mapping_form(self)
@@ -34,10 +37,6 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
 
-    def dropdown_filetype_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        self.dropdown_filetype.items = cache.mapping_rules_filetype_dropdown()
-
     def dropdown_mapping_rule_change(self, **event_args):
         """This method is called when an item is selected"""
         self.flow_panel_xlstab.visible = True if self.dropdown_mapping_rule.selected_value is not None else False
@@ -45,6 +44,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     @logger.log_function
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
+        cache_filetype = ClientCache('generate_mapping_type_dropdown')
         self.sheet_tabs_panel.clear()
         if file is not None:
             self.valerror_title.visible = False
@@ -55,12 +55,12 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                 self.button_excel_next.visible = False
                 self.button_pdf_next.visible = True
                 self.dropdown_filetype.visible = True
-                self.dropdown_filetype.selected_value = cache.mapping_rules_filetype_getkey(const.FileImportType.PDF)
+                self.dropdown_filetype.selected_value = cache_filetype.get_complete_key(const.FileImportType.PDF)
             elif file.content_type in ("application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", \
                                       "application/vnd.ms-excel.sheet.macroEnabled.12", "application/x-excel", "text/csv"):
                 self.button_pdf_next.visible = False
                 self.dropdown_filetype.visible = True
-                self.dropdown_filetype.selected_value = cache.mapping_rules_filetype_getkey(const.FileImportType.Excel)
+                self.dropdown_filetype.selected_value = cache_filetype.get_complete_key(const.FileImportType.Excel)
                 xls = anvil.server.call('preview_file', file=file)
                 for i in xls:
                     cb = CheckBox(
@@ -103,11 +103,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
         logger.info(f"{len(tablist)} tabs are chosen in {__name__}.")
-        matrix = anvil.server.call('select_mapping_matrix', id=self.dropdown_mapping_rule.selected_value)
-        logger.debug("matrix=", matrix)
-        extra = anvil.server.call('select_mapping_extra_actions', id=self.dropdown_mapping_rule.selected_value)
-        logger.debug("extra=", extra)
-        df, lbls = anvil.server.call('import_file', file=self.file_loader_1.file, tablist=tablist, rules=matrix, extra=extra)
+        df, lbls = anvil.server.call('proc_excel_import_1st_stage', self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, tablist)
         logger.trace("df=", df)
         logger.debug("lbls=", lbls)
         Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls)

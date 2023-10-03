@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from fuzzywuzzy import fuzz
@@ -31,26 +32,25 @@ def generate_labels_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
-    # Case 001 - string dict key handling review
-    content = list((row['name'] + " (" + str(row['id']) + ")", repr({"id": row['id'], "text": row['name']})) for row in rows)
+    content = list((row['name'] + " (" + str(row['id']) + ")", (row['id'], row['name'])) for row in rows)
     return content
 
-@anvil.server.callable("generate_labels_list")
+@anvil.server.callable("generate_labels_dict_of_list")
 @logger.log_function
-def generate_labels_list():
+def generate_labels_dict_of_list():
     """
-    Select data from a DB table which stores labels' detail to list.
+    Select data from a DB table which stores labels' detail as transformed dictionary of list.
 
     Returns:
-        list: A full list of label IDs, names and status.
+        dict: A dictionary of each column as key, where value is the list of the data belonging to that particular column.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
-    return list({"id": row['id'], "name": row['name'], "status": row['status']} for row in rows)
+    return helper.to_dict_of_list(rows)
 
 @anvil.server.callable("get_selected_label_attr")
 @logger.log_function
@@ -197,8 +197,8 @@ def predict_relevant_labels(srclbl, curlbl):
     Return a label which has the highest proximity (a.k.a. the most matched) from the DB from the source label.
 
     Parameters:
-        srclbl (dict): The labels extracted from Excel to be compared.
-        curlbl (dict): The labels from the DB labels table.
+        srclbl (list): The labels extracted from Excel to be compared.
+        curlbl (list): The label dropdown from the DB labels table.
 
     Returns:
         score (list): Proximity score of each label, its order follows the order of the srclbl.
@@ -209,9 +209,9 @@ def predict_relevant_labels(srclbl, curlbl):
     for s in srclbl:
         highscore = [0, None]
         for lbl in curlbl:
-            similarity = fuzz.ratio(s, curlbl[lbl])
-            logger.trace(f"lbl={lbl}, similarity={similarity}, highscore[0]={highscore[0]}")
+            similarity = fuzz.ratio(s, lbl[1][1])
+            logger.trace(f"lbl={lbl[1][1]}, similarity={similarity}, highscore[0]={highscore[0]}")
             if similarity > highscore[0]:
-                highscore = [similarity, {'id': int(lbl), 'text': curlbl[lbl]}]
+                highscore = [similarity, [lbl[1][0], lbl[1][1]]]
         score.append(highscore[1] if highscore[0] > min_proximity else None)
     return score

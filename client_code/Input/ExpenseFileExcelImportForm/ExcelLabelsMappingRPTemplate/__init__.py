@@ -5,7 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....Utils import Caching as cache
+from ....Utils.ClientCache import ClientCache
 from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
 
@@ -17,13 +17,15 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.dropdown_lbl_action.items = cache.labels_mapping_action_dropdown()
-        self.dropdown_lbl_map_to.items = cache.labels_dropdown()
+        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
+        cache_labels = ClientCache('generate_labels_dropdown')
+        self.dropdown_lbl_action.items = cache_lbl_action.get_cache()
+        self.dropdown_lbl_map_to.items = cache_labels.get_cache()
         self.hidden_lbl_action.text = None
         self.input_label.visible = False
 
         # Prefill "labels map to" dropdown by finding high proximity choices
-        self.dropdown_lbl_map_to.selected_value = repr(self.item['tgtlbl']) if self.item['tgtlbl'] is not None else None
+        self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None
 
     def dropdown_lbl_action_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""

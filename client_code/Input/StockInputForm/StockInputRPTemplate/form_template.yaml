@@ -20,6 +20,7 @@ components:
     name: button_edit
     layout_properties: {column: YAYOIZ}
     event_bindings: {click: button_edit_click}
+    data_bindings: []
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,

@@ -6,12 +6,14 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
+from ....Utils.ButtonModerator import ButtonModerator
 from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
-from ....Utils import Caching as cache
+from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -19,12 +21,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.row_acct.items = cache.accounts_dropdown()
-        # Account dropdown key is a list. If it's just int which is populated from file upload, then has to lookup the desc to form a key
-        acct_dict = cache.accounts_dict()
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        self.row_acct.items = cache_acct.get_cache()
         logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
-        if self.row_acct.selected_value is not None and not isinstance(self.row_acct.selected_value, list):
-            self.row_acct.selected_value = [self.row_acct.selected_value, acct_dict.get(self.row_acct.selected_value, None)]
+        if self.row_acct.selected_value is not None: self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
@@ -34,21 +34,22 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
+    @logger.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
-            lbls = cache.labels_list()
-            trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            cache_labels_list = ClientCache('generate_labels_dict_of_list')
+            lbls = cache_labels_list.get_cache()
+            # trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
+            trimmed_list = list(filter(len, label_list.split(",")))
             logger.trace(f"trimmed_list={trimmed_list}")
+            logger.trace(f"cache_labels_list={lbls}")
             for i in trimmed_list:
                 # Don't generate label if following conditions are met -
                 # 1. label ID is 0 (which is possible from file upload)
                 # 2. label ID is not integer
                 # 3. label ID is NaN
                 if i.isdigit() and int(i) != 0:
-                    lbl_name = None
-                    for j in lbls:
-                        if str(j.get("id")).strip() == i:
-                            lbl_name = j.get("name").strip()
+                    lbl_name = lbls.get('name')[lbls.get('id').index(int(i))]
                     b = Button(text=lbl_name,
                             # icon=const.Icons.REMOVE,
                             foreground=const.ColorSchemes.BUTTON_FG,
@@ -126,11 +127,16 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _set_stmt_dtl_visible(self, vis, **event_args):
         self.row_stmt_dtl.visible = vis
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item.get('iid') is not None: 
-            cache.add_deleted_row(self.item.get('iid'))
+            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
+            if cache_del_iid.is_empty():
+                cache_del_iid.set_cache([self.item.get('iid')])
+            else:
+                cache_del_iid.get_cache().append(self.item.get('iid'))
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
         self.remove_from_parent()
