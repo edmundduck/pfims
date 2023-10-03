@@ -25,10 +25,8 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         # Any code you write here will run when the form opens.
         cache_interval = ClientCache('select_search_interval')
         cache_settings = ClientCache('select_settings')
-        self.dropdown_interval.items = cache_interval.get_cache()
-        self.dropdown_symbol.items = []
-    
         settings = cache_settings.get_cache()
+        self.dropdown_interval.items = cache_interval.get_cache()
         self.dropdown_interval.selected_value = settings.get('default_interval')
         self.time_datefrom.date = settings.get('default_datefrom')
         self.time_dateto.date = settings.get('default_dateto')
@@ -37,34 +35,42 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.subform = TransactionReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = True
+            self.panel_label.visible = False
             self.panel_tranx_list.visible = True
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = False
+            # Prevent from adding default value "[Symbol]" by registering to the dictionary
+            self.tag = {'added_symbols': {None: 1}}
+            self._update_stock_enablement()
         elif "P&L" in subform.report_name.text:
             self.subform = PnLReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = True
+            self.panel_label.visible = False
             self.panel_tranx_list.visible = False
             self.panel_pnl_report.visible = True
             self.panel_exp_list.visible = False
+            # Prevent from adding default value "[Symbol]" by registering to the dictionary
+            self.tag = {'added_symbols': {None: 1}}
+            self._update_stock_enablement()
         elif "Expense" in subform.report_name.text:
             self.subform = ExpenseReportForm()
             self.colpanel_list.add_component(self.subform)
             self.panel_symbol.visible = False
+            self.panel_label.visible = True
             self.panel_tranx_list.visible = False
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = True
+            # Prevent from adding default value "[Symbol]" by registering to the dictionary
+            self.tag = {'added_labels': {None: 1}}
+            self._update_expense_enablement()
         else:
             # If error, show no buttons
             self.panel_symbol.visible = False
             self.panel_tranx_list.visible = False
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = False
-   
-        # Prevent from adding default value "[Symbol]" by registering to the dictionary
-        self.tag = {'added_symbols': {None: 1}}
-        self._upd_scr_enablement()
-      
+         
     # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
     # Return selected symbols which appear in blue buttons 
     @logger.log_function
@@ -87,7 +93,26 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                     i.remove_from_parent()
 
     @logger.log_function
-    def _upd_scr_enablement(self):
+    def _getall_selected_labels(self):
+        label_list = []
+        for i in self.panel_symbol.get_components():
+            if isinstance(i, Button):
+                if i.icon == const.Icons.REMOVE:
+                    label_list += [i.tag]
+        return label_list
+
+    # Remove all labels selected as blue buttons from dictionary
+    @logger.log_function
+    def _rmvall_selected_labels(self):
+        for i in self.panel_label.get_components():
+            if isinstance(i, Button):
+                if i.icon == const.Icons.REMOVE:
+                    # Deregister the added label from the dictionary in self.tag
+                    self.tag['added_labels'].pop(i.tag)
+                    i.remove_from_parent()
+
+    @logger.log_function
+    def _update_stock_enablement(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
         if interval in (None, ''):
             self._reset_search()
@@ -106,7 +131,24 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.button_tranx_gen_csv.enabled = True
             self.button_tranx_search.enabled = True
             self.button_pnl_search.enabled = True
-            self.button_exp_search.enabled = True  
+  
+    @logger.log_function
+    def _update_expense_enablement(self):
+        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
+        if interval in (None, ''):
+            self._reset_search()
+        else:
+            cache_labels = ClientCache('generate_labels_dropdown')
+            self.dropdown_label.items = cache_labels.get_cache()
+            if interval != "SDR":
+                self.time_datefrom.enabled = False
+                self.time_dateto.enabled = False
+                self.label_timetotime.enabled = False
+            else:
+                self.time_datefrom.enabled = True
+                self.time_dateto.enabled = True
+                self.label_timetotime.enabled = True
+            self.button_exp_search.enabled = True
   
     def _reset_search(self):
         self.time_datefrom.date = ""
@@ -114,6 +156,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.dropdown_interval.items = cache_interval.get_cache()
         self.dropdown_symbol.items = []
         self._rmvall_selected_symbols()
+        self._rmvall_selected_labels()
         self.subform.rpt_panel.items = []
         self.button_tranx_gen_csv.enabled = False
         self.button_tranx_search.enabled = False
@@ -138,16 +181,19 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
   
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
-        self._rmvall_selected_symbols()
-        self._upd_scr_enablement()
+        if ("Transaction" or "P&L") in subform.report_name.text:
+            self._rmvall_selected_symbols()
+            self._update_stock_enablement()
 
     def time_datefrom_change(self, **event_args):
         """This method is called when the selected date changes"""
-        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
+        if ("Transaction" or "P&L") in self.subform.report_name.text:
+            self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
 
     def time_dateto_change(self, **event_args):
         """This method is called when the selected date changes"""
-        self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
+        if ("Transaction" or "P&L") in subform.report_name.text:
+            self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
 
     @logger.log_function
     def tranx_rpt_button_plus_click(self, **event_args):
@@ -159,7 +205,6 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                     background=const.ColorSchemes.BUTTON_BG)
             self.panel_symbol.add_component(b, name=self.dropdown_symbol.selected_value)
             b.set_event_handler('click', self.tranx_rpt_button_minus_click)
-
             # Register the added symbol to the dictionary in self.tag to avoid duplication
             self.tag['added_symbols'].update({self.dropdown_symbol.selected_value: 1})
 
@@ -210,15 +255,35 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
 
     def button_exp_search_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_labels = ClientCache('generate_labels_dropdown')
-        label_list = cache_labels.get_cache()
+        label_list = self._getall_selected_labels()
         enddate = self._find_enddate()
         startdate = self._find_startdate()
-    
-        self.subform.hidden_time_datefrom.date = startdate
-        self.subform.hidden_symbol.text = label_list
+        
         self.subform.rpt_panel.items = anvil.server.call('select_transactions_filter_by_labels', startdate, enddate, label_list)
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
         self._reset_search()
+
+    def exp_rpt_button_plus_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        lbl_id, lbl_name = self.dropdown_label.selected_value if self.dropdown_label.selected_value is not None else [None, None]
+        if self.tag['added_labels'].get(lbl_id, None) is None:
+            b = Button(text=lbl_name,
+                       tag=lbl_id,
+                       icon=const.Icons.REMOVE,
+                       foreground=const.ColorSchemes.BUTTON_FG,
+                       background=const.ColorSchemes.BUTTON_BG,
+                       font_size=12
+                      )
+            self.panel_label.add_component(b, name=lbl_id)
+            b.set_event_handler('click', self.exp_rpt_button_minus_click)
+            # Register the added label to the dictionary in self.tag to avoid duplication
+            self.tag['added_labels'].update({lbl_id: 1})
+
+    @logger.log_function
+    def exp_rpt_button_minus_click(self, **event_args):
+        b = event_args['sender']
+        # Deregister the added label from the dictionary in self.tag
+        self.tag['added_labels'].pop(b.tag)
+        b.remove_from_parent()

@@ -145,7 +145,7 @@ def select_journals(start_date, end_date, symbols=[]):
         symbols (list): List of selected symbols.
 
     Returns:
-        rows (list): Result in CSV file.
+        rows (list): Stock journals in list.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -414,17 +414,18 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
+    logger.debug("labels=", labels)
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sell_sql = "j.trandate <= '{0}'".format(end_date) if end_date is not None else ""
-        buy_sql = "j.trandate >= '{0}'".format(start_date) if start_date is not None else ""
-        symbol_sql = "j.symbol IN ({0})".format(",".join("'" + i + "'" for i in symbols)) if len(symbols) > 0 else ""
-        conn_sql1 = " AND " if sell_sql or buy_sql or symbol_sql else ""
-        conn_sql2 = " AND " if sell_sql and (buy_sql or symbol_sql) else ""
-        conn_sql3 = " AND " if (sell_sql or buy_sql) and symbol_sql else ""
+        enddate_sql = "j.trandate <= '{0}'".format(end_date) if end_date is not None else ""
+        startdate_sql = "j.trandate >= '{0}'".format(start_date) if start_date is not None else ""
+        label_sql = "j.labels ~ ({0})".format("".join("(?=.*" + i + ")" for i in labels)) if len(labels) > 0 else ""
+        conn_sql1 = " AND " if enddate_sql or startdate_sql or label_sql else ""
+        conn_sql2 = " AND " if enddate_sql and (startdate_sql or label_sql) else ""
+        conn_sql3 = " AND " if (enddate_sql or startdate_sql) and label_sql else ""
         sql = f"SELECT j.iid, j.tab_id, j.trandate, j.account_id, j.amount, j.labels, j.remarks, j.stmt_dtl \
         FROM {sysmod.schemafin()}.exp_transactions j, {sysmod.schemafin()}.expensetab t \
-        WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {sell_sql} {conn_sql2} \
-        {buy_sql} {conn_sql3} {symbol_sql} ORDER BY j.trandate DESC, j.iid ASC"
+        WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {enddate_sql} {conn_sql2} \
+        {startdate_sql} {conn_sql3} {label_sql} ORDER BY j.trandate DESC, j.iid ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         logger.trace("rows=", rows)

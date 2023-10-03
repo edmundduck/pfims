@@ -21,21 +21,21 @@ components:
     role: null
     columns:
     - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:10648'}
-    - {id: DNGCRO, title: Transaction Date, data_key: tran_date, width: '90', $$hashKey: 'object:10649'}
-    - {id: DMKCOL, title: Account, data_key: acct, width: '80', $$hashKey: 'object:10651'}
-    - {id: JRLRWP, title: Amount, data_key: amt, width: '100', $$hashKey: 'object:10652'}
-    - {id: WXPMEY, title: Debt, data_key: debt, width: '100', $$hashKey: 'object:10653'}
-    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70', $$hashKey: 'object:10654'}
+    - {id: DNGCRO, title: Transaction Date, data_key: trandate, width: '90', $$hashKey: 'object:10649'}
+    - {id: DMKCOL, title: Account, data_key: account_id, width: '80', $$hashKey: 'object:10651'}
+    - {id: JRLRWP, title: Amount, data_key: amount, width: '100', $$hashKey: 'object:10652'}
     - {id: NMAPTI, title: Remarks, data_key: remarks, expand: false, width: '200',
       $$hashKey: 'object:10655'}
     - {id: YMODTM, title: Statement Detail, data_key: stmt_dtl, $$hashKey: 'object:10710',
       width: '200'}
-    - {id: RMITXR, title: Labels, data_key: lbl, width: '80', $$hashKey: 'object:10650'}
+    - {id: RMITXR, title: Labels, data_key: labels, width: '80', $$hashKey: 'object:10650'}
+    - {id: WXPMEY, title: Debt, data_key: debt, width: '100', $$hashKey: 'object:10653'}
+    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70', $$hashKey: 'object:10654'}
     auto_header: true
     tooltip: ''
     border: ''
     foreground: ''
-    rows_per_page: 20
+    rows_per_page: 50
     visible: true
     wrap_on: never
     show_page_controls: true
@@ -62,7 +62,7 @@ components:
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Rows per Page, font_size: null, font: '', spacing_above: small,
+        visible: true, text: Rows per Page, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: label_4
@@ -78,7 +78,7 @@ components:
         foreground: ''
         items: ['20', '50', '100']
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
