@@ -5,11 +5,13 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ....Utils.ClientCache import ClientCache
 from ....Utils import Constants as const
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.ClientCache import ClientCache
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     def __init__(self, **properties):
@@ -52,6 +54,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         if b.parent.tag[0] is not None and not b.parent.tag[-1]: self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
         b.parent.remove_from_parent()
 
+    @btnmod.one_click_only
     @logger.log_function
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -82,6 +85,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         Notification(msg).show()
         self.parent.raise_event('x-reload-rp')
 
+    @btnmod.one_click_only
     @logger.log_function
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""

@@ -45,3 +45,15 @@ class ButtonModerator:
                     btn_source.enabled = btn_source_state
             return result
         return wrapper
+
+    def override_end_state(self, state):
+        """
+        Provide a dictionary which contains override state. Add it in the wrapped function return for one_click_only function to handle.
+
+        Parameters:
+            state (boolean): The end state of the button, True for enabled, False for disabled.
+
+        Returns:
+            dict: A dictionary which contains the override key and value.
+        """
+        return { self.OVERRIDE_KEY: state }

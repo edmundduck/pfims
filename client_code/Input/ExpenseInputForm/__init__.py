@@ -242,7 +242,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 logger.info(msg2)
                 Notification(msg2).show()
-                return { btnmod.OVERRIDE_KEY: False }
+                return btnmod.override_end_state(False)
             else:
                 msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
                 logger.error(msg2)

@@ -183,7 +183,7 @@ class StockInputForm(StockInputFormTemplate):
                 msg = f"Template {templ_name} has been deleted."
                 logger.info(msg)
                 Notification(msg).show()
-                return { btnmod.OVERRIDE_KEY: False }
+                return btnmod.override_end_state(False)
             else:
                 msg = f"ERROR: Fail to delete template {templ_name}."
                 logger.error(msg)
@@ -213,7 +213,7 @@ class StockInputForm(StockInputFormTemplate):
             msg = f"Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only."
             logger.info(msg)
             Notification(msg).show()
-            return { btnmod.OVERRIDE_KEY: False }
+            return btnmod.override_end_state(False)
         else:
             msg = f"ERROR: Fail to submit template {templ_name}."
             logger.error(msg)
