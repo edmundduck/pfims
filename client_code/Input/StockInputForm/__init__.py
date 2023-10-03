@@ -154,10 +154,6 @@ class StockInputForm(StockInputFormTemplate):
     @logger.log_function
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_brokers = ClientCache('generate_brokers_dropdown')
-        cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
-        cache_template = ClientCache('generate_template_dropdown')
-        cache_user_settings = ClientCache('select_settings')        
         templ_id, templ_name = self.dropdown_templ.selected_value
         confirm = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=templ_name))
         userconf = alert(content=confirm, 
@@ -167,6 +163,11 @@ class StockInputForm(StockInputFormTemplate):
         if userconf == const.Alerts.CONFIRM:
             result = anvil.server.call('delete_templates', template_id=templ_id)
             if result is not None and result > 0:
+                cache_brokers = ClientCache('generate_brokers_dropdown')
+                cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
+                cache_template = ClientCache('generate_template_dropdown')
+                cache_user_settings = ClientCache('select_settings')        
+                
                 """ Reset row delete flag """
                 cache_del_iid.clear_cache()
             
@@ -179,13 +180,14 @@ class StockInputForm(StockInputFormTemplate):
                 self.input_selldate.date = date.today()
                 # Reset on screen change status
                 self.disable_submit_button()
-                
                 msg = f"Template {templ_name} has been deleted."
                 logger.info(msg)
+                Notification(msg).show()
+                return { btnmod.OVERRIDE_KEY: False }
             else:
                 msg = f"ERROR: Fail to delete template {templ_name}."
                 logger.error(msg)
-            Notification(msg).show()                
+                Notification(msg).show()
 
     @btnmod.one_click_only
     @logger.log_function
@@ -197,16 +199,25 @@ class StockInputForm(StockInputFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
+            cache_brokers = ClientCache('generate_brokers_dropdown')
             cache_template = ClientCache('generate_template_dropdown')
+            cache_user_settings = ClientCache('select_settings')        
+
             cache_template.clear_cache()
             self.dropdown_templ.items = cache_template.get_cache()
+            self.dropdown_broker.selected_value = cache_brokers.get_complete_key(cache_user_settings.get_cache()['default_broker'])
             self.dropdown_templ.selected_value = None
+            self.input_repeating_panel.items = []
+            self.templ_name.text = None
+            self.input_selldate.date = date.today()
             msg = f"Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only."
             logger.info(msg)
+            Notification(msg).show()
+            return { btnmod.OVERRIDE_KEY: False }
         else:
             msg = f"ERROR: Fail to submit template {templ_name}."
             logger.error(msg)
-        Notification(msg).show()
+            Notification(msg).show()
 
     def templ_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""

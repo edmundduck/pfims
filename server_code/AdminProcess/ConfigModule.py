@@ -185,7 +185,7 @@ def psgldb_get_submitted_templ_list():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
-        result = list((''.join([row['template_name'], ' [', row['template_id'], ']']), (row['template_id'], row['template_name'])) for row in cur.fetchall())
+        result = list((''.join([row['template_name'], ' [', str(row['template_id']), ']']), (row['template_id'], row['template_name'])) for row in cur.fetchall())
         logger.debug("result=", result)
         cur.close()
     return result
