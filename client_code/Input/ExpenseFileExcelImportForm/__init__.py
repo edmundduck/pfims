@@ -6,10 +6,12 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     def __init__(self, data, labels, **properties):
@@ -18,7 +20,8 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
 
         # Any code you write here will run when the form opens.
         cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_tabs.items = ClientCache('generate_expensetabs_dropdown')
+        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        self.dropdown_tabs.items = cache_exptabs.get_cache()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
@@ -54,6 +57,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         else:
             self.button_next.visible = False
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
