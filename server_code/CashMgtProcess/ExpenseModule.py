@@ -325,7 +325,7 @@ def proc_save_exp_tab(tab_id, name, rows, iid_list):
     Returns:
         list: A list of all functions return required by the save.
     """
-    id = save_expensetab(tab_id, name)
+    tab_id = save_expensetab(tab_id, name)
     if tab_id is None or tab_id <= 0:
         raise RuntimeError(f"ERROR: Fail to save expense tab {name}, aborting further update.")
     result_u = upsert_transactions(tab_id, rows)

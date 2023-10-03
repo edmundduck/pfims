@@ -8,6 +8,7 @@ from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
 from ...Utils import Routing
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ...Utils.Validation import Validator
@@ -15,6 +16,7 @@ from ...Utils.Logger import ClientLogger
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ExpenseInputForm(ExpenseInputFormTemplate):
     def __init__(self, tab_id=None, data=None, **properties):
@@ -147,9 +149,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-stmt-dtl-visible', vis=not self.cb_hide_stmtdtl.checked)
 
+
+    @btnmod.one_click_only
     @logger.log_function
     def button_save_click(self, **event_args):
-        self.button_save_exptab.enabled = False
         """Validation"""
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
         if result is not True:
@@ -192,12 +195,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         except RuntimeError as err:
             logger.error(err)
             Notification(err).show()
-        self.button_save_exptab.enabled = True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.button_save_exptab.enabled = False
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         result = anvil.server.call('submit_expensetab', tab_id, True)
@@ -216,12 +218,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             msg = f"ERROR: Fail to submit expense tab {tab_name}."
             logger.error(msg)
         Notification(msg).show()
-        self.button_save_exptab.enabled = True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.button_delete_exptab.enabled = False
         to_be_del_tab_id, to_be_del_tab_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         msg = Label(text=f"Proceed expense tab <{to_be_del_tab_name}> deletion by clicking DELETE.")
         userconf = alert(content=msg, title="Confirm Expense Tab Deletion", buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
@@ -240,12 +241,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 cache_del_iid.clear_cache()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 logger.info(msg2)
-                self.button_delete_exptab.enabled = False
+                Notification(msg2).show()
+                return btnmod.override_end_state(False)
             else:
                 msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
                 logger.error(msg2)
-                self.button_delete_exptab.enabled = True
-            Notification(msg2).show()
+                Notification(msg2).show()
 
     def tab_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""

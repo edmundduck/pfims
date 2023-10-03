@@ -6,12 +6,14 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
+from ....Utils.ButtonModerator import ButtonModerator
 from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -125,10 +127,10 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _set_stmt_dtl_visible(self, vis, **event_args):
         self.row_stmt_dtl.visible = vis
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.button_delete.enabled = False
         if self.item.get('iid') is not None: 
             cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
             if cache_del_iid.is_empty():

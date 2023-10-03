@@ -6,11 +6,13 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils import Constants as const
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class LabelMaintForm(LabelMaintFormTemplate):
     def __init__(self, **properties):
@@ -57,6 +59,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
         self.dropdown_status.selected_value = True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -79,11 +82,13 @@ class LabelMaintForm(LabelMaintFormTemplate):
             self.dropdown_lbl_list.selected_value = [lbl_id[0], lbl_name]
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
             self.button_labels_update.enabled = True
+            self.button_labels_delete.enabled = True
             msg = f"Label {lbl_name} has been created successfully."
             logger.info(msg)
         Notification(msg).show()
         return
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -106,11 +111,13 @@ class LabelMaintForm(LabelMaintFormTemplate):
         Notification(msg).show()
         return
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_labels_move_click(self, **event_args):
         """This method is called when the button is clicked"""
         pass
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_labels_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -129,10 +136,12 @@ class LabelMaintForm(LabelMaintFormTemplate):
                 self.clear()
                 msg = f"Label {selected_lbl_name} has been deleted."
                 logger.info(msg)
+                Notification(msg).show()
+                return btnmod.override_end_state(False)
             else:
                 msg = f"ERROR: Fail to delete label {selected_lbl_name}."
                 logger.error(msg)
-            Notification(msg).show()
+                Notification(msg).show()
 
     def clear(self, **event_args):
         self.dropdown_lbl_list_show()

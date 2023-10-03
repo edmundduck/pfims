@@ -7,11 +7,13 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Constants as const
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 from ...Utils.Validation import Validator
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
     def __init__(self, data, **properties):
@@ -21,7 +23,8 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         # Any code you write here will run when the form opens.
         cache_acct = ClientCache('generate_accounts_dropdown')
         cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_tabs.items = ClientCache('generate_expensetabs_dropdown')
+        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        self.dropdown_tabs.items = cache_exptabs.get_cache()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
@@ -47,6 +50,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         """This method is called when the button is clicked"""
         Routing.open_exp_input_form(self)
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""

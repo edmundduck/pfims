@@ -6,10 +6,12 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Constants as const
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class SettingForm(SettingFormTemplate):
     def __init__(self, **properties):
@@ -58,6 +60,7 @@ class SettingForm(SettingFormTemplate):
             self.time_datefrom.enabled = True
             self.time_dateto.enabled = True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -71,6 +74,7 @@ class SettingForm(SettingFormTemplate):
             n = Notification("ERROR: Fail to insert or update.")
         n.show()
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -88,6 +92,7 @@ class SettingForm(SettingFormTemplate):
         """This method is called when the TextBox loses focus"""
         self.button_broker_create.enabled = False if self.text_broker_name.text == '' else True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -102,6 +107,7 @@ class SettingForm(SettingFormTemplate):
         self.dropdown_default_broker.selected_value = default_broker
         self.hidden_b_id.text = broker_id
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -132,6 +138,7 @@ class SettingForm(SettingFormTemplate):
             self.text_broker_name.text = broker_name
             self.dropdown_ccy.selected_value = broker_ccy
   
+    @btnmod.one_click_only
     @logger.log_function
     def button_templ_edit_click(self, **event_args):
         """This method is called when the button is clicked"""

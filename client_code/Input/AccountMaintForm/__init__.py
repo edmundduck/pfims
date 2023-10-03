@@ -7,10 +7,12 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from ...Utils import Routing
 from ...Utils import Constants as const
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class AccountMaintForm(AccountMaintFormTemplate):
     def __init__(self, **properties):
@@ -51,6 +53,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.dropdown_status.items = [('Active', True), ('Inactive', False)]
         self.dropdown_status.selected_value = True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_accounts_create_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -77,6 +80,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         Notification(msg).show()
         return
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_accounts_update_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -105,6 +109,7 @@ class AccountMaintForm(AccountMaintFormTemplate):
         Notification(msg).show()
         return
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -123,10 +128,12 @@ class AccountMaintForm(AccountMaintFormTemplate):
                 self.clear()
                 msg = f"Account {acct_name} ({acct_id}) has been deleted."
                 logger.info(msg)
+                Notification(msg).show()
+                return btnmod.override_end_state(False)
             else:
                 msg = f"ERROR: Fail to delete account {acct_name} ({acct_id})."
                 logger.error(msg)
-            Notification(msg).show()
+                Notification(msg).show()
 
     def clear(self, **event_args):
         self.dropdown_acct_list_show()

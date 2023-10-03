@@ -6,11 +6,13 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from ....Utils import Constants as const
+from ....Utils.ButtonModerator import ButtonModerator
 from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class StockInputRPTemplate(StockInputRPTemplateTemplate):
     def __init__(self, **properties):
@@ -20,10 +22,10 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         # Any code you write here will run when the form opens.
         self.foreground = const.ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else const.ColorSchemes.AMT_POS
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.button_edit.enabled = False
         self.row_selldate.date = self.item['sell_date']
         self.row_buydate.date = self.item['buy_date']
         self.row_symbol.text = self.item['symbol']
@@ -38,12 +40,11 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
         
         self.input_data_panel_readonly.visible = False
         self.input_data_panel_editable.visible = True
-        self.button_edit.enabled = True
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.button_save.enabled = False
         v = Validator()
     
         # To access the parent form, needs to access 3 parent levels ...
@@ -91,12 +92,11 @@ class StockInputRPTemplate(StockInputRPTemplateTemplate):
             self.input_data_panel_readonly.visible = True
             self.input_data_panel_editable.visible = False            
             self.parent.raise_event('x-disable-submit-button')
-        self.button_save.enabled = True
       
+    @btnmod.one_click_only
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.button_delete.enabled = False
         if self.item.get('iid') is not None:
             cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
             if cache_del_iid.is_empty():
