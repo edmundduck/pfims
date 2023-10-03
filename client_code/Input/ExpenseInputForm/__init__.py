@@ -70,11 +70,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_add_rows.enabled = False
         if self.tag['reload']:
             self.reload_rp_data(extra=self._generate_blank_records())
             self.tag['reload'] = False
         else:
             self.input_repeating_panel.items = self._generate_blank_records() + self.input_repeating_panel.items
+        self.button_add_rows.enabled = True
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -147,6 +149,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     @logger.log_function
     def button_save_click(self, **event_args):
+        self.button_save_exptab.enabled = False
         """Validation"""
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
         if result is not True:
@@ -189,10 +192,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         except RuntimeError as err:
             logger.error(err)
             Notification(err).show()
+        self.button_save_exptab.enabled = True
 
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_save_exptab.enabled = False
         tab_name = self.tab_name.text
         tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         result = anvil.server.call('submit_expensetab', tab_id, True)
@@ -211,10 +216,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             msg = f"ERROR: Fail to submit expense tab {tab_name}."
             logger.error(msg)
         Notification(msg).show()
+        self.button_save_exptab.enabled = True
 
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        self.button_delete_exptab.enabled = False
         to_be_del_tab_id, to_be_del_tab_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         msg = Label(text=f"Proceed expense tab <{to_be_del_tab_name}> deletion by clicking DELETE.")
         userconf = alert(content=msg, title="Confirm Expense Tab Deletion", buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
@@ -229,14 +236,15 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 self.dropdown_tabs.items = cache_exptabs.get_cache()
                 self.dropdown_tabs.selected_value = None
                 tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
-                self.button_delete_exptab.enabled = False
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
                 logger.info(msg2)
+                self.button_delete_exptab.enabled = False
             else:
                 msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
                 logger.error(msg2)
+                self.button_delete_exptab.enabled = True
             Notification(msg2).show()
 
     def tab_name_change(self, **event_args):
