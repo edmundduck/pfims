@@ -436,13 +436,8 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     return list(rows)
 
 def format_accounts_labels(rows):
-    cache_acct = ClientCache('generate_accounts_dropdown')
     DL = helper.to_dict_of_list(rows)
-    acct_list = []
-    for i in DL.get(exprcd.Account):
-        acct_list.append(cache_acct.get_complete_key(i))
-    DL[exprcd.Account] = acct_list
-    return helper.to_list_of_dict(DL)
+    return rows
 
 @anvil.server.callable("proc_search_expense_list")
 @logger.log_function

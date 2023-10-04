@@ -260,6 +260,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         startdate = self._find_startdate()
         
         self.subform.rpt_panel.items = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
+        self.subform.rpt_panel.raise_event_on_children('x-update-acct-dropdown-selected-value')
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
