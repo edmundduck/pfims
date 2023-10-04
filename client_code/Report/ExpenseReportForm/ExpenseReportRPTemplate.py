@@ -29,7 +29,7 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         #open_form(newform)
         pass
 
-    def _update_acct_dropdown_selected_value(self):
+    def _update_acct_dropdown_selected_value(self, **event_args):
         cache_acct = ClientCache('generate_accounts_dropdown')
         self.row_dropdown_acct.items = cache_acct.get_cache()
         self.row_dropdown_acct.selected_value = cache_acct.get_complete_key(self.row_dropdown_acct.selected_value)

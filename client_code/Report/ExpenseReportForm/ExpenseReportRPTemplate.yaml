@@ -80,11 +80,29 @@ components:
     background: ''
     bold: false
     underline: false
-    include_placeholder: false
+    include_placeholder: true
   name: row_dropdown_acct
   layout_properties: {column: DMKCOL}
   data_bindings:
   - {property: selected_value, code: 'self.item[''ACC'']', writeback: true}
+- type: TextArea
+  properties: {role: null, align: left, height: '', tooltip: '', placeholder: '',
+    border: '', enabled: false, foreground: '', visible: true, text: '', font_size: 12,
+    auto_expand: false, font: '', spacing_above: small, spacing_below: small, italic: false,
+    background: '', bold: false, underline: false}
+  name: row_textarea_remarks
+  layout_properties: {column: NMAPTI}
+  data_bindings:
+  - {property: text, code: 'self.item[''RMK'']', writeback: true}
+- type: TextArea
+  properties: {role: null, align: left, height: '', tooltip: '', placeholder: '',
+    border: '', enabled: false, foreground: '', visible: true, text: '', font_size: 12,
+    auto_expand: false, font: '', spacing_above: small, spacing_below: small, italic: false,
+    background: '', bold: false, underline: false}
+  name: row_textarea_stmt_dtl
+  layout_properties: {column: YMODTM}
+  data_bindings:
+  - {property: text, code: 'self.item[''STD'']', writeback: true}
 container:
   type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
