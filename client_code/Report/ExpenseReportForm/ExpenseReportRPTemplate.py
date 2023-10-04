@@ -21,22 +21,23 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
 
         # Logic to generate label buttons
         cache_labels = ClientCache('generate_labels_dropdown')
-        for j in self.item[const.ExpenseDBTableDefinion.Labels].split(","):
-            if j not in (None, ''):
-                lbl_id, lbl_name = cache_labels.get_complete_key(int(j))
-                b = Button(
-                    text=lbl_name,
-                    # icon=const.Icons.REMOVE,
-                    foreground=const.ColorSchemes.BUTTON_FG,
-                    background=const.ColorSchemes.BUTTON_BG,
-                    font_size=10,
-                    align="left",
-                    spacing_above="small",
-                    spacing_below="small",
-                    tag=lbl_id,
-                    enabled=False
-                )
-                self.row_panel_labels.add_component(b, False, name=lbl_id)
+        if self.item[const.ExpenseDBTableDefinion.Labels] is not None:
+            for j in self.item[const.ExpenseDBTableDefinion.Labels].split(","):
+                if j not in (None, ''):
+                    lbl_id, lbl_name = cache_labels.get_complete_key(int(j))
+                    b = Button(
+                        text=lbl_name,
+                        # icon=const.Icons.REMOVE,
+                        foreground=const.ColorSchemes.BUTTON_FG,
+                        background=const.ColorSchemes.BUTTON_BG,
+                        font_size=10,
+                        align="left",
+                        spacing_above="small",
+                        spacing_below="small",
+                        tag=lbl_id,
+                        enabled=False
+                    )
+                    self.row_panel_labels.add_component(b, False, name=lbl_id)
 
         # Logic to generate account dropdowns
         cache_acct = ClientCache('generate_accounts_dropdown')
