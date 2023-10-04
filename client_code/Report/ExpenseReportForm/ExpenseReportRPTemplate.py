@@ -21,9 +21,10 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
 
         # Logic to generate label buttons
         cache_labels = ClientCache('generate_labels_dropdown')
+        print(self.item[const.ExpenseDBTableDefinion.Labels])
         for j in self.item[const.ExpenseDBTableDefinion.Labels].split(","):
             if j not in (None, ''):
-                print(cache_labels.get_complete_key(j)
+                print(cache_labels.get_complete_key(j))
                 lbl_id, lbl_name = cache_labels.get_complete_key(j)
                 b = Button(
                     text=lbl_name,

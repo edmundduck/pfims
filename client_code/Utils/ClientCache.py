@@ -95,7 +95,8 @@ class ClientCache:
         """
         if ClientCache.cache_dict.get(self.name, None) is not None:
             cache = ClientCache.cache_dict.get(self.name, None)
-            if any(isinstance(i, list) for i in cache):
+            logger.trace('cache=', cache)
+            if any(isinstance(i, (list, tuple)) for i in cache):
                 return next((item[1] for item in cache if partial_key in item[1]), partial_key)
             else:
                 return partial_key
