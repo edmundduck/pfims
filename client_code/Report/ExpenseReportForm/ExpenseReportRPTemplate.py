@@ -21,11 +21,9 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
 
         # Logic to generate label buttons
         cache_labels = ClientCache('generate_labels_dropdown')
-        print(self.item[const.ExpenseDBTableDefinion.Labels])
         for j in self.item[const.ExpenseDBTableDefinion.Labels].split(","):
             if j not in (None, ''):
-                print(cache_labels.get_complete_key(j))
-                lbl_id, lbl_name = cache_labels.get_complete_key(j)
+                lbl_id, lbl_name = cache_labels.get_complete_key(int(j))
                 b = Button(
                     text=lbl_name,
                     # icon=const.Icons.REMOVE,
@@ -39,6 +37,11 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
                     enabled=False
                 )
                 self.row_panel_labels.add_component(b, False, name=lbl_id)
+
+        # Logic to generate account dropdowns
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        self.row_dropdown_acct.items = cache_acct.get_cache()
+        self.row_dropdown_acct.selected_value = cache_acct.get_complete_key(self.row_dropdown_acct.selected_value)
 
     def row_link_symbol_click(self, **event_args):
         """This method is called when the link is clicked"""

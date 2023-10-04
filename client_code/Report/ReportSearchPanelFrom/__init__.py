@@ -262,25 +262,10 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         startdate = self._find_startdate()
 
         exp_list = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
-        DL = {k: [dic[k] for dic in exp_list] for k in exp_list[0]}
-        DL[const.ExpenseDBTableDefinion.Account] = [cache_acct.get_complete_key(i) for i in DL.get(const.ExpenseDBTableDefinion.Account)]
-        DL[const.ExpenseDBTableDefinion.Labels] = [cache_labels.get_complete_key(i) for i in DL.get(const.ExpenseDBTableDefinion.Labels)]
-        # for i in DL.get(const.ExpenseDBTableDefinion.Labels):
-        #     for j in i.split(","):
-        #         if j not in (None, ''):
-        #             lbl_id, lbl_name = cache_labels.get_complete_key(j)
-        #             b = Button(text=lbl_name,
-        #                     # icon=const.Icons.REMOVE,
-        #                     foreground=const.ColorSchemes.BUTTON_FG,
-        #                     background=const.ColorSchemes.BUTTON_BG,
-        #                     font_size=10,
-        #                     align="left",
-        #                     spacing_above="small",
-        #                     spacing_below="small",
-        #                     tag=selected_lid
-        #                     )
-        #             self.row_panel_labels.add_component(b, False, name=selected_lid)
-        self.subform.rpt_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        # DL = {k: [dic[k] for dic in exp_list] for k in exp_list[0]}
+        # DL[const.ExpenseDBTableDefinion.Account] = [cache_acct.get_complete_key(i) for i in DL.get(const.ExpenseDBTableDefinion.Account)]
+        # self.subform.rpt_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        self.subform.rpt_panel.items = exp_list
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
