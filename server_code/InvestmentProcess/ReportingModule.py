@@ -9,6 +9,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
+from ..DataObject.FinObject import ExpenseRecord as exprcd
 from ..Utils import Constants as const
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
@@ -422,20 +423,26 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         conn_sql1 = " AND " if enddate_sql or startdate_sql or label_sql else ""
         conn_sql2 = " AND " if enddate_sql and (startdate_sql or label_sql) else ""
         conn_sql3 = " AND " if (enddate_sql or startdate_sql) and label_sql else ""
-        sql = f"SELECT j.iid, j.tab_id, j.trandate, j.account_id, j.amount, j.labels, j.remarks, j.stmt_dtl \
-        FROM {sysmod.schemafin()}.exp_transactions j, {sysmod.schemafin()}.expensetab t \
+        sql = f"SELECT j.iid, j.tab_id, j.trandate AS {exprcd.Date}, j.account_id AS {exprcd.Account}, j.amount AS {exprcd.Amount}, j.labels AS {exprcd.Labels}, \
+        j.remarks AS {exprcd.Remarks}, j.stmt_dtl AS {exprcd.StmtDtl} FROM {sysmod.schemafin()}.exp_transactions j, {sysmod.schemafin()}.expensetab t \
         WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {enddate_sql} {conn_sql2} \
         {startdate_sql} {conn_sql3} {label_sql} ORDER BY j.trandate DESC, j.iid ASC"
         cur.execute(sql)
         logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
         rows = cur.fetchall()
+        rows = helper.upper_dict_keys(rows, exprcd.data_list)
         logger.trace("rows=", rows)
         cur.close()
     return list(rows)
 
 def format_accounts_labels(rows):
-    print(helper.to_dict_of_list(rows))
-    return rows
+    cache_acct = ClientCache('generate_accounts_dropdown')
+    DL = helper.to_dict_of_list(rows)
+    acct_list = []
+    for i in DL.get(exprcd.Account):
+        acct_list.append(cache_acct.get_complete_key(i))
+    DL[exprcd.Account] = acct_list
+    return helper.to_list_of_dict(DL)
 
 @anvil.server.callable("proc_search_expense_list")
 @logger.log_function

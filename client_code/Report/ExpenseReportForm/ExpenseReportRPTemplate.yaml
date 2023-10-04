@@ -15,7 +15,7 @@ components:
   name: row_label_amt
   layout_properties: {column: JRLRWP}
   data_bindings:
-  - {property: text, code: '"${0:.2f}".format(self.item[''amount''])'}
+  - {property: text, code: '"${0:.2f}".format(self.item[''AMT''])'}
 - type: Label
   properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
     visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
@@ -41,7 +41,8 @@ components:
     italic: false, background: '', bold: false, underline: false, icon: ''}
   name: row_label_labels
   layout_properties: {column: RMITXR}
-  data_bindings: []
+  data_bindings:
+  - {property: text, code: 'self.item[''LBL'']'}
   event_bindings: {click: row_link_symbol_click}
 - type: Label
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
@@ -59,7 +60,31 @@ components:
   name: row_label_trandate
   layout_properties: {column: DNGCRO}
   data_bindings:
-  - {property: text, code: 'self.item[''trandate'']'}
+  - {property: text, code: 'self.item[''DTE'']'}
+- type: DropDown
+  properties:
+    role: null
+    align: full
+    tooltip: ''
+    placeholder: ''
+    border: ''
+    enabled: false
+    foreground: ''
+    items: []
+    visible: true
+    font_size: 12
+    font: ''
+    spacing_above: small
+    spacing_below: small
+    italic: false
+    background: ''
+    bold: false
+    underline: false
+    include_placeholder: false
+  name: row_dropdown_acct
+  layout_properties: {column: DMKCOL}
+  data_bindings:
+  - {property: selected_value, code: 'self.item[''ACC'']', writeback: true}
 container:
   type: DataRowPanel
   properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
