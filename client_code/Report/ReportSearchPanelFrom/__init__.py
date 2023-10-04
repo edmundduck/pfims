@@ -95,7 +95,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     @logger.log_function
     def _getall_selected_labels(self):
         label_list = []
-        for i in self.panel_symbol.get_components():
+        for i in self.panel_label.get_components():
             if isinstance(i, Button):
                 if i.icon == const.Icons.REMOVE:
                     label_list += [i.tag]

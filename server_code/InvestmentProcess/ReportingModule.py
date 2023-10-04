@@ -418,7 +418,7 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         enddate_sql = "j.trandate <= '{0}'".format(end_date) if end_date is not None else ""
         startdate_sql = "j.trandate >= '{0}'".format(start_date) if start_date is not None else ""
-        label_sql = "j.labels ~ ({0})".format("".join("(?=.*" + i + ")" for i in labels)) if len(labels) > 0 else ""
+        label_sql = "j.labels ~ '{0}'".format("".join("(?=.*" + str(i) + ")" for i in labels)) if len(labels) > 0 else ""
         conn_sql1 = " AND " if enddate_sql or startdate_sql or label_sql else ""
         conn_sql2 = " AND " if enddate_sql and (startdate_sql or label_sql) else ""
         conn_sql3 = " AND " if (enddate_sql or startdate_sql) and label_sql else ""
@@ -427,6 +427,7 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {enddate_sql} {conn_sql2} \
         {startdate_sql} {conn_sql3} {label_sql} ORDER BY j.trandate DESC, j.iid ASC"
         cur.execute(sql)
+        logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
