@@ -10,6 +10,7 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
 from ..Utils import Constants as const
+from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
@@ -398,7 +399,6 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
     logger.trace("rowstruct=", rowstruct)
     return sorted(rowstruct, key=lambda x: x.get('sell_date'))
 
-@anvil.server.callable("select_transactions_filter_by_labels")
 @logger.log_function
 def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     """
@@ -434,6 +434,12 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     return list(rows)
 
 def format_accounts_labels(rows):
-    pass
+    print(helper.to_dict_of_list(rows))
+    return rows
 
+@anvil.server.callable("proc_search_expense_list")
+@logger.log_function
 def proc_search_expense_list(start_date, end_date, labels=[]):
+    rows = select_transactions_filter_by_labels(start_date, end_date, labels)
+    result = format_accounts_labels(rows)
+    return result

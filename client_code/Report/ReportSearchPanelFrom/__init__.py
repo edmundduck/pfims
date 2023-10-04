@@ -259,7 +259,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         enddate = self._find_enddate()
         startdate = self._find_startdate()
         
-        self.subform.rpt_panel.items = anvil.server.call('select_transactions_filter_by_labels', startdate, enddate, label_list)
+        self.subform.rpt_panel.items = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
