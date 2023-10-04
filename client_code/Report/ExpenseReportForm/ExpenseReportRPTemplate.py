@@ -18,7 +18,26 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
     
         # Any code you write here will run when the form opens.
         self.foreground = const.ColorSchemes.AMT_EXPENSE if self.item[const.ExpenseDBTableDefinion.Amount] < 0 else const.ColorSchemes.AMT_POS
-        self.add_event_handler('x-update-acct-dropdown-selected-value', self._update_acct_dropdown_selected_value)
+
+        # Logic to generate label buttons
+        cache_labels = ClientCache('generate_labels_dropdown')
+        for j in self.item[const.ExpenseDBTableDefinion.Labels].split(","):
+            if j not in (None, ''):
+                print(cache_labels.get_complete_key(j)
+                lbl_id, lbl_name = cache_labels.get_complete_key(j)
+                b = Button(
+                    text=lbl_name,
+                    # icon=const.Icons.REMOVE,
+                    foreground=const.ColorSchemes.BUTTON_FG,
+                    background=const.ColorSchemes.BUTTON_BG,
+                    font_size=10,
+                    align="left",
+                    spacing_above="small",
+                    spacing_below="small",
+                    tag=lbl_id,
+                    enabled=False
+                )
+                self.row_panel_labels.add_component(b, False, name=lbl_id)
 
     def row_link_symbol_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -28,8 +47,3 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         #                    symtemplid=self.row_hidden_templ_id.text)
         #open_form(newform)
         pass
-
-    def _update_acct_dropdown_selected_value(self, **event_args):
-        cache_acct = ClientCache('generate_accounts_dropdown')
-        self.row_dropdown_acct.items = cache_acct.get_cache()
-        self.row_dropdown_acct.selected_value = cache_acct.get_complete_key(self.row_dropdown_acct.selected_value)

@@ -255,12 +255,32 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
 
     def button_exp_search_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        cache_labels = ClientCache('generate_labels_dropdown')
         label_list = self._getall_selected_labels()
         enddate = self._find_enddate()
         startdate = self._find_startdate()
-        
-        self.subform.rpt_panel.items = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
-        self.subform.rpt_panel.raise_event_on_children('x-update-acct-dropdown-selected-value')
+
+        exp_list = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
+        DL = {k: [dic[k] for dic in exp_list] for k in exp_list[0]}
+        DL[const.ExpenseDBTableDefinion.Account] = [cache_acct.get_complete_key(i) for i in DL.get(const.ExpenseDBTableDefinion.Account)]
+        DL[const.ExpenseDBTableDefinion.Labels] = [cache_labels.get_complete_key(i) for i in DL.get(const.ExpenseDBTableDefinion.Labels)]
+        # for i in DL.get(const.ExpenseDBTableDefinion.Labels):
+        #     for j in i.split(","):
+        #         if j not in (None, ''):
+        #             lbl_id, lbl_name = cache_labels.get_complete_key(j)
+        #             b = Button(text=lbl_name,
+        #                     # icon=const.Icons.REMOVE,
+        #                     foreground=const.ColorSchemes.BUTTON_FG,
+        #                     background=const.ColorSchemes.BUTTON_BG,
+        #                     font_size=10,
+        #                     align="left",
+        #                     spacing_above="small",
+        #                     spacing_below="small",
+        #                     tag=selected_lid
+        #                     )
+        #             self.row_panel_labels.add_component(b, False, name=selected_lid)
+        self.subform.rpt_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
