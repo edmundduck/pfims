@@ -21,7 +21,9 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         # Any code you write here will run when the form opens.
         cache_labels = ClientCache('generate_labels_dropdown')
         cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
         self.dropdown_tabs.items = cache_exptabs.get_cache()
+        self.dropdown_actions_for_all.items = cache_lbl_action.get_cache()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
@@ -76,3 +78,13 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     def refresh_label_cache(self, **event_args):
         cache_labels = ClientCache('generate_labels_dropdown')
         cache_labels.clear_cache()
+
+    def apply_action_to_all_labels(self, action, **event_args):
+        for i in self.labels_mapping_panel.get_components():
+            if isinstance(i, DropDown):
+                print(i)
+
+    def dropdown_actions_for_all_change(self, **event_args):
+        """This method is called when an item is selected"""
+        action, action_desc = self.dropdown_actions_for_all.selected_value if self.dropdown_actions_for_all.selected_value is not None else [None, None]
+        self.raise_event_on_children('x-apply-action-to-all', action=action)
