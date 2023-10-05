@@ -172,16 +172,16 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 self.dropdown_tabs.items = cache_exptabs.get_cache()
                 self.dropdown_tabs.selected_value = [tab_id, tab_name]
             if result_u is None and result_d is None:
-                msg = f"WARNING: Expense tab {name} has been saved but technical problem occurs in saving transactions. Please try again."
+                msg = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
                 logger.warning(msg)
             elif result_u is None:
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
-                msg = f"WARNING: Expense tab {name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
+                msg = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
                 logger.warning(msg)
             elif result_d is None:
                 self._replace_iid(result_u)
-                msg = f"WARNING: Expense tab {name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
+                msg = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
                 logger.warning(msg)
             else:
                 self._deleted_iid_row_reset()
