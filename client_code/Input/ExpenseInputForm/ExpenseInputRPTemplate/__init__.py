@@ -134,7 +134,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
         self.remove_from_parent()
-        event_args['sender'].trigger('writeback')
+        # event_args['sender'].parent.trigger('writeback')
         
     def row_date_change(self, **event_args):
         """This method is called when the selected date changes"""
