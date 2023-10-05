@@ -154,8 +154,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     @logger.log_function
     def button_save_click(self, **event_args):
         """Validation"""
-        for c in self.input_repeating_panel.get_components():
-            print(f"COMPO: {c}, {c._validate()}")
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
         if result is not True:
             return
