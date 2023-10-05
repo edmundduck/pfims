@@ -43,12 +43,3 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         cache_acct = ClientCache('generate_accounts_dropdown')
         self.row_dropdown_acct.items = cache_acct.get_cache()
         self.row_dropdown_acct.selected_value = cache_acct.get_complete_key(self.row_dropdown_acct.selected_value)
-
-    def row_link_symbol_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        # TODO - To be implemented with hash routing in the future
-        #newform = SettingForm(symname=self.row_link_symbol.text, 
-        #                    symid=self.row_hidden_iid.text, 
-        #                    symtemplid=self.row_hidden_templ_id.text)
-        #open_form(newform)
-        pass
