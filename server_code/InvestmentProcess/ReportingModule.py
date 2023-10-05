@@ -9,7 +9,9 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
+from ..DataObject.FinObject import ExpenseRecord as exprcd
 from ..Utils import Constants as const
+from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
@@ -145,7 +147,7 @@ def select_journals(start_date, end_date, symbols=[]):
         symbols (list): List of selected symbols.
 
     Returns:
-        rows (list): Result in CSV file.
+        rows (list): Stock journals in list.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -397,3 +399,49 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
 
     logger.trace("rowstruct=", rowstruct)
     return sorted(rowstruct, key=lambda x: x.get('sell_date'))
+
+@logger.log_function
+def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
+    """
+    Return transactions for repeating panel to display based on transaction date criteria.
+
+    Parameters:
+        start_date (date): Start date of the search.
+        end_date (date): End date of the search.
+        labels (list): List of selected labels.
+
+    Returns:
+        rows (list): Transactions in list.
+    """
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    logger.debug("labels=", labels)
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        enddate_sql = "j.trandate <= '{0}'".format(end_date) if end_date is not None else ""
+        startdate_sql = "j.trandate >= '{0}'".format(start_date) if start_date is not None else ""
+        label_sql = "j.labels ~ '^{0}'".format("|".join("(?=.*" + str(i) + ")" for i in labels)) if len(labels) > 0 else ""
+        conn_sql1 = " AND " if enddate_sql or startdate_sql or label_sql else ""
+        conn_sql2 = " AND " if enddate_sql and (startdate_sql or label_sql) else ""
+        conn_sql3 = " AND " if (enddate_sql or startdate_sql) and label_sql else ""
+        sql = f"SELECT j.iid, j.tab_id, j.trandate AS {exprcd.Date}, j.account_id AS {exprcd.Account}, j.amount AS {exprcd.Amount}, j.labels AS {exprcd.Labels}, \
+        j.remarks AS {exprcd.Remarks}, j.stmt_dtl AS {exprcd.StmtDtl} FROM {sysmod.schemafin()}.exp_transactions j, {sysmod.schemafin()}.expensetab t \
+        WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {enddate_sql} {conn_sql2} \
+        {startdate_sql} {conn_sql3} {label_sql} ORDER BY j.trandate DESC, j.iid ASC"
+        cur.execute(sql)
+        logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+        rows = cur.fetchall()
+        rows = helper.upper_dict_keys(rows, exprcd.data_list)
+        logger.trace("rows=", rows)
+        cur.close()
+    return list(rows)
+
+def format_accounts_labels(rows):
+    DL = helper.to_dict_of_list(rows)
+    return rows
+
+@anvil.server.callable("proc_search_expense_list")
+@logger.log_function
+def proc_search_expense_list(start_date, end_date, labels=[]):
+    rows = select_transactions_filter_by_labels(start_date, end_date, labels)
+    result = format_accounts_labels(rows)
+    return result
