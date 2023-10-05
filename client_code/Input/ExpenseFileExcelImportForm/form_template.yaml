@@ -123,6 +123,20 @@ components:
     name: data_grid_1
     layout_properties: {width: 511.6}
     components:
+    - type: FlowPanel
+      properties: {role: null, vertical_align: full, spacing: medium, align: left,
+        tooltip: '', border: '', foreground: '', visible: true, spacing_above: small,
+        spacing_below: small, background: ''}
+      name: flow_panel_apply_all
+      layout_properties: {}
+      components:
+      - type: CheckBox
+        properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
+          foreground: '', allow_indeterminate: false, visible: true, text: Apply action to all labels,
+          font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
+          background: '', bold: false, checked: false, underline: false}
+        name: cb_apply_all
+        layout_properties: {}
     - type: RepeatingPanel
       properties: {spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
       name: labels_mapping_panel

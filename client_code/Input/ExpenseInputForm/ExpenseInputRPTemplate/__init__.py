@@ -125,8 +125,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @btnmod.one_click_only
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        print(event_args)
-        print(self.item)
         if self.item.get('iid') is not None: 
             cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
             if cache_del_iid.is_empty():
@@ -135,6 +133,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 cache_del_iid.get_cache().append(self.item.get('iid'))
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
+        for i in self.item.keys():
+            # To allow reload_rp_data to filter this record.
+            self.item[i] = None 
         self.remove_from_parent()
         # event_args['sender'].parent.trigger('writeback')
         
