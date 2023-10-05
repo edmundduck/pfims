@@ -154,6 +154,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     @logger.log_function
     def button_save_click(self, **event_args):
         """Validation"""
+        for c in self.input_repeating_panel.get_components():
+            print(f"COMPO: {c}, {c._validate()}")
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
         if result is not True:
             return
@@ -252,6 +254,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the text in this text box is edited"""
         self._switch_to_save_button()
 
+    @logger.log_function
     def reload_rp_data(self, extra=[], **event_args):
         """
         Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
