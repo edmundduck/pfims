@@ -123,6 +123,36 @@ components:
     name: data_grid_1
     layout_properties: {width: 511.6}
     components:
+    - type: FlowPanel
+      properties: {role: null, vertical_align: full, spacing: medium, align: left,
+        tooltip: '', border: '', foreground: '', visible: true, spacing_above: small,
+        spacing_below: small, background: ''}
+      name: flow_panel_apply_all
+      layout_properties: {}
+      components:
+      - type: DropDown
+        properties:
+          role: null
+          align: full
+          tooltip: ''
+          placeholder: Choose an action for all labels
+          border: ''
+          enabled: true
+          foreground: ''
+          items: []
+          visible: true
+          font_size: 12
+          font: ''
+          spacing_above: small
+          spacing_below: small
+          italic: false
+          background: ''
+          bold: false
+          underline: false
+          include_placeholder: true
+        name: dropdown_actions_for_all
+        layout_properties: {}
+        event_bindings: {change: dropdown_actions_for_all_change}
     - type: RepeatingPanel
       properties: {spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
       name: labels_mapping_panel

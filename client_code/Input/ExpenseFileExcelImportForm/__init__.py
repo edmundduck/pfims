@@ -21,7 +21,9 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         # Any code you write here will run when the form opens.
         cache_labels = ClientCache('generate_labels_dropdown')
         cache_exptabs = ClientCache('generate_expensetabs_dropdown')
+        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
         self.dropdown_tabs.items = cache_exptabs.get_cache()
+        self.dropdown_actions_for_all.items = cache_lbl_action.get_cache()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
@@ -41,7 +43,6 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
-        self.labels_mapping_panel.add_event_handler('x-refresh-label-cache', self.refresh_label_cache)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -61,6 +62,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
+        logger.trace(f"labels_mapping={self.labels_mapping_panel.items}")
         df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping=self.labels_mapping_panel.items)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
@@ -73,6 +75,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
             pass
         self.enable_next_button()
 
-    def refresh_label_cache(self, **event_args):
-        cache_labels = ClientCache('generate_labels_dropdown')
-        cache_labels.clear_cache()
+    def dropdown_actions_for_all_change(self, **event_args):
+        """This method is called when an item is selected"""
+        action, action_desc = self.dropdown_actions_for_all.selected_value if self.dropdown_actions_for_all.selected_value is not None else [None, None]
+        self.labels_mapping_panel.raise_event_on_children('x-apply-action-to-all', action=action)

@@ -34,7 +34,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
-    @logger.log_function
     def _generateall_selected_labels(self, label_list):
         if label_list not in ('', None):
             cache_labels_list = ClientCache('generate_labels_dict_of_list')
@@ -64,7 +63,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                     self.row_panel_labels.add_component(b, False, name=lbl_name)
                     b.set_event_handler('click', self.label_button_minus_click)
 
-    @logger.log_function
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
         loc = self.hidden_lbls_id.text.find(str(b.tag))
@@ -77,7 +75,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
-    @logger.log_function
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
@@ -103,8 +100,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.row_acct.selected_value in (None, '') and self.row_amt.text in (None, '') and self.row_date.date in (None, ''):
-            return True
         v = Validator()
 
         # To access the parent form, needs to access 3 parent levels ...
@@ -128,7 +123,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_stmt_dtl.visible = vis
 
     @btnmod.one_click_only
-    @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.item.get('iid') is not None: 
@@ -139,8 +133,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 cache_del_iid.get_cache().append(self.item.get('iid'))
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
+        for i in self.item.keys():
+            # To allow reload_rp_data to filter this record.
+            self.item[i] = None 
         self.remove_from_parent()
-
+        # event_args['sender'].parent.trigger('writeback')
+        
     def row_date_change(self, **event_args):
         """This method is called when the selected date changes"""
         self.parent.raise_event('x-switch-to-save-button')

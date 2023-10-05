@@ -252,6 +252,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the text in this text box is edited"""
         self._switch_to_save_button()
 
+    @logger.log_function
     def reload_rp_data(self, extra=[], **event_args):
         """
         Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
@@ -268,7 +269,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 # Filter out all None rows
                 return False
             return True
-        
+        print(f"reload_rp_data={self.input_repeating_panel.items}")
         self.input_repeating_panel.items = extra + list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
     def _replace_iid(self, iid, **event_args):
