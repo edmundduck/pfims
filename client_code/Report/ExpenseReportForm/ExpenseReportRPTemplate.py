@@ -30,7 +30,7 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
                         # icon=const.Icons.REMOVE,
                         foreground=const.ColorSchemes.BUTTON_FG,
                         background=const.ColorSchemes.BUTTON_BG,
-                        font_size=10,
+                        font_size=12,
                         align="left",
                         spacing_above="small",
                         spacing_below="small",

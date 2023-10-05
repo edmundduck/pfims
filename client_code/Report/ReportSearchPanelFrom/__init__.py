@@ -7,6 +7,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
 from ...Utils import Constants as const
+from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 from ..TransactionReportForm import TransactionReportForm
@@ -14,6 +15,7 @@ from ..PnLReportForm import PnLReportForm
 from ..ExpenseReportForm import ExpenseReportForm
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     subform = None
@@ -121,8 +123,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
                 self.time_datefrom.enabled = False
                 self.time_dateto.enabled = False
                 self.label_timetotime.enabled = False
-                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items',
-                            start_date=anvil.server.call('get_start_date', date.today(), interval))
+                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', start_date=anvil.server.call('get_start_date', date.today(), interval))
             else:
                 self.time_datefrom.enabled = True
                 self.time_dateto.enabled = True
@@ -215,6 +216,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.tag['added_symbols'].pop(b.text)
         b.remove_from_parent()
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_tranx_search_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -224,6 +226,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         
         self.subform.rpt_panel.items = anvil.server.call('select_journals', startdate, enddate, symbol_list)
 
+    @btnmod.one_click_only
     def button_tranx_gen_csv_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
@@ -238,6 +241,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         """This method is called when the button is clicked"""
         self._reset_search()
     
+    @btnmod.one_click_only
     @logger.log_function
     def button_pnl_search_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -253,6 +257,8 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         """This method is called when the button is clicked"""
         self._reset_search()
 
+    @btnmod.one_click_only
+    @logger.log_function
     def button_exp_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         cache_acct = ClientCache('generate_accounts_dropdown')
