@@ -119,6 +119,39 @@ def create_account(name, ccy, valid_from, valid_to, status):
         if conn is not None: conn.close()
     return None
 
+@anvil.server.callable("create_multiple_accounts")
+@logger.log_function
+def create_multiple_accounts(accounts):
+    """
+    Create new multiple accounts into the DB table which stores accounts' detail.
+
+    Parameters:
+        accounts (list of dict): Contains list of account names and their attributes.
+
+    Returns:
+        list: A list of successful created account IDs, otherwise None.
+    """
+    userid = sysmod.get_current_userid()
+    try:
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            if len(accounts) > 0:
+                mogstr = ', '.join(cur.mogrify("(%s, %s, %s, %s, %s, %s)", (userid, account['name'], account['ccy'], account['valid_from'], account['valid_to'], account['status'])).decode('utf-8') for account in accounts)
+                stmt = f"INSERT INTO {sysmod.schemafin()}.accounts (userid, name, ccy, valid_from, valid_to, status) VALUES %s RETURNING id"
+                cur.execute(stmt % mogstr)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                return [r['id'] for r in cur.fetchall()]
+            else:
+                return []
+    except (Exception, psycopg2.OperationalError) as err:
+        logger.error(err)
+        conn.rollback()
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
+
 @anvil.server.callable("update_account")
 @logger.log_function
 def update_account(id, name, ccy, valid_from, valid_to, status):

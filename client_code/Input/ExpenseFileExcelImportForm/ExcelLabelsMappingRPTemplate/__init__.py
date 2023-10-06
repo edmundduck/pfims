@@ -27,7 +27,7 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
 
         # Prefill "labels map to" dropdown by finding high proximity choices
         self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None
-        self.add_event_handler('x-apply-action-to-all', self.apply_action_to_all_labels)
+        self.add_event_handler('x-apply-action-to-all-labels', self.apply_action_to_all_labels)
 
     @logger.log_function
     def dropdown_lbl_action_change(self, **event_args):
