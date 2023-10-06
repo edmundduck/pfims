@@ -14,7 +14,7 @@ logger = ClientLogger()
 btnmod = ButtonModerator()
 
 class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
-    def __init__(self, data, labels, **properties):
+    def __init__(self, data, labels, accounts, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
@@ -23,7 +23,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         cache_exptabs = ClientCache('generate_expensetabs_dropdown')
         cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
         self.dropdown_tabs.items = cache_exptabs.get_cache()
-        self.dropdown_actions_for_all.items = cache_lbl_action.get_cache()
+        self.dropdown_actions_for_all_labels.items = cache_lbl_action.get_cache()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
@@ -41,6 +41,10 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         logger.trace("DL=", DL)
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
+        if accounts is None:
+            self.flow_panel_step7.visible = False
+        else:
+            self.flow_panel_step7.visible = True            
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
 
@@ -75,7 +79,12 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
             pass
         self.enable_next_button()
 
-    def dropdown_actions_for_all_change(self, **event_args):
+    def dropdown_actions_for_all_labels_change(self, **event_args):
         """This method is called when an item is selected"""
-        action, action_desc = self.dropdown_actions_for_all.selected_value if self.dropdown_actions_for_all.selected_value is not None else [None, None]
-        self.labels_mapping_panel.raise_event_on_children('x-apply-action-to-all', action=action)
+        action, action_desc = self.dropdown_actions_for_all_labels.selected_value if self.dropdown_actions_for_all_labels.selected_value is not None else [None, None]
+        self.labels_mapping_panel.raise_event_on_children('x-apply-action-to-all-labels', action=action)
+
+    def dropdown_actions_for_all_accounts_change(self, **event_args):
+        """This method is called when an item is selected"""
+        action, action_desc = self.dropdown_actions_for_all_labels.selected_value if self.dropdown_actions_for_all_labels.selected_value is not None else [None, None]
+        self.labels_mapping_panel.raise_event_on_children('x-apply-action-to-all-accounts', action=action)

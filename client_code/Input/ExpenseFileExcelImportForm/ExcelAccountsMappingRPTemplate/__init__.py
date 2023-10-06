@@ -1,4 +1,4 @@
-from ._anvil_designer import ExcelLabelsMappingRPTemplateTemplate
+from ._anvil_designer import ExcelAccountsMappingRPTemplateTemplate
 from anvil import *
 import anvil.server
 import anvil.users
@@ -11,7 +11,7 @@ from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
-class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
+class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)

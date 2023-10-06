@@ -103,10 +103,11 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
             if isinstance(i, CheckBox) and i.checked:
                 tablist.append(i.text)
         logger.info(f"{len(tablist)} tabs are chosen in {__name__}.")
-        df, lbls = anvil.server.call('proc_excel_import_1st_stage', self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, tablist)
+        df, lbls, accts = anvil.server.call('proc_excel_import_1st_stage', self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, tablist)
         logger.trace("df=", df)
         logger.debug("lbls=", lbls)
-        Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls)
+        logger.debug("accts=", accts)
+        Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls, accounts=accts)
 
     @logger.log_function
     def button_pdf_next_click(self, **event_args):

@@ -88,13 +88,18 @@ def import_file(file, tablist, rules, extra):
     Returns:
         new_df (dataframe): Processed dataframe containing all transactions.
         lbl_df (dataframe): Processed dataframe containing all labels.
+        acct_df (dataframe): Processed dataframe containing all accounts.
     """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
     extra_dl = helper.to_dict_of_list(extra)
 
     new_df = None
+    has_acct_mapping = False
     for i in rules:
+        if i.get(exprcd.Account, None) not in (None, '') and not str(i.get(exprcd.Account)).isspace():
+            has_acct_mapping = True
+        
         # Convert column in character ID to number for Pandas read_excel
         col = list(map(lambda x: ord(i[x].lower()) - 97 if 'a' <= i[x].lower() <= 'z' else None , col_name))
         common_col = set(i.values()).intersection(extra_dl.get('col')) if extra_dl.get('col', None) is not None else {}
@@ -130,7 +135,13 @@ def import_file(file, tablist, rules, extra):
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
     lbl_df = new_df.loc[:, [exprcd.Labels]]
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
-    return (new_df.dropna(subset=[exprcd.Amount, exprcd.Date], ignore_index=True)).to_dict(orient='records'), lbl_df[exprcd.Labels].dropna().unique()
+
+    if has_acct_mapping:
+        acct_df = new_df.loc[:, [exprcd.Account]].dropna().unique()
+    else:
+        acct_df = None
+
+    return (new_df.dropna(subset=[exprcd.Amount, exprcd.Date], ignore_index=True)).to_dict(orient='records'), lbl_df[exprcd.Labels].dropna().unique(), acct_df
 
 @anvil.server.callable("update_mapping")
 @logger.log_function
@@ -505,5 +516,5 @@ def proc_excel_import_1st_stage(rule_id, file, tablist):
     """
     matrix = FileUploadMappingModule.select_mapping_matrix(rule_id)
     extra = FileUploadMappingModule.select_mapping_extra_actions(rule_id)
-    data_df, lbls_df = import_file(file, tablist, matrix, extra)
-    return [data_df, lbls_df]
+    data_df, lbls_df, acct_df = import_file(file, tablist, matrix, extra)
+    return [data_df, lbls_df, acct_df]

@@ -35,10 +35,10 @@ def open_exp_file_upload_form(self, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseFileUploadForm())
 
-def open_exp_file_excel_import_form(self, data, labels, **event_args):
+def open_exp_file_excel_import_form(self, data, labels, accounts, **event_args):
     from ..Input.ExpenseFileExcelImportForm import ExpenseFileExcelImportForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(ExpenseFileExcelImportForm(data, labels))
+    anvil.get_open_form().content_panel.add_component(ExpenseFileExcelImportForm(data, labels, accounts))
 
 def open_exp_file_pdf_import_form(self, data, **event_args):
     from ..Input.ExpenseFilePDFImportForm import ExpenseFilePDFImportForm

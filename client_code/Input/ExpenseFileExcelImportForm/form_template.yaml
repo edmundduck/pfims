@@ -127,7 +127,7 @@ components:
       properties: {role: null, vertical_align: full, spacing: medium, align: left,
         tooltip: '', border: '', foreground: '', visible: true, spacing_above: small,
         spacing_below: small, background: ''}
-      name: flow_panel_apply_all
+      name: flow_panel_apply_all_labels
       layout_properties: {}
       components:
       - type: DropDown
@@ -150,9 +150,9 @@ components:
           bold: false
           underline: false
           include_placeholder: true
-        name: dropdown_actions_for_all
+        name: dropdown_actions_for_all_labels
         layout_properties: {}
-        event_bindings: {change: dropdown_actions_for_all_change}
+        event_bindings: {change: dropdown_actions_for_all_labels_change}
     - type: RepeatingPanel
       properties: {spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
       name: labels_mapping_panel
@@ -203,7 +203,7 @@ components:
       properties: {role: null, vertical_align: full, spacing: medium, align: left,
         tooltip: '', border: '', foreground: '', visible: true, spacing_above: small,
         spacing_below: small, background: ''}
-      name: flow_panel_apply_all_copy
+      name: flow_panel_apply_all_accounts
       layout_properties: {}
       components:
       - type: DropDown
@@ -211,7 +211,7 @@ components:
           role: null
           align: full
           tooltip: ''
-          placeholder: Choose an action for all labels
+          placeholder: Choose an action for all accounts
           border: ''
           enabled: true
           foreground: ''
@@ -226,12 +226,14 @@ components:
           bold: false
           underline: false
           include_placeholder: true
-        name: dropdown_actions_for_all_copy
+        name: dropdown_actions_for_all_accounts
         layout_properties: {}
-        event_bindings: {change: dropdown_actions_for_all_change}
+        event_bindings: {change: dropdown_actions_for_all_accounts_change}
     - type: RepeatingPanel
-      properties: {spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
-      name: labels_mapping_panel_copy
+      properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
+        visible: true, spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelAccountsMappingRPTemplate,
+        background: ''}
+      name: accounts_mapping_panel
       layout_properties: {}
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
