@@ -27,7 +27,7 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
 
         ### TO DO ###
         # Prefill "labels map to" dropdown by finding high proximity choices
-        self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None
+        self.dropdown_acct_map_to.selected_value = self.item['tgtacct'] if self.item['tgtacct'] is not None else None
         self.add_event_handler('x-apply-action-to-all-accounts', self.apply_action_to_all_accounts)
 
     @logger.log_function
@@ -36,13 +36,13 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
         action, action_desc = self.dropdown_acct_action.selected_value if self.dropdown_acct_action.selected_value is not None else [None, None]
         if action in (None, const.FileImportLabelExtraAction.SKIP):
             self.dropdown_acct_map_to.visible = False
-            self.input_label.visible = False
+            self.input_account.visible = False
         elif action == const.FileImportLabelExtraAction.MAP:
             self.dropdown_acct_map_to.visible = True
-            self.input_label.visible = False
+            self.input_account.visible = False
         elif action == const.FileImportLabelExtraAction.CREATE:
             self.dropdown_acct_map_to.visible = False
-            self.input_label.visible = True
+            self.input_account.visible = True
         prev = self.hidden_acct_action.text
         self.hidden_acct_action.text = action
         self.parent.raise_event('x-handle-action-count', action=action, prev=prev)

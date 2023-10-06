@@ -24,6 +24,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
         self.dropdown_tabs.items = cache_exptabs.get_cache()
         self.dropdown_actions_for_all_labels.items = cache_lbl_action.get_cache()
+        self.dropdown_actions_for_all_accounts.items = cache_lbl_action.get_cache()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
@@ -40,10 +41,10 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         }
         logger.trace("DL=", DL)
         DL_acct = {
-            'srclbl': accounts,
+            'srcacct': accounts,
             'action': [ None for i in range(len(accounts))],
-            'tgtlbl': [ None for i in range(len(accounts))],
-            'new': accounts
+            'tgtacct': [ None for i in range(len(accounts))],
+            'newacct': accounts
         }
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
@@ -74,7 +75,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         logger.trace(f"labels_mapping={self.labels_mapping_panel.items}")
-        df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping=self.labels_mapping_panel.items)
+        df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping_lbls=self.labels_mapping_panel.items, mapping_accts=self.accounts_mapping_panel.items)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def handle_action_count(self, action, prev, **event_args):

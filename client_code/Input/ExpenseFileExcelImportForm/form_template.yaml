@@ -182,9 +182,9 @@ components:
     properties:
       role: null
       columns:
-      - {id: LFIIUE, title: '', data_key: src_label, $$hashKey: 'object:9382'}
-      - {id: DUOBFI, title: '', data_key: tgt_label, $$hashKey: 'object:9383'}
-      - {id: WIDMCS, title: '', data_key: new_label, $$hashKey: 'object:9384'}
+      - {id: LFIIUE, title: '', data_key: srcacct, $$hashKey: 'object:9382'}
+      - {id: DUOBFI, title: '', data_key: tgtacct, $$hashKey: 'object:9383'}
+      - {id: WIDMCS, title: '', data_key: newacct, $$hashKey: 'object:9384'}
       auto_header: false
       tooltip: ''
       border: ''

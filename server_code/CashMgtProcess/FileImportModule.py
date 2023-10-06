@@ -145,13 +145,14 @@ def import_file(file, tablist, rules, extra):
 
 @anvil.server.callable("update_mapping")
 @logger.log_function
-def update_mapping(data, mapping):
+def update_mapping(data, mapping_lbls, mapping_accts):
     """
     Update labels mapping from the imported Dataframe.
 
     Parameters:
         data (dataframe): The dataframe to be updated with the mapping.
-        mapping (list): The list of labels mapping from user's input.
+        mapping_lbls (list): The list of labels mapping from user's input.
+        mapping_accts (list): The list of accounts mapping from user's input.
 
     Returns:
         df (dataframe): Processed dataframe.
