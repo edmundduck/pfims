@@ -137,7 +137,7 @@ def import_file(file, tablist, rules, extra):
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
 
     if has_acct_mapping:
-        acct_df = new_df.loc[:, [exprcd.Account]].dropna().unique()
+        acct_df = new_df.loc[:, [exprcd.Account]][exprcd.Account].dropna().unique()
     else:
         acct_df = None
 

@@ -28,7 +28,6 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         # Prefill "labels map to" dropdown by finding high proximity choices
         self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None
         self.add_event_handler('x-apply-action-to-all-labels', self.apply_action_to_all_labels)
-        self.add_event_handler('x-apply-action-to-all-accounts', self.apply_action_to_all_accounts)
 
     @logger.log_function
     def dropdown_lbl_action_change(self, **event_args):
@@ -52,9 +51,3 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         self.dropdown_lbl_action.selected_value = cache_lbl_action.get_complete_key(action)
         self.item['action'] = cache_lbl_action.get_complete_key(action)
         self.dropdown_lbl_action_change()
-
-    def apply_action_to_all_accounts(self, action, **event_args):
-        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
-        self.dropdown_acct_action.selected_value = cache_lbl_action.get_complete_key(action)
-        self.item['action'] = cache_lbl_action.get_complete_key(action)
-        self.dropdown_lbl_action_change()???

@@ -17,44 +17,38 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
-        cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_lbl_action.items = cache_lbl_action.get_cache()
-        self.dropdown_lbl_map_to.items = cache_labels.get_cache()
-        self.dropdown_lbl_map_to.visible = False
-        self.hidden_lbl_action.text = None
-        self.input_label.visible = False
+        cache_acct_action = ClientCache('generate_labels_mapping_action_dropdown')
+        cache_acct = ClientCache('generate_accounts_dropdown')
+        self.dropdown_acct_action.items = cache_acct_action.get_cache()
+        self.dropdown_acct_map_to.items = cache_acct.get_cache()
+        self.dropdown_acct_map_to.visible = False
+        self.hidden_acct_action.text = None
+        self.input_account.visible = False
 
+        ### TO DO ###
         # Prefill "labels map to" dropdown by finding high proximity choices
         self.dropdown_lbl_map_to.selected_value = self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None
-        self.add_event_handler('x-apply-action-to-all-labels', self.apply_action_to_all_labels)
         self.add_event_handler('x-apply-action-to-all-accounts', self.apply_action_to_all_accounts)
 
     @logger.log_function
-    def dropdown_lbl_action_change(self, **event_args):
+    def dropdown_acct_action_change(self, **event_args):
         """This method is called when an item is selected"""
-        action, action_desc = self.dropdown_lbl_action.selected_value if self.dropdown_lbl_action.selected_value is not None else [None, None]
+        action, action_desc = self.dropdown_acct_action.selected_value if self.dropdown_acct_action.selected_value is not None else [None, None]
         if action in (None, const.FileImportLabelExtraAction.SKIP):
-            self.dropdown_lbl_map_to.visible = False
+            self.dropdown_acct_map_to.visible = False
             self.input_label.visible = False
         elif action == const.FileImportLabelExtraAction.MAP:
-            self.dropdown_lbl_map_to.visible = True
+            self.dropdown_acct_map_to.visible = True
             self.input_label.visible = False
         elif action == const.FileImportLabelExtraAction.CREATE:
-            self.dropdown_lbl_map_to.visible = False
+            self.dropdown_acct_map_to.visible = False
             self.input_label.visible = True
-        prev = self.hidden_lbl_action.text
-        self.hidden_lbl_action.text = action
+        prev = self.hidden_acct_action.text
+        self.hidden_acct_action.text = action
         self.parent.raise_event('x-handle-action-count', action=action, prev=prev)
 
-    def apply_action_to_all_labels(self, action, **event_args):
-        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
-        self.dropdown_lbl_action.selected_value = cache_lbl_action.get_complete_key(action)
-        self.item['action'] = cache_lbl_action.get_complete_key(action)
-        self.dropdown_lbl_action_change()
-
     def apply_action_to_all_accounts(self, action, **event_args):
-        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
-        self.dropdown_acct_action.selected_value = cache_lbl_action.get_complete_key(action)
-        self.item['action'] = cache_lbl_action.get_complete_key(action)
-        self.dropdown_lbl_action_change()???
+        cache_acct_action = ClientCache('generate_labels_mapping_action_dropdown')
+        self.dropdown_acct_action.selected_value = cache_acct_action.get_complete_key(action)
+        self.item['action'] = cache_acct_action.get_complete_key(action)
+        self.dropdown_acct_action_change()

@@ -39,12 +39,19 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
             'new': labels
         }
         logger.trace("DL=", DL)
+        DL_acct = {
+            'srclbl': accounts,
+            'action': [ None for i in range(len(accounts))],
+            'tgtlbl': [ None for i in range(len(accounts))],
+            'new': accounts
+        }
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
         if accounts is None:
             self.flow_panel_step7.visible = False
         else:
-            self.flow_panel_step7.visible = True            
+            self.accounts_mapping_panel.items = [dict(zip(DL_acct, col)) for col in zip(*DL_acct.values())]
+            self.flow_panel_step7.visible = True
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
 
