@@ -43,7 +43,10 @@ def to_list_of_dict(DL):
     Returns:
         LD (list of dict): List of dict.
     """
-    LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    if DL is not None:
+        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    else:
+        LD = []
     return LD
 
 def to_dict_of_list(LD):
@@ -56,10 +59,13 @@ def to_dict_of_list(LD):
     Returns:
         DL (dict of list): Dict of list.
     """
-    if isinstance(LD[0], dict):
-        DL = {k: [dic[k] for dic in LD] for k in LD[0]}
-    elif isinstance(LD[0], psycopg2.extras.DictRow):
-        DL = {k: [dic[k] for dic in LD] for k in LD[0].keys()}
+    if LD is not None and len(LD) > 0:
+        if isinstance(LD[0], dict):
+            DL = {k: [dic[k] for dic in LD] for k in LD[0]}
+        elif isinstance(LD[0], psycopg2.extras.DictRow):
+            DL = {k: [dic[k] for dic in LD] for k in LD[0].keys()}
+        else:
+            raise TypeError(f"Only list of dict or list of DictCursor is supported.")
     else:
-        raise TypeError(f"Only list of dict or list of DictCursor is supported.")
+        DL = {}
     return DL

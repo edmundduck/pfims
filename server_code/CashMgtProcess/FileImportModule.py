@@ -97,7 +97,7 @@ def import_file(file, tablist, rules, extra):
     for i in rules:
         # Convert column in character ID to number for Pandas read_excel
         col = list(map(lambda x: ord(i[x].lower()) - 97 if 'a' <= i[x].lower() <= 'z' else None , col_name))
-        common_col = set(i.values()).intersection(extra_dl.get('col'))
+        common_col = set(i.values()).intersection(extra_dl.get('col')) if extra_dl.get('col', None) is not None else {}
                 
         nonNanList, nanList = ([c for c in col_name if i[c] not in (None, '')], [c for c in col_name if i[c] in (None, '')])
         for t in tablist:
