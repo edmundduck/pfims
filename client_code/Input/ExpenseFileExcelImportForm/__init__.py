@@ -74,8 +74,12 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
+        cache_labels = ClientCache('generate_labels_dropdown')
+        cache_acct = ClientCache('generate_accounts_dropdown')
         logger.trace(f"labels_mapping={self.labels_mapping_panel.items}")
-        df = anvil.server.call('update_mapping', data=self.tag.get('data'), mapping_lbls=self.labels_mapping_panel.items, mapping_accts=self.accounts_mapping_panel.items)
+        df = anvil.server.call('proc_excel_update_mappings', data=self.tag.get('data'), mapping_lbls=self.labels_mapping_panel.items, mapping_accts=self.accounts_mapping_panel.items)
+        cache_labels.clear_cache()
+        cache_acct.clear_cache()
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def handle_action_count(self, action, prev, **event_args):
@@ -94,5 +98,5 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
 
     def dropdown_actions_for_all_accounts_change(self, **event_args):
         """This method is called when an item is selected"""
-        action, action_desc = self.dropdown_actions_for_all_labels.selected_value if self.dropdown_actions_for_all_labels.selected_value is not None else [None, None]
-        self.labels_mapping_panel.raise_event_on_children('x-apply-action-to-all-accounts', action=action)
+        action, action_desc = self.dropdown_actions_for_all_accounts.selected_value if self.dropdown_actions_for_all_accounts.selected_value is not None else [None, None]
+        self.accounts_mapping_panel.raise_event_on_children('x-apply-action-to-all-accounts', action=action)

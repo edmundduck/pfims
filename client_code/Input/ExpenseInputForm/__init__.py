@@ -269,7 +269,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 # Filter out all None rows
                 return False
             return True
-        print(f"reload_rp_data={self.input_repeating_panel.items}")
         self.input_repeating_panel.items = extra + list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
     def _replace_iid(self, iid, **event_args):

@@ -13,6 +13,7 @@ import pdfplumber
 import re
 import datetime
 from . import LabelModule as lbl_mod
+from . import AccountModule as acct_mod
 from . import FileUploadMappingModule
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import LoggingModule
@@ -143,16 +144,15 @@ def import_file(file, tablist, rules, extra):
 
     return (new_df.dropna(subset=[exprcd.Amount, exprcd.Date], ignore_index=True)).to_dict(orient='records'), lbl_df[exprcd.Labels].dropna().unique(), acct_df
 
-@anvil.server.callable("update_mapping")
+@anvil.server.callable("update_labels_mapping")
 @logger.log_function
-def update_mapping(data, mapping_lbls, mapping_accts):
+def update_labels_mapping(data, mapping):
     """
     Update labels mapping from the imported Dataframe.
 
     Parameters:
         data (dataframe): The dataframe to be updated with the mapping.
-        mapping_lbls (list): The list of labels mapping from user's input.
-        mapping_accts (list): The list of accounts mapping from user's input.
+        mapping (list): The list of labels mapping from user's input.
 
     Returns:
         df (dataframe): Processed dataframe.
@@ -171,12 +171,13 @@ def update_mapping(data, mapping_lbls, mapping_accts):
             'status': [ True for i in range(len(pos_create)) ]
         }
         # labels param is transposed from DL to LD (List of Dicts)
-        lbl_id = lbl_mod.create_label(labels=[dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())])
+        lbl_list = [dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())]
+        lbl_id = lbl_mod.create_label(lbl_list)
         logger.debug("Label created with ID lbl_id=", lbl_id)
         if lbl_id is None: raise Exception("Fail to create label.")
     
         # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-        for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = {'id': lbl_id[lbl_loc], 'text': None}
+        for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = [lbl_id[lbl_loc], lbl_list[lbl_loc].get('name')]
         logger.trace("2) Replace labels with action = 'C' to the newly created label codes in step 1")
         logger.trace("DL['tgtlbl']=", DL['tgtlbl'])
     
@@ -194,6 +195,67 @@ def update_mapping(data, mapping_lbls, mapping_accts):
                         id = lbl_mapping['tgtlbl'][0]
                         df[exprcd.Labels].replace(lbl_mapping['srclbl'], id, inplace=True)
         logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
+        logger.trace("df=", df)
+        # df.fillna(value={exprcd.Remarks:None, exprcd.StmtDtl:None, exprcd.Amount:0}, inplace=True)
+        # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
+        return df.replace([np.nan], [None]).sort_values(by=exprcd.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+    except (Exception) as err:
+        logger.error(err)
+    return None
+
+@anvil.server.callable("update_accounts_mapping")
+@logger.log_function
+def update_accounts_mapping(data, mapping):
+    """
+    Update accounts mapping from the imported Dataframe.
+
+    Parameters:
+        data (dataframe): The dataframe to be updated with the mapping.
+        mapping (list): The list of accounts mapping from user's input.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
+    try:
+        # 1. Get all items with action = 'C', and grab new field to create new accounts
+        # DL = Dict of Lists
+        DL = helper.to_dict_of_list(mapping)
+        # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
+        DL_action = {'id': [dic[0] for dic in DL['action']]}
+        pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
+        logger.debug("pos_create=", pos_create)
+        acct_mogstr = {
+            'name': [DL['newacct'][x] for x in pos_create],
+            'ccy': [ None for i in range(len(pos_create)) ],
+            'valid_from': [ None for i in range(len(pos_create)) ],
+            'valid_to': [ None for i in range(len(pos_create)) ],
+            'status': [ True for i in range(len(pos_create)) ]
+        }
+        # labels param is transposed from DL to LD (List of Dicts)
+        acct_list = [dict(zip(acct_mogstr, col)) for col in zip(*acct_mogstr.values())]
+        acct_id = acct_mod.create_multiple_accounts(acct_list)
+        logger.debug("Account created with ID acct_id=", acct_id)
+        if acct_id is None: raise Exception("Fail to create account.")
+    
+        # 2. Replace accounts with action = 'C' to the newly created account codes in step 1
+        for acct_loc in range(len(acct_id)): DL['tgtacct'][pos_create[acct_loc]] = [acct_id[acct_loc], acct_list[acct_loc].get('name')]
+        logger.trace("2) Replace accounts with action = 'C' to the newly created account codes in step 1")
+        logger.trace("DL['tgtacct']=", DL['tgtacct'])
+    
+        # 3. Replace accounts with action = 'M' and 'C' to the target account codes in df
+        # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
+        df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
+        
+        LD = helper.to_list_of_dict(DL)
+        if df is not None and LD is not None:
+            for acct_mapping in LD:
+                if acct_mapping is not None:
+                    if acct_mapping.get('action')[0] == "S":
+                        df[exprcd.Account].replace(acct_mapping['srcacct'], None, inplace=True)                    
+                    elif acct_mapping.get('tgtacct') is not None:
+                        id = acct_mapping['tgtacct'][0]
+                        df[exprcd.Account].replace(acct_mapping['srcacct'], id, inplace=True)
+        logger.trace("3) Replace accounts with action = 'M' and 'C' to the target account codes in df")
         logger.trace("df=", df)
         # df.fillna(value={exprcd.Remarks:None, exprcd.StmtDtl:None, exprcd.Amount:0}, inplace=True)
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
@@ -519,3 +581,22 @@ def proc_excel_import_1st_stage(rule_id, file, tablist):
     extra = FileUploadMappingModule.select_mapping_extra_actions(rule_id)
     data_df, lbls_df, acct_df = import_file(file, tablist, matrix, extra)
     return [data_df, lbls_df, acct_df]
+
+@anvil.server.callable("proc_excel_update_mappings")
+@logger.log_function
+def proc_excel_update_mappings(data, mapping_lbls, mapping_accts):
+    """
+    Consolidated process for updating labels and accounts mapping in excel import.
+
+    Parameters:
+        data (dataframe): The dataframe to be updated with the mapping.
+        mapping_lbls (list): The list of labels mapping from user's input.
+        mapping_accts (list): The list of accounts mapping from user's input.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
+    df = data.copy()
+    df = update_labels_mapping(df, mapping_lbls)
+    df = update_accounts_mapping(df, mapping_accts)
+    return df
