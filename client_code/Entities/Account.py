@@ -8,6 +8,12 @@ from anvil.tables import app_tables
 
 class Account:
     def __init__(self, data):
+        self.set(data)
+
+    def get(self):
+        return [self.id, self.name, self.ccy, self.valid_from, self.valid_to, self.status]
+        
+    def set(self, data):
         if data and isinstance(data, list):
             self.id = data[0]
             self.name = data[1]
@@ -16,4 +22,9 @@ class Account:
             self.valid_to = data[4]
             self.status = data[5]
 
-    def 
+    def is_valid(self):
+        if not self.name or self.name.isspace():
+            return False
+        if not self.ccy or self.ccy.isspace():
+            return False
+        return True
