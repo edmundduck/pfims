@@ -49,6 +49,9 @@ class FileImportLabelExtraAction:
     MAP = 'M'
     CREATE = 'C'
 
+class ReportSearchMode:
+    USER_DEFINED = 'SDR'
+
 # PnL reports drill mode
 class PNLDrillMode:
     """

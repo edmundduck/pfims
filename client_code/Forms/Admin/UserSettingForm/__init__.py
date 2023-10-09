@@ -1,4 +1,4 @@
-from ._anvil_designer import SettingFormTemplate
+from ._anvil_designer import UserSettingFormTemplate
 from anvil import *
 import anvil.users
 import anvil.server
@@ -9,11 +9,12 @@ from ...Utils import Constants as const
 from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
+from ....Controllers.UserSettingController import UserSettingController
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
 
-class SettingForm(SettingFormTemplate):
+class UserSettingForm(UserSettingFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)

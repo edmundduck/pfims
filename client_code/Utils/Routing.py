@@ -13,9 +13,9 @@ def open_dashboard_form(self, **event_args):
     anvil.get_open_form().content_panel.add_component(DashboardForm())
 
 def open_setting_form(self, **event_args):
-    from ..Admin.SettingForm import SettingForm
+    from ..Forms.Admin.UserSettingForm import UserSettingForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(SettingForm())
+    anvil.get_open_form().content_panel.add_component(UserSettingForm())
 
 def open_stock_input_form(self, **event_args):
     from ..Input.StockInputForm import StockInputForm
