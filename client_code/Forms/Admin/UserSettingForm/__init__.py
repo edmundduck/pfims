@@ -38,28 +38,13 @@ class UserSettingForm(UserSettingFormTemplate):
             self.time_dateto.date = settings.get('default_dateto')
             self.dropdown_logging_level.selected_value = settings.get('logging_level')
 
-        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval != "SDR":
-            self.time_datefrom.enabled = False
-            self.time_dateto.enabled = False
-    
-        self.button_broker_create.enabled = False
-        self.button_broker_update.enabled = False
-        self.button_broker_delete.enabled = False
+        self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
+        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value)
     
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
-        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval != "SDR":
-            if interval in (None, ''):
-                self.time_datefrom.date = ''
-                self.time_dateto.date = ''
-        
-            self.time_datefrom.enabled = False
-            self.time_dateto.enabled = False
-        else:
-            self.time_datefrom.enabled = True
-            self.time_dateto.enabled = True
+        self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
+        self.time_datefrom.date, self.time_dateto.date = UserSettingController.set_search_time_datefield_value(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date)
 
     @btnmod.one_click_only
     @logger.log_function
@@ -127,17 +112,12 @@ class UserSettingForm(UserSettingFormTemplate):
 
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
+        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value)
         broker_id, broker_name, broker_ccy = self.dropdown_broker_list.selected_value
         self.hidden_b_id.text = broker_id
         if broker_id in (None, ''):
-            self.button_broker_update.enabled = False
-            self.button_broker_delete.enabled = False
-            self.button_broker_create.enabled = False
             self.text_broker_name.text = ''
         else:
-            self.button_broker_update.enabled = True
-            self.button_broker_delete.enabled = True
-            self.button_broker_create.enabled = True
             self.text_broker_name.text = broker_name
             self.dropdown_ccy.selected_value = broker_ccy
   
