@@ -5,9 +5,19 @@ import anvil.users
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 def generate_brokers_dropdown(self):
+    """
+    Access brokers dropdown from either client cache or generate from DB data returned from server side.
+
+    Returns:
+        brokers_dropdown (list): Brokers dropdown formed by partial brokers DB table data.
+    """
     from ..Utils.ClientCache import ClientCache
-    return ClientCache('generate_brokers_simplified_list')
-    'generate_brokers_simplified_list'
+    brokers_dropdown = ClientCache('generate_brokers_dropdown', [])
+    if brokers_dropdown.is_empty():
+        brokers_list = anvil.server.call('generate_brokers_simplified_list')
+        new_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in brokers_list)
+        brokers_dropdown.set_cache(new_dropdown)
+    return brokers_dropdown
 
 def enable_search_time_datefield(self, interval_selection):
     """

@@ -21,15 +21,13 @@ class UserSettingForm(UserSettingFormTemplate):
         
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
-        cache_brokers = ClientCache('generate_brokers_simplified_list')
-        
+        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
+        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
         self.dropdown_logging_level.items = const.LoggingLevel.dropdown
         settings, search_interval, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
-        self.dropdown_default_broker.items = cache_brokers.get_cache()
         # Not use client cache to load search interval and CCY to reduce server calls turnaround
         self.dropdown_interval.items = search_interval
         self.dropdown_ccy.items = ccy
-        self.dropdown_broker_list.items = cache_brokers.get_cache()
         self.dropdown_sub_templ_list.items = submitted_templ_list
         if settings is not None and len(settings) > 0:
             self.dropdown_default_broker.selected_value = cache_brokers.get_complete_key(settings.get('default_broker'))
