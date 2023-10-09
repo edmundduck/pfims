@@ -19,30 +19,36 @@ from ..CashMgtProcess import AccountModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
+@anvil.server.callable("select_settings", require_user=True)
 @logger.log_function
-def psqldb_select_settings():
+def select_settings():
     """
-    Select data from the DB table which stores each user's settings
+    Select user's settings from the user's setting DB table.
 
     Returns:
-        dict: A dictionary containing all user's settings
+        dict: A dictionary containing all user's settings.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
-    settings = None
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {sysmod.schemafin()}.settings")
-        for i in cur.fetchall():
-            settings = {
-                'default_broker': i['default_broker'],
-                'default_interval': i['default_interval'],
-                'default_datefrom': i['default_datefrom'],
-                'default_dateto': i['default_dateto'],
-                'logging_level': i['logging_level']
-            }
-        logger.debug("settings=", settings)
-        cur.close()
-    return settings
+    def psqldb_select_settings():
+        userid = sysmod.get_current_userid()
+        conn = sysmod.db_connect()
+        settings = None
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (userid, ))
+            cur.execute(stmt)
+            for i in cur.fetchall():
+                settings = {
+                    'default_broker': i['default_broker'],
+                    'default_interval': i['default_interval'],
+                    'default_datefrom': i['default_datefrom'],
+                    'default_dateto': i['default_dateto'],
+                    'logging_level': i['logging_level']
+                }
+            logger.debug("settings=", settings)
+            cur.close()
+        return settings
+
+    return psqldb_select_settings()
 
 @logger.log_function
 def psgldb_generate_brokers_dropdown():
@@ -205,18 +211,6 @@ def psgldb_select_search_interval():
         logger.debug("rows=", rows)
         cur.close()
     return list((row['name'], row['id']) for row in rows)
-
-# Postgres impl END
-
-@anvil.server.callable
-def select_settings():
-    """
-    A wrapper function to select user settings detail to generate a dropdown list.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psqldb_select_settings()
 
 @anvil.server.callable
 def generate_brokers_dropdown():
