@@ -14,6 +14,7 @@ from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..CashMgtProcess import AccountModule
+from ..Entities.Setting import Setting
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -26,12 +27,11 @@ def select_settings():
     Select user's settings from the user's setting DB table.
 
     Returns:
-        row (dict): A dictionary containing all user's settings.
+        setting (Setting): Setting object contains all user's setting.
     """
     def psqldb_select_settings():
         userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
-        settings = None
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=sysmod.schemafin())
             stmt = cur.mogrify(sql, (userid, ))
@@ -41,7 +41,8 @@ def select_settings():
             cur.close()
         return row
 
-    return psqldb_select_settings()
+    setting = Setting(psqldb_select_settings())
+    return setting
 
 @logger.log_function
 def psgldb_generate_brokers_dropdown():
@@ -63,7 +64,7 @@ def psgldb_generate_brokers_dropdown():
 
 @anvil.server.callable('upsert_settings', require_user=True)
 @logger.log_function
-def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+def upsert_settings(setting):
     """
     Insert or update settings from setting form to a DB table which stores user's settings detail.
 
@@ -80,21 +81,26 @@ def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_
         int: Successful update row count, otherwise None
     """
     def psgldb_upsert_settings():
-        userid = sysmod.get_current_userid()
-        if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
+        conn, cur = None * 2
         try:
-            conn = sysmod.db_connect()
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
-                default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
-                default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
-                stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
-                cur.execute(stmt)
-                conn.commit()
-                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
-                anvil.server.session['loglevel'] = logging_level
-                return cur.rowcount
+            if isinstance(setting, Setting):
+                userid = sysmod.get_current_userid()
+                if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
+                    conn = sysmod.db_connect()
+                    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                        sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
+                        default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
+                        default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
+                        stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
+                        cur.execute(stmt)
+                        conn.commit()
+                        logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                        if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
+                        anvil.server.session['loglevel'] = logging_level
+                        return cur.rowcount
+            else:
+                raise TypeError(f"The parameter is not a Setting object.")
+        except TypeError as err:
         except (Exception, psycopg2.OperationalError) as err:
             logger.error(err)
             conn.rollback()
