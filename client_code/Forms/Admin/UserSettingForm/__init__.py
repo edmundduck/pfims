@@ -5,11 +5,11 @@ import anvil.server
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
-from ...Utils import Constants as const
-from ...Utils.ButtonModerator import ButtonModerator
-from ...Utils.ClientCache import ClientCache
-from ...Utils.Logger import ClientLogger
-from ....Controllers.UserSettingController import UserSettingController
+from ....Utils import Constants as const
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.ClientCache import ClientCache
+from ....Utils.Logger import ClientLogger
+from ....Controllers import UserSettingController
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
@@ -29,12 +29,12 @@ class UserSettingForm(UserSettingFormTemplate):
         self.dropdown_interval.items = search_interval
         self.dropdown_ccy.items = ccy
         self.dropdown_sub_templ_list.items = submitted_templ_list
-        if settings is not None and len(settings) > 0:
-            self.dropdown_default_broker.selected_value = cache_brokers.get_complete_key(settings.get('default_broker'))
-            self.dropdown_interval.selected_value = settings.get('default_interval')
-            self.time_datefrom.date = settings.get('default_datefrom')
-            self.time_dateto.date = settings.get('default_dateto')
-            self.dropdown_logging_level.selected_value = settings.get('logging_level')
+        if settings.is_valid():
+            self.dropdown_default_broker.selected_value = cache_brokers.get_complete_key(settings.get_broker())
+            self.dropdown_interval.selected_value = settings.get_search_interval()
+            self.time_datefrom.date = settings.get_search_datefrom()
+            self.time_dateto.date = settings.get_search_dateto()
+            self.dropdown_logging_level.selected_value = settings.get_logging_level()
 
         self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
         self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value)

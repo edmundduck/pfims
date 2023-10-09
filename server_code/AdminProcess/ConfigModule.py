@@ -37,14 +37,14 @@ def select_settings():
             stmt = cur.mogrify(sql, (userid, ))
             cur.execute(stmt)
             row = cur.fetchone()
-            logger.debug("settings=", settings)
+            logger.debug("settings=", row)
             cur.close()
         return row
 
     setting = Setting(psqldb_select_settings())
     return setting
 
-@anvil.server.callable
+@anvil.server.callable('generate_brokers_simplified_list')
 @logger.log_function
 def generate_brokers_simplified_list():
     """
@@ -65,7 +65,7 @@ def generate_brokers_simplified_list():
         # broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in result)
         return rows
 
-    return psgldb_generate_brokers_dropdown()
+    return psgldb_generate_brokers_simplified_list()
 
 @anvil.server.callable('upsert_settings', require_user=True)
 @logger.log_function

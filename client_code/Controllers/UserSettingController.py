@@ -4,7 +4,7 @@ import anvil.users
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-def generate_brokers_dropdown(self):
+def generate_brokers_dropdown():
     """
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
 
@@ -12,14 +12,14 @@ def generate_brokers_dropdown(self):
         brokers_dropdown (list): Brokers dropdown formed by partial brokers DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    brokers_dropdown = ClientCache('generate_brokers_dropdown', [])
+    brokers_dropdown = ClientCache('generate_brokers_dropdown', None)
     if brokers_dropdown.is_empty():
         brokers_list = anvil.server.call('generate_brokers_simplified_list')
         new_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in brokers_list)
         brokers_dropdown.set_cache(new_dropdown)
-    return brokers_dropdown
+    return brokers_dropdown.get_cache()
 
-def enable_search_time_datefield(self, interval_selection):
+def enable_search_time_datefield(interval_selection):
     """
     Enable or disable the "search time" (from, to) date field.
 
@@ -30,7 +30,7 @@ def enable_search_time_datefield(self, interval_selection):
     interval = interval_selection[0] if isinstance(interval_selection, list) else interval_selection
     return [True] *2 if interval == ReportSearchMode.USER_DEFINED else [False] *2
 
-def set_search_time_datefield_value(self, interval_selection, date_from_value, date_to_value):
+def set_search_time_datefield_value(interval_selection, date_from_value, date_to_value):
     """
     Set the "search time" (from, to) date field value.
 
@@ -41,7 +41,7 @@ def set_search_time_datefield_value(self, interval_selection, date_from_value, d
     interval = interval_selection[0] if isinstance(interval_selection, list) else interval_selection
     return [date_from_value, date_to_value] if interval == ReportSearchMode.USER_DEFINED else [None] *2
 
-def enable_broker_action_button(self, broker_selection):
+def enable_broker_action_button(broker_selection):
     """
     Enable or disable the broker action buttons (Create, Update, Delete).
 
@@ -51,7 +51,7 @@ def enable_broker_action_button(self, broker_selection):
     broker_id = broker_selection[0] if isinstance(broker_selection, list) else broker_selection
     return [False] *3 if broker_id in (None, '') or broker_id.isspace() else [True] *3
 
-def set_selected_broker_fields(self, broker_selection):
+def set_selected_broker_fields(broker_selection):
     """
     Set the broker name and currency based on broker dropdown.
 
