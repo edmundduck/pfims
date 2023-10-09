@@ -6,7 +6,9 @@ import anvil.users
 @anvil.server.portable_class
 class Setting:
     def __init__(self, data):
+        print("1.data=", data)
         self.set(data)
+        print("2.data=", data)
 
     def get(self):
         return [self.default_broker, self.default_interval, self.default_datefrom, self.default_dateto, self.logging_level]
