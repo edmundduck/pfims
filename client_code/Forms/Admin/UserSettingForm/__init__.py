@@ -21,7 +21,7 @@ class UserSettingForm(UserSettingFormTemplate):
         
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
-        cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_brokers = ClientCache('generate_brokers_simplified_list')
         
         self.dropdown_logging_level.items = const.LoggingLevel.dropdown
         settings, search_interval, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
@@ -67,7 +67,7 @@ class UserSettingForm(UserSettingFormTemplate):
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_brokers = ClientCache('generate_brokers_simplified_list')
         broker_id, dummy = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         cache_brokers.clear_cache()
         self.dropdown_broker_list.items = cache_brokers.get_cache()
@@ -86,7 +86,7 @@ class UserSettingForm(UserSettingFormTemplate):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
         broker_id, broker_name, broker_ccy = self.dropdown_broker_list.selected_value
-        cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_brokers = ClientCache('generate_brokers_simplified_list')
         broker_id, dummy = anvil.server.call('proc_broker_create_update', broker_id, self.text_broker_name.text, self.dropdown_ccy.selected_value)
         cache_brokers.clear_cache()
         self.dropdown_broker_list.items = cache_brokers.get_cache()
@@ -99,7 +99,7 @@ class UserSettingForm(UserSettingFormTemplate):
     @logger.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_brokers = ClientCache('generate_brokers_simplified_list')
         count, dummy = anvil.server.call('proc_broker_delete', self.hidden_b_id.text)
         cache_brokers.clear_cache()
         if count is not None and count > 0:
@@ -113,13 +113,7 @@ class UserSettingForm(UserSettingFormTemplate):
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
         self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value)
-        broker_id, broker_name, broker_ccy = self.dropdown_broker_list.selected_value
-        self.hidden_b_id.text = broker_id
-        if broker_id in (None, ''):
-            self.text_broker_name.text = ''
-        else:
-            self.text_broker_name.text = broker_name
-            self.dropdown_ccy.selected_value = broker_ccy
+        self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value = UserSettingController.set_selected_broker_fields(self.dropdown_broker_list.selected_value)
   
     @btnmod.one_click_only
     @logger.log_function
@@ -136,6 +130,3 @@ class UserSettingForm(UserSettingFormTemplate):
             n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=templ_name))
         n.show()
 
-    def button_logging_edit_click(self, **event_args):
-        """This method is called when the button is clicked"""
-        

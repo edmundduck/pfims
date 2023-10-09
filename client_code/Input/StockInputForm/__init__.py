@@ -24,7 +24,7 @@ class StockInputForm(StockInputFormTemplate):
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
 
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-        cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_brokers = ClientCache('generate_brokers_simplified_list')
         cache_template = ClientCache('generate_template_dropdown')
         cache_user_settings = ClientCache('select_settings')
         templ_id, templ_name = self.dropdown_templ.selected_value if self.dropdown_templ.selected_value is not None else [None, None]
@@ -86,7 +86,7 @@ class StockInputForm(StockInputFormTemplate):
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
-        cache_brokers = ClientCache('generate_brokers_dropdown')
+        cache_brokers = ClientCache('generate_brokers_simplified_list')
         cache_user_settings = ClientCache('select_settings')
         if self.dropdown_templ.selected_value is not None:
             templ_id, templ_name = self.dropdown_templ.selected_value
@@ -163,7 +163,7 @@ class StockInputForm(StockInputFormTemplate):
         if userconf == const.Alerts.CONFIRM:
             result = anvil.server.call('delete_templates', template_id=templ_id)
             if result is not None and result > 0:
-                cache_brokers = ClientCache('generate_brokers_dropdown')
+                cache_brokers = ClientCache('generate_brokers_simplified_list')
                 cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
                 cache_template = ClientCache('generate_template_dropdown')
                 cache_user_settings = ClientCache('select_settings')        
@@ -199,7 +199,7 @@ class StockInputForm(StockInputFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            cache_brokers = ClientCache('generate_brokers_dropdown')
+            cache_brokers = ClientCache('generate_brokers_simplified_list')
             cache_template = ClientCache('generate_template_dropdown')
             cache_user_settings = ClientCache('select_settings')        
 

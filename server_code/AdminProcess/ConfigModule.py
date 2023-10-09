@@ -44,23 +44,28 @@ def select_settings():
     setting = Setting(psqldb_select_settings())
     return setting
 
+@anvil.server.callable
 @logger.log_function
-def psgldb_generate_brokers_dropdown():
+def generate_brokers_simplified_list():
     """
-    Select broker data from the DB table which stores investment brokers' detail to generate a dropdown list.
+    Select part of investment broker's data from the broker DB table.
 
     Returns:
         broker_dropdown (list): A dropdown list of broker names and CCY as description, and broker ID as ID.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT broker_id, name, ccy FROM {sysmod.schemafin()}.brokers WHERE userid = {userid} ORDER BY broker_id ASC")
-        result = cur.fetchall()
-        cur.close()
-    logger.debug("result=", result)
-    broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in result)
-    return broker_dropdown
+    def psgldb_generate_brokers_simplified_list():
+        userid = sysmod.get_current_userid()
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = "SELECT broker_id, name, ccy FROM {schema}.brokers WHERE userid = {userid} ORDER BY broker_id ASC".format(schema=sysmod.schemafin(), userid=userid)
+            cur.execute(sql)
+            rows = cur.fetchall()
+            logger.debug("simplified_list=", rows)
+            cur.close()
+        # broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in result)
+        return rows
+
+    return psgldb_generate_brokers_dropdown()
 
 @anvil.server.callable('upsert_settings', require_user=True)
 @logger.log_function
@@ -84,24 +89,27 @@ def upsert_settings(setting):
         conn, cur = None * 2
         try:
             if isinstance(setting, Setting):
-                userid = sysmod.get_current_userid()
+                userid = setting.get_userid()
+                if sysmod.get_current_userid() != userid:
+                    raise RuntimeError(f"Unauthorized access to other's user settings.")
                 if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
-                    conn = sysmod.db_connect()
-                    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                        sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
-                        default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
-                        default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
-                        stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
-                        cur.execute(stmt)
-                        conn.commit()
-                        logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                        if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
-                        anvil.server.session['loglevel'] = logging_level
-                        return cur.rowcount
+                conn = sysmod.db_connect()
+                with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                    sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
+                    default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
+                    default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
+                    stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
+                    cur.execute(stmt)
+                    conn.commit()
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                    if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
+                    anvil.server.session['loglevel'] = logging_level
+                    return cur.rowcount
             else:
                 raise TypeError(f"The parameter is not a Setting object.")
-        except TypeError as err:
-        except (Exception, psycopg2.OperationalError) as err:
+        except (RuntimeError, TypeError) as err:
+            logger.error(err)
+        except psycopg2.OperationalError as err:
             logger.error(err)
             conn.rollback()
         finally:
@@ -214,16 +222,6 @@ def psgldb_select_search_interval():
         logger.debug("rows=", rows)
         cur.close()
     return list((row['name'], row['id']) for row in rows)
-
-@anvil.server.callable
-def generate_brokers_dropdown():
-    """
-    A wrapper function to select brokers detail to generate a dropdown list.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_generate_brokers_dropdown()
 
 @anvil.server.callable
 def upsert_brokers(b_id, name, ccy):
