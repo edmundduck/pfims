@@ -19,14 +19,14 @@ from ..CashMgtProcess import AccountModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("select_settings", require_user=True)
+@anvil.server.callable('select_settings', require_user=True)
 @logger.log_function
 def select_settings():
     """
     Select user's settings from the user's setting DB table.
 
     Returns:
-        dict: A dictionary containing all user's settings.
+        row (dict): A dictionary containing all user's settings.
     """
     def psqldb_select_settings():
         userid = sysmod.get_current_userid()
@@ -36,17 +36,10 @@ def select_settings():
             sql = "SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=sysmod.schemafin())
             stmt = cur.mogrify(sql, (userid, ))
             cur.execute(stmt)
-            for i in cur.fetchall():
-                settings = {
-                    'default_broker': i['default_broker'],
-                    'default_interval': i['default_interval'],
-                    'default_datefrom': i['default_datefrom'],
-                    'default_dateto': i['default_dateto'],
-                    'logging_level': i['logging_level']
-                }
+            row = cur.fetchone()
             logger.debug("settings=", settings)
             cur.close()
-        return settings
+        return row
 
     return psqldb_select_settings()
 
@@ -68,8 +61,9 @@ def psgldb_generate_brokers_dropdown():
     broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in result)
     return broker_dropdown
 
+@anvil.server.callable('upsert_settings', require_user=True)
 @logger.log_function
-def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
     """
     Insert or update settings from setting form to a DB table which stores user's settings detail.
 
@@ -85,28 +79,31 @@ def psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, l
     Returns:
         int: Successful update row count, otherwise None
     """
-    userid = sysmod.get_current_userid()
-    if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
-    try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
-            default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
-            default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
-            stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
-            cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
-            anvil.server.session['loglevel'] = logging_level
-            return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
-        logger.error(err)
-        conn.rollback()
-    finally:
-        if cur is not None: cur.close()
-        if conn is not None: conn.close()
-    return None
+    def psgldb_upsert_settings():
+        userid = sysmod.get_current_userid()
+        if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
+        try:
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
+                default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
+                default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
+                stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
+                anvil.server.session['loglevel'] = logging_level
+                return cur.rowcount
+        except (Exception, psycopg2.OperationalError) as err:
+            logger.error(err)
+            conn.rollback()
+        finally:
+            if cur is not None: cur.close()
+            if conn is not None: conn.close()
+        return None
+
+    return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
 
 @logger.log_function
 def psgldb_upsert_brokers(b_id, prefix, name, ccy):
@@ -221,23 +218,6 @@ def generate_brokers_dropdown():
         function: A function to actual execute the logic in DB.
     """
     return psgldb_generate_brokers_dropdown()
-
-@anvil.server.callable
-def upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
-    """
-    A wrapper function to insert or update user settings detail.
-
-    Parameters:
-        def_broker (str): The name of the broker.
-        def_interval (str): The ID of the default search interval.
-        def_datefrom (date): The date to default search from.
-        def_dateto (date): The date to default search to.
-        logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
 
 @anvil.server.callable
 def upsert_brokers(b_id, name, ccy):
