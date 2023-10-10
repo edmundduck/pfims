@@ -86,9 +86,7 @@ def upsert_settings(setting):
         conn, cur = None * 2
         try:
             if isinstance(setting, Setting):
-                userid = setting.get_userid()
-                if sysmod.get_current_userid() != userid:
-                    raise RuntimeError(f"Unauthorized access to other's user settings.")
+                userid = sysmod.get_current_userid()
                 if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
                 conn = sysmod.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -104,7 +102,7 @@ def upsert_settings(setting):
                     return cur.rowcount
             else:
                 raise TypeError(f"The parameter is not a Setting object.")
-        except (RuntimeError, TypeError) as err:
+        except TypeError as err:
             logger.error(err)
         except psycopg2.OperationalError as err:
             logger.error(err)

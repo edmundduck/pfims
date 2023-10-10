@@ -45,13 +45,21 @@ class Setting:
         return self.logging_level
 
     def set(self, data):
-        if data and isinstance(data, dict):
-            self.userid = data.get('userid')
-            self.default_broker = data.get('default_broker')
-            self.default_interval = data.get('default_interval')
-            self.default_datefrom = data.get('default_datefrom')
-            self.default_dateto = data.get('default_dateto')
-            self.logging_level = data.get('logging_level')
+        if data:
+            if isinstance(data, dict):
+                self.userid = data.get('userid')
+                self.default_broker = data.get('default_broker')
+                self.default_interval = data.get('default_interval')
+                self.default_datefrom = data.get('default_datefrom')
+                self.default_dateto = data.get('default_dateto')
+                self.logging_level = data.get('logging_level')
+            elif isinstance(data, list):
+                self.userid = data[0]
+                self.default_broker = data[1]
+                self.default_interval = data[2]
+                self.default_datefrom = data[3]
+                self.default_dateto = data[4]
+                self.logging_level = data[5]
 
     def is_valid(self):
         return True

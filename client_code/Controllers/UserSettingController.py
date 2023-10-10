@@ -1,5 +1,6 @@
 import anvil.server
 import anvil.users
+from ..Entities.Setting import Setting
 from ..Utils.Constants import CacheKey
 
 # This is a module.
@@ -153,30 +154,24 @@ def visible_logging_panel():
     """
     return True if anvil.app.environment.name in 'Dev' else False
 
-def change_settings(broker_id, interval, datefrom, dateto, logging_level):
+def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefrom, dateto, logging_level):
     """
     Convert the fields from the form for submitting the user settings change in backend.
 
     Parameters:
-        broker_id (str): The name of the broker.
-        interval (str): The ID of the default search interval.
+        broker_dropdown_selected (list): The selected value in list from the broker dropdown.
+        interval_dropdown_selected (list): The selected value in list from the search interval.
         datefrom (date): The date to default search from.
         dateto (date): The date to default search to.
         logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
         
-
     Returns:
-        broker_id (String): Selected broker ID.
-        broker_name (String): Selected broker name, None instead if broker ID is none or empty.
-        broker_ccy (String): Selected broker currency, None instead if broker ID is none or empty.
+        count (int): Successful update row count, otherwise None
     """
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.USER_SETTINGS, None)
-    if isinstance(broker_selection, list):
-        broker_id, broker_name, broker_ccy = broker_selection
-        if broker_id in (None, '') or broker_id.isspace():
-            broker_name, broker_ccy = [None] *2
-    else:
-        broker_name, broker_ccy = [None] *2
-    return [broker_id, broker_name, broker_ccy]
+    broker_id, __, __ = broker_dropdown_selected if isinstance(broker_dropdown_selected, list) else [broker_dropdown_selected, None, None]
+    search_interval = interval_dropdown_selected[0] if isinstance(interval_dropdown_selected, list) else interval_dropdown_selected
+    count = anvil.server.call('proc_upsert_settings', Setting([None, broker_id, search_interval, datefrom, dateto, logging_level]))
+    return count
 

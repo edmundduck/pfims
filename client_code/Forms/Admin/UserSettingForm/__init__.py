@@ -48,9 +48,14 @@ class UserSettingForm(UserSettingFormTemplate):
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
         cache_settings = ClientCache('select_settings')
-        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        broker_id, broker_name, broker_ccy = self.dropdown_default_broker.selected_value
-        count = anvil.server.call('proc_upsert_settings', broker_id, interval, self.time_datefrom.date, self.time_dateto.date, self.dropdown_logging_level.selected_value)
+        count = anvil.server.call(
+            'proc_upsert_settings', 
+            self.dropdown_default_broker.selected_value, 
+            self.dropdown_interval.selected_value, 
+            self.time_datefrom.date, 
+            self.time_dateto.date, 
+            self.dropdown_logging_level.selected_value
+        )
         logger.set_level()
         if count is not None and count > 0:
             n = Notification("{count} row updated successfully.".format(count=count))
