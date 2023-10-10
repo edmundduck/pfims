@@ -178,38 +178,38 @@ def update_broker(broker_id, broker_name, ccy):
             if conn is not None: conn.close()
         return None
     return psgldb_update_broker()
-      
-@anvil.server.callable('delete_brokers')
+
+@anvil.server.callable('delete_broker')
 @logger.log_function
-def delete_brokers(b_id):
+def delete_broker(broker_id):
     """
-    Delete an investment broker from the DB table which stores investment brokers' detail.
+    Delete an investment broker and save the change into the brokers DB table.
 
     Row count returned larger than 0 is considered as a successful update.
     
     Parameters:
-        b_id (str): The ID of the broker.
+        broker_id (str): The ID of the broker.
 
     Returns:
         cur.rowcount (int): Successful update row count, otherwise None.
     """
-    def psgldb_delete_brokers():
+    def psgldb_delete_broker():
         try:
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{b_id}'")
+                cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{broker_id}'")
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
                 return cur.rowcount
-        except (Exception, psycopg2.OperationalError) as err:
+        except psycopg2.OperationalError as err:
             logger.error(err)
             conn.rollback()
         finally:
             if cur is not None: cur.close()
             if conn is not None: conn.close()
         return None
-    return psgldb_delete_brokers()
+    return psgldb_delete_broker()
     
 @anvil.server.callable("generate_currency_list")
 @logger.log_function
@@ -305,18 +305,6 @@ def proc_upsert_settings(setting):
     count = upsert_settings(setting)
     sysmod.set_user_logging_level()
     return count
-
-@anvil.server.callable("proc_broker_delete")
-@logger.log_function
-def proc_broker_delete(b_id):
-    """
-    Consolidated process for broker deletion.
-
-    Returns:
-        list: A list of all functions return required by the broker deletion.
-    """
-    count = delete_brokers(b_id)
-    return [count, None]
 
 @anvil.server.callable("proc_submitted_template_update")
 @logger.log_function

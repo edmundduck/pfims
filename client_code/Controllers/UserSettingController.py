@@ -2,9 +2,12 @@ import anvil.server
 import anvil.users
 from ..Entities.Setting import Setting
 from ..Utils.Constants import CacheKey
+from ..Utils.Logger import ClientLogger
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
+
+logger = ClientLogger()
 
 def get_user_settings(data=None, reload=False):
     """
@@ -21,7 +24,8 @@ def get_user_settings(data=None, reload=False):
         rows = anvil.server.call('select_settings')
         cache.set_cache(rows.get_dict())
     return cache.get_cache()
-    
+
+@logger.log_function
 def generate_brokers_dropdown(data=None, reload=False):
     """
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
@@ -34,8 +38,9 @@ def generate_brokers_dropdown(data=None, reload=False):
         cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.BROKER, list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data))
-    if reload: 
+    cache_data = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data) if data else None
+    cache = ClientCache(CacheKey.BROKER, cache_data)
+    if reload:
         cache.clear_cache()
     if cache.is_empty():
         rows = anvil.server.call('generate_brokers_simplified_list')
@@ -218,6 +223,26 @@ def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
         anvil.server.call('create_broker', broker_name, ccy)
     if not result:
         raise RuntimeError(f"Error occurs in create_broker or update_broker.")
+    else:
+        cache.clear_cache()
+    return result
+
+def delete_broker(broker_dropdown_selected):
+    """
+    Convert the fields from the form for deleting the broker change in backend.
+
+    Parameters:
+        broker_dropdown_selected (list): The selected value in list from the broker dropdown.
+        
+    Returns:
+        result (int): Successful update row count, otherwise None.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.BROKER, None)
+    broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
+    result = anvil.server.call('delete_broker', broker_id)
+    if not result:
+        raise RuntimeError(f"Error occurs in delete_broker.")
     else:
         cache.clear_cache()
     return result

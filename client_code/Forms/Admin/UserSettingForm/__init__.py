@@ -74,7 +74,6 @@ class UserSettingForm(UserSettingFormTemplate):
             self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
             self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
             self.dropdown_default_broker.selected_value = default_broker
-            self.hidden_b_id.text = broker_id
             n = Notification(f"Broker {self.text_broker_name.text} has been created successfully.")
         except Exception as err:
             logger.error(err)
@@ -92,15 +91,10 @@ class UserSettingForm(UserSettingFormTemplate):
         try:
             default_broker = self.dropdown_default_broker.selected_value
             broker_id = self.dropdown_broker_list.selected_value[0]
-            ccy = self.dropdown_ccy.selected_value[0]
             UserSettingController.change_broker(self.dropdown_broker_list.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-            print("1")
             self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
-            print("2")
             self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
-            print("3")
-            self.dropdown_broker_list.selected_value = [broker_id, self.text_broker_name.text, ccy]
-            print("4")
+            self.dropdown_broker_list.selected_value = (broker_id, self.text_broker_name.text, self.dropdown_ccy.selected_value)
             self.dropdown_default_broker.selected_value = default_broker
             n = Notification(f"Broker {self.text_broker_name.text} has been updated successfully.")
         except Exception as err:
@@ -112,22 +106,21 @@ class UserSettingForm(UserSettingFormTemplate):
     @logger.log_function
     def button_broker_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_brokers = ClientCache('generate_brokers_simplified_list')
-        count, dummy = anvil.server.call('proc_broker_delete', self.hidden_b_id.text)
-        cache_brokers.clear_cache()
-        if count is not None and count > 0:
-            self.dropdown_broker_list.items = cache_brokers.get_cache()
-            self.dropdown_default_broker.items = cache_brokers.get_cache()
-            n = Notification("Broker ID ({b_id}) deleted successfully.".format(b_id=self.hidden_b_id.text))
-        else:
-            n = Notification("ERROR: Fail to delete broker ID ({b_id}).".format(b_id=self.hidden_b_id.text))
+        try:
+            count = UserSettingController.delete_broker(self.dropdown_broker_list.selected_value)
+            self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
+            self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
+            n = Notification(f"Broker {self.text_broker_name.text} has been deleted successfully.")
+        except Exception as err:
+            logger.error(err)
+            n = Notification(f"ERROR occurs when deleting broker {self.text_broker_name.text}.")
         n.show()
 
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
         self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
             UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
-        self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value = UserSettingController.set_selected_broker_fields(self.dropdown_broker_list.selected_value)
+        _, self.text_broker_name.text, self.dropdown_ccy.selected_value = UserSettingController.set_selected_broker_fields(self.dropdown_broker_list.selected_value)
   
     @btnmod.one_click_only
     @logger.log_function
