@@ -33,14 +33,13 @@ def select_settings():
         userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=sysmod.schemafin())
+            sql = "SELECT userid, default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=sysmod.schemafin())
             stmt = cur.mogrify(sql, (userid, ))
             cur.execute(stmt)
             row = cur.fetchone()
             logger.debug("settings=", row)
             cur.close()
         return row
-
     setting = Setting(psqldb_select_settings())
     return setting
 

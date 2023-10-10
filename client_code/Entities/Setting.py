@@ -6,9 +6,16 @@ import anvil.users
 @anvil.server.portable_class
 class Setting:
     def __init__(self, data):
-        print("1.data=", data)
         self.set(data)
-        print("2.data=", data)
+
+    def __str__(self):
+        return "{0}: {1}, {2}, {3}, {4}, {5}".format(
+            self.__class__,
+            self.default_broker, 
+            self.default_interval, 
+            self.default_datefrom, 
+            self.default_dateto, 
+            self.logging_level)
 
     def get(self):
         return [self.default_broker, self.default_interval, self.default_datefrom, self.default_dateto, self.logging_level]
@@ -29,13 +36,13 @@ class Setting:
         return self.logging_level
 
     def set(self, data):
-        if data and isinstance(data, list):
-            self.userid = data[0]
-            self.default_broker = data[1]
-            self.default_interval = data[2]
-            self.default_datefrom = data[3]
-            self.default_dateto = data[4]
-            self.logging_level = data[5]
+        if data:
+            self.userid = data.get('userid')
+            self.default_broker = data.get('default_broker')
+            self.default_interval = data.get('default_interval')
+            self.default_datefrom = data.get('default_datefrom')
+            self.default_dateto = data.get('default_dateto')
+            self.logging_level = data.get('logging_level')
 
     def is_valid(self):
         return True

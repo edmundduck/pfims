@@ -29,8 +29,9 @@ class UserSettingForm(UserSettingFormTemplate):
         self.dropdown_interval.items = search_interval
         self.dropdown_ccy.items = ccy
         self.dropdown_sub_templ_list.items = submitted_templ_list
+        print("settings=", settings)
         if settings.is_valid():
-            self.dropdown_default_broker.selected_value = cache_brokers.get_complete_key(settings.get_broker())
+            self.dropdown_default_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(settings.get_broker())
             self.dropdown_interval.selected_value = settings.get_search_interval()
             self.time_datefrom.date = settings.get_search_datefrom()
             self.time_dateto.date = settings.get_search_dateto()

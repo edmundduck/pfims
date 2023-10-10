@@ -19,6 +19,20 @@ def generate_brokers_dropdown():
         brokers_dropdown.set_cache(new_dropdown)
     return brokers_dropdown.get_cache()
 
+def get_broker_dropdown_selected_item(broker_id):
+    """
+    Return a complete key based on a partial broker ID which is a part of the key in a dropdown list.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in broker dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    brokers_dropdown = ClientCache('generate_brokers_dropdown', None)
+    if brokers_dropdown.is_empty():
+        generate_brokers_dropdown()
+    selected_item = brokers_dropdown.get_complete_key(broker_id)
+    return selected_item
+
 def enable_search_time_datefield(interval_selection):
     """
     Enable or disable the "search time" (from, to) date field.
