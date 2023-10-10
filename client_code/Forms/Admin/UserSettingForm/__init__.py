@@ -91,10 +91,16 @@ class UserSettingForm(UserSettingFormTemplate):
         """This method is called when the button is clicked"""
         try:
             default_broker = self.dropdown_default_broker.selected_value
+            broker_id = self.dropdown_broker_list.selected_value[0]
+            ccy = self.dropdown_ccy.selected_value[0]
             UserSettingController.change_broker(self.dropdown_broker_list.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+            print("1")
             self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
+            print("2")
             self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
-            self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
+            print("3")
+            self.dropdown_broker_list.selected_value = [broker_id, self.text_broker_name.text, ccy]
+            print("4")
             self.dropdown_default_broker.selected_value = default_broker
             n = Notification(f"Broker {self.text_broker_name.text} has been updated successfully.")
         except Exception as err:

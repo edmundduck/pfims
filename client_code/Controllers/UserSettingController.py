@@ -215,8 +215,7 @@ def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     ccy = ccy_dropdown_selected[0] if isinstance(ccy_dropdown_selected, (list, tuple)) else ccy_dropdown_selected
     result = anvil.server.call('update_broker', broker_id, broker_name, ccy) if broker_id else \
-        anvil.server.call('create_broker', broker_name, ccy) 
-        
+        anvil.server.call('create_broker', broker_name, ccy)
     if not result:
         raise RuntimeError(f"Error occurs in create_broker or update_broker.")
     else:
