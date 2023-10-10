@@ -16,7 +16,7 @@ def generate_brokers_dropdown(data=None, reload=False):
         dropdown_cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    dropdown_cache = ClientCache(__name__, data)
+    dropdown_cache = ClientCache('generate_brokers_dropdown', list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data))
     if reload: 
         dropdown_cache.clear_cache()
     if dropdown_cache.is_empty():
@@ -36,7 +36,7 @@ def generate_search_interval_dropdown(data=None):
         dropdown_cache.get_cache (list): Search interval dropdown formed by search interval DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    dropdown_cache = ClientCache(__name__, data)
+    dropdown_cache = ClientCache('generate_search_interval_dropdown', list((r['name'], r['id']) for r in data))
     if dropdown_cache.is_empty():
         rows = anvil.server.call('generate_search_interval_list')
         new_dropdown = list((r['name'], r['id']) for r in rows)
@@ -54,7 +54,7 @@ def generate_currency_dropdown(data=None):
         dropdown_cache.get_cache (list): Currency dropdown formed by currency DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    dropdown_cache = ClientCache(__name__, data)
+    dropdown_cache = ClientCache('generate_currency_dropdown', list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in data))
     if dropdown_cache.is_empty():
         rows = anvil.server.call('generate_currency_list')
         new_dropdown = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in rows)
@@ -73,7 +73,7 @@ def generate_submitted_journal_groups_dropdown(data=None, reload=False):
         dropdown_cache.get_cache (list): Submitted stock journal groups dropdown formed by stock journal groups DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    dropdown_cache = ClientCache(__name__, data)
+    dropdown_cache = ClientCache('generate_submitted_journal_groups_dropdown', list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data))
     if dropdown_cache.is_empty():
         rows = anvil.server.call('generate_submitted_journal_groups_list')
         new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
@@ -142,3 +142,12 @@ def set_selected_broker_fields(broker_selection):
     else:
         broker_name, broker_ccy = [None] *2
     return [broker_id, broker_name, broker_ccy]
+
+def visible_logging_panel():
+    """
+    Make the logging panel visible or invisible.
+
+    Returns:
+        Boolean: True for visible, false for invisible.
+    """
+    return True if anvil.app.environment.name in 'Dev' else False

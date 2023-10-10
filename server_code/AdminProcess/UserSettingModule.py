@@ -203,7 +203,7 @@ def generate_currency_list():
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
-    return content
+    return rows
 
 @anvil.server.callable("generate_submitted_journal_groups_list")
 @logger.log_function
@@ -286,7 +286,8 @@ def proc_init_settings():
     settings = select_settings()
     brokers = generate_brokers_simplified_list()
     search_interval = generate_search_interval_list()
-    ccy = AccountModule.generate_ccy_dropdown()
+    # ccy = AccountModule.generate_ccy_dropdown()
+    ccy = generate_currency_list()
     submitted_group_list = generate_submitted_journal_groups_list()
     return [settings, brokers, search_interval, ccy, submitted_group_list]
 

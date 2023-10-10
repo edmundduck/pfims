@@ -10,7 +10,6 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..Utils import Constants as const
-from ..AdminProcess import ConfigModule as cfmod
 from ..DataObject import FinObject as fobj
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule

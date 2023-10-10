@@ -20,7 +20,6 @@ class UserSettingForm(UserSettingFormTemplate):
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
-        if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
         settings, brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
         self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown(data=brokers)
         self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(data=brokers)
@@ -38,6 +37,7 @@ class UserSettingForm(UserSettingFormTemplate):
         self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
         self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
             UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
+        self.column_panel_logging.visible = UserSettingController.visible_logging_panel()
     
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
