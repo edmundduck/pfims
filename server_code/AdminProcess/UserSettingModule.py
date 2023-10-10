@@ -6,7 +6,6 @@ from ..Entities.Setting import Setting
 from ..InvestmentProcess import InputModule
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
-from ..CashMgtProcess import AccountModule
 from ..Utils.Constants import SettingConfig
 
 # This is a server module. It runs on the Anvil server,
@@ -108,7 +107,7 @@ def upsert_settings(setting):
 
     return psgldb_upsert_settings()
 
-@anvil.server.callable('create_brokers')
+@anvil.server.callable('create_broker')
 @logger.log_function
 def create_broker(broker_name, ccy):
     """
@@ -131,9 +130,9 @@ def create_broker(broker_name, ccy):
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
                 id = cur.fetchone()['id']
                 conn.commit()
-                cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={str(id)}")
+                cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={id}")
                 broker_id = cur.fetchone()['broker_id']
-                if broker_id <= 0: raise psycopg2.OperationalError("Create broker fail with broker ID <= 0.")
+                if id <= 0 and broker_id is None: raise psycopg2.OperationalError("Create broker fail with invalid broker ID.")
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 return broker_id
         except psycopg2.OperationalError as err:
@@ -281,7 +280,6 @@ def proc_init_settings():
     settings = select_settings()
     brokers = generate_brokers_simplified_list()
     search_interval = generate_search_interval_list()
-    # ccy = AccountModule.generate_ccy_dropdown()
     ccy = generate_currency_list()
     submitted_group_list = generate_submitted_journal_groups_list()
     return [settings, brokers, search_interval, ccy, submitted_group_list]
@@ -306,9 +304,9 @@ def proc_upsert_settings(setting):
     sysmod.set_user_logging_level()
     return count
 
-@anvil.server.callable("proc_submitted_template_update")
+@anvil.server.callable("proc_submitted_journal_group_update")
 @logger.log_function
-def proc_submitted_template_update(templ_id):
+def proc_submitted_journal_group_update(templ_id):
     """
     Consolidated process for submitted template dropdown update.
 
@@ -316,12 +314,7 @@ def proc_submitted_template_update(templ_id):
         templ_id (int): ID of the template.
 
     Returns:
-        list: A list of all functions return required by the submitted template dropdown update.
+        result (int): Successful submit row count, otherwise None.
     """
     result = InputModule.submit_templates(templ_id, False)
-
-    if result is not None and result > 0:
-        submitted_templ_list = get_submitted_templ_list()
-        return [templ_id, result, submitted_templ_list]
-    else:
-        return [templ_id, result, None]
+    return result

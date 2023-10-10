@@ -1,15 +1,9 @@
 from ._anvil_designer import UserSettingFormTemplate
 from anvil import *
 import anvil.users
-import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ....Utils import Constants as const
-from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.ClientCache import ClientCache
-from ....Utils.Logger import ClientLogger
 from ....Controllers import UserSettingController
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
@@ -20,10 +14,10 @@ class UserSettingForm(UserSettingFormTemplate):
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
-        settings, brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
+        settings, brokers, search_interval, ccy, submitted_group_list = UserSettingController.initialize_data()
         self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown(data=brokers)
         self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(data=brokers)
-        self.dropdown_logging_level.items = const.LoggingLevel.dropdown
+        self.dropdown_logging_level.items = UserSettingController.generate_logging_level_dropdown()
         self.dropdown_interval.items = UserSettingController.generate_search_interval_dropdown(data=search_interval)
         self.dropdown_ccy.items = UserSettingController.generate_currency_dropdown(data=ccy)
         self.dropdown_sub_templ_list.items = UserSettingController.generate_submitted_journal_groups_dropdown(data=submitted_group_list)
@@ -34,8 +28,8 @@ class UserSettingForm(UserSettingFormTemplate):
         self.dropdown_logging_level.selected_value = settings.get_logging_level()
 
         self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
-        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
-            UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
+        self.button_broker_create.enabled = UserSettingController.enable_broker_create_button(self.text_broker_name.text)
+        self.button_broker_update.enabled, self.button_broker_delete.enabled = UserSettingController.enable_broker_update_delete_button(self.dropdown_broker_list.selected_value)
         self.column_panel_logging.visible = UserSettingController.visible_logging_panel()
         # Save the retrieved settings into cache
         UserSettingController.get_user_settings(settings)
@@ -69,7 +63,7 @@ class UserSettingForm(UserSettingFormTemplate):
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         try:
-            broker_id = UserSettingController.change_broker(self.dropdown_default_broker.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+            broker_id = UserSettingController.change_broker(None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
             self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
             self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
             self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
@@ -82,7 +76,7 @@ class UserSettingForm(UserSettingFormTemplate):
 
     def text_broker_name_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
-        __, __, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
+        self.button_broker_create.enabled = UserSettingController.enable_broker_create_button(self.text_broker_name.text)
 
     @btnmod.one_click_only
     @logger.log_function
@@ -118,22 +112,20 @@ class UserSettingForm(UserSettingFormTemplate):
 
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
-            UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
         _, self.text_broker_name.text, self.dropdown_ccy.selected_value = UserSettingController.set_selected_broker_fields(self.dropdown_broker_list.selected_value)
+        self.button_broker_create.enabled = UserSettingController.enable_broker_create_button(self.text_broker_name.text)
+        self.button_broker_update.enabled, self.button_broker_delete.enabled = UserSettingController.enable_broker_update_delete_button(self.dropdown_broker_list.selected_value)
   
     @btnmod.one_click_only
     @logger.log_function
-    def button_templ_edit_click(self, **event_args):
+    def button_jrn_grp_edit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        templ_id, templ_name = self.dropdown_sub_templ_list.selected_value if self.dropdown_sub_templ_list.selected_value is not None else [None, None]
-        templ_id, result, submitted_templ_list = anvil.server.call('proc_submitted_template_update', templ_id)
-
-        if result is not None and result > 0:
-            """ Reflect the change in template dropdown """
-            self.dropdown_sub_templ_list.items = submitted_templ_list
-            n = Notification("Template {templ_name} has been enabled for modification in the input section.".format(templ_name=templ_name))
-        else:
-            n = Notification("ERROR: Fail to enable template {templ_name} for modification.".format(templ_name=templ_name))
+        try:
+            result = UserSettingController.submit_journal_group(self.dropdown_sub_templ_list.selected_value)
+            self.dropdown_sub_templ_list.items = UserSettingController.generate_submitted_journal_groups_dropdown()
+            n = Notification(f"Journal group has been re-enabled for modification successfully.")
+        except Exception as err:
+            logger.error(err)
+            n = Notification(f"ERROR occurs when submitting journal group.")
         n.show()
 

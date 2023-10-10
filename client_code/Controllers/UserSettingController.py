@@ -1,13 +1,23 @@
 import anvil.server
 import anvil.users
 from ..Entities.Setting import Setting
-from ..Utils.Constants import CacheKey
+from ..Utils.Constants import CacheKey, LoggingLevel
 from ..Utils.Logger import ClientLogger
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 logger = ClientLogger()
+
+def initialize_data():
+    """
+    Get all the data for form initialization.
+
+    Returns:
+        list: A list of all functions return required by the form initialization.
+    """
+    settings, brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
+    return [settings, brokers, search_interval, ccy, submitted_group_list]
 
 def get_user_settings(data=None, reload=False):
     """
@@ -59,7 +69,8 @@ def generate_search_interval_dropdown(data=None):
         cache.get_cache (list): Search interval dropdown formed by search interval DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.SEARCH_INTERVAL, list((r['name'], r['id']) for r in data))
+    cache_data = list((r['name'], r['id']) for r in data) if data else None
+    cache = ClientCache(CacheKey.SEARCH_INTERVAL, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_search_interval_list')
         new_dropdown = list((r['name'], r['id']) for r in rows)
@@ -77,7 +88,8 @@ def generate_currency_dropdown(data=None):
         cache.get_cache (list): Currency dropdown formed by currency DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.CURRENCY, list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in data))
+    cache_data = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in data) if data else None
+    cache = ClientCache(CacheKey.CURRENCY, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_currency_list')
         new_dropdown = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in rows)
@@ -96,12 +108,22 @@ def generate_submitted_journal_groups_dropdown(data=None, reload=False):
         cache.get_cache (list): Submitted stock journal groups dropdown formed by stock journal groups DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.SUBMITTED_JRN_GRP, list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data))
+    cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
+    cache = ClientCache(CacheKey.SUBMITTED_JRN_GRP, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_submitted_journal_groups_list')
         new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
         cache.set_cache(new_dropdown)
     return cache.get_cache()
+
+def generate_logging_level_dropdown():
+    """
+    Access application logging level dropdown from client side.
+
+    Returns:
+        list: Application logging level dropdown defined as static data in client Constants module.
+    """
+    return LoggingLevel.dropdown
 
 def get_broker_dropdown_selected_item(broker_id):
     """
@@ -139,15 +161,30 @@ def set_search_time_datefield_value(interval_selection, date_from_value, date_to
     interval = interval_selection[0] if isinstance(interval_selection, (list, tuple)) else interval_selection
     return [date_from_value, date_to_value] if interval == SearchInterval.INTERVAL_SELF_DEFINED else [None] *2
 
-def enable_broker_action_button(broker_selection, broker_name):
+def enable_broker_create_button(broker_name):
     """
-    Enable or disable the broker action buttons (Create, Update, Delete).
+    Enable or disable the broker action button (Create only).
 
+    Parameters:
+        broker_name (str): The to-be-created broker name.
+
+    Returns:
+        Boolean: True for enable, false for disable.
+    """
+    return False if broker_name in (None, '') or broker_name.isspace() else True
+
+def enable_broker_update_delete_button(broker_selection):
+    """
+    Enable or disable the broker action buttons (Update and Delete only).
+
+    Parameters:
+        broker_selection (list): The selected value in list from the broker dropdown.
+        
     Returns:
         Boolean, Boolean: True for enable, false for disable.
     """
     broker_id = broker_selection[0] if isinstance(broker_selection, (list, tuple)) else broker_selection
-    return [False]*3 if (broker_id or broker_name) in (None, '') or broker_id.isspace() or broker_name.isspace() else [True]*3
+    return [False]*2 if broker_id in (None, '') or broker_id.isspace() else [True]*2
 
 def set_selected_broker_fields(broker_selection):
     """
@@ -163,6 +200,7 @@ def set_selected_broker_fields(broker_selection):
         if broker_id in (None, '') or broker_id.isspace():
             broker_name, broker_ccy = [None] *2
     else:
+        broker_id = broker_selection
         broker_name, broker_ccy = [None] *2
     return [broker_id, broker_name, broker_ccy]
 
@@ -187,7 +225,7 @@ def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefr
         logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
         
     Returns:
-        count (int): Successful update row count, otherwise None
+        result (int): Successful update row count, otherwise None
     """
     from ..Utils.ClientCache import ClientCache
     from ..Utils.Constants import SearchInterval
@@ -196,12 +234,12 @@ def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefr
     search_interval = interval_dropdown_selected[0] if isinstance(interval_dropdown_selected, (list, tuple)) else interval_dropdown_selected
     if search_interval != SearchInterval.INTERVAL_SELF_DEFINED:
         datefrom, dateto = [None, None]
-    count = anvil.server.call('proc_upsert_settings', Setting([None, broker_id, search_interval, datefrom, dateto, logging_level]))
-    if not count:
+    result = anvil.server.call('proc_upsert_settings', Setting([None, broker_id, search_interval, datefrom, dateto, logging_level]))
+    if not result:
         raise RuntimeError(f"Error occurs in proc_upsert_setting.")
     else:
         cache.clear_cache()
-    return count
+    return result
 
 def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
     """
@@ -243,6 +281,26 @@ def delete_broker(broker_dropdown_selected):
     result = anvil.server.call('delete_broker', broker_id)
     if not result:
         raise RuntimeError(f"Error occurs in delete_broker.")
+    else:
+        cache.clear_cache()
+    return result
+
+def submit_journal_group(jrn_grp_dropdown_selected):
+    """
+    Convert the fields from the form for submitting the journal group change in backend.
+
+    Parameters:
+        jrn_grp_dropdown_selected (list): The selected value in list from the submitted journal group dropdown.
+        
+    Returns:
+        result (int): Successful update row count, otherwise None.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.SUBMITTED_JRN_GRP, None)
+    jrn_grp_id, _ = jrn_grp_dropdown_selected if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else [jrn_grp_dropdown_selected, None]
+    result = anvil.server.call('proc_submitted_journal_group_update', jrn_grp_id)
+    if not result:
+        raise RuntimeError(f"Error occurs in proc_submitted_journal_group_update.")
     else:
         cache.clear_cache()
     return result
