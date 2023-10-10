@@ -50,7 +50,7 @@ def generate_brokers_simplified_list():
     Select part of investment broker's data from the broker DB table.
 
     Returns:
-        broker_dropdown (list): A dropdown list of broker names and CCY as description, and broker ID as ID.
+        rows (list of RealDictRow): A list consists of broker IDs, names and CCY as description.
     """
     def psgldb_generate_brokers_simplified_list():
         userid = sysmod.get_current_userid()
@@ -61,9 +61,7 @@ def generate_brokers_simplified_list():
             rows = cur.fetchall()
             logger.debug("simplified_list=", rows)
             cur.close()
-        # broker_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in result)
         return rows
-
     return psgldb_generate_brokers_simplified_list()
 
 @anvil.server.callable('upsert_settings', require_user=True)
@@ -188,39 +186,63 @@ def psgldb_delete_brokers(b_id):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable("psgldb_get_submitted_templ_list")
+@anvil.server.callable("generate_currency_list")
 @logger.log_function
-def psgldb_get_submitted_templ_list():
+def generate_currency_list():
     """
-    Select "Submitted" templates from the DB table which stores templates' detail to generate a dropdown list.
+    Select refence data - Currency (CCY)  from the currency DB table.
+
+    Note that not all currencies have symbols, they can be empty.
 
     Returns:
-        result (list): A dropdown list of submitted template names as description, and submitted template IDs as ID.
-    """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
-        result = list((''.join([row['template_name'], ' [', str(row['template_id']), ']']), (row['template_id'], row['template_name'])) for row in cur.fetchall())
-        logger.debug("result=", result)
-        cur.close()
-    return result
-        
-@logger.log_function
-def psgldb_select_search_interval():
-    """
-    Select data from a DB table which stores search intervals' detail to generate a dropdown list.
-
-    Returns:
-        list: A dropdown list of search interval name as description, and search interval ID as ID.
+        rows (list of RealDictRow): A list consists of CCY names, abbreviations and symbols.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
+        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.ccy ORDER BY common_seq ASC, abbv ASC")
         rows = cur.fetchall()
-        logger.debug("rows=", rows)
+        logger.trace("rows=", rows)
         cur.close()
-    return list((row['name'], row['id']) for row in rows)
+    return content
+
+@anvil.server.callable("generate_submitted_journal_groups_list")
+@logger.log_function
+def generate_submitted_journal_groups_list():
+    """
+    Select "Submitted" journal groups from the stock journal groups DB table.
+
+    Returns:
+        rows (list of RealDictRow): A list consists of submitted journal groups IDs and names.
+    """
+    def psgldb_generate_submitted_journal_groups_list():
+        userid = sysmod.get_current_userid()
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
+            rows = cur.fetchall()
+            logger.debug("rows=", rows)
+            cur.close()
+        return rows
+    return psgldb_generate_submitted_journal_groups_list()
+
+@anvil.server.callable('generate_search_interval_list')
+@logger.log_function
+def generate_search_interval_list():
+    """
+    Select reference data - search interval from the search interval DB table.
+
+    Returns:
+        rows (list of RealDictRow): A list consists of search interval ID and name.
+    """
+    def psgldb_generate_search_interval_list():
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(f"SELECT id, name FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
+            rows = cur.fetchall()
+            logger.debug("rows=", rows)
+            cur.close()
+        return rows
+    return psgldb_generate_search_interval_list()
 
 @anvil.server.callable
 def upsert_brokers(b_id, name, ccy):
@@ -252,28 +274,6 @@ def delete_brokers(b_id):
     """
     return psgldb_delete_brokers(b_id)
     
-@anvil.server.callable
-# Generate SUBMITTED template selection dropdown items
-def get_submitted_templ_list():
-    """
-    A wrapper function to select submitted templates to generate a dropdown list.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_get_submitted_templ_list()
-
-@anvil.server.callable
-# DB table "search_interval" select method callable by client modules
-def select_search_interval():
-    """
-    A wrapper function to select search interval to generate a dropdown list.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_select_search_interval()
-
 @anvil.server.callable("proc_init_settings")
 @logger.log_function
 def proc_init_settings():
@@ -284,10 +284,11 @@ def proc_init_settings():
         list: A list of all functions return required by the form initialization.
     """
     settings = select_settings()
-    search_interval = select_search_interval()
+    brokers = generate_brokers_simplified_list()
+    search_interval = generate_search_interval_list()
     ccy = AccountModule.generate_ccy_dropdown()
-    submitted_templ_list = get_submitted_templ_list()
-    return [settings, search_interval, ccy, submitted_templ_list]
+    submitted_group_list = generate_submitted_journal_groups_list()
+    return [settings, brokers, search_interval, ccy, submitted_group_list]
 
 @anvil.server.callable("proc_upsert_settings")
 @logger.log_function

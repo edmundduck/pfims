@@ -21,15 +21,13 @@ class UserSettingForm(UserSettingFormTemplate):
         
         # Any code you write here will run when the form opens.
         if anvil.app.environment.name in 'Dev': self.column_panel_logging.visible = True
-        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
-        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
+        settings, brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
+        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown(data=brokers)
+        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(data=brokers)
         self.dropdown_logging_level.items = const.LoggingLevel.dropdown
-        settings, search_interval, ccy, submitted_templ_list = anvil.server.call('proc_init_settings')
-        # Not use client cache to load search interval and CCY to reduce server calls turnaround
-        self.dropdown_interval.items = search_interval
-        self.dropdown_ccy.items = ccy
-        self.dropdown_sub_templ_list.items = submitted_templ_list
-        print("settings=", settings)
+        self.dropdown_interval.items = UserSettingController.generate_search_interval_dropdown(data=search_interval)
+        self.dropdown_ccy.items = UserSettingController.generate_currency_dropdown(data=ccy)
+        self.dropdown_sub_templ_list.items = UserSettingController.generate_submitted_journal_groups_dropdown(data=submitted_group_list)
         if settings.is_valid():
             self.dropdown_default_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(settings.get_broker())
             self.dropdown_interval.selected_value = settings.get_search_interval()
@@ -38,7 +36,8 @@ class UserSettingForm(UserSettingFormTemplate):
             self.dropdown_logging_level.selected_value = settings.get_logging_level()
 
         self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
-        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value)
+        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
+            UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
     
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -66,18 +65,16 @@ class UserSettingForm(UserSettingFormTemplate):
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        cache_brokers = ClientCache('generate_brokers_simplified_list')
-        broker_id, dummy = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        cache_brokers.clear_cache()
-        self.dropdown_broker_list.items = cache_brokers.get_cache()
-        self.dropdown_default_broker.items = cache_brokers.get_cache()
-        self.dropdown_broker_list.selected_value = cache_brokers.get_complete_key(broker_id)
+        broker_id, __ = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(reload=True)
+        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
+        self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
         self.dropdown_default_broker.selected_value = default_broker
         self.hidden_b_id.text = broker_id
 
     def text_broker_name_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
-        self.button_broker_create.enabled = False if self.text_broker_name.text == '' else True
+        __, __, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
 
     @btnmod.one_click_only
     @logger.log_function
@@ -111,7 +108,8 @@ class UserSettingForm(UserSettingFormTemplate):
 
     def dropdown_broker_list_change(self, **event_args):
         """This method is called when an item is selected"""
-        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value)
+        self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
+            UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
         self.hidden_b_id.text, self.text_broker_name.text, self.dropdown_ccy.selected_value = UserSettingController.set_selected_broker_fields(self.dropdown_broker_list.selected_value)
   
     @btnmod.one_click_only
