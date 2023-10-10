@@ -37,6 +37,8 @@ class UserSettingForm(UserSettingFormTemplate):
         self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
             UserSettingController.enable_broker_action_button(self.dropdown_broker_list.selected_value, self.text_broker_name.text)
         self.column_panel_logging.visible = UserSettingController.visible_logging_panel()
+        # Save the retrieved settings into cache
+        UserSettingController.get_user_settings(settings)
     
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -47,21 +49,19 @@ class UserSettingForm(UserSettingFormTemplate):
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_settings = ClientCache('select_settings')
-        count = anvil.server.call(
-            'proc_upsert_settings', 
-            self.dropdown_default_broker.selected_value, 
-            self.dropdown_interval.selected_value, 
-            self.time_datefrom.date, 
-            self.time_dateto.date, 
-            self.dropdown_logging_level.selected_value
-        )
-        logger.set_level()
-        if count is not None and count > 0:
-            n = Notification("{count} row updated successfully.".format(count=count))
-            cache_settings.clear_cache()
-        else:
-            n = Notification("ERROR: Fail to insert or update.")
+        try:
+            UserSettingController.change_settings(
+                self.dropdown_default_broker.selected_value, 
+                self.dropdown_interval.selected_value, 
+                self.time_datefrom.date, 
+                self.time_dateto.date, 
+                self.dropdown_logging_level.selected_value
+            )
+            logger.set_level()
+            n = Notification("Setting has been updated successfully.")
+        except (Exception) as err:
+            logger.error(err)
+            n = Notification("ERROR: Failure occurs during setting update.")
         n.show()
 
     @btnmod.one_click_only

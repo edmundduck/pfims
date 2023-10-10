@@ -10,7 +10,11 @@ class CacheKey:
     """
     Non-function keys for client cache.
     """
-    USER_SETTINGS = 'usersettings'
+    USER_SETTINGS = 'user_settings'
+    BROKER = 'broker_dropdown'
+    CURRENCY = 'ccy_dropdown'
+    SEARCH_INTERVAL = 'search_interval_dropdown'
+    SUBMITTED_JRN_GRP = 'submitted_journal_group_dropdown'
     STOCK_INPUT_DEL_IID = 'stock_input_delete_row_iid'
     EXP_INPUT_DEL_IID = 'exp_input_delete_row_iid'
     
@@ -50,8 +54,16 @@ class FileImportLabelExtraAction:
     MAP = 'M'
     CREATE = 'C'
 
-class ReportSearchMode:
-    USER_DEFINED = 'SDR'
+class SearchInterval:
+    """
+    Search interval modes used in Report search panel and config.
+    """
+    INTERVAL_LAST_1_MTH = 'L1M'
+    INTERVAL_LAST_3_MTH = 'L3M'
+    INTERVAL_LAST_6_MTH = 'L6M'
+    INTERVAL_LAST_1_YR = 'L1Y'
+    INTERVAL_YEAR_TO_DATE = 'YTD'
+    INTERVAL_SELF_DEFINED = 'SDR'
 
 # PnL reports drill mode
 class PNLDrillMode:

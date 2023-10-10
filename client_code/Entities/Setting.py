@@ -19,7 +19,7 @@ class Setting:
             self.default_dateto, 
             self.logging_level)
 
-    def get(self):
+    def get_dict(self):
         return {
             self.__column_def__[0]: self.userid,
             self.__column_def__[1]: self.default_broker,
@@ -29,6 +29,16 @@ class Setting:
             self.__column_def__[5]: self.logging_level
         }
 
+    def get_list(self):
+        return [
+            self.userid,
+            self.default_broker,
+            self.default_interval,
+            self.default_datefrom,
+            self.default_dateto,
+            self.logging_level
+        ]
+        
     def get_broker(self):
         return self.default_broker
 
@@ -53,7 +63,7 @@ class Setting:
                 self.default_datefrom = data.get('default_datefrom')
                 self.default_dateto = data.get('default_dateto')
                 self.logging_level = data.get('logging_level')
-            elif isinstance(data, list):
+            elif isinstance(data, (list, tuple)):
                 self.userid = data[0]
                 self.default_broker = data[1]
                 self.default_interval = data[2]
@@ -65,7 +75,7 @@ class Setting:
         return True
 
     def __serialize__(self, global_data):
-        global_data[f"Setting_{self.userid}"] = self.get()
+        global_data[f"Setting_{self.userid}"] = self.get_dict()
         return self.userid
 
     def __deserialize__(self, userid, global_data):

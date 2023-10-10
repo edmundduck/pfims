@@ -83,17 +83,18 @@ def upsert_settings(setting):
         int: Successful update row count, otherwise None
     """
     def psgldb_upsert_settings():
-        conn, cur = None * 2
+        conn, cur = [None]*2
         try:
             if isinstance(setting, Setting):
-                userid = sysmod.get_current_userid()
-                if def_interval != s_const.SearchInterval.INTERVAL_SELF_DEFINED: def_datefrom, def_dateto = [None, None]
+                setting.userid = sysmod.get_current_userid()
+                mogstr = setting.get_list() + setting.get_list()[1:]
+                print("mogstr=", mogstr)
                 conn = sysmod.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                     sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
                     default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
                     default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
-                    stmt = cur.mogrify(sql, (userid, def_broker, def_interval, def_datefrom, def_dateto, logging_level, def_broker, def_interval, def_datefrom, def_dateto, logging_level))
+                    stmt = cur.mogrify(sql, mogstr)
                     cur.execute(stmt)
                     conn.commit()
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
@@ -112,10 +113,11 @@ def upsert_settings(setting):
             if conn is not None: conn.close()
         return None
 
-    return psgldb_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
+    return psgldb_upsert_settings()
 
+@anvil.server.callable('upsert_brokers')
 @logger.log_function
-def psgldb_upsert_brokers(b_id, prefix, name, ccy):
+def upsert_brokers(b_id, name, ccy):
     """
     Insert or update an investment broker from setting form to the DB table which stores investment brokers' detail.
 
@@ -123,40 +125,43 @@ def psgldb_upsert_brokers(b_id, prefix, name, ccy):
     
     Parameters:
         b_id (str): The ID of the broker.
-        prefix (str): The prefix of the broker ID.
         name (str): The name of the broker.
         ccy (str): The base CCY of the broker.
 
     Returns:
         b_id (int): The ID of the newly created or existing broker, otherwise None
     """
-    userid = sysmod.get_current_userid()
-    try:
-        conn = sysmod.db_connect()  
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if b_id in (None, ''):
-                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
-                # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
-                id = cur.fetchone()['id']
-                conn.commit()
-                cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={str(id)}")
-                b_id = cur.fetchone()['broker_id']
-            else:
-                cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{name}', ccy='{ccy}' WHERE broker_id='{b_id}'")
-                conn.commit()
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            return b_id
-    except (Exception, psycopg2.OperationalError) as err:
-        logger.error(err)
-        conn.rollback()
-    finally:
-        if cur is not None: cur.close()
-        if conn is not None: conn.close()
-    return None
+    def psgldb_upsert_brokers():
+        userid = sysmod.get_current_userid()
+        prefix = s_const.SettingConfig.BROKER_ID_PREFIX
+        try:
+            conn = sysmod.db_connect()  
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                if b_id in (None, ''):
+                    cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
+                    # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
+                    id = cur.fetchone()['id']
+                    conn.commit()
+                    cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={str(id)}")
+                    b_id = cur.fetchone()['broker_id']
+                else:
+                    cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{name}', ccy='{ccy}' WHERE broker_id='{b_id}'")
+                    conn.commit()
+                    if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                return b_id
+        except (Exception, psycopg2.OperationalError) as err:
+            logger.error(err)
+            conn.rollback()
+        finally:
+            if cur is not None: cur.close()
+            if conn is not None: conn.close()
+        return None
+    return psgldb_upsert_brokers()
       
+@anvil.server.callable('delete_brokers')
 @logger.log_function
-def psgldb_delete_brokers(b_id):
+def delete_brokers(b_id):
     """
     Delete an investment broker from the DB table which stores investment brokers' detail.
 
@@ -168,22 +173,24 @@ def psgldb_delete_brokers(b_id):
     Returns:
         cur.rowcount (int): Successful update row count, otherwise None.
     """
-    try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{b_id}'")
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
-            return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
-        logger.error(err)
-        conn.rollback()
-    finally:
-        if cur is not None: cur.close()
-        if conn is not None: conn.close()
-    return None
-
+    def psgldb_delete_brokers():
+        try:
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{b_id}'")
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
+                return cur.rowcount
+        except (Exception, psycopg2.OperationalError) as err:
+            logger.error(err)
+            conn.rollback()
+        finally:
+            if cur is not None: cur.close()
+            if conn is not None: conn.close()
+        return None
+    return psgldb_delete_brokers()
+    
 @anvil.server.callable("generate_currency_list")
 @logger.log_function
 def generate_currency_list():
@@ -242,36 +249,6 @@ def generate_search_interval_list():
         return rows
     return psgldb_generate_search_interval_list()
 
-@anvil.server.callable
-def upsert_brokers(b_id, name, ccy):
-    """
-    A wrapper function to insert or update brokers detail.
-
-    The prefix of a broker ID is currently predefined in a constant file and used here.
-    
-    Parameters:
-        b_id (str): The ID of the broker.
-        name (str): The name of the broker.
-        ccy (str): The base CCY of the broker.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_upsert_brokers(b_id, s_const.SettingConfig.BROKER_ID_PREFIX, name, ccy)
-      
-@anvil.server.callable
-def delete_brokers(b_id):
-    """
-    A wrapper function to delete brokers detail.
-
-    Parameters:
-        b_id (str): The ID of the broker.
-
-    Returns:
-        function: A function to actual execute the logic in DB.
-    """
-    return psgldb_delete_brokers(b_id)
-    
 @anvil.server.callable("proc_init_settings")
 @logger.log_function
 def proc_init_settings():
@@ -291,7 +268,7 @@ def proc_init_settings():
 
 @anvil.server.callable("proc_upsert_settings")
 @logger.log_function
-def proc_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level):
+def proc_upsert_settings(setting):
     """
     Consolidated process for settings update.
 
@@ -305,7 +282,7 @@ def proc_upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, log
     Returns:
         int: Successful update row count, otherwise None
     """
-    count = upsert_settings(def_broker, def_interval, def_datefrom, def_dateto, logging_level)
+    count = upsert_settings(setting)
     sysmod.set_user_logging_level()
     return count
 
