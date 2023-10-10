@@ -4,10 +4,10 @@ import psycopg2
 import psycopg2.extras
 from ..Entities.Setting import Setting
 from ..InvestmentProcess import InputModule
-from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..CashMgtProcess import AccountModule
+from ..Utils.Constants import SettingConfig
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -73,7 +73,7 @@ def upsert_settings(setting):
         logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
 
     Returns:
-        int: Successful update row count, otherwise None
+        cur.rowcount (int): Successful update row count, otherwise None
     """
     def psgldb_upsert_settings():
         conn, cur = [None]*2
@@ -123,11 +123,11 @@ def create_broker(broker_name, ccy):
     """
     def psgldb_create_broker():
         userid = sysmod.get_current_userid()
-        prefix = s_const.SettingConfig.BROKER_ID_PREFIX
+        prefix = SettingConfig.BROKER_ID_PREFIX
         try:
             conn = sysmod.db_connect()  
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
+                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{broker_name}','{ccy}') RETURNING id")
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
                 id = cur.fetchone()['id']
                 conn.commit()
@@ -136,7 +136,7 @@ def create_broker(broker_name, ccy):
                 if broker_id <= 0: raise psycopg2.OperationalError("Create broker fail with broker ID <= 0.")
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 return broker_id
-        except (Exception, psycopg2.OperationalError) as err:
+        except psycopg2.OperationalError as err:
             logger.error(err)
             conn.rollback()
         finally:
@@ -145,49 +145,39 @@ def create_broker(broker_name, ccy):
         return None
     return psgldb_create_broker()
       
-@anvil.server.callable('upsert_brokers')
+@anvil.server.callable('update_broker')
 @logger.log_function
-def upsert_brokers(b_id, name, ccy):
+def update_broker(broker_id, broker_name, ccy):
     """
-    Insert or update an investment broker from setting form to the DB table which stores investment brokers' detail.
+    Update an investment broker and save the change into the brokers DB table.
 
-    Row count returned larger than 0 is considered as a successful update. At the same time, logging level is updated into the server user session.
-    
     Parameters:
-        b_id (str): The ID of the broker.
-        name (str): The name of the broker.
+        broker_id (str): The ID of the broker.
+        broker_name (str): The name of the broker.
         ccy (str): The base CCY of the broker.
 
     Returns:
-        b_id (int): The ID of the newly created or existing broker, otherwise None
+        cur.rowcount (int): Successful update row count, otherwise None
     """
-    def psgldb_upsert_brokers():
+    def psgldb_update_broker():
         userid = sysmod.get_current_userid()
-        prefix = s_const.SettingConfig.BROKER_ID_PREFIX
+        prefix = SettingConfig.BROKER_ID_PREFIX
         try:
             conn = sysmod.db_connect()  
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                if b_id in (None, ''):
-                    cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
-                    # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
-                    id = cur.fetchone()['id']
-                    conn.commit()
-                    cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={str(id)}")
-                    b_id = cur.fetchone()['broker_id']
-                else:
-                    cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{name}', ccy='{ccy}' WHERE broker_id='{b_id}'")
-                    conn.commit()
-                    if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
+                cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{broker_name}', ccy='{ccy}' WHERE broker_id='{broker_id}'")
+                conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                return b_id
-        except (Exception, psycopg2.OperationalError) as err:
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
+                return cur.rowcount
+        except psycopg2.OperationalError as err:
             logger.error(err)
             conn.rollback()
         finally:
             if cur is not None: cur.close()
             if conn is not None: conn.close()
         return None
-    return psgldb_upsert_brokers()
+    return psgldb_update_broker()
       
 @anvil.server.callable('delete_brokers')
 @logger.log_function
@@ -315,18 +305,6 @@ def proc_upsert_settings(setting):
     count = upsert_settings(setting)
     sysmod.set_user_logging_level()
     return count
-
-@anvil.server.callable("proc_broker_create_update")
-@logger.log_function
-def proc_broker_create_update(b_id, name, ccy):
-    """
-    Consolidated process for broker creation and update.
-
-    Returns:
-        list: A list of all functions return required by the broker creation and update.
-    """
-    broker_id = upsert_brokers(b_id, name, ccy)
-    return [broker_id, None]
 
 @anvil.server.callable("proc_broker_delete")
 @logger.log_function

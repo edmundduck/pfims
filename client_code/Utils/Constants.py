@@ -17,7 +17,16 @@ class CacheKey:
     SUBMITTED_JRN_GRP = 'submitted_journal_group_dropdown'
     STOCK_INPUT_DEL_IID = 'stock_input_delete_row_iid'
     EXP_INPUT_DEL_IID = 'exp_input_delete_row_iid'
-    
+
+class SettingConfig:
+    """
+    Config for Setting page.
+
+    Database col definition change may be required should the values are adjusted here.
+    """
+    BROKER_ID_PREFIX = 'BR'
+    BROKER_SUFFIX_LEN = 5
+
 class ExpenseConfig:
     """
     Config for Input Expense page.

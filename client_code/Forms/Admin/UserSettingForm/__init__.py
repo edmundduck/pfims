@@ -58,22 +58,28 @@ class UserSettingForm(UserSettingFormTemplate):
                 self.dropdown_logging_level.selected_value
             )
             logger.set_level()
-            n = Notification("Setting has been updated successfully.")
+            n = Notification(f"Setting has been updated successfully.")
         except (Exception) as err:
             logger.error(err)
-            n = Notification("ERROR: Failure occurs during setting update.")
+            n = Notification(f"ERROR occurs during setting update.")
         n.show()
 
     @btnmod.one_click_only
     @logger.log_function
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
-        broker_id, _ = UserSettingController.change_broker(self.dropdown_default_broker.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
-        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
-        self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
-        self.dropdown_default_broker.selected_value = default_broker
-        self.hidden_b_id.text = broker_id
+        try:
+            broker_id = UserSettingController.change_broker(self.dropdown_default_broker.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+            self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
+            self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
+            self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
+            self.dropdown_default_broker.selected_value = default_broker
+            self.hidden_b_id.text = broker_id
+            n = Notification(f"Broker {self.text_broker_name.text} has been created successfully.")
+        except Exception as err:
+            logger.error(err)
+            n = Notification(f"ERROR occurs when creating broker {self.text_broker_name.text}.")
+        n.show()
 
     def text_broker_name_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
@@ -83,13 +89,18 @@ class UserSettingForm(UserSettingFormTemplate):
     @logger.log_function
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
-        default_broker = self.dropdown_default_broker.selected_value
-        broker_id, _ = UserSettingController.change_broker(self.dropdown_broker_list.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
-        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
-        self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
-        self.dropdown_default_broker.selected_value = default_broker
-        self.hidden_b_id.text = broker_id
+        try:
+            default_broker = self.dropdown_default_broker.selected_value
+            UserSettingController.change_broker(self.dropdown_broker_list.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+            self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
+            self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
+            self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
+            self.dropdown_default_broker.selected_value = default_broker
+            n = Notification(f"Broker {self.text_broker_name.text} has been updated successfully.")
+        except Exception as err:
+            logger.error(err)
+            n = Notification(f"ERROR occurs when updating broker {self.text_broker_name.text}.")
+        n.show()
 
     @btnmod.one_click_only
     @logger.log_function
