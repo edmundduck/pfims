@@ -173,5 +173,6 @@ def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefr
     broker_id, __, __ = broker_dropdown_selected if isinstance(broker_dropdown_selected, list) else [broker_dropdown_selected, None, None]
     search_interval = interval_dropdown_selected[0] if isinstance(interval_dropdown_selected, list) else interval_dropdown_selected
     count = anvil.server.call('proc_upsert_settings', Setting([None, broker_id, search_interval, datefrom, dateto, logging_level]))
+    if count
     return count
 
