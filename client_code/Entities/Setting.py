@@ -42,7 +42,7 @@ class Setting:
             self.default_interval = data.get('default_interval')
             self.default_datefrom = data.get('default_datefrom')
             self.default_dateto = data.get('default_dateto')
-            self.logging_level = data.get('logging_level')
+            self.logging_level = listdata.get('logging_level')
 
     def is_valid(self):
         return True
