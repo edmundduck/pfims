@@ -10,6 +10,7 @@ class CacheKey:
     """
     Non-function keys for client cache.
     """
+    USER_SETTINGS = 'usersettings'
     STOCK_INPUT_DEL_IID = 'stock_input_delete_row_iid'
     EXP_INPUT_DEL_IID = 'exp_input_delete_row_iid'
     

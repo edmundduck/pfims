@@ -27,12 +27,11 @@ class UserSettingForm(UserSettingFormTemplate):
         self.dropdown_interval.items = UserSettingController.generate_search_interval_dropdown(data=search_interval)
         self.dropdown_ccy.items = UserSettingController.generate_currency_dropdown(data=ccy)
         self.dropdown_sub_templ_list.items = UserSettingController.generate_submitted_journal_groups_dropdown(data=submitted_group_list)
-        if settings.is_valid():
-            self.dropdown_default_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(settings.get_broker())
-            self.dropdown_interval.selected_value = settings.get_search_interval()
-            self.time_datefrom.date = settings.get_search_datefrom()
-            self.time_dateto.date = settings.get_search_dateto()
-            self.dropdown_logging_level.selected_value = settings.get_logging_level()
+        self.dropdown_default_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(settings.get_broker())
+        self.dropdown_interval.selected_value = settings.get_search_interval()
+        self.time_datefrom.date = settings.get_search_datefrom()
+        self.time_dateto.date = settings.get_search_dateto()
+        self.dropdown_logging_level.selected_value = settings.get_logging_level()
 
         self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
         self.button_broker_update.enabled, self.button_broker_delete.enabled, self.button_broker_create.enabled = \
