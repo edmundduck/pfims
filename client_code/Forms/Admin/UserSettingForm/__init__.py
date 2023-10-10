@@ -68,9 +68,8 @@ class UserSettingForm(UserSettingFormTemplate):
     @logger.log_function
     def button_broker_create_click(self, **event_args):
         """This method is called when the button is clicked"""
-        default_broker = self.dropdown_default_broker.selected_value
-        broker_id, __ = anvil.server.call('proc_broker_create_update', None, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(reload=True)
+        broker_id, _ = UserSettingController.change_broker(self.dropdown_default_broker.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
         self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
         self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
         self.dropdown_default_broker.selected_value = default_broker
@@ -85,13 +84,10 @@ class UserSettingForm(UserSettingFormTemplate):
     def button_broker_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         default_broker = self.dropdown_default_broker.selected_value
-        broker_id, broker_name, broker_ccy = self.dropdown_broker_list.selected_value
-        cache_brokers = ClientCache('generate_brokers_simplified_list')
-        broker_id, dummy = anvil.server.call('proc_broker_create_update', broker_id, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-        cache_brokers.clear_cache()
-        self.dropdown_broker_list.items = cache_brokers.get_cache()
-        self.dropdown_default_broker.items = cache_brokers.get_cache()
-        self.dropdown_broker_list.selected_value = cache_brokers.get_complete_key(broker_id)
+        broker_id, _ = UserSettingController.change_broker(self.dropdown_broker_list.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
+        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
+        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
+        self.dropdown_broker_list.selected_value = UserSettingController.get_broker_dropdown_selected_item(broker_id)
         self.dropdown_default_broker.selected_value = default_broker
         self.hidden_b_id.text = broker_id
 

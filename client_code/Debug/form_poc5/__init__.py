@@ -25,8 +25,6 @@ class form_poc5(form_poc5Template):
         a1, b1, c1, d1 = self.separate_call()
         self.consolidated_call()
         a2, b2, c2, d2 = [None, None, None, None]
-        print(f"\na1={a1}\nb1={b1}\nc1={c1}\nd1={d1}")
-        print(f"\na2={a2}\nb2={b2}\nc2={c2}\nd2={d2}")
 
     @logger.log_function
     def separate_call(self):

@@ -1,20 +1,13 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
 import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from ..Entities.Setting import Setting
 from ..InvestmentProcess import InputModule
-from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..CashMgtProcess import AccountModule
-from ..Entities.Setting import Setting
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -88,7 +81,7 @@ def upsert_settings(setting):
             if isinstance(setting, Setting):
                 setting.userid = sysmod.get_current_userid()
                 mogstr = setting.get_list() + setting.get_list()[1:]
-                print("mogstr=", mogstr)
+                logging_level = mogstr[-1]
                 conn = sysmod.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                     sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
@@ -115,6 +108,43 @@ def upsert_settings(setting):
 
     return psgldb_upsert_settings()
 
+@anvil.server.callable('create_brokers')
+@logger.log_function
+def create_broker(broker_name, ccy):
+    """
+    Create an investment broker and save the change into the brokers DB table.
+
+    Parameters:
+        broker_name (str): The name of the broker.
+        ccy (str): The base CCY of the broker.
+
+    Returns:
+        broker_id (int): The ID of the newly created broker, otherwise None
+    """
+    def psgldb_create_broker():
+        userid = sysmod.get_current_userid()
+        prefix = s_const.SettingConfig.BROKER_ID_PREFIX
+        try:
+            conn = sysmod.db_connect()  
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{name}','{ccy}') RETURNING id")
+                # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
+                id = cur.fetchone()['id']
+                conn.commit()
+                cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={str(id)}")
+                broker_id = cur.fetchone()['broker_id']
+                if broker_id <= 0: raise psycopg2.OperationalError("Create broker fail with broker ID <= 0.")
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                return broker_id
+        except (Exception, psycopg2.OperationalError) as err:
+            logger.error(err)
+            conn.rollback()
+        finally:
+            if cur is not None: cur.close()
+            if conn is not None: conn.close()
+        return None
+    return psgldb_create_broker()
+      
 @anvil.server.callable('upsert_brokers')
 @logger.log_function
 def upsert_brokers(b_id, name, ccy):

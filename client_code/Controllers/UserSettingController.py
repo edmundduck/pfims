@@ -188,7 +188,6 @@ def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefr
     from ..Utils.Constants import SearchInterval
     cache = ClientCache(CacheKey.USER_SETTINGS, None)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
-    print("BROKER_ID=", broker_id)
     search_interval = interval_dropdown_selected[0] if isinstance(interval_dropdown_selected, (list, tuple)) else interval_dropdown_selected
     if search_interval != SearchInterval.INTERVAL_SELF_DEFINED:
         datefrom, dateto = [None, None]
@@ -198,4 +197,27 @@ def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefr
     else:
         cache.clear_cache()
     return count
+
+def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
+    """
+    Convert the fields from the form for creating or updating the broker change in backend.
+
+    Parameters:
+        broker_dropdown_selected (list): The selected value in list from the broker dropdown.
+        broker_name (str): The selected or to-be-created broker name.
+        ccy_dropdown_selected (list): The selected value in list from the currency dropdown.
+        
+    Returns:
+        id (int): The ID of the newly created or existing broker, otherwise None.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.BROKER, None)
+    broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
+    ccy = ccy_dropdown_selected[0] if isinstance(ccy_dropdown_selected, (list, tuple)) else ccy_dropdown_selected
+    id = anvil.server.call('proc_broker_create_update', broker_id, broker_name, ccy)
+    if not id:
+        raise RuntimeError(f"Error occurs in upsert_brokers.")
+    else:
+        cache.clear_cache()
+    return id
 
