@@ -1,4 +1,4 @@
-from ._anvil_designer import StockInputRPTemplateTemplate
+from ._anvil_designer import StockTradingTxnDetailRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
@@ -14,7 +14,7 @@ from ....Utils.Logger import ClientLogger
 logger = ClientLogger()
 btnmod = ButtonModerator()
 
-class StockInputRPTemplate(StockInputRPTemplateTemplate):
+class StockTradingTxnDetailRPTemplate(StockTradingTxnDetailRPTemplateTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)

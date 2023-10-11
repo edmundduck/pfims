@@ -100,7 +100,7 @@ class MainForm(MainFormTemplate):
         self.reset_link_status()
         self.colpanel_link_input.role = 'selected'
         self.colpanel_lv2link_input_stock.role = 'selected'
-        Routing.open_stock_input_form(self)
+        Routing.open_stock_txn_input_form(self)
 
     def colpanel_lv2link_input_exp_click(self, **event_args):
         """This method is called when the link is clicked"""
