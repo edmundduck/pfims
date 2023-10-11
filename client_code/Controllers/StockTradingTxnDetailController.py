@@ -37,7 +37,7 @@ def get_stock_journal_group_broker(broker_dropdown_selected):
     """
     from . import UserSettingController
     jrn_grp_id, _ = broker_dropdown_selected if broker_dropdown_selected else [None, None]
-    broker_id = anvil.server.call('get_selected_template_attr', jrn_grp_id) if jrn_grp_id else UserSettingController.get_user_settings().get_broker()
+    broker_id = anvil.server.call('get_stock_journal_group', jrn_grp_id) if jrn_grp_id else UserSettingController.get_user_settings().get_broker()
     selected_item = UserSettingController.get_broker_dropdown_selected_item(broker_id)
     return selected_item
 

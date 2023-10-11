@@ -242,9 +242,9 @@ def delete_templates(template_id):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable("get_selected_template_attr")
+@anvil.server.callable("get_stock_journal_group")
 @logger.log_function
-def get_selected_template_attr(templ_id):
+def get_stock_journal_group(templ_id):
     """
     Return selected broker based on template dropdown selection.
     

@@ -80,7 +80,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         if self.dropdown_templ.selected_value is not None:
             templ_id, templ_name = self.dropdown_templ.selected_value
             self.templ_name.text = templ_name
-            self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(anvil.server.call('get_selected_template_attr', templ_id))
+            self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(anvil.server.call('get_stock_journal_group', templ_id))
             self.button_submit.enabled = True
         else:
             templ_id, templ_name = [None, None]
