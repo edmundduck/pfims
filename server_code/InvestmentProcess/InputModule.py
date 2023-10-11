@@ -245,23 +245,23 @@ def delete_templates(template_id):
 
 @anvil.server.callable("get_stock_journal_group")
 @logger.log_function
-def get_stock_journal_group(templ_id):
+def get_stock_journal_group(group_id):
     """
-    Return selected broker based on template dropdown selection.
+    Return selected stock journal group detail.
     
     Parameters:
-        templ_id (int): ID of the template.
+        group_id (int): ID of the stock journal group.
 
     Returns:
-        row (list): A list of broker ID if select is successful, otherwise None.
+        jrn_grp (StockJournalGroup): A stock journal group object.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id={templ_id}")
+        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id={group_id}")
         row = cur.fetchone()
         logger.trace("row=", row)
         cur.close()
-    return row['broker_id'] if row is not None else None
+    return StockJournalGroup(row)
   
 @anvil.server.callable("generate_draftring_stock_journal_groups_list")
 @logger.log_function
