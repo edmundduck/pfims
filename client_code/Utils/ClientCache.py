@@ -29,12 +29,16 @@ class ClientCache:
         """
         self.name = funcname
         if ClientCache.cache_dict.get(funcname, None) is None:
-            try:
-                ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
-                logger.debug(f"Cache {self.name} (function) initiated.")
-            except (anvil.server.NoServerFunctionError) as err:
+            if data:
                 ClientCache.cache_dict[funcname] = data
-                logger.debug(f"Cache {self.name} (manual) initiated.")
+                logger.debug(f"Cache {self.name} initiated manually.")
+            else:
+                try:
+                    ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
+                    logger.debug(f"Cache {self.name} initiated by calling function.")
+                except (anvil.server.NoServerFunctionError) as err:
+                    logger.error(err)
+                    logger.warning(f"{funcname} cannot be found. Client cache cannot be initiated.")
 
     def __str__(self):
         return "Cache {0} name:{1} includes -\n{2}".format(

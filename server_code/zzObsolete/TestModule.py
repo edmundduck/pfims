@@ -2,29 +2,28 @@ import anvil.files
 from anvil.files import data_files
 import anvil.secrets
 import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 # import camelot
 from io import BytesIO
 import datetime
 from ..SysProcess import SystemModule as sysmod
+from ..SysProcess import LoggingModule
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+logger = LoggingModule.ServerLogger()
 
 @anvil.server.callable
 def zz_test_session():
-    print(anvil.server.session)
+    logger.debug(anvil.server.session)
     if anvil.server.session is None:
-        print("It's none")
+        logger.debug("It's none")
     else:
-        print("It's not none")
+        logger.debug("It's not none")
     if not anvil.server.session:
-        print("It's empty")
+        logger.debug("It's empty")
     else:
-        print("It's not empty")
+        logger.debug("It's not empty")
 
 @anvil.server.callable
 def test_camelot(file, url):
@@ -38,33 +37,33 @@ def test_camelot(file, url):
     # tk latest (not confirmed)
     MAX_IMAGES_STORED = 1
     userid = int(sysmod.get_current_userid())
-    print("userid=", userid)
+    logger.debug("userid=", userid)
     if file.content_type != "application/pdf":
         raise Exception(f"File type not allowed, file upload aborted.")
     
     all_rows = app_tables.upload_files.search(tables.order_by('last_upload', ascending=False), userid=userid)
     if len(all_rows) > MAX_IMAGES_STORED:
         rows_to_delete = all_rows[MAX_IMAGES_STORED:]
-        print("rows_to_delete=", rows_to_delete)
+        logger.debug("rows_to_delete=", rows_to_delete)
         for row_del in rows_to_delete:
             row_del.delete()
             
     row = app_tables.upload_files.add_row(userid=userid, fileobj=file, last_upload=datetime.datetime.now())
     fileurl = row[2][1].url[:-3]
-    print("fileurl=", fileurl)
-    print("tempurl=", url)
+    logger.debug("fileurl=", fileurl)
+    logger.debug("tempurl=", url)
     for r in row:
-        print(r)
+        logger.debug(r)
 
     # test pdf
     fileurl = 'https://www.expat.hsbc.com/content/dam/hsbc/mbos/docs/important-documents/expat-gbp-rate-change-sheet.pdf'
     # try:
     t = camelot.read_pdf(fileurl)
-    print("Total tables extracted:", t.n)
+    logger.debug("Total tables extracted:", t.n)
     # print the first table as Pandas DataFrame
-    print(t[0].df)
+    logger.debug(t[0].df)
     # except (Exception) as err:
-    # print(f"Error: {err}")
+    # logger.debug(f"Error: {err}")
 
 @anvil.server.callable
 def test_tabula(file, url):
@@ -72,7 +71,7 @@ def test_tabula(file, url):
 
     pdf_url = 'https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_61_COVID-19.pdf'
     test_df = tabula.read_pdf(pdf_url)[0]
-    print(test_df)
+    logger.debug(test_df)
 
 @anvil.server.callable
 def test_pdfplumber(file, url):
@@ -81,5 +80,5 @@ def test_pdfplumber(file, url):
     with pdfplumber.open(BytesIO(file.get_bytes())) as pdf:
         # table = pdf.pages[1].extract_table()
         page = pdf.pages[0]
-        print(page.width, ",", page.height)
+        logger.debug(page.width, ",", page.height)
         # pd.DataFrame(table[1::],columns=table[0]))
