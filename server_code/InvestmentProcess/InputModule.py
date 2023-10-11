@@ -9,6 +9,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
+from ..Entities.StockJournalGroup import StockJournalGroup
 from ..Utils import Constants as const
 from ..DataObject import FinObject as fobj
 from ..SysProcess import SystemModule as sysmod
