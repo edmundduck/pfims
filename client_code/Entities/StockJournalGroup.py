@@ -6,8 +6,12 @@ import anvil.users
 class StockJournalGroup:
     __column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted', 'journals']
     
-    def __init__(self, data):
-        self.set(data)
+    def __init__(self, data=None):
+        if data:
+            self.set(data)
+        else:
+            self.set([None]*9)
+            print("XXXXXX", self)
 
     def __str__(self):
         return "{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}".format(
@@ -19,7 +23,7 @@ class StockJournalGroup:
             self.create_time,
             self.lastsave_time,
             self.submit_time,
-            len(self.journals)
+            self.journals
         )
 
     def get_dict(self):
@@ -57,6 +61,11 @@ class StockJournalGroup:
     def get_broker(self):
         return self.broker_id
 
+    def set_broker(self, broker_id):
+        print("1 set_broker=", broker_id)
+        self.broker_id = broker_id
+        print("2 set_broker=", self.broker_id)
+        
     def get_submitted_status(self):
         return self.submitted
 
