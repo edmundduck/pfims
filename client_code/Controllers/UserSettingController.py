@@ -23,16 +23,21 @@ def get_user_settings(data=None, reload=False):
     """
     Return user settings of the current logged on user.
 
+    Parameters:
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
     Returns:
         cache.get_cache (list): User's settings.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.USER_SETTINGS, data.get_dict())
+    cache_data = data if data and isinstance(data, Setting) else None
+    cache = ClientCache(CacheKey.USER_SETTINGS, cache_data) 
     if reload: 
         cache.clear_cache()
     if cache.is_empty():
         rows = anvil.server.call('select_settings')
-        cache.set_cache(rows.get_dict())
+        cache.set_cache(rows)
     return cache.get_cache()
 
 @logger.log_function
@@ -41,8 +46,8 @@ def generate_brokers_dropdown(data=None, reload=False):
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
-        reload (Boolean): True if clear cache is required. False by default.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
@@ -63,7 +68,7 @@ def generate_search_interval_dropdown(data=None):
     Access search interval dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
 
     Returns:
         cache.get_cache (list): Search interval dropdown formed by search interval DB table data.
@@ -82,7 +87,7 @@ def generate_currency_dropdown(data=None):
     Access currency dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
 
     Returns:
         cache.get_cache (list): Currency dropdown formed by currency DB table data.
@@ -101,8 +106,8 @@ def generate_submitted_journal_groups_dropdown(data=None, reload=False):
     Access submitted stock journal groups dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
-        reload (Boolean): True if clear cache is required. False by default.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Submitted stock journal groups dropdown formed by stock journal groups DB table data.

@@ -262,14 +262,14 @@ def get_selected_template_attr(templ_id):
         cur.close()
     return row['broker_id'] if row is not None else None
   
-@anvil.server.callable("generate_template_dropdown")
+@anvil.server.callable("generate_draftring_stock_journal_groups_list")
 @logger.log_function
-def generate_template_dropdown():
+def generate_draftring_stock_journal_groups_list():
     """
-    Generate DRAFTING (a.k.a. unsubmitted) template selection dropdown items.
-    
+    Select DRAFTING (a.k.a. unsubmitted) stock journal groups from the template DB table.
+
     Returns:
-        row (list): A list of unsubmitted template item formed by template IDs and names.
+        rows (list of RealDictRow): A list of unsubmitted template item formed by template IDs and names.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -277,7 +277,7 @@ def generate_template_dropdown():
         cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
         rows = cur.fetchall()
         cur.close()
-    return list((''.join([row['template_name'], ' [', str(row['template_id']), ']']), (row['template_id'], row['template_name'])) for row in rows)
+    return rows
 
 @anvil.server.callable("calculate_amount")
 @logger.log_function

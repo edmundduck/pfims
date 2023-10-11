@@ -2,14 +2,11 @@ from ._anvil_designer import StockTradingTxnDetailRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ....Utils import Constants as const
-from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.ClientCache import ClientCache
-from ....Utils.Validation import Validator
-from ....Utils.Logger import ClientLogger
+from .....Utils import Constants as const
+from .....Utils.ButtonModerator import ButtonModerator
+from .....Utils.ClientCache import ClientCache
+from .....Utils.Validation import Validator
+from .....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
