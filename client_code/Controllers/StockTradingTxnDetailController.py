@@ -1,5 +1,6 @@
 import anvil.server
 import anvil.users
+from ..Entities.StockJournalGroup import StockJournalGroup
 from ..Utils.Constants import CacheKey, LoggingLevel
 
 # This is a module.
@@ -37,7 +38,8 @@ def get_stock_journal_group_broker(broker_dropdown_selected):
     """
     from . import UserSettingController
     jrn_grp_id, _ = broker_dropdown_selected if broker_dropdown_selected else [None, None]
-    jrn_grp_obj = anvil.server.call('get_stock_journal_group', jrn_grp_id) if jrn_grp_id else UserSettingController.get_user_settings().get_broker()
+    jrn_grp_obj = anvil.server.call('get_stock_journal_group', jrn_grp_id) if jrn_grp_id else StockJournalGroup().set({'broker_id':UserSettingController.get_user_settings().get_broker()})
+    print("JRN_GRP_OBJ=", jrn_grp_obj)
     selected_item = UserSettingController.get_broker_dropdown_selected_item(jrn_grp_obj.get_broker())
     return selected_item
 

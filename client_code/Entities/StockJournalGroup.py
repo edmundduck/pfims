@@ -75,15 +75,15 @@ class StockJournalGroup:
     def set(self, data):
         if data:
             if isinstance(data, dict):
-                self.userid = data.get('userid')
-                self.id = data.get('template_id')
-                self.name = data.get('template_name')
-                self.broker_id = data.get('broker_id')
-                self.submitted = data.get('submitted')
-                self.create_time = data.get('template_create')
-                self.lastsave_time = data.get('template_lastsave')
-                self.submit_time = data.get('template_submitted')
-                self.journals = data.get('journals')
+                self.userid = data.get('userid', None)
+                self.id = data.get('template_id', None)
+                self.name = data.get('template_name', None)
+                self.broker_id = data.get('broker_id', None)
+                self.submitted = data.get('submitted', None)
+                self.create_time = data.get('template_create', None)
+                self.lastsave_time = data.get('template_lastsave', None)
+                self.submit_time = data.get('template_submitted', None)
+                self.journals = data.get('journals', None)
             elif isinstance(data, (list, tuple)):
                 self.userid = data[0]
                 self.id = data[1]
