@@ -42,8 +42,11 @@ class StockJournal:
     def get_list(self):
         return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
 
-    def get_id(self):
-        return self.id
+    def get_group_id(self):
+        return self.template_id
+        
+    def get_item_id(self):
+        return self.iid
 
     def get_name(self):
         return self.name

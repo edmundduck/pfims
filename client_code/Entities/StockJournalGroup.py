@@ -39,13 +39,13 @@ class StockJournalGroup:
         return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
 
     def get_id(self):
-        return self.template_id
+        return getattr(self, self.__property_def__[1])
 
     def get_name(self):
-        return self.template_name
+        return getattr(self, self.__property_def__[2])
     
     def get_broker(self):
-        return self.broker_id
+        return getattr(self, self.__property_def__[3])
 
     def set_broker(self, broker_id):
         copy = self.copy()
@@ -53,19 +53,19 @@ class StockJournalGroup:
         return copy
         
     def get_submitted_status(self):
-        return self.submitted
+        return getattr(self, self.__property_def__[4])
 
     def get_created_time(self):
-        return self.template_create
+        return getattr(self, self.__property_def__[5])
 
     def get_lastsaved_time(self):
-        return self.template_lastsave
+        return getattr(self, self.__property_def__[6])
 
     def get_submitted_time(self):
-        return self.template_submitted
+        return getattr(self, self.__property_def__[7])
 
     def get_journals(self):
-        return self.journals
+        return getattr(self, self.__property_def__[8])
 
     def set_journals(self, journals):
         copy = self.copy()
