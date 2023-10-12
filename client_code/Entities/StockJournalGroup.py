@@ -5,8 +5,8 @@ import anvil.users
 
 @anvil.server.portable_class
 class StockJournalGroup:
-    ??? Should I add journals too ???
-    __column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted']
+    __db_column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted']
+    __property_def__ = __db_column_def__ + ['journals']
     
     def __init__(self, data=None):
         if data:
@@ -30,19 +30,19 @@ class StockJournalGroup:
 
     @staticmethod
     def get_column_definition():
-        return ', '.join(c for c in StockJournalGroup.__column_def__)
+        return ', '.join(c for c in StockJournalGroup.__db_column_def__)
 
     def get_dict(self):
         return {
-            self.__column_def__[0]: self.userid,
-            self.__column_def__[1]: self.id,
-            self.__column_def__[2]: self.name,
-            self.__column_def__[3]: self.broker_id,
-            self.__column_def__[4]: self.submitted,
-            self.__column_def__[5]: self.create_time,
-            self.__column_def__[6]: self.lastsave_time,
-            self.__column_def__[7]: self.submit_time,
-            'journals': self.journals
+            self.__property_def__[0]: self.userid,
+            self.__property_def__[1]: self.id,
+            self.__property_def__[2]: self.name,
+            self.__property_def__[3]: self.broker_id,
+            self.__property_def__[4]: self.submitted,
+            self.__property_def__[5]: self.create_time,
+            self.__property_def__[6]: self.lastsave_time,
+            self.__property_def__[7]: self.submit_time,
+            self.__property_def__[8]: self.journals
         }
 
     def get_list(self):
