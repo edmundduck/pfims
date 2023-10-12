@@ -125,7 +125,9 @@ class StockJournalGroup:
         return True
 
     def __serialize__(self, global_data):
+        print("1 SERIALIZE=", global_data[f"{__class__.__name__}_{self.userid}"])
         global_data[f"{__class__.__name__}_{self.userid}"] = self.get_dict()
+        print("2 SERIALIZE=", global_data[f"{__class__.__name__}_{self.userid}"])
         return self.userid
 
     def __deserialize__(self, userid, global_data):
