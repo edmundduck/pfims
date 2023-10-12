@@ -257,7 +257,7 @@ def get_stock_journal_group(group_id):
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE template_id={group_id}")
+        cur.execute(f"SELECT {StockJournalGroup.get_column_definition()} FROM {sysmod.schemafin()}.templates WHERE template_id={group_id}")
         row = cur.fetchone()
         logger.trace("row=", row)
         cur.close()

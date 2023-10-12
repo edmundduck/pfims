@@ -26,22 +26,32 @@ def generate_stock_journal_groups_dropdown(data=None, reload=False):
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
-def get_stock_journal_group_broker(broker_dropdown_selected):
+def get_single_stock_journal_group(group_dropdown_selected):
     """
-    Return the broker ID of the selected stock journal group.
+    Return the stock journal group object of the selected stock journal group.
 
     Parameters:
-        broker_dropdown_selected (list): The selected value in list from the broker dropdown.
+        group_dropdown_selected (list): The selected value in list from the broker dropdown.
 
     Returns:
-        selected_item (list): Complete key of the selected item in broker dropdown.
+        jrn_grp_obj (StockJournalGroup): A stock journal group object.
     """
     from . import UserSettingController
     blank_jrn_grp = StockJournalGroup()
-    print("BLANK=", blank_jrn_grp)
-    jrn_grp_id, _ = broker_dropdown_selected if broker_dropdown_selected else [None, None]
+    jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
     jrn_grp_obj = anvil.server.call('get_stock_journal_group', jrn_grp_id) if jrn_grp_id else blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
-    print("JRN_GRP_OBJ=", jrn_grp_obj)
-    selected_item = UserSettingController.get_broker_dropdown_selected_item(jrn_grp_obj.get_broker())
-    return selected_item
+    return jrn_grp_obj
+
+def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):
+    """
+    Enable or disable the stock journal group submit button.
+
+    Parameters:
+        jrn_grp_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
+
+    Returns:
+        Boolean: True for enable, false for disable.
+    """
+    jrn_grp_id = jrn_grp_dropdown_selected[0] if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else jrn_grp_dropdown_selected
+    return False if str(jrn_grp_id) in (None, '') or str(jrn_grp_id).isspace() else True
 

@@ -3,19 +3,21 @@ import anvil.users
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+@anvil.server.portable_class
 class StockJournalGroup:
-    __column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted', 'journals']
+    ??? Should I add journals too ???
+    __column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted']
     
     def __init__(self, data=None):
         if data:
             self.set(data)
         else:
             self.set([None]*9)
-            print("XXXXXX", self)
 
     def __str__(self):
-        return "{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}".format(
+        return "{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}".format(
             self.__class__,
+            self.userid, 
             self.id, 
             self.name, 
             self.broker_id, 
@@ -25,6 +27,10 @@ class StockJournalGroup:
             self.submit_time,
             self.journals
         )
+
+    @staticmethod
+    def get_column_definition():
+        return ', '.join(c for c in StockJournalGroup.__column_def__)
 
     def get_dict(self):
         return {
@@ -36,7 +42,7 @@ class StockJournalGroup:
             self.__column_def__[5]: self.create_time,
             self.__column_def__[6]: self.lastsave_time,
             self.__column_def__[7]: self.submit_time,
-            self.__column_def__[8]: self.journals
+            'journals': self.journals
         }
 
     def get_list(self):
@@ -62,9 +68,9 @@ class StockJournalGroup:
         return self.broker_id
 
     def set_broker(self, broker_id):
-        print("1 set_broker=", broker_id)
-        self.broker_id = broker_id
-        print("2 set_broker=", self.broker_id)
+        copy = self.copy()
+        copy.broker_id = broker_id
+        return copy
         
     def get_submitted_status(self):
         return self.submitted
@@ -81,6 +87,11 @@ class StockJournalGroup:
     def get_journals(self):
         return self.journals
 
+    def set_journals(self, journals):
+        copy = self.copy()
+        copy.journals = journals
+        return copy
+        
     def set(self, data):
         if data:
             if isinstance(data, dict):
@@ -103,6 +114,9 @@ class StockJournalGroup:
                 self.lastsave_time = data[6]
                 self.submit_time = data[7]
                 self.journals = data[8]
+
+    def copy(self):
+        return StockJournalGroup(self.get_dict())
 
     def is_valid(self):
         if not self.name or self.name.isspace(): return False
