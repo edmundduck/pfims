@@ -2,10 +2,14 @@ import anvil.server
 import anvil.users
 from ..Entities.StockJournalGroup import StockJournalGroup
 from ..Utils.Constants import CacheKey, LoggingLevel
+from ..Utils.Logger import ClientLogger
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+logger = ClientLogger()
+
+@logger.log_function
 def generate_stock_journal_groups_dropdown(data=None, reload=False):
     """
     Access stock journal groups dropdown from either client cache or generate from DB data returned from server side.
@@ -26,6 +30,7 @@ def generate_stock_journal_groups_dropdown(data=None, reload=False):
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
+@logger.log_function
 def get_stock_journal_group(group_dropdown_selected):
     """
     Return the stock journal group object of the selected stock journal group.
@@ -39,7 +44,9 @@ def get_stock_journal_group(group_dropdown_selected):
     from . import UserSettingController
     blank_jrn_grp = StockJournalGroup()
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
+    logger.trace(f'jrn_grp_id={jrn_grp_id}')
     jrn_grp_obj = anvil.server.call('select_stock_journal_group', jrn_grp_id) if jrn_grp_id else blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
+    logger.trace(f'jrn_grp_obj={jrn_grp_obj}')
     return jrn_grp_obj
 
 def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):

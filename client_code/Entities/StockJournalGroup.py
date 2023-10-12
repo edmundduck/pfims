@@ -6,7 +6,7 @@ import anvil.users
 @anvil.server.portable_class
 class StockJournalGroup:
     __db_column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted']
-    __property_def__ = __db_column_def__ + ['journals']
+    __property_def__ = ['userid', 'id', 'name', 'broker_id', 'submitted', 'create_time', 'lastsave_time', 'submit_time', 'journals']
     
     def __init__(self, data=None):
         if data:
@@ -33,8 +33,6 @@ class StockJournalGroup:
         return ', '.join(c for c in StockJournalGroup.__db_column_def__)
 
     def get_dict(self):
-        for i in range(len(self.__property_def__)):
-            print(eval(''.join(('self.', self.__property_def__[i]))))
         return {
             # self.__property_def__[0]: self.userid,
             # self.__property_def__[1]: self.id,
@@ -45,7 +43,7 @@ class StockJournalGroup:
             # self.__property_def__[6]: self.lastsave_time,
             # self.__property_def__[7]: self.submit_time,
             # self.__property_def__[8]: self.journals
-            self.__property_def__[i]: eval(''.join(('a.', self.__property_def__[i]))) for i in range(len(self.__property_def__))
+            self.__property_def__[i]: getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__))
         }
 
     def get_list(self):
@@ -119,7 +117,6 @@ class StockJournalGroup:
                 self.journals = data[8]
 
     def copy(self):
-        print("PRINT!!", self.get_dict())
         return StockJournalGroup(self.get_dict())
 
     def is_valid(self):

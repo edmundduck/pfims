@@ -20,13 +20,13 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     
         # Any code you write here will run when the form opens.
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
-
+        jrn_grp = StockTradingTxnDetailController.get_stock_journal_group(self.dropdown_templ.selected_value)
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
         self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown()
         self.dropdown_broker.items = UserSettingController.generate_brokers_dropdown()
-        self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_stock_journal_group(self.dropdown_templ.selected_value)
+        self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(jrn_grp.get_broker())
         # Reset on screen change status
         self.disable_submit_button()
         
