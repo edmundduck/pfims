@@ -6,7 +6,7 @@ import anvil.users
 @anvil.server.portable_class
 class StockJournalGroup:
     __db_column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted']
-    __property_def__ = ['userid', 'id', 'name', 'broker_id', 'submitted', 'create_time', 'lastsave_time', 'submit_time', 'journals']
+    __property_def__ = __db_column_def__ + ['journals']
     
     def __init__(self, data=None):
         if data:
@@ -33,31 +33,10 @@ class StockJournalGroup:
         return ', '.join(c for c in StockJournalGroup.__db_column_def__)
 
     def get_dict(self):
-        return {
-            # self.__property_def__[0]: self.userid,
-            # self.__property_def__[1]: self.id,
-            # self.__property_def__[2]: self.name,
-            # self.__property_def__[3]: self.broker_id,
-            # self.__property_def__[4]: self.submitted,
-            # self.__property_def__[5]: self.create_time,
-            # self.__property_def__[6]: self.lastsave_time,
-            # self.__property_def__[7]: self.submit_time,
-            # self.__property_def__[8]: self.journals
-            self.__property_def__[i]: getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__))
-        }
+        return { self.__property_def__[i]: getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) }
 
     def get_list(self):
-        return [
-            self.userid,
-            self.id,
-            self.name,
-            self.broker_id,
-            self.submitted,
-            self.create_time,
-            self.lastsave_time,
-            self.submit_time,
-            self.journals
-        ]
+        return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
 
     def get_id(self):
         return self.id
@@ -92,29 +71,13 @@ class StockJournalGroup:
         copy = self.copy()
         copy.journals = journals
         return copy
-        
+
     def set(self, data):
         if data:
             if isinstance(data, dict):
-                self.userid = data.get('userid', None)
-                self.id = data.get('template_id', None)
-                self.name = data.get('template_name', None)
-                self.broker_id = data.get('broker_id', None)
-                self.submitted = data.get('submitted', None)
-                self.create_time = data.get('template_create', None)
-                self.lastsave_time = data.get('template_lastsave', None)
-                self.submit_time = data.get('template_submitted', None)
-                self.journals = data.get('journals', None)
+                setattr((self, ''.join(('self.', self.__property_def__[i])), data.get(self.__property_def__[i], None)) for i in range(len(self.__property_def__)))
             elif isinstance(data, (list, tuple)):
-                self.userid = data[0]
-                self.id = data[1]
-                self.name = data[2]
-                self.broker_id = data[3]
-                self.submitted = data[4]
-                self.create_time = data[5]
-                self.lastsave_time = data[6]
-                self.submit_time = data[7]
-                self.journals = data[8]
+                setattr((self, ''.join(('self.', self.__property_def__[i])), data[i]) for i in range(len(self.__property_def__)))
 
     def copy(self):
         return StockJournalGroup(self.get_dict())
@@ -125,9 +88,7 @@ class StockJournalGroup:
         return True
 
     def __serialize__(self, global_data):
-        print("1 SERIALIZE=", global_data[f"{__class__.__name__}_{self.userid}"])
         global_data[f"{__class__.__name__}_{self.userid}"] = self.get_dict()
-        print("2 SERIALIZE=", global_data[f"{__class__.__name__}_{self.userid}"])
         return self.userid
 
     def __deserialize__(self, userid, global_data):
