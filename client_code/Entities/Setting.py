@@ -53,6 +53,9 @@ class Setting:
             elif isinstance(data, (list, tuple)):
                 for i in range(len(self.__property_def__)):
                     setattr(self, self.__property_def__[i], data[i])
+            return self.copy()
+        else:
+            raise TypeError(f'Function \'set\' only accepts dict, list or tuple as parameter.')
 
     def copy(self):
         return Setting(self.get_dict())
