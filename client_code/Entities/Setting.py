@@ -12,7 +12,7 @@ class Setting:
 
     def __str__(self):
         return "{0}: {1}, {2}, {3}, {4}, {5}".format(
-            self.__class__,
+            self.__class__.__name__,
             self.default_broker, 
             self.default_interval, 
             self.default_datefrom, 

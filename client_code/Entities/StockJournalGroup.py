@@ -16,15 +16,15 @@ class StockJournalGroup:
 
     def __str__(self):
         return '{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}'.format(
-            self.__class__,
+            self.__class__.__name__,
             self.userid, 
-            self.id, 
-            self.name, 
+            self.template_id, 
+            self.template_name, 
             self.broker_id, 
             self.submitted, 
-            self.create_time,
-            self.lastsave_time,
-            self.submit_time,
+            self.template_create,
+            self.template_lastsave,
+            self.template_submitted,
             self.journals
         )
 
@@ -39,10 +39,10 @@ class StockJournalGroup:
         return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
 
     def get_id(self):
-        return self.id
+        return self.template_id
 
     def get_name(self):
-        return self.name
+        return self.template_name
     
     def get_broker(self):
         return self.broker_id
@@ -56,13 +56,13 @@ class StockJournalGroup:
         return self.submitted
 
     def get_created_time(self):
-        return self.create_time
+        return self.template_create
 
     def get_lastsaved_time(self):
-        return self.lastsave_time
+        return self.template_lastsave
 
     def get_submitted_time(self):
-        return self.submit_time
+        return self.template_submitted
 
     def get_journals(self):
         return self.journals
@@ -75,15 +75,17 @@ class StockJournalGroup:
     def set(self, data):
         if data:
             if isinstance(data, dict):
-                setattr((self, ''.join(('self.', self.__property_def__[i])), data.get(self.__property_def__[i], None)) for i in range(len(self.__property_def__)))
+                for i in range(len(self.__property_def__)):
+                    setattr(self, self.__property_def__[i], data.get(self.__property_def__[i], None))
             elif isinstance(data, (list, tuple)):
-                setattr((self, ''.join(('self.', self.__property_def__[i])), data[i]) for i in range(len(self.__property_def__)))
+                for i in range(len(self.__property_def__)):
+                    setattr(self, self.__property_def__[i], data[i])
 
     def copy(self):
         return StockJournalGroup(self.get_dict())
 
     def is_valid(self):
-        if not self.name or self.name.isspace(): return False
+        if not self.template_name or self.template_name.isspace(): return False
         if not self.broker_id or self.broker_id.isspace(): return False
         return True
 

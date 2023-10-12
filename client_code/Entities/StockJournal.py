@@ -4,6 +4,7 @@ import datetime as datetime
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+@anvil.server.portable_class
 class StockJournal:
     __db_column_def__ = ['iid', 'template_id', 'sell_date', 'buy_date', 'symbol', 'qty', 'sales', 'cost', 'fee', 'sell_price', 'buy_price', 'pnl']
     __property_def__ = ['userid'] + __db_column_def__
@@ -16,7 +17,7 @@ class StockJournal:
 
     def __str__(self):
         return '{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}'.format(
-            self.__class__,
+            self.__class__.__name__,
             self.userid, 
             self.iid, 
             self.template_id, 
@@ -33,39 +34,13 @@ class StockJournal:
 
     @staticmethod
     def get_column_definition():
-        return ', '.join(c for c StockJournal.__db_column_def__)
+        return ', '.join(c for c in StockJournal.__db_column_def__)
 
     def get_dict(self):
-        return {
-            self.__property_def__[0]: self.userid,
-            self.__property_def__[1]: self.iid,
-            self.__property_def__[2]: self.template_id,
-            self.__property_def__[3]: self.sell_date,
-            self.__property_def__[4]: self.buy_date,
-            self.__property_def__[5]: self.symbol,
-            self.__property_def__[6]: self.sales,
-            self.__property_def__[7]: self.cost,
-            self.__property_def__[8]: self.fee,
-            self.__property_def__[9]: self.sell_price,
-            self.__property_def__[10]: self.buy_date,
-            self.__property_def__[11]: self.pnl
-        }
+        return { self.__property_def__[i]: getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) }
 
     def get_list(self):
-        return [
-            self.userid, 
-            self.iid, 
-            self.template_id, 
-            self.sell_date, 
-            self.buy_date, 
-            self.symbol, 
-            self.sales,
-            self.cost,
-            self.fee,
-            self.sell_price,
-            self.buy_date,
-            self.pnl
-        ]
+        return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
 
     def get_id(self):
         return self.id
@@ -104,29 +79,11 @@ class StockJournal:
     def set(self, data):
         if data:
             if isinstance(data, dict):
-                self.userid = data.get('userid', None)
-                self.id = data.get('template_id', None)
-                self.name = data.get('template_name', None)
-                self.broker_id = data.get('broker_id', None)
-                self.submitted = data.get('submitted', None)
-                self.create_time = data.get('template_create', None)
-                self.lastsave_time = data.get('template_lastsave', None)
-                self.submit_time = data.get('template_submitted', None)
-                self.journals = data.get('journals', None)
+                for i in range(len(self.__property_def__)):
+                    setattr(self, self.__property_def__[i], data.get(self.__property_def__[i], None))
             elif isinstance(data, (list, tuple)):
-                self.userid = data[0]
-                self.iid = data[1]
-                self.template_id = data[2]
-                self.sell_date = data[3]
-                self.buy_date = data[4]
-                self.symbol = data[5]
-                self.qty = data[6]
-                self.sales = data[7]
-                self.cost = data[8]
-                self.fee = data[9]
-                self.sell_price = data[10]
-                self.buy_price = data[11]
-                self.pnl = data[12]
+                for i in range(len(self.__property_def__)):
+                    setattr(self, self.__property_def__[i], data[i])
 
     def copy(self):
         return StockJournal(self.get_dict())
@@ -150,8 +107,4 @@ class StockJournal:
     def __deserialize__(self, userid, global_data):
         data = global_data[f"{__class__.__name}_{userid}"]
         self.__init__(data)
-
     
-    def get(self):
-        return [self.id, self.name, self.ccy, self.valid_from, self.valid_to, self.status]
-        
