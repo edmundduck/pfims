@@ -26,7 +26,7 @@ def generate_stock_journal_groups_dropdown(data=None, reload=False):
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
-def get_single_stock_journal_group(group_dropdown_selected):
+def get_stock_journal_group(group_dropdown_selected):
     """
     Return the stock journal group object of the selected stock journal group.
 
@@ -39,7 +39,7 @@ def get_single_stock_journal_group(group_dropdown_selected):
     from . import UserSettingController
     blank_jrn_grp = StockJournalGroup()
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
-    jrn_grp_obj = anvil.server.call('get_stock_journal_group', jrn_grp_id) if jrn_grp_id else blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
+    jrn_grp_obj = anvil.server.call('select_stock_journal_group', jrn_grp_id) if jrn_grp_id else blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
     return jrn_grp_obj
 
 def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):

@@ -15,7 +15,7 @@ class StockJournalGroup:
             self.set([None]*9)
 
     def __str__(self):
-        return "{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}".format(
+        return '{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}'.format(
             self.__class__,
             self.userid, 
             self.id, 
@@ -34,15 +34,16 @@ class StockJournalGroup:
 
     def get_dict(self):
         return {
-            self.__property_def__[0]: self.userid,
-            self.__property_def__[1]: self.id,
-            self.__property_def__[2]: self.name,
-            self.__property_def__[3]: self.broker_id,
-            self.__property_def__[4]: self.submitted,
-            self.__property_def__[5]: self.create_time,
-            self.__property_def__[6]: self.lastsave_time,
-            self.__property_def__[7]: self.submit_time,
-            self.__property_def__[8]: self.journals
+            # self.__property_def__[0]: self.userid,
+            # self.__property_def__[1]: self.id,
+            # self.__property_def__[2]: self.name,
+            # self.__property_def__[3]: self.broker_id,
+            # self.__property_def__[4]: self.submitted,
+            # self.__property_def__[5]: self.create_time,
+            # self.__property_def__[6]: self.lastsave_time,
+            # self.__property_def__[7]: self.submit_time,
+            # self.__property_def__[8]: self.journals
+            self.__property_def__[i]: eval(''.join(('a.', self.__property_def__[i]))) for i in range(len(self.__property_def__))
         }
 
     def get_list(self):
@@ -116,6 +117,7 @@ class StockJournalGroup:
                 self.journals = data[8]
 
     def copy(self):
+        print("PRINT!!", self.get_dict())
         return StockJournalGroup(self.get_dict())
 
     def is_valid(self):
@@ -124,9 +126,9 @@ class StockJournalGroup:
         return True
 
     def __serialize__(self, global_data):
-        global_data[f"StockJournalGroup_{self.userid}"] = self.get_dict()
+        global_data[f"{__class__.__name__}_{self.userid}"] = self.get_dict()
         return self.userid
 
     def __deserialize__(self, userid, global_data):
-        data = global_data[f"StockJournalGroup_{userid}"]
+        data = global_data[f"{__class__.__name__}_{userid}"]
         self.__init__(data)

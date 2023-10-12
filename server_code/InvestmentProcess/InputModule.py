@@ -2,9 +2,6 @@ import anvil.files
 from anvil.files import data_files
 import anvil.secrets
 import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
@@ -19,26 +16,76 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("select_template_journals")
+@anvil.server.callable("generate_draftring_stock_journal_groups_list")
 @logger.log_function
-def select_template_journals(templ_id):
+def generate_draftring_stock_journal_groups_list():
     """
-    Return template journals for repeating panel to display based on template selection dropdown.
+    Select DRAFTING (a.k.a. unsubmitted) stock journal groups from the template DB table.
+
+    Returns:
+        rows (list of RealDictRow): A list of unsubmitted template item formed by template IDs and names.
+    """
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = 'SELECT * FROM {schema}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC'.format(
+            schema=sysmod.schemafin(),
+            userid=userid
+        )
+        cur.execute(sql)
+        rows = cur.fetchall()
+        logger.trace("rows=", rows)
+        cur.close()
+        return rows
+
+@anvil.server.callable("select_stock_journal_group")
+@logger.log_function
+def select_stock_journal_group(group_id):
+    """
+    Return selected stock journal group detail.
+    
+    Parameters:
+        group_id (int): ID of the stock journal group.
+
+    Returns:
+        jrn_grp (StockJournalGroup): A stock journal group object.
+    """
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = 'SELECT {col_def} FROM {schema}.templates WHERE template_id=%s'.format(
+            col_def=StockJournalGroup.get_column_definition(),
+            schema=sysmod.schemafin()
+        )
+        stmt = cur.mogrify(sql, (group_id, ))
+        cur.execute(stmt)
+        row = cur.fetchone()
+        logger.trace('row=', row)
+        cur.close()
+        return StockJournalGroup(row)
+  
+@anvil.server.callable("select_stock_journals")
+@logger.log_function
+def select_stock_journals(group_id):
+    """
+    Return all journals under a selected stock journal group.
 
     Parameters:
-        templ_id (int): Selected template ID from the template's dropdown.
+        group_id (int): ID of the stock journal group.
 
     Returns:
         rows (list): All template journals detail corresponding to the selected template, return empty list otherwise.
     """
-    if templ_id is not None:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {templ_id} ORDER BY sell_date DESC, buy_date DESC, symbol ASC")
-            rows = cur.fetchall()
-            cur.close()
-            return list(rows)
-    return []
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = 'SELECT * FROM {schema}.templ_journals WHERE template_id = %s ORDER BY sell_date DESC, buy_date DESC, symbol ASC'.format(
+            schema=sysmod.schemafin()
+        )
+        stmt = cur.mogrify(sql, (group_id, ))
+        cur.execute(stmt)
+        rows = cur.fetchall()
+        logger.trace('rows=', rows)
+        cur.close()
+        return rows
 
 @anvil.server.callable("upsert_journals")
 @logger.log_function
@@ -243,43 +290,6 @@ def delete_templates(template_id):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable("get_stock_journal_group")
-@logger.log_function
-def get_stock_journal_group(group_id):
-    """
-    Return selected stock journal group detail.
-    
-    Parameters:
-        group_id (int): ID of the stock journal group.
-
-    Returns:
-        jrn_grp (StockJournalGroup): A stock journal group object.
-    """
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT {StockJournalGroup.get_column_definition()} FROM {sysmod.schemafin()}.templates WHERE template_id={group_id}")
-        row = cur.fetchone()
-        logger.trace("row=", row)
-        cur.close()
-    return StockJournalGroup(row)
-  
-@anvil.server.callable("generate_draftring_stock_journal_groups_list")
-@logger.log_function
-def generate_draftring_stock_journal_groups_list():
-    """
-    Select DRAFTING (a.k.a. unsubmitted) stock journal groups from the template DB table.
-
-    Returns:
-        rows (list of RealDictRow): A list of unsubmitted template item formed by template IDs and names.
-    """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC")
-        rows = cur.fetchall()
-        cur.close()
-    return rows
-
 @anvil.server.callable("calculate_amount")
 @logger.log_function
 def calculate_amount(sell_amt, buy_amt, fee, qty):
@@ -321,7 +331,7 @@ def proc_save_template_and_journals(template_id, template_name, broker_id, del_i
         raise RuntimeError(f"ERROR: Fail to save template {template_name}, aborting further update.")
     result = upsert_journals(templ_id, journals)
     if result is not None:
-        select_journals = select_template_journals(templ_id)
+        select_journals = select_stock_journals(templ_id)
     else:
         select_journals = None
     return [templ_id, select_journals]
