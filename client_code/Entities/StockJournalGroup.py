@@ -12,20 +12,12 @@ class StockJournalGroup:
         if data:
             self.set(data)
         else:
-            self.set([None]*9)
+            self.set([None]*len(self.__property_def__))
 
     def __str__(self):
-        return '{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}'.format(
+        return '{0}: {1}'.format(
             self.__class__.__name__,
-            self.userid, 
-            self.template_id, 
-            self.template_name, 
-            self.broker_id, 
-            self.submitted, 
-            self.template_create,
-            self.template_lastsave,
-            self.template_submitted,
-            self.journals
+            self.get_dict()
         )
 
     @staticmethod

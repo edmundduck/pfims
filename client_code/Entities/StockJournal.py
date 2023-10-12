@@ -13,23 +13,12 @@ class StockJournal:
         if data:
             self.set(data)
         else:
-            self.set([None]*13)
+            self.set([None]*len(self.__property_def__))
 
     def __str__(self):
-        return '{0}: {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}'.format(
+        return '{0}: {1}'.format(
             self.__class__.__name__,
-            self.userid, 
-            self.iid, 
-            self.template_id, 
-            self.sell_date, 
-            self.buy_date, 
-            self.symbol, 
-            self.sales,
-            self.cost,
-            self.fee,
-            self.sell_price,
-            self.buy_date,
-            self.pnl
+            self.get_dict()
         )
 
     @staticmethod
