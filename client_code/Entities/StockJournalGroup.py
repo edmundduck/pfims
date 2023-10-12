@@ -33,6 +33,8 @@ class StockJournalGroup:
         return ', '.join(c for c in StockJournalGroup.__db_column_def__)
 
     def get_dict(self):
+        for i in range(len(self.__property_def__)):
+            print(eval(''.join(('self.', self.__property_def__[i]))))
         return {
             # self.__property_def__[0]: self.userid,
             # self.__property_def__[1]: self.id,
