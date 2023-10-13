@@ -1,6 +1,6 @@
 import anvil.server
 import anvil.users
-from ..Entities.StockJournalGroup import StockJournalGroup
+from ..Entities.StockJournal import StockJournal
 from ..Utils.Constants import CacheKey, LoggingLevel
 from ..Utils.Logger import ClientLogger
 
@@ -42,6 +42,7 @@ def get_stock_journal_group(group_dropdown_selected):
         jrn_grp_obj (StockJournalGroup): A stock journal group object.
     """
     from . import UserSettingController
+    from ..Entities.StockJournalGroup import StockJournalGroup
     blank_jrn_grp = StockJournalGroup()
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
     logger.trace(f'jrn_grp_id={jrn_grp_id} / blank_jrn_grp={blank_jrn_grp}')

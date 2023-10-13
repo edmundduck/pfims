@@ -106,7 +106,7 @@ def upsert_journals(tid, rows):
         cur.rowcount (int): Successful update row count, otherwise None.
     """
     try:
-        conn = sysmod.db_connect()
+        conn = sysmod.db_connect() 
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
