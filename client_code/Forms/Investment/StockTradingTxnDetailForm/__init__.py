@@ -100,7 +100,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
             if templ_original_id != templ_id or templ_original_name != templ_name:
                 # Only trigger template dropdown refresh when new template is created or template name is changed
                 self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
-                self.dropdown_templ.selected_value = [templ_id, templ_name]
+                self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journals_group_dropdown_selected_item(templ_id)
             if journals is not None:
                 # Result not None means insert/update journals is done successfully
                 """ Reflect the change in template journals """

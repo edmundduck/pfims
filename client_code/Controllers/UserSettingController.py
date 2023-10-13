@@ -134,6 +134,9 @@ def get_broker_dropdown_selected_item(broker_id):
     """
     Return a complete key based on a partial broker ID which is a part of the key in a dropdown list.
 
+    Parameters:
+        broker_id (string): The ID of the selected broker.
+
     Returns:
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
@@ -148,6 +151,9 @@ def enable_search_time_datefield(interval_selection):
     """
     Enable or disable the "search time" (from, to) date field.
 
+    Parameters:
+        interval_selection (list): The selected value in list from the search interval dropdown.
+        
     Returns:
         Boolean, Boolean: True for enable, false for disable.
     """
@@ -159,6 +165,11 @@ def set_search_time_datefield_value(interval_selection, date_from_value, date_to
     """
     Set the "search time" (from, to) date field value.
 
+    Parameters:
+        interval_selection (list): The selected value in list from the search interval dropdown.
+        date_from_value (date): The date to search from.
+        date_from_to (date): The date to search to.
+        
     Returns:
         String, String: Return original values provided in parameters if it's user defined, otherwise None.
     """
@@ -195,6 +206,9 @@ def set_selected_broker_fields(broker_selection):
     """
     Set the broker name and currency based on broker dropdown.
 
+    Parameters:
+        broker_selection (list): The selected value in list from the broker dropdown.
+        
     Returns:
         broker_id (String): Selected broker ID.
         broker_name (String): Selected broker name, None instead if broker ID is none or empty.

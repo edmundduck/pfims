@@ -49,6 +49,23 @@ def get_stock_journal_group(group_dropdown_selected):
     logger.trace(f'jrn_grp_obj={jrn_grp_obj}')
     return jrn_grp_obj
 
+def get_stock_journals_group_dropdown_selected_item(group_id):
+    """
+    Return a complete key based on a partial broker ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        group_id (int): The ID of the selected stock journal group.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in broker dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    jrn_grp_dropdown = ClientCache(CacheKey.STOCK_JRN_GRP, None)
+    if jrn_grp_dropdown.is_empty():
+        generate_stock_journal_groups_dropdown()
+    selected_item = jrn_grp_dropdown.get_complete_key(group_id)
+    return selected_item
+
 def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):
     """
     Enable or disable the stock journal group submit button.
