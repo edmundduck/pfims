@@ -23,6 +23,11 @@ class StockJournalGroup(BaseEntity):
     def get_name(self):
         return getattr(self, self.__property_def__[2], None)
     
+    def set_name(self, name):
+        copy = self.copy()
+        copy.name = name
+        return copy
+        
     def get_broker(self):
         return getattr(self, self.__property_def__[3], None)
 

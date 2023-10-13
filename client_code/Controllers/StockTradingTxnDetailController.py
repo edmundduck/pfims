@@ -1,6 +1,5 @@
 import anvil.server
 import anvil.users
-from ..Entities.StockJournal import StockJournal
 from ..Utils.Constants import CacheKey, LoggingLevel
 from ..Utils.Logger import ClientLogger
 
@@ -93,6 +92,8 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     Returns:
         result (list): A list of all functions return required by the save.
     """
+    from ..Entities.StockJournal import StockJournal
+    from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID, None)
 
@@ -107,6 +108,9 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
 
     jrn_grp_id_ori, jrn_grp_name_ori = jrn_grp_dropdown_selected if jrn_grp_dropdown_selected is not None else [None, None]
     broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
+
+    jrn_grp = StockJournalGroup()
+    jrn_grp.set()
 
     result = anvil.server.call('proc_save_group_and_journals', jrn_grp_id_ori, jrn_grp_name, broker_id, cache.get_cache(), self.input_repeating_panel.items)
     if not result:
