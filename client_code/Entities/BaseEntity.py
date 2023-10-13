@@ -5,10 +5,13 @@ import anvil.users
 
 @anvil.server.portable_class
 class BaseEntity:
-    __db_column_def__ = ['userid']
+    # Each child class must implement the following 2 private variables.
+    __db_column_def__ = None
     __property_def__ = __db_column_def__
     
     def __init__(self, data=None):
+        if not self.__db_column_def__ or not self.__property_def__:
+            raise NotImplementedError(f'Private class variables __db_column_def__ and __property_def__ must be implemented in child class inheriting BaseEntity.')
         if data:
             self.set(data)
         else:
@@ -22,13 +25,13 @@ class BaseEntity:
 
     @staticmethod
     def get_column_definition():
-        return ', '.join(c for c in BaseEntity.__db_column_def__)
+        raise NotImplementedError(f'Static function get_column_definition() must be implemented in child class.')
 
     def get_dict(self):
-        return { self.__property_def__[i]: getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) }
+        return { self.__property_def__[i]: getattr(self, self.__property_def__[i], None) for i in range(len(self.__property_def__)) }
 
     def get_list(self):
-        return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
+        return [ getattr(self, self.__property_def__[i], None) for i in range(len(self.__property_def__)) ]
 
     def set(self, data):
         if data:
@@ -38,15 +41,15 @@ class BaseEntity:
             elif isinstance(data, (list, tuple)):
                 for i in range(len(self.__property_def__)):
                     setattr(self, self.__property_def__[i], data[i])
+            return self
         else:
-            raise TypeError(f'Function \'set\' only accepts dict, list or tuple as parameter.')
+            raise TypeError(f'Method set() only accepts dict, list or tuple as parameter.')
             
-
     def copy(self):
-        return BaseEntity(self.get_dict())
+        raise NotImplementedError(f'Method copy() must be implemented in child class.')
 
     def is_valid(self):
-        return True
+        raise NotImplementedError(f'Method is_valid() must be implemented in child class.')
 
     def __serialize__(self, global_data):
         global_data[f"{__class__.__name__}_{self.userid}"] = self.get_dict()

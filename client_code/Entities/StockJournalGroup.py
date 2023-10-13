@@ -12,18 +12,18 @@ class StockJournalGroup(BaseEntity):
     def __init__(self, data=None):
         super().__init__(data)
 
-    # @staticmethod
-    # def get_column_definition():
-    #     return ', '.join(c for c in StockJournalGroup.__db_column_def__)
+    @staticmethod
+    def get_column_definition():
+        return ', '.join(c for c in StockJournalGroup.__db_column_def__)
 
     def get_id(self):
-        return getattr(self, self.__property_def__[1])
+        return getattr(self, self.__property_def__[1], None)
 
     def get_name(self):
-        return getattr(self, self.__property_def__[2])
+        return getattr(self, self.__property_def__[2], None)
     
     def get_broker(self):
-        return getattr(self, self.__property_def__[3])
+        return getattr(self, self.__property_def__[3], None)
 
     def set_broker(self, broker_id):
         copy = self.copy()
@@ -31,29 +31,30 @@ class StockJournalGroup(BaseEntity):
         return copy
         
     def get_submitted_status(self):
-        return getattr(self, self.__property_def__[4])
+        return getattr(self, self.__property_def__[4], None)
 
     def get_created_time(self):
-        return getattr(self, self.__property_def__[5])
+        return getattr(self, self.__property_def__[5], None)
 
     def get_lastsaved_time(self):
-        return getattr(self, self.__property_def__[6])
+        return getattr(self, self.__property_def__[6], None)
 
     def get_submitted_time(self):
-        return getattr(self, self.__property_def__[7])
+        return getattr(self, self.__property_def__[7], None)
 
     def get_journals(self):
-        return getattr(self, self.__property_def__[8])
+        return getattr(self, self.__property_def__[8], None)
 
     def set_journals(self, journals):
         copy = self.copy()
         copy.journals = journals
         return copy
 
-    # def copy(self):
-    #     return StockJournalGroup(self.get_dict())
+    def copy(self):
+        return StockJournalGroup(self.get_dict())
 
     def is_valid(self):
-        if not self.template_name or self.template_name.isspace(): return False
-        if not self.broker_id or self.broker_id.isspace(): return False
+        group_name, broker_id = [self.get_name(), self.get_broker()]
+        if not group_name or group_name.isspace(): return False
+        if not broker_id or broker_id.isspace(): return False
         return True

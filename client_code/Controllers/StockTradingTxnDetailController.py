@@ -43,9 +43,8 @@ def get_stock_journal_group(group_dropdown_selected):
     """
     from . import UserSettingController
     blank_jrn_grp = StockJournalGroup()
-    print(f'blank_jrn_grt={blank_jrn_grp}')
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
-    logger.trace(f'jrn_grp_id={jrn_grp_id}')
+    logger.trace(f'jrn_grp_id={jrn_grp_id} / blank_jrn_grp={blank_jrn_grp}')
     jrn_grp_obj = anvil.server.call('select_stock_journal_group', jrn_grp_id) if jrn_grp_id else blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
     logger.trace(f'jrn_grp_obj={jrn_grp_obj}')
     return jrn_grp_obj

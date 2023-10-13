@@ -1,104 +1,70 @@
 import anvil.server
 import anvil.users
 import datetime as datetime
+from .BaseEntity import BaseEntity
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 @anvil.server.portable_class
-class StockJournal:
+class StockJournal(BaseEntity):
     __db_column_def__ = ['iid', 'template_id', 'sell_date', 'buy_date', 'symbol', 'qty', 'sales', 'cost', 'fee', 'sell_price', 'buy_price', 'pnl']
     __property_def__ = ['userid'] + __db_column_def__
     
     def __init__(self, data=None):
-        if data:
-            self.set(data)
-        else:
-            self.set([None]*len(self.__property_def__))
-
-    def __str__(self):
-        return '{0}: {1}'.format(
-            self.__class__.__name__,
-            self.get_dict()
-        )
+        super().__init__(data)
 
     @staticmethod
     def get_column_definition():
         return ', '.join(c for c in StockJournal.__db_column_def__)
 
-    def get_dict(self):
-        return { self.__property_def__[i]: getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) }
-
-    def get_list(self):
-        return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
-
     def get_group_id(self):
-        return self.template_id
+        return getattr(self, self.__property_def__[2], None)
         
     def get_item_id(self):
-        return self.iid
+        return getattr(self, self.__property_def__[1], None)
 
-    def get_name(self):
-        return self.name
+    def get_sell_date(self):
+        return getattr(self, self.__property_def__[3], None)
     
-    def get_broker(self):
-        return self.broker_id
-
-    def set_broker(self, broker_id):
-        copy = self.copy()
-        copy.broker_id = broker_id
-        return copy
+    def get_buy_date(self):
+        return getattr(self, self.__property_def__[4], None)
         
-    def get_submitted_status(self):
-        return self.submitted
+    def get_symbol(self):
+        return getattr(self, self.__property_def__[5], None)
 
-    def get_created_time(self):
-        return self.create_time
+    def get_number_of_shares(self):
+        return getattr(self, self.__property_def__[6], None)
 
-    def get_lastsaved_time(self):
-        return self.lastsave_time
+    def get_total_sales(self):
+        return getattr(self, self.__property_def__[7], None)
 
-    def get_submitted_time(self):
-        return self.submit_time
+    def get_total_cost(self):
+        return getattr(self, self.__property_def__[8], None)
 
-    def get_journals(self):
-        return self.journals
+    def get_fee(self):
+        return getattr(self, self.__property_def__[9], None)
 
-    def set_journals(self, journals):
-        copy = self.copy()
-        copy.journals = journals
-        return copy
-        
-    def set(self, data):
-        if data:
-            if isinstance(data, dict):
-                for i in range(len(self.__property_def__)):
-                    setattr(self, self.__property_def__[i], data.get(self.__property_def__[i], None))
-            elif isinstance(data, (list, tuple)):
-                for i in range(len(self.__property_def__)):
-                    setattr(self, self.__property_def__[i], data[i])
-        else:
-            raise TypeError(f'Function \'set\' only accepts dict, list or tuple as parameter.')
+    def get_unit_price_sold(self):
+        return getattr(self, self.__property_def__[10], None)
+
+    def get_unit_price_bought(self):
+        return getattr(self, self.__property_def__[11], None)
+
+    def get_profit_n_loss(self):
+        return getattr(self, self.__property_def__[12], None)
 
     def copy(self):
         return StockJournal(self.get_dict())
 
     def is_valid(self):
+        buy_date, symbol, shares, total_cost = [self.get_buy_date(), self.get_symbol(), self.get_number_of_shares(), self.get_total_cost()]
         date_format = '%Y-%m-%d'
-        if not self.buy_date or self.buy_date.isspace(): return False
+        if not buy_date or buy_date.isspace(): return False
         try:
-            datetime.strptime(self.buy_date, date_format)
+            datetime.strptime(buy_date, date_format)
         except ValueError as err:
             return False
-        if not self.symbol or self.symbol.isspace(): return False
-        if not self.qty or self.qty.isspace(): return False
-        if not self.cost or self.cost.isspace(): return False
+        if not symbol or symbol.isspace(): return False
+        if not shares or shares.isspace(): return False
+        if not total_cost or total_cost.isspace(): return False
         return True
-
-    def __serialize__(self, global_data):
-        global_data[f"{__class__.__name}_{self.userid}"] = self.get_dict()
-        return self.userid
-
-    def __deserialize__(self, userid, global_data):
-        data = global_data[f"{__class__.__name}_{userid}"]
-        self.__init__(data)
-    
