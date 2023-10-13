@@ -86,7 +86,7 @@ def select_stock_journals(group_id):
         rows = cur.fetchall()
         logger.trace('rows=', rows)
         cur.close()
-        jrns = list(Journal(r) for r in rows)
+        jrns = list(StockJournal(r) for r in rows)
         return jrns
 
 @anvil.server.callable("upsert_journals")
@@ -173,29 +173,71 @@ def delete_journals(template_id, iid_list):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable("save_templates")
+@anvil.server.callable("save_new_stock_journal_group")
 @logger.log_function
-def save_templates(template_id, template_name, broker_id, del_iid = []):
+def save_new_stock_journal_group(jrn_grp):
     """
-    Insert or update templates into the DB table which stores templates detail with time handling logic.
+    Save a new stock journal group into the stock journal group DB table.
 
     Parameters:
-        template_id (int): The ID of the template. All journals under the same template share the same TID.
-        template_name (string): The name of the template.
-        broker_id (string): The broker ID which corresponds to the template.
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
+
+    Returns:
+        tid['template_id'] (int): Template ID if save is successful, otherwise None.
+    """
+    try:
+        if isinstance(jrn_grp, StockJournalGroup):
+            userid = sysmod.get_current_userid()
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "INSERT INTO {schema}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
+                VALUES (%s,%s,%s,%s,%s,%s) RETURNING template_id".format(
+                    schema=sysmod.schemafin()
+                )
+                mogstr = [jrn_grp.get_userid(), jrn_grp.get_name(), jrn_grp.get_broker(), jrn_grp.get_submitted_status(), \
+                        jrn_grp.get_created_time(), jrn_grp.get_lastsaved_time()]
+                stmt = cur.mogrify(sql, mogstr)
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                tid = cur.fetchone()
+                logger.debug("tid=", tid)
+                if not tid or tid.get('template_id', -1) < 0: 
+                    raise psycopg2.OperationalError('Template (id:{0}) creation or update fail.'.format(template_id))
+                return tid.get('template_id', -1)
+        else:
+            raise TypeError(f'The parameter is not a StockJournalGroup object.')
+    except TypeError as err:
+        logger.error(err)
+    except psycopg2.OperationalError as err:
+        logger.error(err)
+        conn.rollback()
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()
+    return None
+
+@anvil.server.callable("save_existing_stock_journal_group")
+@logger.log_function
+def save_existing_stock_journal_group(jrn_grp, del_iid = []):
+    """
+    Save stock journal group change into the stock journal group DB table.
+
+    Parameters:
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
         del_iid (list): The list of IID requiring deletion.
 
     Returns:
         tid['template_id'] (int): Template ID if save is successful, otherwise None.
     """
-    userid = sysmod.get_current_userid()
     try:
+        userid = sysmod.get_current_userid()
         currenttime = datetime.now()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if del_iid is not None and len(del_iid) > 0:
-                delete_journals(template_id, del_iid)
-            if template_id in (None, ''):
+            if del_iid and len(del_iid) > 0:
+                delete_journals(jrn_grp.get_id(), del_iid)
+            if jrn_grp.get_id() in (None, ''):
                 sql = f"INSERT INTO {sysmod.schemafin()}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
                 VALUES ({userid},'{template_name}','{broker_id}',False,'{currenttime}','{currenttime}') RETURNING template_id"
             else:
@@ -306,21 +348,18 @@ def calculate_amount(sell_amt, buy_amt, fee, qty):
 
 @anvil.server.callable("proc_save_group_and_journals")
 @logger.log_function
-def proc_save_group_and_journals(group_id, group_name, broker_id, del_iid_list, journals):
+def proc_save_group_and_journals(jrn_grp, del_iid_list):
     """
     Consolidated process for saving stock journal group and journals.
 
     Parameters:
-        group_id (int): The ID of a selected stock journal group.
-        group_name (string): The name of a selected stock journal group.
-        broker_id (string): The broker ID which corresponds to the stock journal group.
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
         del_iid_list (list): A list of IID (item ID) to be deleted, every journal has an IID.
-        journals (list): A list of journals to be inserted or updated.
 
     Returns:
         list: A list of all functions return required by the save.
     """
-    group_id = save_templates(group_id, group_name, broker_id, del_iid_list)
+    group_id = save_templates(jrn_grp, del_iid_list)
     if group_id is None or group_id <= 0:
         raise RuntimeError(f"ERROR: Fail to save stock journal group {group_name}, aborting further update.")
     result = upsert_journals(group_id, journals)

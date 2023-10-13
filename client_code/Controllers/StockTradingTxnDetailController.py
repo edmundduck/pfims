@@ -92,6 +92,7 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     Returns:
         result (list): A list of all functions return required by the save.
     """
+    from datetime import date, datetime
     from ..Entities.StockJournal import StockJournal
     from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
@@ -109,10 +110,19 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     jrn_grp_id_ori, jrn_grp_name_ori = jrn_grp_dropdown_selected if jrn_grp_dropdown_selected is not None else [None, None]
     broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
 
+    currenttime = datetime.now()
     jrn_grp = StockJournalGroup()
-    jrn_grp.set()
+    jrn_grp.set_id(jrn_grp_id_ori)
+    jrn_grp.set_name(jrn_grp_name)
+    jrn_grp.set_broker(broker_id)
+    jrn_grp.set_journals(journals)
 
-    result = anvil.server.call('proc_save_group_and_journals', jrn_grp_id_ori, jrn_grp_name, broker_id, cache.get_cache(), self.input_repeating_panel.items)
+    {userid},'{template_name}','{broker_id}',False,'{currenttime}','{currenttime}'
+    if not jrn_grp_id_ori:
+        jrn_grp.set_submitted_status(False)
+        jrn_grp.set_created_time(currenttime)
+        jrn_grp.set_lastsaved_time(currenttime)
+        result = anvil.server.call('proc_new_save_group_and_journals', jrn_grp)
     if not result:
         raise RuntimeError(f"Error occurs in proc_save_group_and_journals.")
     else:

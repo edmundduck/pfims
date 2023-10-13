@@ -23,19 +23,9 @@ class StockJournalGroup(BaseEntity):
     def get_name(self):
         return getattr(self, self.__property_def__[2], None)
     
-    def set_name(self, name):
-        copy = self.copy()
-        copy.name = name
-        return copy
-        
     def get_broker(self):
         return getattr(self, self.__property_def__[3], None)
 
-    def set_broker(self, broker_id):
-        copy = self.copy()
-        copy.broker_id = broker_id
-        return copy
-        
     def get_submitted_status(self):
         return getattr(self, self.__property_def__[4], None)
 
@@ -51,12 +41,47 @@ class StockJournalGroup(BaseEntity):
     def get_journals(self):
         return getattr(self, self.__property_def__[8], None)
 
+    def set_id(self, id):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[1], name)
+        return copy
+        
+    def set_name(self, name):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[2], name)
+        return copy
+        
+    def set_broker(self, broker_id):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[3], broker_id)
+        return copy
+        
+    def set_submitted_status(self, status):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[4], status)
+        return copy
+        
+    def set_created_time(self, created_time):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[5], created_time)
+        return copy
+        
+    def set_lastsaved_time(self, lastsaved_time):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[6], lastsaved_time)
+        return copy
+        
+    def set_submitted_time(self, submitted_time):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[7], submitted_time)
+        return copy
+        
     def set_journals(self, journals):
         copy = self.copy()
         if isinstance(journals, StockJournal):
-            copy.journals = StockJournal(journals)
+            setattr(copy, self.__property_def__[8], StockJournal(journals))
         elif isinstance(journals, list):
-            copy.journals = list(StockJournal(j) for j in journals)
+            setattr(copy, self.__property_def__[8], list(StockJournal(j) for j in journals))
         return copy
 
     def copy(self):
