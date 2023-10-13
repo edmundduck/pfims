@@ -30,18 +30,6 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         # Reset on screen change status
         self.disable_submit_button()
         
-    @logger.log_function
-    def save_row_change(self, **event_args):
-        """ 
-        *** ESSENTIAL ***
-        Update child items from repeating panel to parent form items
-        Refer to the following reference links for detail
-        https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
-        https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
-        https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
-        """
-        self.input_repeating_panel.items = [c.input_data_panel_readonly.item for c in self.input_repeating_panel.get_components()]
-    
     @btnmod.one_click_only
     @logger.log_function
     def button_plus_click(self, **event_args):
@@ -87,35 +75,20 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     @logger.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
-        templ_original_id, templ_original_name = self.dropdown_templ.selected_value if self.dropdown_templ.selected_value is not None else [None, None]
-        templ_name = self.templ_name.text
-        broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
-
         try:
-            self.save_row_change()
-            templ_id, journals = anvil.server.call('proc_save_template_and_journals', templ_original_id, templ_name, broker_id, cache_del_iid.get_cache(), self.input_repeating_panel.items)    
-            if not cache_del_iid.is_empty() and len(cache_del_iid.get_cache()) > 0:
-                cache_del_iid.clear_cache()
-            if templ_original_id != templ_id or templ_original_name != templ_name:
-                # Only trigger template dropdown refresh when new template is created or template name is changed
-                self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
-                self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journals_group_dropdown_selected_item(templ_id)
-            if journals is not None:
+            result = StockTradingTxnDetailController.save_stock_journal_group(self.dropdown_templ.selected_value, self.templ_name.text, self.dropdown_broker.selected_valu, self.input_repeating_panel.items)
+            self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
+            self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journals_group_dropdown_selected_item(templ_id)
+            if result:
                 # Result not None means insert/update journals is done successfully
-                """ Reflect the change in template journals """
-                self.input_repeating_panel.items = journals
-                self.button_submit.enabled = True
-                msg = f"Template {templ_name} has been saved successfully."
+                self.input_repeating_panel.items = result[1]
+                self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
+                msg = f'Stock journal group {self.templ_name.text} has been saved successfully.'
                 logger.info(msg)
-            else:
-                # Otherwise there are problems occured during insert/update journals
-                msg = f"Warning: There are issues saving journals in template {templ_name}."
-                logger.warning(msg)
-            Notification(msg).show()
         except RuntimeError as err:
             logger.error(msg)
-            Notification(msg).show()
+            msg = Notification(f'ERROR occurs when updating broker {self.text_broker_name.text}.')
+        Notification(msg).show()
             
     @btnmod.one_click_only
     def button_erase_click(self, **event_args):

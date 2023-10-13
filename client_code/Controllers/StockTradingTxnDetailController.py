@@ -79,3 +79,37 @@ def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):
     jrn_grp_id = jrn_grp_dropdown_selected[0] if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else jrn_grp_dropdown_selected
     return False if str(jrn_grp_id) in (None, '') or str(jrn_grp_id).isspace() else True
 
+def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dropdown_selected, journals):
+    """
+    Convert the fields from the form for saving the stock journal group change in backend.
+
+    Parameters:
+        jrn_grp_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
+        jrn_grp_name (string): The name of the selected stock journal group.
+        broker_dropdown_selected (list): The selected value in list from the broker dropdown.
+        journals (list): A list of journals from repeating panel to be inserted or updated.
+        
+    Returns:
+        result (list): A list of all functions return required by the save.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID, None)
+
+    # Reflect updates in the row first
+    # *** ESSENTIAL ***
+    # Update child items from repeating panel to parent form items
+    # Refer to the following reference links for detail
+    # https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
+    # https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
+    # https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
+    self.input_repeating_panel.items = [c.input_data_panel_readonly.item for c in self.input_repeating_panel.get_components()]
+
+    jrn_grp_id_ori, jrn_grp_name_ori = jrn_grp_dropdown_selected if jrn_grp_dropdown_selected is not None else [None, None]
+    broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
+
+    result = anvil.server.call('proc_save_template_and_journals', jrn_grp_id_ori, jrn_grp_name, broker_id, cache.get_cache(), self.input_repeating_panel.items)
+    if not result:
+        raise RuntimeError(f"Error occurs in proc_save_template_and_journals.")
+    else:
+        cache.clear_cache()
+    return result
