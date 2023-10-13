@@ -22,7 +22,7 @@ def generate_stock_journal_groups_dropdown(data=None, reload=False):
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.STOCK_JRN_GRP, cache_data)
+    cache = ClientCache(CacheKey.DD_STOCK_JRN_GRP, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_draftring_stock_journal_groups_list')
         new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
@@ -42,10 +42,18 @@ def get_stock_journal_group(group_dropdown_selected):
     """
     from . import UserSettingController
     from ..Entities.StockJournalGroup import StockJournalGroup
+    from ..Utils.ClientCache import ClientCache
     blank_jrn_grp = StockJournalGroup()
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
     logger.trace(f'jrn_grp_id={jrn_grp_id} / blank_jrn_grp={blank_jrn_grp}')
-    jrn_grp_obj = anvil.server.call('select_stock_journal_group', jrn_grp_id) if jrn_grp_id else blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
+    cache = ClientCache(CacheKey.OBJ_STOCK_JRN_GRP, None)
+    if jrn_grp_id:
+        jrn_grp_obj = anvil.server.call('select_stock_journal_group', jrn_grp_id)
+        jrn_list = anvil.server.call('select_stock_journals', jrn_grp_id)
+        jrn_grp_obj.set_journals(jrn_list)
+        cache.set_cache(jrn_grp_obj)
+    else:
+        jrn_grp_obj = blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
     logger.trace(f'jrn_grp_obj={jrn_grp_obj}')
     return jrn_grp_obj
 
@@ -60,7 +68,7 @@ def get_stock_journals_group_dropdown_selected_item(group_id):
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
     from ..Utils.ClientCache import ClientCache
-    jrn_grp_dropdown = ClientCache(CacheKey.STOCK_JRN_GRP, None)
+    jrn_grp_dropdown = ClientCache(CacheKey.DD_STOCK_JRN_GRP, None)
     if jrn_grp_dropdown.is_empty():
         generate_stock_journal_groups_dropdown()
     selected_item = jrn_grp_dropdown.get_complete_key(group_id)
@@ -122,9 +130,10 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
         jrn_grp.set_submitted_status(False)
         jrn_grp.set_created_time(currenttime)
         jrn_grp.set_lastsaved_time(currenttime)
-        result = anvil.server.call('proc_new_save_group_and_journals', jrn_grp)
-    if not result:
+        jrn_grp = anvil.server.call('proc_save_group_and_journals', jrn_grp)
+    if not jrn_grp:
         raise RuntimeError(f"Error occurs in proc_save_group_and_journals.")
     else:
+        logger.trace('jrn_grp=', jrn_grp)
         cache.clear_cache()
-    return result
+    return jrn_grp

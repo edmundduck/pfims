@@ -359,12 +359,11 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list):
     Returns:
         list: A list of all functions return required by the save.
     """
-    group_id = save_templates(jrn_grp, del_iid_list)
+    group_id = save_existing_stock_journal_group(jrn_grp, del_iid_list) if jrn_grp.get_id() else save_new_stock_journal_group(jrn_grp)
     if group_id is None or group_id <= 0:
-        raise RuntimeError(f"ERROR: Fail to save stock journal group {group_name}, aborting further update.")
-    result = upsert_journals(group_id, journals)
-    if result is not None:
-        select_journals = select_stock_journals(group_id)
-    else:
-        select_journals = None
-    return [group_id, select_journals]
+        raise RuntimeError(f'ERROR: Fail to save stock journal group {group_name}, aborting further update.')
+    result = upsert_journals(group_id, jrn_grp.get_journals())
+    select_journals = select_stock_journals(group_id) if result is not None else None
+    jrn_grp.set_id(group_id)
+    jrn_grp.set_journals(select_journals)
+    return jrn_grp

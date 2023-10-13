@@ -69,7 +69,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         self.templ_name.text = jrn_grp.get_name()
         self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(jrn_grp.get_broker())
         self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
-        self.input_repeating_panel.items = anvil.server.call('select_stock_journals', jrn_grp.get_id())
+        self.input_repeating_panel.items = jrn_grp.get_journals()
             
     @btnmod.one_click_only
     @logger.log_function

@@ -54,7 +54,7 @@ def generate_brokers_dropdown(data=None, reload=False):
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.BROKER, cache_data)
+    cache = ClientCache(CacheKey.DD_BROKER, cache_data)
     if reload:
         cache.clear_cache()
     if cache.is_empty():
@@ -75,7 +75,7 @@ def generate_search_interval_dropdown(data=None):
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((r['name'], r['id']) for r in data) if data else None
-    cache = ClientCache(CacheKey.SEARCH_INTERVAL, cache_data)
+    cache = ClientCache(CacheKey.DD_SEARCH_INTERVAL, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_search_interval_list')
         new_dropdown = list((r['name'], r['id']) for r in rows)
@@ -94,7 +94,7 @@ def generate_currency_dropdown(data=None):
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in data) if data else None
-    cache = ClientCache(CacheKey.CURRENCY, cache_data)
+    cache = ClientCache(CacheKey.DD_CURRENCY, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_currency_list')
         new_dropdown = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in rows)
@@ -114,7 +114,7 @@ def generate_submitted_journal_groups_dropdown(data=None, reload=False):
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.SUBMITTED_JRN_GRP, cache_data)
+    cache = ClientCache(CacheKey.DD_SUBMITTED_JRN_GRP, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_submitted_journal_groups_list')
         new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
@@ -141,7 +141,7 @@ def get_broker_dropdown_selected_item(broker_id):
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
     from ..Utils.ClientCache import ClientCache
-    brokers_dropdown = ClientCache(CacheKey.BROKER, None)
+    brokers_dropdown = ClientCache(CacheKey.DD_BROKER, None)
     if brokers_dropdown.is_empty():
         generate_brokers_dropdown()
     selected_item = brokers_dropdown.get_complete_key(broker_id)
@@ -273,7 +273,7 @@ def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
         result (int): The ID of the newly created or row count of the updated broker, otherwise None.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.BROKER, None)
+    cache = ClientCache(CacheKey.DD_BROKER, None)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     ccy = ccy_dropdown_selected[0] if isinstance(ccy_dropdown_selected, (list, tuple)) else ccy_dropdown_selected
     result = anvil.server.call('update_broker', broker_id, broker_name, ccy) if broker_id else \
@@ -295,7 +295,7 @@ def delete_broker(broker_dropdown_selected):
         result (int): Successful update row count, otherwise None.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.BROKER, None)
+    cache = ClientCache(CacheKey.DD_BROKER, None)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     result = anvil.server.call('delete_broker', broker_id)
     if not result:
@@ -315,7 +315,7 @@ def submit_journal_group(jrn_grp_dropdown_selected):
         result (int): Successful update row count, otherwise None.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.SUBMITTED_JRN_GRP, None)
+    cache = ClientCache(CacheKey.DD_SUBMITTED_JRN_GRP, None)
     jrn_grp_id, _ = jrn_grp_dropdown_selected if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else [jrn_grp_dropdown_selected, None]
     result = anvil.server.call('proc_submitted_journal_group_update', jrn_grp_id)
     if not result:
