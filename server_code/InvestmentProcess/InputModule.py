@@ -7,6 +7,7 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..Entities.StockJournalGroup import StockJournalGroup
+from ..Entities.StockJournal import StockJournal
 from ..Utils import Constants as const
 from ..DataObject import FinObject as fobj
 from ..SysProcess import SystemModule as sysmod
@@ -73,7 +74,7 @@ def select_stock_journals(group_id):
         group_id (int): ID of the stock journal group.
 
     Returns:
-        rows (list): All template journals detail corresponding to the selected template, return empty list otherwise.
+        jrns (list of StockJournal): All journals detail corresponding to the selected stock journal group, return empty list otherwise
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -85,7 +86,8 @@ def select_stock_journals(group_id):
         rows = cur.fetchall()
         logger.trace('rows=', rows)
         cur.close()
-        return rows
+        jrns = list(Journal(r) for r in rows)
+        return jrns
 
 @anvil.server.callable("upsert_journals")
 @logger.log_function
@@ -110,6 +112,13 @@ def upsert_journals(tid, rows):
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
             # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
             if len(rows) > 0:
+                sql = 'INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
+                VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET sell_date=EXCLUDED.sell_date, buy_date=EXCLUDED.buy_date, symbol=EXCLUDED.symbol, \
+                qty=EXCLUDED.qty, sales=EXCLUDED.sales, cost=EXCLUDED.cost, fee=EXCLUDED.fee, sell_price=EXCLUDED.sell_price, buy_price=EXCLUDED.buy_price, \
+                pnl=EXCLUDED.pnl WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id'.format(
+                        schema=sysmod.schemafin(),
+                        p1=args
+                    )
                 mogstr = []
                 for row in rows:
                     tj = fobj.TradeJournal()
@@ -118,22 +127,7 @@ def upsert_journals(tid, rows):
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
                 logger.trace("mogstr=", mogstr)
                 args = ",".join(mogstr)
-                cur.execute("INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, \
-                sales, cost, fee, sell_price, buy_price, pnl) VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET \
-                sell_date=EXCLUDED.sell_date, \
-                buy_date=EXCLUDED.buy_date, \
-                symbol=EXCLUDED.symbol, \
-                qty=EXCLUDED.qty, \
-                sales=EXCLUDED.sales, \
-                cost=EXCLUDED.cost, \
-                fee=EXCLUDED.fee, \
-                sell_price=EXCLUDED.sell_price, \
-                buy_price=EXCLUDED.buy_price, \
-                pnl=EXCLUDED.pnl \
-                WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id".format(
-                        schema=sysmod.schemafin(),
-                        p1=args
-                    ))
+                cur.execute()
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Journals (template id:{0}) creation or update fail.".format(tid))
@@ -310,28 +304,28 @@ def calculate_amount(sell_amt, buy_amt, fee, qty):
     profit = round(float(sell_amt) - float(buy_amt) - float(fee), 2)
     return [sell_price, buy_price, profit]
 
-@anvil.server.callable("proc_save_template_and_journals")
+@anvil.server.callable("proc_save_group_and_journals")
 @logger.log_function
-def proc_save_template_and_journals(template_id, template_name, broker_id, del_iid_list, journals):
+def proc_save_group_and_journals(group_id, group_name, broker_id, del_iid_list, journals):
     """
-    Consolidated process for saving template and journals.
+    Consolidated process for saving stock journal group and journals.
 
     Parameters:
-        template_id (int): The ID of a selected template.
-        template_name (string): The name of a selected template.
-        broker_id (string): The broker ID which corresponds to the template.
+        group_id (int): The ID of a selected stock journal group.
+        group_name (string): The name of a selected stock journal group.
+        broker_id (string): The broker ID which corresponds to the stock journal group.
         del_iid_list (list): A list of IID (item ID) to be deleted, every journal has an IID.
         journals (list): A list of journals to be inserted or updated.
 
     Returns:
         list: A list of all functions return required by the save.
     """
-    templ_id = save_templates(template_id, template_name, broker_id, del_iid_list)
-    if templ_id is None or templ_id <= 0:
-        raise RuntimeError(f"ERROR: Fail to save template {template_name}, aborting further update.")
-    result = upsert_journals(templ_id, journals)
+    group_id = save_templates(group_id, group_name, broker_id, del_iid_list)
+    if group_id is None or group_id <= 0:
+        raise RuntimeError(f"ERROR: Fail to save stock journal group {group_name}, aborting further update.")
+    result = upsert_journals(group_id, journals)
     if result is not None:
-        select_journals = select_stock_journals(templ_id)
+        select_journals = select_stock_journals(group_id)
     else:
         select_journals = None
-    return [templ_id, select_journals]
+    return [group_id, select_journals]

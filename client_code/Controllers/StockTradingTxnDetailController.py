@@ -107,9 +107,9 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     jrn_grp_id_ori, jrn_grp_name_ori = jrn_grp_dropdown_selected if jrn_grp_dropdown_selected is not None else [None, None]
     broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
 
-    result = anvil.server.call('proc_save_template_and_journals', jrn_grp_id_ori, jrn_grp_name, broker_id, cache.get_cache(), self.input_repeating_panel.items)
+    result = anvil.server.call('proc_save_group_and_journals', jrn_grp_id_ori, jrn_grp_name, broker_id, cache.get_cache(), self.input_repeating_panel.items)
     if not result:
-        raise RuntimeError(f"Error occurs in proc_save_template_and_journals.")
+        raise RuntimeError(f"Error occurs in proc_save_group_and_journals.")
     else:
         cache.clear_cache()
     return result
