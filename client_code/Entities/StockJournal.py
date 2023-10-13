@@ -17,12 +17,12 @@ class StockJournal(BaseEntity):
     def get_column_definition():
         return ', '.join(c for c in StockJournal.__db_column_def__)
 
-    def get_group_id(self):
-        return getattr(self, self.__property_def__[2], None)
-        
     def get_item_id(self):
         return getattr(self, self.__property_def__[1], None)
 
+    def get_group_id(self):
+        return getattr(self, self.__property_def__[2], None)
+        
     def get_sell_date(self):
         return getattr(self, self.__property_def__[3], None)
     

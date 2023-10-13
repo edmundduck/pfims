@@ -1,6 +1,7 @@
 import anvil.server
 import anvil.users
 from .BaseEntity import BaseEntity
+from .StockJournal import StockJournal
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
@@ -47,7 +48,10 @@ class StockJournalGroup(BaseEntity):
 
     def set_journals(self, journals):
         copy = self.copy()
-        copy.journals = journals
+        if isinstance(journals, StockJournal):
+            copy.journals = StockJournal(journals)
+        elif isinstance(journals, list):
+            copy.journals = list(StockJournal(j) for j in journals)
         return copy
 
     def copy(self):
