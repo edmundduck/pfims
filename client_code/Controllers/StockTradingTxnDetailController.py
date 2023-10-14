@@ -30,7 +30,7 @@ def generate_stock_journal_groups_dropdown(data=None, reload=False):
     return cache.get_cache()
 
 @logger.log_function
-def get_stock_journal_group(group_dropdown_selected):
+def __get_stock_journal_group__(group_dropdown_selected):
     """
     Return the stock journal group object of the selected stock journal group.
 
@@ -40,42 +40,70 @@ def get_stock_journal_group(group_dropdown_selected):
     Returns:
         jrn_grp (StockJournalGroup): A stock journal group object.
     """
-    from . import UserSettingController
-    from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
     cache = ClientCache(CacheKey.OBJ_STOCK_JRN_GRP, None)
     if jrn_grp_id:
-        jrn_grp = anvil.server.call('select_stock_journal_group', jrn_grp_id)
-        jrn_list = anvil.server.call('select_stock_journals', jrn_grp_id)
-        print("1 - Problem lies below? jrn_list=", jrn_list)
-        print(list(str(j) for j in jrn_list))
-        jrn_grp = jrn_grp.set_journals(jrn_list)
-        print("2 SET issue!!!! should have euqal sign ... jrn_grp=", jrn_grp)
-        cache.set_cache(jrn_grp)
-        print("3")
-        logger.trace(f'jrn_grp_id={jrn_grp_id} / jrn_grp={jrn_grp}')
+        if not cache.is_empty() and cache.get_cache().get(jrn_grp_id, None):
+            jrn_grp = cache.get_cache().get(jrn_grp_id, None)
+        else:
+            jrn_grp = anvil.server.call('select_stock_journal_group', jrn_grp_id)
+            jrn_list = anvil.server.call('select_stock_journals', jrn_grp_id)
+            jrn_grp = jrn_grp.set_journals(jrn_list)
+            cache.set_cache({jrn_grp_id: jrn_grp})
+            logger.trace(f'jrn_grp_id={jrn_grp_id} / jrn_grp={jrn_grp} / journals={list(str(j) for j in jrn_grp.get_journals()) if jrn_grp.get_journals() else []}')
     else:
+        from . import UserSettingController
+        from ..Entities.StockJournalGroup import StockJournalGroup
         blank_jrn_grp = StockJournalGroup()
         jrn_grp = blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
         logger.trace(f'jrn_grp_id={jrn_grp_id} / blank_jrn_grp={blank_jrn_grp}')
     return jrn_grp
 
-def get_stock_journals_group_dropdown_selected_item(group_id):
+@logger.log_function
+def get_group_name(group_dropdown_selected):
+    """
+    Return the stock journal group name of the selected stock journal group.
+
+    Parameters:
+        group_dropdown_selected (list): The selected value in list from the broker dropdown.
+
+    Returns:
+        jrn_grp.get_name (string): Selected stock journal group's name.
+    """
+    jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
+    return jrn_grp.get_name()
+
+@logger.log_function
+def get_journals(group_dropdown_selected):
+    """
+    Return all journals under the selected stock journal group.
+
+    Parameters:
+        group_dropdown_selected (list): The selected value in list from the broker dropdown.
+
+    Returns:
+        jrn_grp.get_serialized_journals (string): Selected stock journal group's journals in serialized form for frontend.
+    """
+    jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
+    return list(j.get_dict() for j in jrn_grp.get_journals()) if jrn_grp.get_journals() else []
+
+def get_stock_journal_group_dropdown_selected_item(group_dropdown_selected):
     """
     Return a complete key based on a partial broker ID which is a part of the key in a dropdown list.
 
     Parameters:
-        group_id (int): The ID of the selected stock journal group.
+        group_dropdown_selected (list): The selected value in list from the broker dropdown.
 
     Returns:
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
     from ..Utils.ClientCache import ClientCache
     jrn_grp_dropdown = ClientCache(CacheKey.DD_STOCK_JRN_GRP, None)
+    jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
     if jrn_grp_dropdown.is_empty():
         generate_stock_journal_groups_dropdown()
-    selected_item = jrn_grp_dropdown.get_complete_key(group_id)
+    selected_item = jrn_grp_dropdown.get_complete_key(jrn_grp.get_broker())
     return selected_item
 
 def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):

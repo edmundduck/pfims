@@ -17,6 +17,9 @@ class StockJournalGroup(BaseEntity):
     def get_column_definition():
         return ', '.join(c for c in StockJournalGroup.__db_column_def__)
 
+    def get_user_id(self):
+        return getattr(self, self.__property_def__[0], None)
+        
     def get_id(self):
         return getattr(self, self.__property_def__[1], None)
 
@@ -39,56 +42,37 @@ class StockJournalGroup(BaseEntity):
         return getattr(self, self.__property_def__[7], None)
 
     def get_journals(self):
-        return getattr(self, self.__property_def__[8], None)
+        return getattr(self, self.__property_def__[8], [])
 
-    def get_serialized_journals(self):
-        jrn = self.get_journals()
-        print("4=", list(j.get_dict() for j in jrn) if jrn else [])
-        return list(j.get_dict() for j in jrn) if jrn else []
+    def set_user_id(self, userid):
+        return self.set_single_attribute(0, userid)
 
     def set_id(self, id):
-        copy = self.copy()
-        setattr(copy, self.__property_def__[1], id)
-        return copy
+        return self.set_single_attribute(1, id)
         
     def set_name(self, name):
-        copy = self.copy()
-        setattr(copy, self.__property_def__[2], name)
-        return copy
+        return self.set_single_attribute(2, name)
         
     def set_broker(self, broker_id):
-        copy = self.copy()
-        setattr(copy, self.__property_def__[3], broker_id)
-        return copy
+        return self.set_single_attribute(3, broker_id)
         
     def set_submitted_status(self, status):
-        copy = self.copy()
-        setattr(copy, self.__property_def__[4], status)
-        return copy
+        return self.set_single_attribute(4, status)
         
     def set_created_time(self, created_time):
-        copy = self.copy()
-        setattr(copy, self.__property_def__[5], created_time)
-        return copy
+        return self.set_single_attribute(5, created_time)
         
     def set_lastsaved_time(self, lastsaved_time):
-        copy = self.copy()
-        setattr(copy, self.__property_def__[6], lastsaved_time)
-        return copy
+        return self.set_single_attribute(6, lastsaved_time)
         
     def set_submitted_time(self, submitted_time):
-        copy = self.copy()
-        setattr(copy, self.__property_def__[7], submitted_time)
-        return copy
+        return self.set_single_attribute(7, submitted_time)
         
     def set_journals(self, journals):
-        copy = self.copy()
         if isinstance(journals, StockJournal):
-            setattr(copy, self.__property_def__[8], StockJournal(journals))
+            return self.set_single_attribute(8, journals)
         elif isinstance(journals, list):
-            setattr(copy, self.__property_def__[8], list(StockJournal(j) for j in journals))
-        print("COPY\n", copy)
-        return copy
+            return self.set_single_attribute(8, list(j for j in journals))
 
     def copy(self):
         return StockJournalGroup(self.get_dict())

@@ -45,6 +45,11 @@ class BaseEntity:
         else:
             raise TypeError(f'Method set() only accepts dict, list or tuple as parameter.')
             
+    def set_single_attribute(self, index, data):
+        copy = self.copy()
+        setattr(copy, self.__property_def__[index], data)
+        return copy
+            
     def copy(self):
         raise NotImplementedError(f'Method copy() must be implemented in child class.')
 

@@ -65,12 +65,10 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
       
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
-        jrn_grp = StockTradingTxnDetailController.get_stock_journal_group(self.dropdown_templ.selected_value)
-        print("3b=", jrn_grp)
-        self.templ_name.text = jrn_grp.get_name()
-        self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(jrn_grp.get_broker())
+        self.templ_name.text = StockTradingTxnDetailController.get_group_name(self.dropdown_templ.selected_value)
+        self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(self.dropdown_templ.selected_value)
         self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
-        self.input_repeating_panel.items = jrn_grp.get_serialized_journals()
+        self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals(self.dropdown_templ.selected_value)
             
     @btnmod.one_click_only
     @logger.log_function
@@ -79,7 +77,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         try:
             result = StockTradingTxnDetailController.save_stock_journal_group(self.dropdown_templ.selected_value, self.templ_name.text, self.dropdown_broker.selected_valu, self.input_repeating_panel.items)
             self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
-            self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journals_group_dropdown_selected_item(templ_id)
+            self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journal_group_dropdown_selected_item(templ_id)
             if result:
                 # Result not None means insert/update journals is done successfully
                 self.input_repeating_panel.items = result[1]

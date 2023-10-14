@@ -17,6 +17,9 @@ class StockJournal(BaseEntity):
     def get_column_definition():
         return ', '.join(c for c in StockJournal.__db_column_def__)
 
+    def get_user_id(self):
+        return getattr(self, self.__property_def__[0], None)
+        
     def get_item_id(self):
         return getattr(self, self.__property_def__[1], None)
 
@@ -53,6 +56,45 @@ class StockJournal(BaseEntity):
     def get_profit_n_loss(self):
         return getattr(self, self.__property_def__[12], None)
 
+    def set_user_id(self, userid):
+        return self.set_single_attribute(0, userid)
+        
+    def set_item_id(self, iid):
+        return self.set_single_attribute(1, iid)
+
+    def set_group_id(self, gid):
+        return self.set_single_attribute(2, gid)
+        
+    def set_sell_date(self, sell_date):
+        return self.set_single_attribute(3, sell_date)
+    
+    def set_buy_date(self, buy_date):
+        return self.set_single_attribute(4, buy_date)
+        
+    def set_symbol(self, symbol):
+        return self.set_single_attribute(5, symbol)
+
+    def set_number_of_shares(self, shares):
+        return self.set_single_attribute(6, shares)
+
+    def set_total_sales(self, sales):
+        return self.set_single_attribute(7, sales)
+
+    def set_total_cost(self, cost):
+        return self.set_single_attribute(8, cost)
+
+    def set_fee(self, fee):
+        return self.set_single_attribute(9, fee)
+
+    def set_unit_price_sold(self, price_sold):
+        return self.set_single_attribute(10, price_sold)
+
+    def set_unit_price_bought(self, price_bought):
+        return self.set_single_attribute(11, price_bought)
+
+    def set_profit_n_loss(self, pnl):
+        return self.set_single_attribute(12, pnl)
+
     def copy(self):
         return StockJournal(self.get_dict())
 
@@ -68,3 +110,12 @@ class StockJournal(BaseEntity):
         if not shares or shares.isspace(): return False
         if not total_cost or total_cost.isspace(): return False
         return True
+
+    def __serialize__(self, global_data):
+        global_data[f"{__class__.__name__}_{self.userid}_{self.get_group_id()}_{self.get_item_id()}"] = self.get_dict()
+        return [self.userid, self.get_group_id(), self.get_item_id()]
+
+    def __deserialize__(self, key, global_data):
+        userid, gid, iid = key
+        data = global_data[f"{__class__.__name__}_{userid}_{gid}_{iid}"]
+        self.__init__(data)

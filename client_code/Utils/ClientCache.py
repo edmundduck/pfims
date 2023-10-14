@@ -37,7 +37,6 @@ class ClientCache:
                     ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
                     logger.debug(f"Cache {self.name} initiated by calling function.")
                 except (anvil.server.NoServerFunctionError) as err:
-                    logger.error(err)
                     logger.warning(f"{funcname} cannot be found. Client cache cannot be initiated.")
 
     def __str__(self):

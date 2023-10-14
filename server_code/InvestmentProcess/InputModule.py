@@ -76,6 +76,7 @@ def select_stock_journals(group_id):
     Returns:
         jrns (list of StockJournal): All journals detail corresponding to the selected stock journal group, return empty list otherwise
     """
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = 'SELECT * FROM {schema}.templ_journals WHERE template_id = %s ORDER BY sell_date DESC, buy_date DESC, symbol ASC'.format(
@@ -86,8 +87,7 @@ def select_stock_journals(group_id):
         rows = cur.fetchall()
         logger.trace('rows=', rows)
         cur.close()
-        jrns = list(str(StockJournal(r)) for r in rows)
-        print("SERVER FUNC select_stock_journals=\n", jrns)
+        jrns = list(StockJournal(r).set_user_id(userid) for r in rows)
         return jrns
 
 @anvil.server.callable("upsert_journals")
@@ -365,7 +365,5 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list):
         raise RuntimeError(f'ERROR: Fail to save stock journal group {group_name}, aborting further update.')
     result = upsert_journals(group_id, jrn_grp.get_journals())
     select_journals = select_stock_journals(group_id) if result is not None else None
-    print("!!!", select_journals)
-    jrn_grp.set_id(group_id)
-    jrn_grp.set_journals(select_journals)
+    jrn_grp = jrn_grp.set_id(group_id).set_journals(select_journals)
     return jrn_grp

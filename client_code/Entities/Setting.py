@@ -24,48 +24,44 @@ class Setting:
     def get_column_definition():
         return ', '.join(c for c in Setting.__db_column_def__)
 
-    def get_dict(self):
-        return { self.__property_def__[i]: getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) }
-
-    def get_list(self):
-        return [ getattr(self, self.__property_def__[i]) for i in range(len(self.__property_def__)) ]
+    def get_user_id(self):
+        return getattr(self, self.__property_def__[0], None)
 
     def get_broker(self):
-        return getattr(self, self.__property_def__[1])
+        return getattr(self, self.__property_def__[1], None)
 
     def get_search_interval(self):
-        return getattr(self, self.__property_def__[2])
+        return getattr(self, self.__property_def__[2], None)
 
     def get_search_datefrom(self):
-        return getattr(self, self.__property_def__[3])
+        return getattr(self, self.__property_def__[3], None)
 
     def get_search_dateto(self):
-        return getattr(self, self.__property_def__[4])
+        return getattr(self, self.__property_def__[4], None)
 
     def get_logging_level(self):
-        return getattr(self, self.__property_def__[5])
+        return getattr(self, self.__property_def__[5], None)
 
-    def set(self, data):
-        if data:
-            if isinstance(data, dict):
-                for i in range(len(self.__property_def__)):
-                    setattr(self, self.__property_def__[i], data.get(self.__property_def__[i], None))
-            elif isinstance(data, (list, tuple)):
-                for i in range(len(self.__property_def__)):
-                    setattr(self, self.__property_def__[i], data[i])
-        else:
-            raise TypeError(f'Function \'set\' only accepts dict, list or tuple as parameter.')
+    def set_user_id(self, userid):
+        return self.set_single_attribute(0, userid)
+
+    def set_broker(self, broker_id):
+        return self.set_single_attribute(1, broker_id)
+
+    def set_search_interval(self, interval):
+        return self.set_single_attribute(2, interval)
+
+    def set_search_datefrom(self, datefrom):
+        return self.set_single_attribute(3, datefrom)
+
+    def set_search_dateto(self, dateto):
+        return self.set_single_attribute(4, dateto)
+
+    def set_logging_level(self, level):
+        return self.set_single_attribute(5, level)
 
     def copy(self):
         return Setting(self.get_dict())
 
     def is_valid(self):
         return True
-
-    def __serialize__(self, global_data):
-        global_data[f"{__class__.__name__}_{self.userid}"] = self.get_dict()
-        return self.userid
-
-    def __deserialize__(self, userid, global_data):
-        data = global_data[f"{__class__.__name__}_{userid}"]
-        self.__init__(data)
