@@ -20,13 +20,12 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     
         # Any code you write here will run when the form opens.
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
-        jrn_grp = StockTradingTxnDetailController.get_stock_journal_group(self.dropdown_templ.selected_value)
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
         self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown()
         self.dropdown_broker.items = UserSettingController.generate_brokers_dropdown()
-        self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(jrn_grp.get_broker())
+        self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_broker_dropdown_selected_item(self.dropdown_templ.selected_value)
         # Reset on screen change status
         self.disable_submit_button()
         
@@ -66,7 +65,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
         self.templ_name.text = StockTradingTxnDetailController.get_group_name(self.dropdown_templ.selected_value)
-        self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(self.dropdown_templ.selected_value)
+        self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_broker_dropdown_selected_item(self.dropdown_templ.selected_value)
         self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
         self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals(self.dropdown_templ.selected_value)
             
@@ -75,12 +74,12 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         try:
-            result = StockTradingTxnDetailController.save_stock_journal_group(self.dropdown_templ.selected_value, self.templ_name.text, self.dropdown_broker.selected_valu, self.input_repeating_panel.items)
+            result = StockTradingTxnDetailController.save_stock_journal_group(self.dropdown_templ.selected_value, self.templ_name.text, self.dropdown_broker.selected_value, self.input_repeating_panel.items)
             self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
-            self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journal_group_dropdown_selected_item(templ_id)
+            self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journal_group_dropdown_selected_item(result.get_id())
             if result:
                 # Result not None means insert/update journals is done successfully
-                self.input_repeating_panel.items = result[1]
+                self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals()
                 self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
                 msg = f'Stock journal group {self.templ_name.text} has been saved successfully.'
                 logger.info(msg)

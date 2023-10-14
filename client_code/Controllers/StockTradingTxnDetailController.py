@@ -88,7 +88,24 @@ def get_journals(group_dropdown_selected):
     jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
     return list(j.get_dict() for j in jrn_grp.get_journals()) if jrn_grp.get_journals() else []
 
-def get_stock_journal_group_dropdown_selected_item(group_dropdown_selected):
+def get_stock_journal_group_dropdown_selected_item(group_id):
+    """
+    Return a complete key based on a partial stock journal group ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        group_id (int): The stock journal group ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in stock journal group dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    jrn_grp_dropdown = ClientCache(CacheKey.DD_STOCK_JRN_GRP, None)
+    if jrn_grp_dropdown.is_empty():
+        generate_stock_journal_groups_dropdown()
+    selected_item = jrn_grp_dropdown.get_complete_key(group_id)
+    return selected_item
+
+def get_broker_dropdown_selected_item(group_dropdown_selected):
     """
     Return a complete key based on a partial broker ID which is a part of the key in a dropdown list.
 
@@ -99,11 +116,12 @@ def get_stock_journal_group_dropdown_selected_item(group_dropdown_selected):
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
     from ..Utils.ClientCache import ClientCache
-    jrn_grp_dropdown = ClientCache(CacheKey.DD_STOCK_JRN_GRP, None)
+    from . import UserSettingController
+    brokers_dropdown = ClientCache(CacheKey.DD_BROKER, None)
     jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
-    if jrn_grp_dropdown.is_empty():
-        generate_stock_journal_groups_dropdown()
-    selected_item = jrn_grp_dropdown.get_complete_key(jrn_grp.get_broker())
+    if brokers_dropdown.is_empty():
+        UserSettingController.generate_brokers_dropdown()
+    selected_item = brokers_dropdown.get_complete_key(jrn_grp.get_broker())
     return selected_item
 
 def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):
@@ -136,7 +154,7 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     from ..Entities.StockJournal import StockJournal
     from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID, None)
+    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
 
     # Reflect updates in the row first
     # *** ESSENTIAL ***

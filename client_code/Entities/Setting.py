@@ -1,24 +1,16 @@
 import anvil.server
 import anvil.users
+from .BaseEntity import BaseEntity
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 @anvil.server.portable_class
-class Setting:
+class Setting(BaseEntity):
     __db_column_def__ = ['userid', 'default_broker', 'default_interval', 'default_datefrom', 'default_dateto', 'logging_level']
     __property_def__ = __db_column_def__
     
-    def __init__(self, data):
-        if data:
-            self.set(data)
-        else:
-            self.set([None]*len(self.__property_def__))
-
-    def __str__(self):
-        return '{0}: {1}'.format(
-            self.__class__.__name__,
-            self.get_dict()
-        )
+    def __init__(self, data=None):
+        super().__init__(data)
 
     @staticmethod
     def get_column_definition():
