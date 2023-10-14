@@ -86,7 +86,8 @@ def select_stock_journals(group_id):
         rows = cur.fetchall()
         logger.trace('rows=', rows)
         cur.close()
-        jrns = list(StockJournal(r) for r in rows)
+        jrns = list(str(StockJournal(r)) for r in rows)
+        print("SERVER FUNC select_stock_journals=\n", jrns)
         return jrns
 
 @anvil.server.callable("upsert_journals")
