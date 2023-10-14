@@ -66,6 +66,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     def dropdown_templ_change(self, **event_args):
         """This method is called when an item is selected"""
         jrn_grp = StockTradingTxnDetailController.get_stock_journal_group(self.dropdown_templ.selected_value)
+        print("3b=", jrn_grp)
         self.templ_name.text = jrn_grp.get_name()
         self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(jrn_grp.get_broker())
         self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)

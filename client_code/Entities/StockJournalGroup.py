@@ -48,7 +48,7 @@ class StockJournalGroup(BaseEntity):
 
     def set_id(self, id):
         copy = self.copy()
-        setattr(copy, self.__property_def__[1], name)
+        setattr(copy, self.__property_def__[1], id)
         return copy
         
     def set_name(self, name):
