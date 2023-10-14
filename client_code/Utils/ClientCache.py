@@ -86,7 +86,8 @@ class ClientCache:
         """
         Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
         """
-        del ClientCache.cache_dict[self.name]
+        if ClientCache.cache_dict.get(self.name, None):
+            del ClientCache.cache_dict[self.name]
         logger.debug(f"Cache {self.name} cleared.")
 
     def get_complete_key(self, partial_key):

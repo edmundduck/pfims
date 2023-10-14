@@ -101,14 +101,14 @@ class StockJournal(BaseEntity):
     def is_valid(self):
         buy_date, symbol, shares, total_cost = [self.get_buy_date(), self.get_symbol(), self.get_number_of_shares(), self.get_total_cost()]
         date_format = '%Y-%m-%d'
-        if not buy_date or buy_date.isspace(): return False
+        if not buy_date or str(buy_date).isspace(): return False
         try:
             datetime.strptime(buy_date, date_format)
         except ValueError as err:
             return False
-        if not symbol or symbol.isspace(): return False
-        if not shares or shares.isspace(): return False
-        if not total_cost or total_cost.isspace(): return False
+        if not symbol or str(symbol).isspace(): return False
+        if not shares or str(shares).isspace(): return False
+        if not total_cost or str(total_cost).isspace(): return False
         return True
 
     def __serialize__(self, global_data):

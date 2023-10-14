@@ -26,6 +26,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown()
         self.dropdown_broker.items = UserSettingController.generate_brokers_dropdown()
         self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_broker_dropdown_selected_item(self.dropdown_templ.selected_value)
+        self.button_delete_templ.enabled = StockTradingTxnDetailController.enable_stock_journal_group_delete_button(self.dropdown_templ.selected_value)
         # Reset on screen change status
         self.disable_submit_button()
         
@@ -67,6 +68,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         self.templ_name.text = StockTradingTxnDetailController.get_group_name(self.dropdown_templ.selected_value)
         self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_broker_dropdown_selected_item(self.dropdown_templ.selected_value)
         self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
+        self.button_delete_templ.enabled = StockTradingTxnDetailController.enable_stock_journal_group_delete_button(self.dropdown_templ.selected_value)
         self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals(self.dropdown_templ.selected_value)
             
     @btnmod.one_click_only
@@ -74,12 +76,20 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
         try:
+            # Reflect updates in the row first
+            # *** ESSENTIAL ***
+            # Update child items from repeating panel to parent form items
+            # Refer to the following reference links for detail
+            # https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
+            # https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
+            # https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
+            self.input_repeating_panel.items = [c.input_data_panel_readonly.item for c in self.input_repeating_panel.get_components()]
             result = StockTradingTxnDetailController.save_stock_journal_group(self.dropdown_templ.selected_value, self.templ_name.text, self.dropdown_broker.selected_value, self.input_repeating_panel.items)
             self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
             self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journal_group_dropdown_selected_item(result.get_id())
             if result:
                 # Result not None means insert/update journals is done successfully
-                self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals()
+                self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals(self.dropdown_templ.selected_value)
                 self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
                 msg = f'Stock journal group {self.templ_name.text} has been saved successfully.'
                 logger.info(msg)

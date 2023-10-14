@@ -23,8 +23,10 @@ def generate_stock_journal_groups_dropdown(data=None, reload=False):
     from ..Utils.ClientCache import ClientCache
     cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
     cache = ClientCache(CacheKey.DD_STOCK_JRN_GRP, cache_data)
+    if reload:
+        cache.clear_cache()
     if cache.is_empty():
-        rows = anvil.server.call('generate_draftring_stock_journal_groups_list')
+        rows = anvil.server.call('generate_drafting_stock_journal_groups_list')
         new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
         cache.set_cache(new_dropdown)
     return cache.get_cache()
@@ -124,17 +126,30 @@ def get_broker_dropdown_selected_item(group_dropdown_selected):
     selected_item = brokers_dropdown.get_complete_key(jrn_grp.get_broker())
     return selected_item
 
-def enable_stock_journal_group_submit_button(jrn_grp_dropdown_selected):
+def enable_stock_journal_group_submit_button(group_dropdown_selected):
     """
     Enable or disable the stock journal group submit button.
 
     Parameters:
-        jrn_grp_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
+        group_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
 
     Returns:
         Boolean: True for enable, false for disable.
     """
-    jrn_grp_id = jrn_grp_dropdown_selected[0] if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else jrn_grp_dropdown_selected
+    jrn_grp_id = group_dropdown_selected[0] if isinstance(group_dropdown_selected, (list, tuple)) else group_dropdown_selected
+    return False if str(jrn_grp_id) in (None, '') or str(jrn_grp_id).isspace() else True
+
+def enable_stock_journal_group_delete_button(group_dropdown_selected):
+    """
+    Enable or disable the stock journal group delete button.
+
+    Parameters:
+        group_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
+
+    Returns:
+        Boolean: True for enable, false for disable.
+    """
+    jrn_grp_id = group_dropdown_selected[0] if isinstance(group_dropdown_selected, (list, tuple)) else group_dropdown_selected
     return False if str(jrn_grp_id) in (None, '') or str(jrn_grp_id).isspace() else True
 
 def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dropdown_selected, journals):
@@ -156,15 +171,6 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
 
-    # Reflect updates in the row first
-    # *** ESSENTIAL ***
-    # Update child items from repeating panel to parent form items
-    # Refer to the following reference links for detail
-    # https://anvil.works/forum/t/is-it-possible-to-access-a-repeating-panels-methods-from-the-parent-form/3028/2
-    # https://anvil.works/forum/t/refresh-data-bindings-when-any-key-in-self-items-changes/1141/3
-    # https://anvil.works/forum/t/repeating-panel-to-collect-new-information/356/3
-    self.input_repeating_panel.items = [c.input_data_panel_readonly.item for c in self.input_repeating_panel.get_components()]
-
     jrn_grp_id_ori, jrn_grp_name_ori = jrn_grp_dropdown_selected if jrn_grp_dropdown_selected is not None else [None, None]
     broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
 
@@ -173,8 +179,9 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     jrn_grp = jrn_grp.set_id(jrn_grp_id_ori).set_name(jrn_grp_name).set_broker(broker_id).set_journals(journals)
 
     if not jrn_grp_id_ori:
+        del_iid = cache.get_cache()
         jrn_grp = jrn_grp.set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
-        jrn_grp = anvil.server.call('proc_save_group_and_journals', jrn_grp)
+        jrn_grp = anvil.server.call('proc_save_group_and_journals', jrn_grp, del_iid)
     if not jrn_grp:
         raise RuntimeError(f"Error occurs in proc_save_group_and_journals.")
     else:

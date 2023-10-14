@@ -17,9 +17,9 @@ from ..SysProcess import LoggingModule
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("generate_draftring_stock_journal_groups_list")
+@anvil.server.callable("generate_drafting_stock_journal_groups_list")
 @logger.log_function
-def generate_draftring_stock_journal_groups_list():
+def generate_drafting_stock_journal_groups_list():
     """
     Select DRAFTING (a.k.a. unsubmitted) stock journal groups from the template DB table.
 
@@ -195,7 +195,7 @@ def save_new_stock_journal_group(jrn_grp):
                 VALUES (%s,%s,%s,%s,%s,%s) RETURNING template_id".format(
                     schema=sysmod.schemafin()
                 )
-                mogstr = [jrn_grp.get_userid(), jrn_grp.get_name(), jrn_grp.get_broker(), jrn_grp.get_submitted_status(), \
+                mogstr = [userid, jrn_grp.get_name(), jrn_grp.get_broker(), jrn_grp.get_submitted_status(), \
                         jrn_grp.get_created_time(), jrn_grp.get_lastsaved_time()]
                 stmt = cur.mogrify(sql, mogstr)
                 cur.execute(stmt)
@@ -349,7 +349,7 @@ def calculate_amount(sell_amt, buy_amt, fee, qty):
 
 @anvil.server.callable("proc_save_group_and_journals")
 @logger.log_function
-def proc_save_group_and_journals(jrn_grp, del_iid_list):
+def proc_save_group_and_journals(jrn_grp, del_iid_list=None):
     """
     Consolidated process for saving stock journal group and journals.
 
