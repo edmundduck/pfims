@@ -38,24 +38,27 @@ def get_stock_journal_group(group_dropdown_selected):
         group_dropdown_selected (list): The selected value in list from the broker dropdown.
 
     Returns:
-        jrn_grp_obj (StockJournalGroup): A stock journal group object.
+        jrn_grp (StockJournalGroup): A stock journal group object.
     """
     from . import UserSettingController
     from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
-    blank_jrn_grp = StockJournalGroup()
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
-    logger.trace(f'jrn_grp_id={jrn_grp_id} / blank_jrn_grp={blank_jrn_grp}')
     cache = ClientCache(CacheKey.OBJ_STOCK_JRN_GRP, None)
     if jrn_grp_id:
-        jrn_grp_obj = anvil.server.call('select_stock_journal_group', jrn_grp_id)
+        jrn_grp = anvil.server.call('select_stock_journal_group', jrn_grp_id)
         jrn_list = anvil.server.call('select_stock_journals', jrn_grp_id)
-        jrn_grp_obj.set_journals(jrn_list)
-        cache.set_cache(jrn_grp_obj)
+        print("1 - Problem lies below? jrn_list=", jrn_list)
+        jrn_grp = jrn_grp.set_journals(jrn_list)
+        print("2 SET issue!!!! should have euqal sign ... jrn_grp=", jrn_grp)
+        cache.set_cache(jrn_grp)
+        print("3")
+        logger.trace(f'jrn_grp_id={jrn_grp_id} / jrn_grp={jrn_grp}')
     else:
-        jrn_grp_obj = blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
-    logger.trace(f'jrn_grp_obj={jrn_grp_obj}')
-    return jrn_grp_obj
+        blank_jrn_grp = StockJournalGroup()
+        jrn_grp = blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
+        logger.trace(f'jrn_grp_id={jrn_grp_id} / blank_jrn_grp={blank_jrn_grp}')
+    return jrn_grp
 
 def get_stock_journals_group_dropdown_selected_item(group_id):
     """
@@ -120,16 +123,10 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
 
     currenttime = datetime.now()
     jrn_grp = StockJournalGroup()
-    jrn_grp.set_id(jrn_grp_id_ori)
-    jrn_grp.set_name(jrn_grp_name)
-    jrn_grp.set_broker(broker_id)
-    jrn_grp.set_journals(journals)
+    jrn_grp = jrn_grp.set_id(jrn_grp_id_ori).set_name(jrn_grp_name).set_broker(broker_id).set_journals(journals)
 
-    {userid},'{template_name}','{broker_id}',False,'{currenttime}','{currenttime}'
     if not jrn_grp_id_ori:
-        jrn_grp.set_submitted_status(False)
-        jrn_grp.set_created_time(currenttime)
-        jrn_grp.set_lastsaved_time(currenttime)
+        jrn_grp = jrn_grp.set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
         jrn_grp = anvil.server.call('proc_save_group_and_journals', jrn_grp)
     if not jrn_grp:
         raise RuntimeError(f"Error occurs in proc_save_group_and_journals.")

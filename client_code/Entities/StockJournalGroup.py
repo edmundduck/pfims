@@ -41,6 +41,11 @@ class StockJournalGroup(BaseEntity):
     def get_journals(self):
         return getattr(self, self.__property_def__[8], None)
 
+    def get_serialized_journals(self):
+        jrn_obj = self.get_journals()
+        print("4=", list(j.get_dict() for j in jrn_obj) if jrn_obj else [])
+        return list(j.get_dict() for j in jrn_obj) if jrn_obj else []
+
     def set_id(self, id):
         copy = self.copy()
         setattr(copy, self.__property_def__[1], name)
@@ -82,6 +87,7 @@ class StockJournalGroup(BaseEntity):
             setattr(copy, self.__property_def__[8], StockJournal(journals))
         elif isinstance(journals, list):
             setattr(copy, self.__property_def__[8], list(StockJournal(j) for j in journals))
+        print("COPY\n", copy)
         return copy
 
     def copy(self):

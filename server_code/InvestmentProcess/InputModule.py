@@ -364,6 +364,7 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list):
         raise RuntimeError(f'ERROR: Fail to save stock journal group {group_name}, aborting further update.')
     result = upsert_journals(group_id, jrn_grp.get_journals())
     select_journals = select_stock_journals(group_id) if result is not None else None
+    print("!!!", select_journals)
     jrn_grp.set_id(group_id)
     jrn_grp.set_journals(select_journals)
     return jrn_grp
