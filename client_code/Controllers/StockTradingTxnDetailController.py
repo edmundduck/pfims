@@ -49,6 +49,7 @@ def get_stock_journal_group(group_dropdown_selected):
         jrn_grp = anvil.server.call('select_stock_journal_group', jrn_grp_id)
         jrn_list = anvil.server.call('select_stock_journals', jrn_grp_id)
         print("1 - Problem lies below? jrn_list=", jrn_list)
+        print(list(j.get_total_cost() for j in jrn_list))
         jrn_grp = jrn_grp.set_journals(jrn_list)
         print("2 SET issue!!!! should have euqal sign ... jrn_grp=", jrn_grp)
         cache.set_cache(jrn_grp)
