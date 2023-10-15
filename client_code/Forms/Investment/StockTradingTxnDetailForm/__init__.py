@@ -4,9 +4,7 @@ import anvil.users
 import anvil.server
 from datetime import date
 from ....Controllers import StockTradingTxnDetailController, UserSettingController
-from ....Utils import Constants as const
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.ClientCache import ClientCache
 from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
@@ -116,21 +114,14 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     @logger.log_function
     def button_delete_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
-        templ_id, templ_name = self.dropdown_templ.selected_value
-        confirm = Label(text="Proceed template <{templ_name}> deletion by clicking DELETE.".format(templ_name=templ_name))
-        userconf = alert(content=confirm, 
-                        title=f"Alert - Template Deletion",
-                        buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
+        from ....Utils.Constants import Alerts
+        _, jrn_grp_name = self.dropdown_templ.selected_value
+        confirm = Label(text="Proceed stock journal group [{jrn_grp_name}] deletion by clicking PROCEED.".format(jrn_grp_name=jrn_grp_name))
+        userconf = alert(content=confirm, title='Alert - Confirm to delete stock journal group', buttons=[('PROCEED', Alerts.CONFIRM), ('CANCEL', Alerts.CANCEL)])
     
-        if userconf == const.Alerts.CONFIRM:
-            result = anvil.server.call('delete_templates', template_id=templ_id)
-            if result is not None and result > 0:
-                cache_del_iid = ClientCache(const.CacheKey.STOCK_INPUT_DEL_IID)
-                
-                """ Reset row delete flag """
-                cache_del_iid.clear_cache()
-            
-                """ Reflect the change in template dropdown """
+        if userconf == Alerts.CONFIRM:
+            try:
+                result = StockTradingTxnDetailController.delete_stock_journal_group(self.dropdown_templ.selected_value)
                 self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
                 self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(UserSettingController.get_user_settings().get_broker())
                 self.input_repeating_panel.items = []
@@ -138,13 +129,13 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
                 self.input_selldate.date = date.today()
                 # Reset on screen change status
                 self.disable_submit_button()
-                msg = f"Template {templ_name} has been deleted."
+                msg = f"Stock journal group {jrn_grp_name} has been deleted."
                 logger.info(msg)
                 Notification(msg).show()
                 return btnmod.override_end_state(False)
-            else:
-                msg = f"ERROR: Fail to delete template {templ_name}."
-                logger.error(msg)
+            except Exception as err:
+                logger.error(err)
+                msg = f"ERROR: Fail to delete template {jrn_grp_name}."
                 Notification(msg).show()
 
     @btnmod.one_click_only

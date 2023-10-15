@@ -204,7 +204,7 @@ def save_new_stock_journal_group(jrn_grp):
                 tid = cur.fetchone()
                 logger.debug("tid=", tid)
                 if not tid or tid.get('template_id', -1) < 0: 
-                    raise psycopg2.OperationalError('Template (id:{0}) creation or update fail.'.format(template_id))
+                    raise psycopg2.OperationalError('Stock journal group (id:{0}) creation or update fail.'.format(template_id))
                 return tid.get('template_id', -1)
         else:
             raise TypeError(f'The parameter is not a StockJournalGroup object.')
@@ -296,17 +296,17 @@ def submit_templates(template_id, submitted):
         if conn is not None: conn.close()
     return None
   
-@anvil.server.callable("delete_templates")
+@anvil.server.callable("delete_stock_journal_group")
 @logger.log_function
-def delete_templates(template_id):
+def delete_stock_journal_group(group_id):
     """
-    Delete templates from the DB table which stores templates detail.
+    Delete a new stock journal group from the stock journal group DB table.
     
-    Delete cascade is implemented in the DB table (which stores template journals detail)"template_id" column, 
-    hence journals under particular template will be deleted automatically.
+    Delete cascade is implemented in the DB table (which stores stock journal group journals detail) "template_id" column, 
+    hence journals under particular group will be deleted automatically.
 
     Parameters:
-        template_id (int): The ID of the template. All journals under the same template share the same TID.
+        group_id (int): The ID of the template. All journals under the same template share the same TID.
 
     Returns:
         cur.rowcount (int): Successful delete row count, otherwise None.
@@ -314,12 +314,14 @@ def delete_templates(template_id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"DELETE FROM {sysmod.schemafin()}.templates WHERE template_id = {template_id}")
+            sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (group_id, ))
+            cur.execute(stmt)
             conn.commit()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Template (id:{0}) deletion fail.".format(template_id))
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Stock journal group (id:{0}) deletion fail.".format(group_id))
             return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:

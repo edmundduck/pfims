@@ -152,18 +152,18 @@ def enable_stock_journal_group_delete_button(group_dropdown_selected):
     jrn_grp_id = group_dropdown_selected[0] if isinstance(group_dropdown_selected, (list, tuple)) else group_dropdown_selected
     return False if str(jrn_grp_id) in (None, '') or str(jrn_grp_id).isspace() else True
 
-def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dropdown_selected, journals):
+def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropdown_selected, journals):
     """
     Convert the fields from the form for saving the stock journal group change in backend.
 
     Parameters:
-        jrn_grp_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
+        group_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
         jrn_grp_name (string): The name of the selected stock journal group.
         broker_dropdown_selected (list): The selected value in list from the broker dropdown.
         journals (list): A list of journals from repeating panel to be inserted or updated.
         
     Returns:
-        result (list): A list of all functions return required by the save.
+        jrn_grp (StockJournalGroup): A stock journal group object.
     """
     from datetime import date, datetime
     from ..Entities.StockJournal import StockJournal
@@ -171,7 +171,7 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
 
-    jrn_grp_id_ori, jrn_grp_name_ori = jrn_grp_dropdown_selected if jrn_grp_dropdown_selected is not None else [None, None]
+    jrn_grp_id_ori, jrn_grp_name_ori = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
 
     currenttime = datetime.now()
@@ -188,3 +188,25 @@ def save_stock_journal_group(jrn_grp_dropdown_selected, jrn_grp_name, broker_dro
         logger.trace('jrn_grp=', jrn_grp)
         cache.clear_cache()
     return jrn_grp
+
+def delete_stock_journal_group(group_dropdown_selected):
+    """
+    Convert the fields from the form for deleting the stock journal group change in backend.
+
+    Parameters:
+        group_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
+        
+    Returns:
+        result (int): Successful delete row count, otherwise None.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
+
+    jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
+    result = anvil.server.call('delete_stock_journal_group', jrn_grp_id) if jrn_grp_id else None
+    if not result:
+        raise RuntimeError(f"Error occurs in delete_stock_journal_group.")
+    else:
+        logger.trace('result=', result)
+        cache.clear_cache()
+    return result
