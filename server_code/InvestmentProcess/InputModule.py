@@ -215,7 +215,7 @@ def save_new_stock_journal_group(jrn_grp):
                 tid = cur.fetchone()
                 logger.debug("tid=", tid)
                 if not tid or tid.get('template_id', -1) < 0: 
-                    raise psycopg2.OperationalError('Stock journal group (id:{0}) creation fail.'.format(template_id))
+                    raise psycopg2.OperationalError(f'Stock journal group [{jrn_grp.get_name()}] creation fail.')
                 return tid.get('template_id', -1)
         raise TypeError(f'The parameter is not a StockJournalGroup object.')
     except psycopg2.OperationalError as err:
@@ -256,7 +256,7 @@ def save_existing_stock_journal_group(jrn_grp):
                 tid = cur.fetchone()
                 logger.debug("tid=", tid)
                 if not tid or tid.get('template_id', -1) < 0: 
-                    raise psycopg2.OperationalError("Stock journal group (id:{0}) update fail.".format(template_id))
+                    raise psycopg2.OperationalError(f'Stock journal group [{jrn_grp.get_name()} ({jrn_grp.get_id()})] update fail.')
                 return tid['template_id']
         raise TypeError(f'The parameter is not a StockJournalGroup object.')
     except psycopg2.OperationalError as err:
@@ -267,36 +267,43 @@ def save_existing_stock_journal_group(jrn_grp):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable("submit_templates")
+@anvil.server.callable("submit_stock_journal_group")
 @logger.log_function
-def submit_templates(template_id, submitted):
+def submit_stock_journal_group(jrn_grp):
     """
-    Update journals into the DB table which stores templates detail to change template submitted/unsubmitted status and timestamp.
+    Submit a new stock journal group to change this group to be either editable (unsubmitted) or not editable (submitted).
 
     Parameters:
-        template_id (int): The ID of the template. All journals under the same template share the same TID.
-        submitted (boolean): The to-be-updated submit status of a selected template.
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
 
     Returns:
         cur.rowcount (int): Successful submit row count, otherwise None.
     """
     try:
         cur, conn = [None]*2
-        currenttime = datetime.now()
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if submitted is True:
-                sql = f"UPDATE {sysmod.schemafin()}.templates SET submitted = {submitted}, \
-                template_submitted = '{currenttime}' WHERE template_id = '{template_id}'"
-            else:
-                sql = f"UPDATE {sysmod.schemafin()}.templates SET submitted = {submitted} \
-                WHERE template_id = '{template_id}'"
-            cur.execute(sql)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Templates (id:{0}) submission or reversal fail.".format(template_id))
-            return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
+        if isinstance(jrn_grp, StockJournalGroup):
+            currenttime = datetime.now()
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                submitted = jrn_grp.get_submitted_status()
+                if submitted:
+                    sql = "UPDATE {schema}.templates SET submitted = %s, template_submitted = %s WHERE template_id = %s".format(
+                        schema=sysmod.schemafin()
+                    )
+                    mogstr = [submitted, jrn_grp.get_submitted_time(), jrn_grp.get_id()]
+                else:
+                    sql = "UPDATE {schema}.templates SET submitted = %s WHERE template_id = %s".format(
+                        schema=sysmod.schemafin()
+                    )
+                    mogstr = [submitted, jrn_grp.get_id()]
+                stmt = cur.mogrify(sql, mogstr)
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError(f'Stock journal group [{jrn_grp.get_name()} ({jrn_grp.get_id()})] submission or reversal fail.')
+                return cur.rowcount
+        raise TypeError(f'The parameter is not a StockJournalGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -306,7 +313,7 @@ def submit_templates(template_id, submitted):
   
 @anvil.server.callable("delete_stock_journal_group")
 @logger.log_function
-def delete_stock_journal_group(group_id):
+def delete_stock_journal_group(jrn_grp):
     """
     Delete a new stock journal group from the stock journal group DB table.
     
@@ -314,21 +321,24 @@ def delete_stock_journal_group(group_id):
     hence journals under particular group will be deleted automatically.
 
     Parameters:
-        group_id (int): The selected stock journal group ID.
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
 
     Returns:
         cur.rowcount (int): Successful delete row count, otherwise None.
     """
     try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
-            stmt = cur.mogrify(sql, (group_id, ))
-            cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Stock journal group (id:{0}) deletion fail.".format(group_id))
-            return cur.rowcount
+        cur, conn = [None]*2
+        if isinstance(jrn_grp, StockJournalGroup):
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
+                stmt = cur.mogrify(sql, (jrn_grp.get_id(), ))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError(f'Stock journal group [{jrn_grp.get_name()} ({jrn_grp.get_id()})] deletion fail.')
+                return cur.rowcount
+        raise TypeError(f'The parameter is not a StockJournalGroup object.')
     except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
@@ -336,26 +346,6 @@ def delete_stock_journal_group(group_id):
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
-
-@anvil.server.callable("calculate_amount")
-@logger.log_function
-def calculate_amount(sell_amt, buy_amt, fee, qty):
-    """
-    Calculate all amount fields including stock profit and stock unit price during sell or buy.
-    
-    Parameters:
-        sell_amt (float): Lump sum of the stock sold.
-        buy_amt (float): Lump sum of the stock purchased.
-        fee (float): Fee incurred after stock purchased and sold.
-        qty (float): Stock quantity.
-
-    Returns:
-        list: A list of stock unit sold price, bought price and profit.
-    """
-    sell_price = round(float(sell_amt) / float(qty), 2)
-    buy_price = round(float(buy_amt) / float(qty), 2)
-    profit = round(float(sell_amt) - float(buy_amt) - float(fee), 2)
-    return [sell_price, buy_price, profit]
 
 @anvil.server.callable("proc_save_group_and_journals")
 @logger.log_function
@@ -382,3 +372,11 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list=None):
     result_u = upsert_journals(group_id, jrn_grp.get_journals())
     jrn_grp = jrn_grp.set_id(group_id)
     return [jrn_grp, result_u, result_d]
+
+@anvil.server.callable("init_cache_stock_trading_txn_detail")
+@logger.log_function
+def init_cache_stock_trading_txn_detail():
+    from ..AdminProcess import UserSettingModule
+    broker_list = UserSettingModule.generate_brokers_simplified_list()
+    jrn_list = generate_drafting_stock_journal_groups_list()
+    return [broker_list, jrn_list]

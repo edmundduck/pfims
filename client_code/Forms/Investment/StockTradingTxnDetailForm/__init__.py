@@ -1,11 +1,8 @@
 from ._anvil_designer import StockTradingTxnDetailFormTemplate
 from anvil import *
-import anvil.users
-import anvil.server
 from datetime import date
-from ....Controllers import StockTradingTxnDetailController, UserSettingController
+from ....Controllers import StockTradingTxnDetailController
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.Validation import Validator
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -17,12 +14,13 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
+        StockTradingTxnDetailController.init_cache()
         self.input_repeating_panel.add_event_handler('x-disable-submit-button', self.disable_submit_button)
         # Initiate repeating panel items to an empty list otherwise will throw NoneType error
         self.input_repeating_panel.items = []
         self.input_selldate.date = date.today()
         self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown()
-        self.dropdown_broker.items = UserSettingController.generate_brokers_dropdown()
+        self.dropdown_broker.items = StockTradingTxnDetailController.generate_brokers_dropdown()
         self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_broker_dropdown_selected_item(self.dropdown_templ.selected_value)
         self.button_delete_templ.enabled = StockTradingTxnDetailController.enable_stock_journal_group_delete_button(self.dropdown_templ.selected_value)
         # Reset on screen change status
@@ -32,6 +30,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     @logger.log_function
     def button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils.Validation import Validator
         v = Validator()
         v.display_when_invalid(self.valerror_title)
         v.require_date_field(self.input_selldate, self.valerror_1, True)
@@ -42,7 +41,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
         v.require_text_field(self.input_cost, self.valerror_6, True)
         v.require_text_field(self.input_fee, self.valerror_7, True)
 
-        sell_price, buy_price, pnl = anvil.server.call('calculate_amount', self.input_sales.text, self.input_cost.text, self.input_fee.text, self.input_qty.text)
+        sell_price, buy_price, pnl = StockTradingTxnDetailController.calculate_amount(self.input_sales.text, self.input_cost.text, self.input_fee.text, self.input_qty.text)
         new_data = {
             "sell_date": self.input_selldate.date,
             "buy_date": self.input_buydate.date,
@@ -87,7 +86,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
             self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journal_group_dropdown_selected_item(result.get_id())
             if result:
                 # Result not None means insert/update journals is done successfully
-                self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals(self.dropdown_templ.selected_value)
+                self.input_repeating_panel.items = StockTradingTxnDetailController.get_journals(self.dropdown_templ.selected_value, reload=True)
                 self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
                 msg = f'Stock journal group {self.templ_name.text} has been saved successfully.'
                 logger.info(msg)
@@ -123,7 +122,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
             try:
                 result = StockTradingTxnDetailController.delete_stock_journal_group(self.dropdown_templ.selected_value)
                 self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
-                self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(UserSettingController.get_user_settings().get_broker())
+                self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_broker_dropdown_selected_item()
                 self.input_repeating_panel.items = []
                 self.templ_name.text = None
                 self.input_selldate.date = date.today()
@@ -135,32 +134,29 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
                 return btnmod.override_end_state(False)
             except Exception as err:
                 logger.error(err)
-                msg = f"ERROR: Fail to delete template {jrn_grp_name}."
+                msg = f"ERROR occurs when deleting stock journal group {jrn_grp_name}."
                 Notification(msg).show()
 
     @btnmod.one_click_only
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        templ_id, templ_name = self.dropdown_templ.selected_value
-        broker_id = self.dropdown_broker.selected_value[0] if self.dropdown_broker.selected_value is not None and isinstance(self.dropdown_broker.selected_value, list) else None
-        result = anvil.server.call('submit_templates', templ_id, True)
-
-        if result is not None and result > 0:
+        jrn_grp_name = self.templ_name.text
+        try:
+            result = StockTradingTxnDetailController.submit_stock_journal_group(self.dropdown_templ.selected_value)
             """ Reflect the change in template dropdown """
             self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
-            self.dropdown_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(UserSettingController.get_user_settings().get_broker())
-            self.dropdown_templ.selected_value = None
+            self.dropdown_broker.selected_value = StockTradingTxnDetailController.get_broker_dropdown_selected_item()
             self.input_repeating_panel.items = []
             self.templ_name.text = None
             self.input_selldate.date = date.today()
-            msg = f"Template {templ_name} has been submitted.\n It can be viewed in the transaction list report only."
+            msg = f"Stock journal group {jrn_grp_name} has been submitted.\n It can be viewed in the transaction list report only."
             logger.info(msg)
             Notification(msg).show()
             return btnmod.override_end_state(False)
-        else:
-            msg = f"ERROR: Fail to submit template {templ_name}."
-            logger.error(msg)
+        except Exception as err:
+            logger.error(err)
+            msg = f"ERROR occurs when submitting stock journal group {jrn_grp_name}."
             Notification(msg).show()
 
     def templ_name_change(self, **event_args):

@@ -18,6 +18,9 @@ class MainForm(MainFormTemplate):
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
+        from ..Controllers import UserSettingController
+        # Initialize user settings into cache
+        UserSettingController.get_user_settings()
         self.colpanel_input1.visible = False
         self.colpanel_input2.visible = False
         self.colpanel_rpt1.visible = False

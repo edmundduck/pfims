@@ -314,12 +314,14 @@ def submit_journal_group(jrn_grp_dropdown_selected):
     Returns:
         result (int): Successful update row count, otherwise None.
     """
+    from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.DD_SUBMITTED_JRN_GRP, None)
-    jrn_grp_id, _ = jrn_grp_dropdown_selected if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else [jrn_grp_dropdown_selected, None]
-    result = anvil.server.call('proc_submitted_journal_group_update', jrn_grp_id)
+    jrn_grp_id, jrn_grp_name = jrn_grp_dropdown_selected if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else [jrn_grp_dropdown_selected, None]
+    jrn_grp = StockJournalGroup().set_id(jrn_grp_id).set_name(jrn_grp_name).set_submitted_status(False)
+    result = anvil.server.call('submit_stock_journal_group', jrn_grp)
     if not result:
-        raise RuntimeError(f"Error occurs in proc_submitted_journal_group_update.")
+        raise RuntimeError(f"Error occurs in submit_stock_journal_group.")
     else:
         cache.clear_cache()
     return result
