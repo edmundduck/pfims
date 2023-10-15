@@ -222,7 +222,7 @@ def save_new_stock_journal_group(jrn_grp):
 @logger.log_function
 def save_existing_stock_journal_group(jrn_grp, del_iid = []):
     """
-    Save stock journal group change into the stock journal group DB table.
+    Save existing stock journal group change together with journals deletion into the stock journal group DB table.
 
     Parameters:
         jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
