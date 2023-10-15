@@ -107,19 +107,13 @@ def upsert_journals(tid, rows):
         cur.rowcount (int): Successful update row count, otherwise None.
     """
     try:
+        cur, conn = [None]*2
         conn = sysmod.db_connect() 
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
             # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
             # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
             if len(rows) > 0:
-                sql = 'INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
-                VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET sell_date=EXCLUDED.sell_date, buy_date=EXCLUDED.buy_date, symbol=EXCLUDED.symbol, \
-                qty=EXCLUDED.qty, sales=EXCLUDED.sales, cost=EXCLUDED.cost, fee=EXCLUDED.fee, sell_price=EXCLUDED.sell_price, buy_price=EXCLUDED.buy_price, \
-                pnl=EXCLUDED.pnl WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id'.format(
-                        schema=sysmod.schemafin(),
-                        p1=args
-                    )
                 mogstr = []
                 for row in rows:
                     tj = fobj.TradeJournal()
@@ -128,13 +122,20 @@ def upsert_journals(tid, rows):
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", tj.getTuple()).decode('utf-8'))
                 logger.trace("mogstr=", mogstr)
                 args = ",".join(mogstr)
-                cur.execute()
+                sql = 'INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
+                VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET sell_date=EXCLUDED.sell_date, buy_date=EXCLUDED.buy_date, symbol=EXCLUDED.symbol, \
+                qty=EXCLUDED.qty, sales=EXCLUDED.sales, cost=EXCLUDED.cost, fee=EXCLUDED.fee, sell_price=EXCLUDED.sell_price, buy_price=EXCLUDED.buy_price, \
+                pnl=EXCLUDED.pnl WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id'.format(
+                        schema=sysmod.schemafin(),
+                        p1=args
+                    )
+                cur.execute(sql)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Journals (template id:{0}) creation or update fail.".format(tid))
                 return cur.rowcount
             return 0
-    except (Exception, psycopg2.OperationalError) as err:
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -144,29 +145,38 @@ def upsert_journals(tid, rows):
     
 @anvil.server.callable("delete_journals")
 @logger.log_function
-def delete_journals(template_id, iid_list):
+def delete_journals(jrn_grp, iid_list):
     """
     Delete journals from the DB table which stores template journals.
 
     Parameters:
-        template_id (int): The ID of the template. All journals under the same template share the same TID.
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
         iid_list (list): The list of IID requiring deletion.
 
     Returns:
         cur.rowcount (int): Successful delete row count, otherwise None.
     """
     try:
-        if len(iid_list) > 0:
-            conn = sysmod.db_connect()
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                args = "({0})".format(",".join(str(i) for i in iid_list))
-                cur.execute(f"DELETE FROM {sysmod.schemafin()}.templ_journals WHERE template_id = {template_id} AND iid IN {args}")
-                conn.commit()
-                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Journals (template id:{0}) deletion fail.".format(template_id))
-                return cur.rowcount
-        return 0
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(jrn_grp, StockJournalGroup):
+            if iid_list and len(iid_list) > 0:
+                conn = sysmod.db_connect()
+                with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                    args = "({0})".format(','.join(str(i) for i in iid_list))
+                    sql = "DELETE FROM {schema}.templ_journals WHERE template_id = %s AND iid IN %s".format(
+                        schema=sysmod.schemafin()
+                    )
+                    mogstr = [jrn_grp.get_id(), args]
+                    stmt = cur.mogrify(sql, mogstr)
+                    cur.execute(stmt)
+                    conn.commit()
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                    if cur.rowcount <= 0: raise psycopg2.OperationalError("Journals (template id:{0}) deletion fail.".format(template_id))
+                    return cur.rowcount
+            return 0
+        else:
+            raise TypeError(f'The parameter is not a StockJournalGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -187,6 +197,7 @@ def save_new_stock_journal_group(jrn_grp):
         tid['template_id'] (int): Template ID if save is successful, otherwise None.
     """
     try:
+        cur, conn = [None]*2
         if isinstance(jrn_grp, StockJournalGroup):
             userid = sysmod.get_current_userid()
             conn = sysmod.db_connect()
@@ -204,12 +215,9 @@ def save_new_stock_journal_group(jrn_grp):
                 tid = cur.fetchone()
                 logger.debug("tid=", tid)
                 if not tid or tid.get('template_id', -1) < 0: 
-                    raise psycopg2.OperationalError('Stock journal group (id:{0}) creation or update fail.'.format(template_id))
+                    raise psycopg2.OperationalError('Stock journal group (id:{0}) creation fail.'.format(template_id))
                 return tid.get('template_id', -1)
-        else:
-            raise TypeError(f'The parameter is not a StockJournalGroup object.')
-    except TypeError as err:
-        logger.error(err)
+        raise TypeError(f'The parameter is not a StockJournalGroup object.')
     except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
@@ -220,39 +228,38 @@ def save_new_stock_journal_group(jrn_grp):
 
 @anvil.server.callable("save_existing_stock_journal_group")
 @logger.log_function
-def save_existing_stock_journal_group(jrn_grp, del_iid = []):
+def save_existing_stock_journal_group(jrn_grp):
     """
-    Save existing stock journal group change together with journals deletion into the stock journal group DB table.
+    Save existing stock journal group change into the stock journal group DB table.
 
     Parameters:
         jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
-        del_iid (list): The list of IID requiring deletion.
 
     Returns:
         tid['template_id'] (int): Template ID if save is successful, otherwise None.
     """
     try:
-        userid = sysmod.get_current_userid()
-        currenttime = datetime.now()
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if del_iid and len(del_iid) > 0:
-                delete_journals(jrn_grp.get_id(), del_iid)
-            if jrn_grp.get_id() in (None, ''):
-                sql = f"INSERT INTO {sysmod.schemafin()}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
-                VALUES ({userid},'{template_name}','{broker_id}',False,'{currenttime}','{currenttime}') RETURNING template_id"
-            else:
-                sql = f"UPDATE {sysmod.schemafin()}.templates SET template_name = '{template_name}', broker_id = '{broker_id}', \
-                submitted = False, template_create = '{currenttime}', template_lastsave = '{currenttime}' \
-                WHERE template_id = '{template_id}' RETURNING template_id"
-            cur.execute(sql)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            tid = cur.fetchone()
-            logger.debug("tid=", tid)
-            if tid['template_id'] < 0: raise psycopg2.OperationalError("Template (id:{0}) creation or update fail.".format(template_id))
-            return tid['template_id']
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(jrn_grp, StockJournalGroup):
+            userid = sysmod.get_current_userid()
+            currenttime = datetime.now()
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "UPDATE {schema}.templates SET template_name = %s, broker_id = %s, submitted = %s, template_lastsave = %s WHERE template_id = %s RETURNING template_id".format(
+                    schema=sysmod.schemafin()
+                )
+                mogstr = [jrn_grp.get_name(), jrn_grp.get_broker(), jrn_grp.get_submitted_status(), jrn_grp.get_lastsaved_time(), jrn_grp.get_id()]
+                stmt = cur.mogrify(sql, mogstr)
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                tid = cur.fetchone()
+                logger.debug("tid=", tid)
+                if not tid or tid.get('template_id', -1) < 0: 
+                    raise psycopg2.OperationalError("Stock journal group (id:{0}) update fail.".format(template_id))
+                return tid['template_id']
+        raise TypeError(f'The parameter is not a StockJournalGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -274,6 +281,7 @@ def submit_templates(template_id, submitted):
         cur.rowcount (int): Successful submit row count, otherwise None.
     """
     try:
+        cur, conn = [None]*2
         currenttime = datetime.now()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -298,7 +306,7 @@ def submit_templates(template_id, submitted):
   
 @anvil.server.callable("delete_stock_journal_group")
 @logger.log_function
-def delete_stock_journal_group(group_id):
+def delete_stock_journal_group(jrn_grp):
     """
     Delete a new stock journal group from the stock journal group DB table.
     
@@ -306,21 +314,24 @@ def delete_stock_journal_group(group_id):
     hence journals under particular group will be deleted automatically.
 
     Parameters:
-        group_id (int): The ID of the template. All journals under the same template share the same TID.
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
 
     Returns:
         cur.rowcount (int): Successful delete row count, otherwise None.
     """
     try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
-            stmt = cur.mogrify(sql, (group_id, ))
-            cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Stock journal group (id:{0}) deletion fail.".format(group_id))
-            return cur.rowcount
+        cur, conn = [None]*2
+        if isinstance(jrn_grp, StockJournalGroup):
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
+                stmt = cur.mogrify(sql, (jrn_grp.get_id(), ))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Stock journal group (id:{0}) deletion fail.".format(jrn_grp.get_id()))
+                return cur.rowcount
+        raise TypeError(f'The parameter is not a StockJournalGroup object.')
     except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
@@ -360,13 +371,17 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list=None):
         del_iid_list (list): A list of IID (item ID) to be deleted, every journal has an IID.
 
     Returns:
-        list: A list of all functions return required by the save.
+        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
+        result_u (int): Successful update row count, otherwise None.
+        result_d (int): Successful delete row count, otherwise None.
     """
-    group_id = save_existing_stock_journal_group(jrn_grp, del_iid_list) if jrn_grp.get_id() else save_new_stock_journal_group(jrn_grp)
-    if group_id is None or group_id <= 0:
-        raise RuntimeError(f'ERROR: Fail to save stock journal group {group_name}, aborting further update.')
-    result = upsert_journals(group_id, jrn_grp.get_journals())
-    # select_journals = select_stock_journals(group_id) if result is not None else None
-    # jrn_grp = jrn_grp.set_id(group_id).set_journals(select_journals)
+    result_d = delete_journals(jrn_grp, del_iid_list)
+    if jrn_grp.get_id():
+        group_id = save_existing_stock_journal_group(jrn_grp)
+    else:
+        group_id = save_new_stock_journal_group(jrn_grp)
+        if group_id is None or group_id <= 0:
+            raise RuntimeError(f'ERROR: Fail to create new stock journal group {group_name}, aborting further update on journals.')
+    result_u = upsert_journals(group_id, jrn_grp.get_journals())
     jrn_grp = jrn_grp.set_id(group_id)
-    return jrn_grp
+    return [jrn_grp, result_u, result_d]

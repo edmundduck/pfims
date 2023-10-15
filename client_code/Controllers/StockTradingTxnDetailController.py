@@ -181,9 +181,11 @@ def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropd
     if not jrn_grp_id_ori:
         del_iid = cache.get_cache()
         jrn_grp = jrn_grp.set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
-        jrn_grp = anvil.server.call('proc_save_group_and_journals', jrn_grp, del_iid)
+        jrn_grp, result_update, result_delete = anvil.server.call('proc_save_group_and_journals', jrn_grp, del_iid)
     if not jrn_grp:
-        raise RuntimeError(f"Error occurs in proc_save_group_and_journals.")
+        raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal group creation or update phase.")
+    elif not result_update or not result_delete:
+        raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal deletion or update phase.")
     else:
         logger.trace('jrn_grp=', jrn_grp)
         cache.clear_cache()
