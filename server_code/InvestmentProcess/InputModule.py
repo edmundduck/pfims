@@ -306,7 +306,7 @@ def submit_templates(template_id, submitted):
   
 @anvil.server.callable("delete_stock_journal_group")
 @logger.log_function
-def delete_stock_journal_group(jrn_grp):
+def delete_stock_journal_group(group_id):
     """
     Delete a new stock journal group from the stock journal group DB table.
     
@@ -314,24 +314,21 @@ def delete_stock_journal_group(jrn_grp):
     hence journals under particular group will be deleted automatically.
 
     Parameters:
-        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
+        group_id (int): The selected stock journal group ID.
 
     Returns:
         cur.rowcount (int): Successful delete row count, otherwise None.
     """
     try:
-        cur, conn = [None]*2
-        if isinstance(jrn_grp, StockJournalGroup):
-            conn = sysmod.db_connect()
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
-                stmt = cur.mogrify(sql, (jrn_grp.get_id(), ))
-                cur.execute(stmt)
-                conn.commit()
-                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Stock journal group (id:{0}) deletion fail.".format(jrn_grp.get_id()))
-                return cur.rowcount
-        raise TypeError(f'The parameter is not a StockJournalGroup object.')
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
+            stmt = cur.mogrify(sql, (group_id, ))
+            cur.execute(stmt)
+            conn.commit()
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+            if cur.rowcount <= 0: raise psycopg2.OperationalError("Stock journal group (id:{0}) deletion fail.".format(group_id))
+            return cur.rowcount
     except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()

@@ -91,9 +91,9 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
                 self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
                 msg = f'Stock journal group {self.templ_name.text} has been saved successfully.'
                 logger.info(msg)
-        except RuntimeError as err:
-            logger.error(msg)
-            msg = Notification(f'ERROR occurs when updating broker {self.text_broker_name.text}.')
+        except Exception as err:
+            logger.error(err)
+            msg = Notification(f'ERROR occurs when updating stock journal group {self.templ_name.text}.')
         Notification(msg).show()
             
     @btnmod.one_click_only
