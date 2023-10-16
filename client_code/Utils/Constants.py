@@ -124,3 +124,10 @@ class Database:
     """
     SCHEMA_FIN = 'fin'
     SCHEMA_REFDATA = 'refdata'
+
+class LinkRole:
+    """
+    Role used in Link components to distinguish they are selected or not.
+    """
+    SELECTED = 'selected'
+    UNSELECTED = ''

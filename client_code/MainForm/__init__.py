@@ -2,6 +2,7 @@ from ._anvil_designer import MainFormTemplate
 from anvil import *
 import anvil.users
 import anvil.server
+from ..Controllers import MainFormController
 from ..Utils import Constants as const
 from ..Utils import Routing
 
@@ -40,8 +41,7 @@ class MainForm(MainFormTemplate):
 
     def colpanel_link_input_click(self, **event_args):
         """This method is called when the link is clicked"""
-        print("CHECK ALL PROPS")
-        print(self.colpanel_link_input.)
+        self.colpanel_link_input.role = MainFormController.switch_role(self.colpanel_link_input.role)
         if self.colpanel_link_input.icon == const.Icons.MENU_SHRINK:
             self.colpanel_input1.visible = True
             self.colpanel_input2.visible = True
