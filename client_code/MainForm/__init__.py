@@ -1,9 +1,7 @@
 from ._anvil_designer import MainFormTemplate
 from anvil import *
 import anvil.users
-import anvil.server
 from ..Controllers import MainFormController
-from ..Utils import Constants as const
 from ..Utils import Routing
 
 class MainForm(MainFormTemplate):

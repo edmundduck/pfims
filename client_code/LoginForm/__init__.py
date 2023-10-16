@@ -1,8 +1,6 @@
 from ._anvil_designer import LoginFormTemplate
 from anvil import *
 import anvil.users
-import anvil.server
-from ..Utils import Constants as const
 from ..Utils import Routing
 
 class LoginForm(LoginFormTemplate):

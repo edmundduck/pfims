@@ -1,4 +1,3 @@
-import anvil.server
 import anvil.users
 
 # This is a module.
