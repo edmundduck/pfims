@@ -130,4 +130,4 @@ class LinkRole:
     Role used in Link components to distinguish they are selected or not.
     """
     SELECTED = 'selected'
-    UNSELECTED = ''
+    UNSELECTED = None
