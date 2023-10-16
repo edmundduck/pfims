@@ -9,6 +9,7 @@ from ..Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
+@logger.log_function
 def initialize_data():
     """
     Get all the data for form initialization.
@@ -16,29 +17,16 @@ def initialize_data():
     Returns:
         list: A list of all functions return required by the form initialization.
     """
-    settings, brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
-    return [settings, brokers, search_interval, ccy, submitted_group_list]
+    brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
+    return [brokers, search_interval, ccy, submitted_group_list]
 
-def get_user_settings(data=None, reload=False):
+def get_user_settings():
     """
-    Return user settings of the current logged on user.
-
-    Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
-        reload (Boolean): Optional. True if clear cache is required. False by default.
-
-    Returns:
-        cache.get_cache (list): User's settings.
+    Get latest user settings of the current logged on user and load to Global as user setting cache.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = data if data and isinstance(data, Setting) else None
-    cache = ClientCache(CacheKey.USER_SETTINGS, cache_data) 
-    if reload: 
-        cache.clear_cache()
-    if cache.is_empty():
-        rows = anvil.server.call('select_settings')
-        cache.set_cache(rows)
-    return cache.get_cache()
+    from .. import Global
+    setting = anvil.server.call('select_settings')
+    Global.settings = setting
 
 @logger.log_function
 def generate_brokers_dropdown(data=None, reload=False):
@@ -63,6 +51,7 @@ def generate_brokers_dropdown(data=None, reload=False):
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
+@logger.log_function
 def generate_search_interval_dropdown(data=None):
     """
     Access search interval dropdown from either client cache or generate from DB data returned from server side.
@@ -82,6 +71,7 @@ def generate_search_interval_dropdown(data=None):
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
+@logger.log_function
 def generate_currency_dropdown(data=None):
     """
     Access currency dropdown from either client cache or generate from DB data returned from server side.
@@ -101,6 +91,7 @@ def generate_currency_dropdown(data=None):
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
+@logger.log_function
 def generate_submitted_journal_groups_dropdown(data=None, reload=False):
     """
     Access submitted stock journal groups dropdown from either client cache or generate from DB data returned from server side.
@@ -232,6 +223,7 @@ def visible_logging_panel():
     """
     return True if anvil.app.environment.name in 'Dev' else False
 
+@logger.log_function
 def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefrom, dateto, logging_level):
     """
     Convert the fields from the form for submitting the user settings change in backend.
@@ -246,20 +238,23 @@ def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefr
     Returns:
         result (int): Successful update row count, otherwise None
     """
-    from ..Utils.ClientCache import ClientCache
+    from .. import Global
     from ..Utils.Constants import SearchInterval
-    cache = ClientCache(CacheKey.USER_SETTINGS, None)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     search_interval = interval_dropdown_selected[0] if isinstance(interval_dropdown_selected, (list, tuple)) else interval_dropdown_selected
     if search_interval != SearchInterval.INTERVAL_SELF_DEFINED:
         datefrom, dateto = [None, None]
-    result = anvil.server.call('proc_upsert_settings', Setting([None, broker_id, search_interval, datefrom, dateto, logging_level]))
+    settings = Setting([Global.userid, broker_id, search_interval, datefrom, dateto, logging_level])
+    result = anvil.server.call('upsert_settings', settings)
+    logger.debug(f"Updated settings (Result: {result})\n{settings}")
     if not result:
         raise RuntimeError(f"Error occurs in proc_upsert_setting.")
     else:
-        cache.clear_cache()
+        Global.settings = settings
+        logger.set_level()
     return result
 
+@logger.log_function
 def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
     """
     Convert the fields from the form for creating or updating the broker change in backend.
@@ -304,6 +299,7 @@ def delete_broker(broker_dropdown_selected):
         cache.clear_cache()
     return result
 
+@logger.log_function
 def submit_journal_group(jrn_grp_dropdown_selected):
     """
     Convert the fields from the form for submitting the journal group change in backend.

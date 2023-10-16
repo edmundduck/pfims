@@ -10,11 +10,11 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
 from ..DataObject.FinObject import ExpenseRecord as exprcd
-from ..Utils import Constants as const
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils.Constants import Database, Icons, PNLDrillMode
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -159,7 +159,7 @@ def select_journals(start_date, end_date, symbols=[]):
         conn_sql2 = " AND " if sell_sql and (buy_sql or symbol_sql) else ""
         conn_sql3 = " AND " if (sell_sql or buy_sql) and symbol_sql else ""
         sql = f"SELECT j.iid, j.template_id, j.sell_date, j.buy_date, j.symbol, j.qty, j.sales, j.cost, j.fee, \
-        j.sell_price, j.buy_price, j.pnl FROM {sysmod.schemafin()}.templ_journals j, {sysmod.schemafin()}.templates t \
+        j.sell_price, j.buy_price, j.pnl FROM {Database.SCHEMA_FIN}.templ_journals j, {Database.SCHEMA_FIN}.templates t \
         WHERE t.userid = {userid} AND t.template_id = j.template_id {conn_sql1} {sell_sql} {conn_sql2} \
         {buy_sql} {conn_sql3} {symbol_sql} ORDER BY sell_date DESC, symbol ASC"
         cur.execute(sql)
@@ -252,11 +252,11 @@ def build_pnl_data(start_date, end_date, symbols):
         logger.debug(f"sell={i['sell_date']} / buy={i['buy_date']} / diff={(i['sell_date']-i['buy_date']).days}")
         
         # Handling of Day
-        format_pnl_dict(i, dictstruct_day, sell_date_str, const.PNLDrillMode.DAY)
+        format_pnl_dict(i, dictstruct_day, sell_date_str, PNLDrillMode.DAY)
         # Handling of Month
-        format_pnl_dict(i, dictstruct_mth, sell_mth_str, const.PNLDrillMode.MONTH)
+        format_pnl_dict(i, dictstruct_mth, sell_mth_str, PNLDrillMode.MONTH)
         # Handling of Year
-        format_pnl_dict(i, dictstruct_yr, sell_yr_str, const.PNLDrillMode.YEAR)
+        format_pnl_dict(i, dictstruct_yr, sell_yr_str, PNLDrillMode.YEAR)
         # Handling parent:child relationship dict
         format_pnl_child(dictstruct_child, sell_mth_str, sell_date_str)
         format_pnl_child(dictstruct_child, sell_yr_str, sell_mth_str)
@@ -299,7 +299,7 @@ def generate_init_pnl_list(start_date, end_date, symbols):
             'fee': fee,
             'pnl': pnl,
             'mode': mode, 
-            'action': const.Icons.DATA_DRILLDOWN
+            'action': Icons.DATA_DRILLDOWN
         }
         rowstruct += [dictitem]
     
@@ -343,22 +343,22 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
     logger.trace('dictstruct_child=', dictstruct_child)
     logger.trace('dictstruct_gchild=', dictstruct_gchild)
     
-    if action == const.Icons.DATA_DRILLDOWN:
+    if action == Icons.DATA_DRILLDOWN:
         dictstruct = None
         childaction = ''
         rowstruct = pnl_list
         
-        if mode == const.PNLDrillMode.YEAR:
+        if mode == PNLDrillMode.YEAR:
             dictstruct = dictstruct_mth
-            childaction = const.Icons.DATA_DRILLDOWN
-        elif mode == const.PNLDrillMode.MONTH:
+            childaction = Icons.DATA_DRILLDOWN
+        elif mode == PNLDrillMode.MONTH:
             dictstruct = dictstruct_day
       
         # Update action from plus to minus
         for rowitem in rowstruct:
             if rowitem['sell_date'] == date_value:
                 rowstruct.remove(rowitem)
-                rowitem['action'] = const.Icons.DATA_SUMMARIZE
+                rowitem['action'] = Icons.DATA_SUMMARIZE
                 rowstruct = rowstruct + [rowitem]
       
         for j in dictstruct_child.get(date_value):
@@ -377,7 +377,7 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
             rowstruct += [dictitem]
       
         #rowstruct = rowstruct + pnl_list
-    elif action == const.Icons.DATA_SUMMARIZE:
+    elif action == Icons.DATA_SUMMARIZE:
         # Make a copy of P&L list into rowstruct
         rowstruct = list(pnl_list)
         childlist = dictstruct_child.get(date_value, {})
@@ -392,7 +392,7 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
             # Update action from minus to plus
             if rowitem['sell_date'] == date_value:
                 rowstruct.remove(rowitem)
-                rowitem['action'] = const.Icons.DATA_DRILLDOWN
+                rowitem['action'] = Icons.DATA_DRILLDOWN
                 rowstruct = rowstruct + [rowitem]
     else:
         pass
@@ -424,7 +424,7 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         conn_sql2 = " AND " if enddate_sql and (startdate_sql or label_sql) else ""
         conn_sql3 = " AND " if (enddate_sql or startdate_sql) and label_sql else ""
         sql = f"SELECT j.iid, j.tab_id, j.trandate AS {exprcd.Date}, j.account_id AS {exprcd.Account}, j.amount AS {exprcd.Amount}, j.labels AS {exprcd.Labels}, \
-        j.remarks AS {exprcd.Remarks}, j.stmt_dtl AS {exprcd.StmtDtl} FROM {sysmod.schemafin()}.exp_transactions j, {sysmod.schemafin()}.expensetab t \
+        j.remarks AS {exprcd.Remarks}, j.stmt_dtl AS {exprcd.StmtDtl} FROM {Database.SCHEMA_FIN}.exp_transactions j, {Database.SCHEMA_FIN}.expensetab t \
         WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {enddate_sql} {conn_sql2} \
         {startdate_sql} {conn_sql3} {label_sql} ORDER BY j.trandate DESC, j.iid ASC"
         cur.execute(sql)

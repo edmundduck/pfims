@@ -14,25 +14,24 @@ class UserSettingForm(UserSettingFormTemplate):
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
-        settings, brokers, search_interval, ccy, submitted_group_list = UserSettingController.initialize_data()
+        from .... import Global
+        brokers, search_interval, ccy, submitted_group_list = UserSettingController.initialize_data()
         self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown(data=brokers)
         self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(data=brokers)
         self.dropdown_logging_level.items = UserSettingController.generate_logging_level_dropdown()
         self.dropdown_interval.items = UserSettingController.generate_search_interval_dropdown(data=search_interval)
         self.dropdown_ccy.items = UserSettingController.generate_currency_dropdown(data=ccy)
         self.dropdown_sub_templ_list.items = UserSettingController.generate_submitted_journal_groups_dropdown(data=submitted_group_list)
-        self.dropdown_default_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(settings.get_broker())
-        self.dropdown_interval.selected_value = settings.get_search_interval()
-        self.time_datefrom.date = settings.get_search_datefrom()
-        self.time_dateto.date = settings.get_search_dateto()
-        self.dropdown_logging_level.selected_value = settings.get_logging_level()
+        self.dropdown_default_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(Global.settings.get_broker())
+        self.dropdown_interval.selected_value = Global.settings.get_search_interval()
+        self.time_datefrom.date = Global.settings.get_search_datefrom()
+        self.time_dateto.date = Global.settings.get_search_dateto()
+        self.dropdown_logging_level.selected_value = Global.settings.get_logging_level()
 
         self.time_datefrom.enabled, self.time_dateto.enabled = UserSettingController.enable_search_time_datefield(self.dropdown_interval.selected_value)
         self.button_broker_create.enabled = UserSettingController.enable_broker_create_button(self.text_broker_name.text)
         self.button_broker_update.enabled, self.button_broker_delete.enabled = UserSettingController.enable_broker_update_delete_button(self.dropdown_broker_list.selected_value)
         self.column_panel_logging.visible = UserSettingController.visible_logging_panel()
-        # Save the retrieved settings into cache
-        UserSettingController.get_user_settings(settings)
     
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
@@ -51,7 +50,6 @@ class UserSettingForm(UserSettingFormTemplate):
                 self.time_dateto.date, 
                 self.dropdown_logging_level.selected_value
             )
-            logger.set_level()
             n = Notification(f"Setting has been updated successfully.")
         except (Exception) as err:
             logger.error(err)

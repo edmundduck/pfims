@@ -2,32 +2,22 @@ from ._anvil_designer import MainFormTemplate
 from anvil import *
 import anvil.users
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 from ..Utils import Constants as const
 from ..Utils import Routing
 
 class MainForm(MainFormTemplate):
     def __init__(self, **properties):
-        # TODO - Move the logon logic to a new logon page
-        anvil.users.login_with_form()
-        username = anvil.server.call('proc_login')
-        anvil.server.call('get_user_data')
-        
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
-        from ..Controllers import UserSettingController
-        # Initialize user settings into cache
-        UserSettingController.get_user_settings()
+        from .. import Global
         self.colpanel_input1.visible = False
         self.colpanel_input2.visible = False
         self.colpanel_rpt1.visible = False
         self.colpanel_rpt2.visible = False
         self.colpanel_rpt3.visible = False
-        self.app_welcome_msg.text = "Welcome {username}".format(username=username)
+        self.app_welcome_msg.text = "Welcome {username}".format(username=Global.email)
         self.label_version.text = anvil.app.environment.name if anvil.app.environment.name in 'Dev' else None
         
 
@@ -50,6 +40,8 @@ class MainForm(MainFormTemplate):
 
     def colpanel_link_input_click(self, **event_args):
         """This method is called when the link is clicked"""
+        print("CHECK ALL PROPS")
+        print(self.colpanel_link_input.)
         if self.colpanel_link_input.icon == const.Icons.MENU_SHRINK:
             self.colpanel_input1.visible = True
             self.colpanel_input2.visible = True
@@ -119,10 +111,7 @@ class MainForm(MainFormTemplate):
 
     def app_logout_click(self, **event_args):
         """This method is called when the link is clicked"""
-        # TODO - Improve the logic later
         from .. import StartupModule
         anvil.users.logout()
-        self.content_panel.clear()
-        self.column_panel.clear()
         StartupModule.startup()
 

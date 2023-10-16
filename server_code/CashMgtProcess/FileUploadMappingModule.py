@@ -13,6 +13,7 @@ from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..DataObject.FinObject import ExpenseRecord as exprcd
+from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -33,7 +34,7 @@ def generate_mapping_dropdown(ftype):
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemafin()}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC"
+        sql = f"SELECT * FROM {Database.SCHEMA_FIN}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC"
         stmt = cur.mogrify(sql, (userid, ftype, ))
         cur.execute(stmt)
         rows = cur.fetchall()
@@ -52,7 +53,7 @@ def generate_mapping_type_dropdown():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemarefd()}.import_filetype ORDER BY seq ASC"
+        sql = f"SELECT * FROM {Database.SCHEMA_REFDATA}.import_filetype ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
@@ -70,7 +71,7 @@ def generate_expense_tbl_def_dropdown():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
+        sql = f"SELECT * FROM {Database.SCHEMA_REFDATA}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
@@ -88,7 +89,7 @@ def generate_upload_action_dropdown():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemarefd()}.upload_action ORDER BY seq ASC"
+        sql = f"SELECT * FROM {Database.SCHEMA_REFDATA}.upload_action ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
@@ -147,7 +148,7 @@ def select_expense_tbl_def_id():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {sysmod.schemarefd()}.expense_tbl_def ORDER BY seq ASC"
+        sql = f"SELECT * FROM {Database.SCHEMA_REFDATA}.expense_tbl_def ORDER BY seq ASC"
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
@@ -216,7 +217,7 @@ def select_mapping_matrix(id):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = f"SELECT datecol AS {exprcd.Date}, acctcol AS {exprcd.Account}, amtcol AS {exprcd.Amount}, remarkscol AS {exprcd.Remarks}, \
-        stmtdtlcol AS {exprcd.StmtDtl}, lblcol AS {exprcd.Labels} FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}"
+        stmtdtlcol AS {exprcd.StmtDtl}, lblcol AS {exprcd.Labels} FROM {Database.SCHEMA_FIN}.mappingmatrix WHERE gid = {id}"
         cur.execute(sql)
         rows = cur.fetchall()
         # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
@@ -255,11 +256,11 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                 rules = mapping_rules.get('rules', [])
                 currenttime = datetime.now()
                 if id is not None:
-                    sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
+                    sql = f"INSERT INTO {Database.SCHEMA_FIN}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
                     ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
                     stmt = cur.mogrify(sql, (int(userid), id, name, type_id, currenttime))
                 else:
-                    sql = f"INSERT INTO {sysmod.schemafin()}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
+                    sql = f"INSERT INTO {Database.SCHEMA_FIN}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
                     stmt = cur.mogrify(sql, (int(userid), name, type_id, currenttime))
                 cur.execute(stmt)
                 conn.commit()
@@ -285,7 +286,7 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                     matrixobj[column].append(col_id)
                 logger.trace("matrixobj=", matrixobj)
                 if len(mogstr) > 0:
-                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
+                    cur.executemany(f"INSERT INTO {Database.SCHEMA_FIN}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                     (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
                     etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col", mogstr)
                     conn.commit()
@@ -298,12 +299,12 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
                 # Third insert/update mapping matrix
                 matrixstr = generate_mapping_matrix(matrixobj, tbl_def)
                 if len(matrixstr) > 0:
-                    cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappingmatrix WHERE gid = {id}")
+                    cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.mappingmatrix WHERE gid = {id}")
                     conn.commit()
                     dcount = cur.rowcount
 
                     # TODO - the column sequence has to be fixed as matrixstr is stored in list instead of object
-                    cur.executemany(f"INSERT INTO {sysmod.schemafin()}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
+                    cur.executemany(f"INSERT INTO {Database.SCHEMA_FIN}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
                     VALUES ({id}, %s, %s, %s, %s, %s, %s)", matrixstr)
                     conn.commit()
                     count = cur.rowcount
@@ -315,7 +316,7 @@ def save_mapping_rules(id, mapping_rules, del_iid=None):
             # At last perform rules deletion (if any)
             if del_iid not in (None, ''):
                 args = "({0})".format(",".join(f"'{i}'" for i in del_iid))
-                sql = f"DELETE FROM {sysmod.schemafin()}.mappingrules WHERE gid = {id} AND col IN {args}"
+                sql = f"DELETE FROM {Database.SCHEMA_FIN}.mappingrules WHERE gid = {id} AND col IN {args}"
                 cur.execute(sql)
                 conn.commit()
                 dcount = cur.rowcount
@@ -368,7 +369,7 @@ def delete_mapping(id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"DELETE FROM {sysmod.schemafin()}.mappinggroup WHERE id = '{id}'")
+            cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.mappinggroup WHERE id = '{id}'")
             conn.commit()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete mapping group fail with rowcount <= 0.")

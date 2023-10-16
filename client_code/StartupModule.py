@@ -10,7 +10,7 @@ def startup():
     if not user_data:
         anvil.open_form('LoginForm')
     else:
-        Global.userid, Global.email, Global.role = user_data
+        Global.userid, Global.email, Global.role, Global.settings = user_data
         anvil.open_form('MainForm')
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ import psycopg2
 import psycopg2.extras
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -29,7 +30,7 @@ def generate_accounts_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
+        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
@@ -48,7 +49,7 @@ def generate_ccy_dropdown():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.ccy ORDER BY common_seq ASC, abbv ASC")
+        cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.ccy ORDER BY common_seq ASC, abbv ASC")
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
@@ -72,7 +73,7 @@ def get_selected_account_attr(selected_acct):
     else:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.accounts WHERE id=%s".format(schema=sysmod.schemafin())  
+            sql = "SELECT * FROM {schema}.accounts WHERE id=%s".format(schema=Database.SCHEMA_FIN)  
             stmt = cur.mogrify(sql, (selected_acct, ))
             cur.execute(stmt)
             row = cur.fetchone()
@@ -103,7 +104,7 @@ def create_account(name, ccy, valid_from, valid_to, status):
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "INSERT INTO {schema}.accounts (userid, name, ccy, valid_from, valid_to, status) \
-            VALUES (%s,%s,%s,%s,%s,%s) RETURNING id".format(schema=sysmod.schemafin())
+            VALUES (%s,%s,%s,%s,%s,%s) RETURNING id".format(schema=Database.SCHEMA_FIN)
             stmt = cur.mogrify(sql, (userid, name, ccy, valid_from, valid_to, status))
             cur.execute(stmt)
             conn.commit()
@@ -137,7 +138,7 @@ def create_multiple_accounts(accounts):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(accounts) > 0:
                 mogstr = ', '.join(cur.mogrify("(%s, %s, %s, %s, %s, %s)", (userid, account['name'], account['ccy'], account['valid_from'], account['valid_to'], account['status'])).decode('utf-8') for account in accounts)
-                stmt = f"INSERT INTO {sysmod.schemafin()}.accounts (userid, name, ccy, valid_from, valid_to, status) VALUES %s RETURNING id"
+                stmt = f"INSERT INTO {Database.SCHEMA_FIN}.accounts (userid, name, ccy, valid_from, valid_to, status) VALUES %s RETURNING id"
                 cur.execute(stmt % mogstr)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
@@ -174,7 +175,7 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.accounts SET name=%s, ccy=%s, valid_from=%s, valid_to=%s, status=%s WHERE id=%s".format(schema=sysmod.schemafin())
+            sql = "UPDATE {schema}.accounts SET name=%s, ccy=%s, valid_from=%s, valid_to=%s, status=%s WHERE id=%s".format(schema=Database.SCHEMA_FIN)
             stmt = cur.mogrify(sql, (name, ccy, valid_from, valid_to, status, id))
             cur.execute(stmt)
             conn.commit()
@@ -206,7 +207,7 @@ def delete_account(id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.accounts WHERE id=%s".format(schema=sysmod.schemafin())
+            sql = "DELETE FROM {schema}.accounts WHERE id=%s".format(schema=Database.SCHEMA_FIN)
             stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()

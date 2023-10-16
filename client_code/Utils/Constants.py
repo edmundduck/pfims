@@ -1,8 +1,3 @@
-import anvil.users
-import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
@@ -10,7 +5,6 @@ class CacheKey:
     """
     Non-function keys for client cache.
     """
-    USER_SETTINGS = 'user_settings'
     DD_BROKER = 'broker_dropdown'
     DD_CURRENCY = 'ccy_dropdown'
     DD_SEARCH_INTERVAL = 'search_interval_dropdown'
@@ -123,3 +117,10 @@ class Alerts:
     """
     CONFIRM = 'Y'
     CANCEL = 'N'
+
+class Database:
+    """
+    Settings used in database layer.
+    """
+    SCHEMA_FIN = 'fin'
+    SCHEMA_REFDATA = 'refdata'

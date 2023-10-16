@@ -8,10 +8,10 @@ import psycopg2.extras
 from datetime import date, datetime
 from ..Entities.StockJournalGroup import StockJournalGroup
 from ..Entities.StockJournal import StockJournal
-from ..Utils import Constants as const
 from ..DataObject import FinObject as fobj
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -30,7 +30,7 @@ def generate_drafting_stock_journal_groups_list():
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = 'SELECT * FROM {schema}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC'.format(
-            schema=sysmod.schemafin(),
+            schema=Database.SCHEMA_FIN,
             userid=userid
         )
         cur.execute(sql)
@@ -55,7 +55,7 @@ def select_stock_journal_group(group_id):
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = 'SELECT {col_def} FROM {schema}.templates WHERE template_id=%s'.format(
             col_def=StockJournalGroup.get_column_definition(),
-            schema=sysmod.schemafin()
+            schema=Database.SCHEMA_FIN
         )
         stmt = cur.mogrify(sql, (group_id, ))
         cur.execute(stmt)
@@ -80,7 +80,7 @@ def select_stock_journals(group_id):
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = 'SELECT * FROM {schema}.templ_journals WHERE template_id = %s ORDER BY sell_date DESC, buy_date DESC, symbol ASC'.format(
-            schema=sysmod.schemafin()
+            schema=Database.SCHEMA_FIN
         )
         stmt = cur.mogrify(sql, (group_id, ))
         cur.execute(stmt)
@@ -126,7 +126,7 @@ def upsert_journals(tid, rows):
                 VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET sell_date=EXCLUDED.sell_date, buy_date=EXCLUDED.buy_date, symbol=EXCLUDED.symbol, \
                 qty=EXCLUDED.qty, sales=EXCLUDED.sales, cost=EXCLUDED.cost, fee=EXCLUDED.fee, sell_price=EXCLUDED.sell_price, buy_price=EXCLUDED.buy_price, \
                 pnl=EXCLUDED.pnl WHERE templ_journals.iid=EXCLUDED.iid AND templ_journals.template_id=EXCLUDED.template_id'.format(
-                        schema=sysmod.schemafin(),
+                        schema=Database.SCHEMA_FIN,
                         p1=args
                     )
                 cur.execute(sql)
@@ -164,7 +164,7 @@ def delete_journals(jrn_grp, iid_list):
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                     args = "({0})".format(','.join(str(i) for i in iid_list))
                     sql = "DELETE FROM {schema}.templ_journals WHERE template_id = %s AND iid IN %s".format(
-                        schema=sysmod.schemafin()
+                        schema=Database.SCHEMA_FIN
                     )
                     mogstr = [jrn_grp.get_id(), args]
                     stmt = cur.mogrify(sql, mogstr)
@@ -204,7 +204,7 @@ def save_new_stock_journal_group(jrn_grp):
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "INSERT INTO {schema}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
                 VALUES (%s,%s,%s,%s,%s,%s) RETURNING template_id".format(
-                    schema=sysmod.schemafin()
+                    schema=Database.SCHEMA_FIN
                 )
                 mogstr = [userid, jrn_grp.get_name(), jrn_grp.get_broker(), jrn_grp.get_submitted_status(), \
                         jrn_grp.get_created_time(), jrn_grp.get_lastsaved_time()]
@@ -246,7 +246,7 @@ def save_existing_stock_journal_group(jrn_grp):
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "UPDATE {schema}.templates SET template_name = %s, broker_id = %s, submitted = %s, template_lastsave = %s WHERE template_id = %s RETURNING template_id".format(
-                    schema=sysmod.schemafin()
+                    schema=Database.SCHEMA_FIN
                 )
                 mogstr = [jrn_grp.get_name(), jrn_grp.get_broker(), jrn_grp.get_submitted_status(), jrn_grp.get_lastsaved_time(), jrn_grp.get_id()]
                 stmt = cur.mogrify(sql, mogstr)
@@ -288,12 +288,12 @@ def submit_stock_journal_group(jrn_grp):
                 submitted = jrn_grp.get_submitted_status()
                 if submitted:
                     sql = "UPDATE {schema}.templates SET submitted = %s, template_submitted = %s WHERE template_id = %s".format(
-                        schema=sysmod.schemafin()
+                        schema=Database.SCHEMA_FIN
                     )
                     mogstr = [submitted, jrn_grp.get_submitted_time(), jrn_grp.get_id()]
                 else:
                     sql = "UPDATE {schema}.templates SET submitted = %s WHERE template_id = %s".format(
-                        schema=sysmod.schemafin()
+                        schema=Database.SCHEMA_FIN
                     )
                     mogstr = [submitted, jrn_grp.get_id()]
                 stmt = cur.mogrify(sql, mogstr)
@@ -331,7 +331,7 @@ def delete_stock_journal_group(jrn_grp):
         if isinstance(jrn_grp, StockJournalGroup):
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=sysmod.schemafin())
+                sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=Database.SCHEMA_FIN)
                 stmt = cur.mogrify(sql, (jrn_grp.get_id(), ))
                 cur.execute(stmt)
                 conn.commit()

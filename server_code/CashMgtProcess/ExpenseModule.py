@@ -13,6 +13,7 @@ from ..DataObject.FinObject import ExpenseRecord as exprcd
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -30,7 +31,7 @@ def generate_expensetabs_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC")
+        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['tab_name'] + " (" + str(row['tab_id']) + ")", [row['tab_id'], row['tab_name']]) for row in rows)
@@ -53,7 +54,7 @@ def get_selected_expensetab_attr(selected_tab):
     else:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {sysmod.schemafin()}.expensetab WHERE tab_id={selected_tab}")
+            cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.expensetab WHERE tab_id={selected_tab}")
             row = cur.fetchone()
             cur.close()
         return [row['tab_id'], row['tab_name']]
@@ -77,7 +78,7 @@ def select_transactions(tid):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"SELECT iid, tab_id, trandate AS {exprcd.Date}, account_id AS {exprcd.Account}, \
             amount AS {exprcd.Amount}, labels AS {exprcd.Labels}, remarks AS {exprcd.Remarks}, stmt_dtl AS {exprcd.StmtDtl} \
-            FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
+            FROM {Database.SCHEMA_FIN}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
             rows = cur.fetchall()
             logger.trace("rows=", rows)
             # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
@@ -129,7 +130,7 @@ def upsert_transactions(tid, rows):
                     labels=EXCLUDED.labels, \
                     remarks=EXCLUDED.remarks, \
                     stmt_dtl=EXCLUDED.stmt_dtl \
-                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=sysmod.schemafin(), p1=args))
+                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=Database.SCHEMA_FIN, p1=args))
                     conn.commit()
                     result = cur.fetchall()
                     iid = list(r['iid'] for r in result)
@@ -170,7 +171,7 @@ def delete_transactions(tid, iid_list):
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 args = "({0})".format(",".join(str(i) for i in iid_list))
-                cur.execute(f"DELETE FROM {sysmod.schemafin()}.exp_transactions WHERE tab_id = {tid} AND iid IN {args}")
+                cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.exp_transactions WHERE tab_id = {tid} AND iid IN {args}")
                 conn.commit()
                 count = cur.rowcount
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
@@ -206,10 +207,10 @@ def save_expensetab(id, name):
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if id in (None, ''):
-                sql = f"INSERT INTO {sysmod.schemafin()}.expensetab (userid, tab_name, submitted, tab_create, tab_lastsave) \
+                sql = f"INSERT INTO {Database.SCHEMA_FIN}.expensetab (userid, tab_name, submitted, tab_create, tab_lastsave) \
                 VALUES ({userid},'{name}',False,'{currenttime}','{currenttime}') RETURNING tab_id"
             else:
-                sql = f"UPDATE {sysmod.schemafin()}.expensetab SET tab_name='{name}', submitted=False, tab_create='{currenttime}', tab_lastsave='{currenttime}' \
+                sql = f"UPDATE {Database.SCHEMA_FIN}.expensetab SET tab_name='{name}', submitted=False, tab_create='{currenttime}', tab_lastsave='{currenttime}' \
                 WHERE userid={userid} AND tab_id={id} RETURNING tab_id"
             cur.execute(sql)
             conn.commit()
@@ -245,10 +246,10 @@ def submit_expensetab(id, submitted):
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if submitted is True:
-                sql = f"UPDATE {sysmod.schemafin()}.expensetab SET submitted={submitted}, tab_submitted='{currenttime}' \
+                sql = f"UPDATE {Database.SCHEMA_FIN}.expensetab SET submitted={submitted}, tab_submitted='{currenttime}' \
                 WHERE tab_id={id} RETURNING tab_id"
             else:
-                sql = f"UPDATE {sysmod.schemafin()}.expensetab SET submitted={submitted} WHERE tab_id={id} RETURNING tab_id"
+                sql = f"UPDATE {Database.SCHEMA_FIN}.expensetab SET submitted={submitted} WHERE tab_id={id} RETURNING tab_id"
             cur.execute(sql)
             conn.commit()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
@@ -281,7 +282,7 @@ def delete_expensetab(tab_id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"DELETE FROM {sysmod.schemafin()}.expensetab WHERE tab_id = {tab_id}")
+            cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.expensetab WHERE tab_id = {tab_id}")
             conn.commit()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Expense tab (id:{0}) deletion fail.".format(tab_id))

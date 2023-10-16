@@ -7,3 +7,4 @@ import anvil.users
 userid = None
 email = None
 role = None
+settings = None

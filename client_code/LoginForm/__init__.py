@@ -15,3 +15,8 @@ class LoginForm(LoginFormTemplate):
         from .. import StartupModule
         anvil.users.login_with_form()
         StartupModule.startup()
+
+    def button_signup_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
