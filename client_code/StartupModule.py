@@ -8,10 +8,10 @@ from . import Global
 def startup():
     user_data = anvil.server.call('get_user_data')
     if not user_data:
-        open_form('LoginForm')
+        anvil.open_form('LoginForm')
     else:
         Global.userid, Global.email, Global.role = user_data
-        open_form('MainForm')
+        anvil.open_form('MainForm')
 
 if __name__ == "__main__":
     startup()

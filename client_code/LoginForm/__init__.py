@@ -10,11 +10,8 @@ class LoginForm(LoginFormTemplate):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
 
-    def app_logout_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        # TODO - Improve the logic later
-        anvil.users.logout()
-        self.app_welcome_msg.text = ""
-        self.content_panel.clear()
-        self.column_panel.clear()
-        open_form('form_main')
+    def button_login_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        from .. import StartupModule
+        anvil.users.login_with_form()
+        StartupModule.startup()

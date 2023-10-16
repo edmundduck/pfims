@@ -120,9 +120,9 @@ class MainForm(MainFormTemplate):
     def app_logout_click(self, **event_args):
         """This method is called when the link is clicked"""
         # TODO - Improve the logic later
+        from .. import StartupModule
         anvil.users.logout()
-        self.app_welcome_msg.text = ""
         self.content_panel.clear()
         self.column_panel.clear()
-        open_form('form_main')
+        StartupModule.startup()
 
