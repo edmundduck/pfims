@@ -6,7 +6,7 @@ from ..Entities.Setting import Setting
 from ..InvestmentProcess import InputModule
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
-from ..Utils.Constants import SettingConfig
+from ..Utils.Constants import Database, SettingConfig
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -25,7 +25,7 @@ def select_settings():
         userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT userid, default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=sysmod.schemafin())
+            sql = "SELECT userid, default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=Database.SCHEMA_FIN)
             stmt = cur.mogrify(sql, (userid, ))
             cur.execute(stmt)
             row = cur.fetchone()
@@ -48,7 +48,7 @@ def generate_brokers_simplified_list():
         userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT broker_id, name, ccy FROM {schema}.brokers WHERE userid = {userid} ORDER BY broker_id ASC".format(schema=sysmod.schemafin(), userid=userid)
+            sql = "SELECT broker_id, name, ccy FROM {schema}.brokers WHERE userid = {userid} ORDER BY broker_id ASC".format(schema=Database.SCHEMA_FIN, userid=userid)
             cur.execute(sql)
             rows = cur.fetchall()
             logger.debug("simplified_list=", rows)
@@ -83,7 +83,7 @@ def upsert_settings(setting):
                 logging_level = mogstr[-1]
                 conn = sysmod.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                    sql = f"INSERT INTO {sysmod.schemafin()}.settings (userid, default_broker, default_interval, default_datefrom, \
+                    sql = f"INSERT INTO {Database.SCHEMA_FIN}.settings (userid, default_broker, default_interval, default_datefrom, \
                     default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
                     default_interval=%s, default_datefrom=%s, default_dateto=%s, logging_level=%s"
                     stmt = cur.mogrify(sql, mogstr)
@@ -91,6 +91,7 @@ def upsert_settings(setting):
                     conn.commit()
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if cur.rowcount <= 0: raise psycopg2.OperationalError("Update settings fail with rowcount <= 0.")
+                    # Update the logging level into server session directly here.
                     anvil.server.session['loglevel'] = logging_level
                     return cur.rowcount
             else:
@@ -126,11 +127,11 @@ def create_broker(broker_name, ccy):
         try:
             conn = sysmod.db_connect()  
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(f"INSERT INTO {sysmod.schemafin()}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{broker_name}','{ccy}') RETURNING id")
+                cur.execute(f"INSERT INTO {Database.SCHEMA_FIN}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{broker_name}','{ccy}') RETURNING id")
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
                 id = cur.fetchone()['id']
                 conn.commit()
-                cur.execute(f"SELECT broker_id FROM {sysmod.schemafin()}.brokers WHERE id={id}")
+                cur.execute(f"SELECT broker_id FROM {Database.SCHEMA_FIN}.brokers WHERE id={id}")
                 broker_id = cur.fetchone()['broker_id']
                 if id <= 0 and broker_id is None: raise psycopg2.OperationalError("Create broker fail with invalid broker ID.")
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
@@ -164,7 +165,7 @@ def update_broker(broker_id, broker_name, ccy):
         try:
             conn = sysmod.db_connect()  
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(f"UPDATE {sysmod.schemafin()}.brokers SET prefix='{prefix}', name='{broker_name}', ccy='{ccy}' WHERE broker_id='{broker_id}'")
+                cur.execute(f"UPDATE {Database.SCHEMA_FIN}.brokers SET prefix='{prefix}', name='{broker_name}', ccy='{ccy}' WHERE broker_id='{broker_id}'")
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Update broker fail with rowcount <= 0.")
@@ -196,7 +197,7 @@ def delete_broker(broker_id):
         try:
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                cur.execute(f"DELETE FROM {sysmod.schemafin()}.brokers WHERE broker_id = '{broker_id}'")
+                cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.brokers WHERE broker_id = '{broker_id}'")
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete brokers fail with rowcount <= 0.")
@@ -223,7 +224,7 @@ def generate_currency_list():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.ccy ORDER BY common_seq ASC, abbv ASC")
+        cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.ccy ORDER BY common_seq ASC, abbv ASC")
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
@@ -242,7 +243,7 @@ def generate_submitted_journal_groups_list():
         userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT template_id, template_name FROM {sysmod.schemafin()}.templates WHERE userid = {userid} AND submitted=true")
+            cur.execute(f"SELECT template_id, template_name FROM {Database.SCHEMA_FIN}.templates WHERE userid = {userid} AND submitted=true")
             rows = cur.fetchall()
             logger.debug("rows=", rows)
             cur.close()
@@ -261,7 +262,7 @@ def generate_search_interval_list():
     def psgldb_generate_search_interval_list():
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT id, name FROM {sysmod.schemarefd()}.search_interval ORDER BY seq ASC")
+            cur.execute(f"SELECT id, name FROM {Database.SCHEMA_REFDATA}.search_interval ORDER BY seq ASC")
             rows = cur.fetchall()
             logger.debug("rows=", rows)
             cur.close()
@@ -277,29 +278,8 @@ def proc_init_settings():
     Returns:
         list: A list of all functions return required by the form initialization.
     """
-    settings = select_settings()
     brokers = generate_brokers_simplified_list()
     search_interval = generate_search_interval_list()
     ccy = generate_currency_list()
     submitted_group_list = generate_submitted_journal_groups_list()
-    return [settings, brokers, search_interval, ccy, submitted_group_list]
-
-@anvil.server.callable("proc_upsert_settings")
-@logger.log_function
-def proc_upsert_settings(setting):
-    """
-    Consolidated process for settings update.
-
-    Parameters:
-        def_broker (str): The name of the broker.
-        def_interval (str): The ID of the default search interval.
-        def_datefrom (date): The date to default search from.
-        def_dateto (date): The date to default search to.
-        logging_level (int): The user's logging level mostly based on Python's logging module, data type in DB is smallint.
-
-    Returns:
-        int: Successful update row count, otherwise None
-    """
-    count = upsert_settings(setting)
-    sysmod.set_user_logging_level()
-    return count
+    return [brokers, search_interval, ccy, submitted_group_list]

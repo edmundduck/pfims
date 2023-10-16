@@ -8,6 +8,7 @@ from ..Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
+@logger.log_function
 def init_cache():
     """
     Call one server function to preload all caches required by the form.
@@ -17,6 +18,7 @@ def init_cache():
     ClientCache(CacheKey.DD_BROKER, list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data_to_cache[0]))
     ClientCache(CacheKey.DD_STOCK_JRN_GRP, list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data_to_cache[1]))
 
+@logger.log_function
 def generate_brokers_dropdown(data=None, reload=False):
     """
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
@@ -80,9 +82,10 @@ def __get_stock_journal_group__(group_dropdown_selected, reload=False):
             logger.trace(f'jrn_grp_id={jrn_grp_id} / jrn_grp={jrn_grp} / journals={list(str(j) for j in jrn_grp.get_journals()) if jrn_grp.get_journals() else []}')
     else:
         from . import UserSettingController
+        from .. import Global
         from ..Entities.StockJournalGroup import StockJournalGroup
         blank_jrn_grp = StockJournalGroup()
-        jrn_grp = blank_jrn_grp.set_broker(UserSettingController.get_user_settings().get_broker())
+        jrn_grp = blank_jrn_grp.set_broker(Global.settings.get_broker())
         logger.trace(f'jrn_grp_id={jrn_grp_id} / blank_jrn_grp={blank_jrn_grp}')
     return jrn_grp
 
@@ -142,8 +145,9 @@ def get_broker_dropdown_selected_item(group_dropdown_selected=None):
     Returns:
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
     from . import UserSettingController
+    from .. import Global
+    from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.DD_BROKER, None)
     if group_dropdown_selected:
         jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
@@ -151,7 +155,7 @@ def get_broker_dropdown_selected_item(group_dropdown_selected=None):
             UserSettingController.generate_brokers_dropdown()
         selected_item = cache.get_complete_key(jrn_grp.get_broker())
     else:
-        selected_item = cache.get_complete_key(UserSettingController.get_user_settings().get_broker())
+        selected_item = cache.get_complete_key(Global.settings.get_broker())
     return selected_item
 
 def enable_stock_journal_group_submit_button(group_dropdown_selected):
@@ -272,7 +276,6 @@ def delete_stock_journal_group(group_dropdown_selected):
         cache.clear_cache()
     return result
 
-@logger.log_function
 def calculate_amount(sell_amt, buy_amt, fee, qty):
     """
     Calculate all amount fields including stock profit and stock unit price during sell or buy.

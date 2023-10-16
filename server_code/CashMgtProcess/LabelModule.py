@@ -12,6 +12,7 @@ from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from fuzzywuzzy import fuzz
+from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -29,7 +30,7 @@ def generate_labels_dropdown():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
+        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['name'] + " (" + str(row['id']) + ")", (row['id'], row['name'])) for row in rows)
@@ -47,7 +48,7 @@ def generate_labels_dict_of_list():
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} ORDER BY name ASC")
+        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
     return helper.to_dict_of_list(rows)
@@ -70,7 +71,7 @@ def get_selected_label_attr(selected_lbl):
     else:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = f"SELECT * FROM {sysmod.schemafin()}.labels WHERE userid = {userid} AND id=%s"  
+            sql = f"SELECT * FROM {Database.SCHEMA_FIN}.labels WHERE userid = {userid} AND id=%s"  
             stmt = cur.mogrify(sql, (selected_lbl, ))
             cur.execute(stmt)
             row = cur.fetchone()
@@ -88,7 +89,7 @@ def generate_labels_mapping_action_dropdown():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {sysmod.schemarefd()}.label_mapping_action ORDER BY seq ASC")
+        cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.label_mapping_action ORDER BY seq ASC")
         rows = cur.fetchall()
         cur.close()
     content = list((row['action'], [row['id'], row['action']]) for row in rows)
@@ -112,7 +113,7 @@ def create_label(labels):
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(labels) > 0:
                 mogstr = ', '.join(cur.mogrify("(%s, %s, %s, %s)", (userid, label['name'], label['keywords'], label['status'])).decode('utf-8') for label in labels)
-                stmt = f"INSERT INTO {sysmod.schemafin()}.labels (userid, name, keywords, status) VALUES %s RETURNING id"
+                stmt = f"INSERT INTO {Database.SCHEMA_FIN}.labels (userid, name, keywords, status) VALUES %s RETURNING id"
                 cur.execute(stmt % mogstr)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
@@ -145,7 +146,7 @@ def update_label(id, name, keywords, status):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = f"UPDATE {sysmod.schemafin()}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s"
+            sql = f"UPDATE {Database.SCHEMA_FIN}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s"
             stmt = cur.mogrify(sql, (name, keywords, status, id))
             cur.execute(stmt)
             conn.commit()
@@ -175,7 +176,7 @@ def delete_label(id):
     try:
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = f"DELETE FROM {sysmod.schemafin()}.labels WHERE id=%s"
+            sql = f"DELETE FROM {Database.SCHEMA_FIN}.labels WHERE id=%s"
             stmt = cur.mogrify(sql, (id, ))
             cur.execute(stmt)
             conn.commit()
