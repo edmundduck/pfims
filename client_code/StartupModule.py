@@ -1,5 +1,6 @@
 import anvil.server
 import anvil.users
+from . import Global
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -9,8 +10,7 @@ def startup():
     if not user_data:
         open_form('LoginForm')
     else:
-        _globals.active, _globals.clients, _globals.projects, _globals.project_rows, \
-        _globals.tags, _globals.time_trackers, _globals.user = user_data
+        Global.userid, Global.email, Global.role = user_data
         open_form('MainForm')
 
 if __name__ == "__main__":
