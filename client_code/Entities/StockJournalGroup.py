@@ -1,27 +1,84 @@
 import anvil.server
 import anvil.users
+from .BaseEntity import BaseEntity
+from .StockJournal import StockJournal
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-class StockJournalGroup:
-    def __init__(self, data):
-        self.set(data)
+@anvil.server.portable_class
+class StockJournalGroup(BaseEntity):
+    __db_column_def__ = ['userid', 'template_id', 'template_name', 'broker_id', 'submitted', 'template_create', 'template_lastsave', 'template_submitted']
+    __property_def__ = __db_column_def__ + ['journals']
+    
+    def __init__(self, data=None):
+        super().__init__(data)
 
-    def get(self):
-        return [self.id, self.name, self.broker_id, self.submitted, self.created_time, self.lastsaved_time, self.submitted_time, self.journals]
+    @staticmethod
+    def get_column_definition():
+        return ', '.join(c for c in StockJournalGroup.__db_column_def__)
+
+    def get_user_id(self):
+        return getattr(self, self.__property_def__[0], None)
         
-    def set(self, data):
-        if data and isinstance(data, list):
-            self.id = data[0]
-            self.name = data[1]
-            self.broker_id = data[2]
-            self.submitted = data[3]
-            self.created_time = data[4]
-            self.lastsaved_time = data[5]
-            self.submitted_time = data[6]
-            self.journals = data[7]
+    def get_id(self):
+        return getattr(self, self.__property_def__[1], None)
+
+    def get_name(self):
+        return getattr(self, self.__property_def__[2], None)
+    
+    def get_broker(self):
+        return getattr(self, self.__property_def__[3], None)
+
+    def get_submitted_status(self):
+        return getattr(self, self.__property_def__[4], None)
+
+    def get_created_time(self):
+        return getattr(self, self.__property_def__[5], None)
+
+    def get_lastsaved_time(self):
+        return getattr(self, self.__property_def__[6], None)
+
+    def get_submitted_time(self):
+        return getattr(self, self.__property_def__[7], None)
+
+    def get_journals(self):
+        return getattr(self, self.__property_def__[8], [])
+
+    def set_user_id(self, userid):
+        return self.set_single_attribute(0, userid)
+
+    def set_id(self, id):
+        return self.set_single_attribute(1, id)
+        
+    def set_name(self, name):
+        return self.set_single_attribute(2, name)
+        
+    def set_broker(self, broker_id):
+        return self.set_single_attribute(3, broker_id)
+        
+    def set_submitted_status(self, status):
+        return self.set_single_attribute(4, status)
+        
+    def set_created_time(self, created_time):
+        return self.set_single_attribute(5, created_time)
+        
+    def set_lastsaved_time(self, lastsaved_time):
+        return self.set_single_attribute(6, lastsaved_time)
+        
+    def set_submitted_time(self, submitted_time):
+        return self.set_single_attribute(7, submitted_time)
+        
+    def set_journals(self, journals):
+        if isinstance(journals, StockJournal):
+            return self.set_single_attribute(8, journals)
+        elif isinstance(journals, list):
+            return self.set_single_attribute(8, list(j for j in journals))
+
+    def copy(self):
+        return StockJournalGroup(self.get_dict())
 
     def is_valid(self):
-        if not self.name or self.name.isspace(): return False
-        if not self.broker_id or self.broker_id.isspace(): return False
+        group_name, broker_id = [self.get_name(), self.get_broker()]
+        if not group_name or group_name.isspace(): return False
+        if not broker_id or broker_id.isspace(): return False
         return True

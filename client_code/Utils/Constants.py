@@ -11,10 +11,12 @@ class CacheKey:
     Non-function keys for client cache.
     """
     USER_SETTINGS = 'user_settings'
-    BROKER = 'broker_dropdown'
-    CURRENCY = 'ccy_dropdown'
-    SEARCH_INTERVAL = 'search_interval_dropdown'
-    SUBMITTED_JRN_GRP = 'submitted_journal_group_dropdown'
+    DD_BROKER = 'broker_dropdown'
+    DD_CURRENCY = 'ccy_dropdown'
+    DD_SEARCH_INTERVAL = 'search_interval_dropdown'
+    DD_STOCK_JRN_GRP = 'stock_journal_group_dropdown'
+    DD_SUBMITTED_JRN_GRP = 'submitted_journal_group_dropdown'
+    OBJ_STOCK_JRN_GRP = 'stock_journal_group_object'
     STOCK_INPUT_DEL_IID = 'stock_input_delete_row_iid'
     EXP_INPUT_DEL_IID = 'exp_input_delete_row_iid'
 

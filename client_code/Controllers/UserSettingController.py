@@ -23,16 +23,21 @@ def get_user_settings(data=None, reload=False):
     """
     Return user settings of the current logged on user.
 
+    Parameters:
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
     Returns:
         cache.get_cache (list): User's settings.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.USER_SETTINGS, data.get_dict())
+    cache_data = data if data and isinstance(data, Setting) else None
+    cache = ClientCache(CacheKey.USER_SETTINGS, cache_data) 
     if reload: 
         cache.clear_cache()
     if cache.is_empty():
         rows = anvil.server.call('select_settings')
-        cache.set_cache(rows.get_dict())
+        cache.set_cache(rows)
     return cache.get_cache()
 
 @logger.log_function
@@ -41,15 +46,15 @@ def generate_brokers_dropdown(data=None, reload=False):
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
-        reload (Boolean): True if clear cache is required. False by default.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.BROKER, cache_data)
+    cache = ClientCache(CacheKey.DD_BROKER, cache_data)
     if reload:
         cache.clear_cache()
     if cache.is_empty():
@@ -63,14 +68,14 @@ def generate_search_interval_dropdown(data=None):
     Access search interval dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
 
     Returns:
         cache.get_cache (list): Search interval dropdown formed by search interval DB table data.
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((r['name'], r['id']) for r in data) if data else None
-    cache = ClientCache(CacheKey.SEARCH_INTERVAL, cache_data)
+    cache = ClientCache(CacheKey.DD_SEARCH_INTERVAL, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_search_interval_list')
         new_dropdown = list((r['name'], r['id']) for r in rows)
@@ -82,14 +87,14 @@ def generate_currency_dropdown(data=None):
     Access currency dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
 
     Returns:
         cache.get_cache (list): Currency dropdown formed by currency DB table data.
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in data) if data else None
-    cache = ClientCache(CacheKey.CURRENCY, cache_data)
+    cache = ClientCache(CacheKey.DD_CURRENCY, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_currency_list')
         new_dropdown = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in rows)
@@ -101,15 +106,15 @@ def generate_submitted_journal_groups_dropdown(data=None, reload=False):
     Access submitted stock journal groups dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
-        reload (Boolean): True if clear cache is required. False by default.
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Submitted stock journal groups dropdown formed by stock journal groups DB table data.
     """
     from ..Utils.ClientCache import ClientCache
     cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.SUBMITTED_JRN_GRP, cache_data)
+    cache = ClientCache(CacheKey.DD_SUBMITTED_JRN_GRP, cache_data)
     if cache.is_empty():
         rows = anvil.server.call('generate_submitted_journal_groups_list')
         new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
@@ -129,11 +134,14 @@ def get_broker_dropdown_selected_item(broker_id):
     """
     Return a complete key based on a partial broker ID which is a part of the key in a dropdown list.
 
+    Parameters:
+        broker_id (string): The ID of the selected broker.
+
     Returns:
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
     from ..Utils.ClientCache import ClientCache
-    brokers_dropdown = ClientCache(CacheKey.BROKER, None)
+    brokers_dropdown = ClientCache(CacheKey.DD_BROKER, None)
     if brokers_dropdown.is_empty():
         generate_brokers_dropdown()
     selected_item = brokers_dropdown.get_complete_key(broker_id)
@@ -143,6 +151,9 @@ def enable_search_time_datefield(interval_selection):
     """
     Enable or disable the "search time" (from, to) date field.
 
+    Parameters:
+        interval_selection (list): The selected value in list from the search interval dropdown.
+        
     Returns:
         Boolean, Boolean: True for enable, false for disable.
     """
@@ -154,6 +165,11 @@ def set_search_time_datefield_value(interval_selection, date_from_value, date_to
     """
     Set the "search time" (from, to) date field value.
 
+    Parameters:
+        interval_selection (list): The selected value in list from the search interval dropdown.
+        date_from_value (date): The date to search from.
+        date_from_to (date): The date to search to.
+        
     Returns:
         String, String: Return original values provided in parameters if it's user defined, otherwise None.
     """
@@ -190,6 +206,9 @@ def set_selected_broker_fields(broker_selection):
     """
     Set the broker name and currency based on broker dropdown.
 
+    Parameters:
+        broker_selection (list): The selected value in list from the broker dropdown.
+        
     Returns:
         broker_id (String): Selected broker ID.
         broker_name (String): Selected broker name, None instead if broker ID is none or empty.
@@ -254,7 +273,7 @@ def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
         result (int): The ID of the newly created or row count of the updated broker, otherwise None.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.BROKER, None)
+    cache = ClientCache(CacheKey.DD_BROKER, None)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     ccy = ccy_dropdown_selected[0] if isinstance(ccy_dropdown_selected, (list, tuple)) else ccy_dropdown_selected
     result = anvil.server.call('update_broker', broker_id, broker_name, ccy) if broker_id else \
@@ -276,7 +295,7 @@ def delete_broker(broker_dropdown_selected):
         result (int): Successful update row count, otherwise None.
     """
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.BROKER, None)
+    cache = ClientCache(CacheKey.DD_BROKER, None)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     result = anvil.server.call('delete_broker', broker_id)
     if not result:
@@ -295,12 +314,14 @@ def submit_journal_group(jrn_grp_dropdown_selected):
     Returns:
         result (int): Successful update row count, otherwise None.
     """
+    from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.SUBMITTED_JRN_GRP, None)
-    jrn_grp_id, _ = jrn_grp_dropdown_selected if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else [jrn_grp_dropdown_selected, None]
-    result = anvil.server.call('proc_submitted_journal_group_update', jrn_grp_id)
+    cache = ClientCache(CacheKey.DD_SUBMITTED_JRN_GRP, None)
+    jrn_grp_id, jrn_grp_name = jrn_grp_dropdown_selected if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else [jrn_grp_dropdown_selected, None]
+    jrn_grp = StockJournalGroup().set_id(jrn_grp_id).set_name(jrn_grp_name).set_submitted_status(False)
+    result = anvil.server.call('submit_stock_journal_group', jrn_grp)
     if not result:
-        raise RuntimeError(f"Error occurs in proc_submitted_journal_group_update.")
+        raise RuntimeError(f"Error occurs in submit_stock_journal_group.")
     else:
         cache.clear_cache()
     return result

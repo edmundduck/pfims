@@ -303,18 +303,3 @@ def proc_upsert_settings(setting):
     count = upsert_settings(setting)
     sysmod.set_user_logging_level()
     return count
-
-@anvil.server.callable("proc_submitted_journal_group_update")
-@logger.log_function
-def proc_submitted_journal_group_update(templ_id):
-    """
-    Consolidated process for submitted template dropdown update.
-
-    Parameters:
-        templ_id (int): ID of the template.
-
-    Returns:
-        result (int): Successful submit row count, otherwise None.
-    """
-    result = InputModule.submit_templates(templ_id, False)
-    return result

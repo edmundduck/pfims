@@ -17,10 +17,10 @@ def open_setting_form(self, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(UserSettingForm())
 
-def open_stock_input_form(self, **event_args):
-    from ..Input.StockInputForm import StockInputForm
+def open_stock_txn_input_form(self, **event_args):
+    from ..Forms.Investment.StockTradingTxnDetailForm import StockTradingTxnDetailForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(StockInputForm())
+    anvil.get_open_form().content_panel.add_component(StockTradingTxnDetailForm())
 
 def open_exp_input_form(self, tab_id=None, data=None, **event_args):
     from ..Input.ExpenseInputForm import ExpenseInputForm

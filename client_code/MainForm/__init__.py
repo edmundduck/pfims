@@ -18,6 +18,9 @@ class MainForm(MainFormTemplate):
         self.init_components(**properties)
         
         # Any code you write here will run when the form opens.
+        from ..Controllers import UserSettingController
+        # Initialize user settings into cache
+        UserSettingController.get_user_settings()
         self.colpanel_input1.visible = False
         self.colpanel_input2.visible = False
         self.colpanel_rpt1.visible = False
@@ -100,7 +103,7 @@ class MainForm(MainFormTemplate):
         self.reset_link_status()
         self.colpanel_link_input.role = 'selected'
         self.colpanel_lv2link_input_stock.role = 'selected'
-        Routing.open_stock_input_form(self)
+        Routing.open_stock_txn_input_form(self)
 
     def colpanel_lv2link_input_exp_click(self, **event_args):
         """This method is called when the link is clicked"""

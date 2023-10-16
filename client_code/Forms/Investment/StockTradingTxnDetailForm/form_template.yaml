@@ -282,7 +282,7 @@ components:
       layout_properties: {column: NMAPTI}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Input.StockInputForm.StockInputRPTemplate,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Investment.StockTradingTxnDetailForm.StockTradingTxnDetailRPTemplate,
       background: ''}
     name: input_repeating_panel
     layout_properties: {}

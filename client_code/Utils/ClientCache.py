@@ -37,7 +37,6 @@ class ClientCache:
                     ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
                     logger.debug(f"Cache {self.name} initiated by calling function.")
                 except (anvil.server.NoServerFunctionError) as err:
-                    logger.error(err)
                     logger.warning(f"{funcname} cannot be found. Client cache cannot be initiated.")
 
     def __str__(self):
@@ -87,7 +86,8 @@ class ClientCache:
         """
         Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
         """
-        del ClientCache.cache_dict[self.name]
+        if ClientCache.cache_dict.get(self.name, None):
+            del ClientCache.cache_dict[self.name]
         logger.debug(f"Cache {self.name} cleared.")
 
     def get_complete_key(self, partial_key):
