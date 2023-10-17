@@ -2,6 +2,7 @@ import anvil.server
 import anvil.users
 from .BaseEntity import BaseEntity
 from .StockJournal import StockJournal
+
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
