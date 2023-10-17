@@ -212,7 +212,9 @@ def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropd
         .set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
     # Has to assign to a variable otherwise value in cache will be updated by reference
     del_iid = cache.get_cache()
-    print("??\n", jrn_grp)
+    print("BEFORE PROC\n")
+    for r in jrn_grp.get_journals():
+        print(str(r))
     jrn_grp, result_update, result_delete = anvil.server.call('proc_save_group_and_journals', jrn_grp, del_iid)
     if not jrn_grp:
         raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal group creation or update phase.")

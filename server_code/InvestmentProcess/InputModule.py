@@ -110,6 +110,8 @@ def upsert_journals(jrn_grp):
                 # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
                 # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
                 if len(jrn_grp.get_journals()) > 0:
+                    for r in jrn_grp.get_journals():
+                        print("**\n", str(r))
                     mogstr = [cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", r.get_db_col_list()).decode('utf-8') for r in jrn_grp.get_journals()]
                     logger.trace("mogstr=", mogstr)
                     sql = 'INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
@@ -350,6 +352,9 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list=None):
         result_u (int): Successful update row count, otherwise None.
         result_d (int): Successful delete row count, otherwise None.
     """
+    print("PROC\n")
+    for r in jrn_grp.get_journals():
+        print(str(r))
     result_d = delete_journals(jrn_grp, del_iid_list)
     if jrn_grp.get_id():
         group_id = save_existing_stock_journal_group(jrn_grp)
@@ -358,7 +363,6 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list=None):
         if group_id is None or group_id <= 0:
             raise RuntimeError(f'ERROR: Fail to create new stock journal group {group_name}, aborting further update on journals.')
         jrn_grp = jrn_grp.set_id(group_id)
-    print("PROC\n", jrn_grp)
     result_u = upsert_journals(jrn_grp)
     return [jrn_grp, result_u, result_d]
 
