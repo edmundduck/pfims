@@ -1,10 +1,3 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
@@ -18,23 +11,27 @@ logger = LoggingModule.ServerLogger()
 
 # For callable decorator to be used with other decorator, refer to following,
 # https://anvil.works/forum/t/fixed-multiple-decorators-in-forms/3582/5
-@anvil.server.callable("generate_accounts_dropdown")
+@anvil.server.callable("generate_accounts_list")
 @logger.log_function
-def generate_accounts_dropdown():
+def generate_accounts_list():
     """
-    Select accounts data from a DB table which stores accounts' detail to generate a dropdown list.
+    Select accounts detail from the accounts DB table.
 
     Returns:
-        list: A dropdown list of accounts names and IDs as description, and account names and IDs as ID.
+        rows (list of RealDictRow): A list of accounts detail.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
+        sql = "SELECT * FROM {schema}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(
+            schema=Database.SCHEMA_FIN,
+            userid=userid
+        )
+        cur.execute(sql)
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
-    return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
+    return rows
 
 @anvil.server.callable("generate_ccy_dropdown")
 @logger.log_function

@@ -1,14 +1,6 @@
 from ._anvil_designer import form_poc5Template
 from anvil import *
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-import anvil.media
-from anvil.tables import app_tables
 from ...Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -28,10 +20,11 @@ class form_poc5(form_poc5Template):
 
     @logger.log_function
     def separate_call(self):
+        from ...Controllers import AccountMaintController
         a = anvil.server.call('generate_expense_tbl_def_dropdown')
         b = anvil.server.call('generate_upload_action_dropdown')
         c = anvil.server.call('generate_labels_dropdown')
-        d = anvil.server.call('generate_accounts_dropdown')
+        d = AccountMaintController.generate_accounts_dropdown()
         return [a, b, c, d]
 
     @logger.log_function
@@ -40,7 +33,7 @@ class form_poc5(form_poc5Template):
             'generate_expense_tbl_def_dropdown',
             'generate_upload_action_dropdown',
             'generate_labels_dropdown',
-            'generate_accounts_dropdown'
+            'generate_accounts_list'
         ]
         a, b, c, d = anvil.server.call('proc_call_cache', func_list)
         return [a, b, c, d]

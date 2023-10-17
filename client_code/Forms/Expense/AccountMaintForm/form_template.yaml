@@ -83,7 +83,7 @@ components:
         include_placeholder: true
       name: dropdown_acct_list
       layout_properties: {grid_position: 'OOWIVP,ESJAKD', full_width_row: false}
-      event_bindings: {show: dropdown_acct_list_show, change: dropdown_acct_list_change}
+      event_bindings: {change: dropdown_acct_list_change}
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Account name,
         border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,

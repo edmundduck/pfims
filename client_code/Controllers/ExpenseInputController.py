@@ -19,13 +19,5 @@ def generate_accounts_dropdown(data=None, reload=False):
     Returns:
         cache.get_cache (list): Accounts dropdown formed by accounts DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name']]) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_ACCOUNT, cache_data)
-    if reload:
-        cache.clear_cache()
-    if cache.is_empty():
-        rows = anvil.server.call('generate_accounts_list')
-        new_dropdown = list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name']]) for r in rows)
-        cache.set_cache(new_dropdown)
-    return cache.get_cache()
+    from . import AccountMaintController
+    return AccountMaintController.generate_accounts_dropdown(data, reload)

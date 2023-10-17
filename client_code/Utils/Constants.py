@@ -5,6 +5,7 @@ class CacheKey:
     """
     Non-function keys for client cache.
     """
+    DD_ACCOUNT = 'generate_accounts_dropdown'
     DD_BROKER = 'broker_dropdown'
     DD_CURRENCY = 'ccy_dropdown'
     DD_SEARCH_INTERVAL = 'search_interval_dropdown'
