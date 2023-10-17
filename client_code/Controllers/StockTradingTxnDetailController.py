@@ -198,6 +198,7 @@ def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropd
         jrn_grp (StockJournalGroup): A stock journal group object.
     """
     from datetime import date, datetime
+    from .. import Global
     from ..Entities.StockJournalGroup import StockJournalGroup
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
@@ -207,9 +208,11 @@ def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropd
 
     currenttime = datetime.now()
     jrn_grp = StockJournalGroup()
-    jrn_grp = jrn_grp.set_id(jrn_grp_id_ori).set_name(jrn_grp_name).set_broker(broker_id).set_journals(journals).set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
+    jrn_grp = jrn_grp.set_user_id(Global.userid).set_id(jrn_grp_id_ori).set_name(jrn_grp_name).set_broker(broker_id).set_journals(journals)\
+        .set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
     # Has to assign to a variable otherwise value in cache will be updated by reference
     del_iid = cache.get_cache()
+    print("??\n", jrn_grp)
     jrn_grp, result_update, result_delete = anvil.server.call('proc_save_group_and_journals', jrn_grp, del_iid)
     if not jrn_grp:
         raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal group creation or update phase.")

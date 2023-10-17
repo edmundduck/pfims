@@ -110,10 +110,7 @@ def upsert_journals(jrn_grp):
                 # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
                 # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
                 if len(jrn_grp.get_journals()) > 0:
-                    mogstr = []
-                    for r in jrn_grp.get_journals():
-                        print(r)
-                    mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", r.get_list()).decode('utf-8') for r in jrn_grp.get_journals())
+                    mogstr = [cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", r.get_db_col_list()).decode('utf-8') for r in jrn_grp.get_journals()]
                     logger.trace("mogstr=", mogstr)
                     sql = 'INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
                     VALUES {p1} ON CONFLICT (iid, template_id) DO UPDATE SET sell_date=EXCLUDED.sell_date, buy_date=EXCLUDED.buy_date, symbol=EXCLUDED.symbol, \
