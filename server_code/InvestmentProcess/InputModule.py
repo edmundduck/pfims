@@ -111,6 +111,8 @@ def upsert_journals(jrn_grp):
                 # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
                 if len(jrn_grp.get_journals()) > 0:
                     mogstr = []
+                    for r in jrn_grp.get_journals():
+                        print(r)
                     mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", r.get_list()).decode('utf-8') for r in jrn_grp.get_journals())
                     logger.trace("mogstr=", mogstr)
                     sql = 'INSERT INTO {schema}.templ_journals (iid, template_id, sell_date, buy_date, symbol, qty, sales, cost, fee, sell_price, buy_price, pnl) \
@@ -154,12 +156,10 @@ def delete_journals(jrn_grp, iid_list):
             if iid_list and len(iid_list) > 0:
                 conn = sysmod.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                    args = "({0})".format(','.join(str(i) for i in iid_list))
                     sql = "DELETE FROM {schema}.templ_journals WHERE template_id = %s AND iid IN %s".format(
-                        schema=Database.SCHEMA_FIN
+                        schema=Database.SCHEMA_FIN,
                     )
-                    mogstr = [jrn_grp.get_id(), args]
-                    stmt = cur.mogrify(sql, mogstr)
+                    stmt = cur.mogrify(sql, (jrn_grp.get_id(), tuple(iid_list)))
                     cur.execute(stmt)
                     conn.commit()
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
