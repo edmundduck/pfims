@@ -113,8 +113,12 @@ class StockJournal(BaseEntity):
         return True
 
     def __serialize__(self, global_data):
-        global_data[f"{__class__.__name__}_{self.userid}_{self.get_group_id()}_{self.get_item_id()}"] = self.get_dict()
-        return [self.userid, self.get_group_id(), self.get_item_id()]
+        print(global_data)
+        print(self.get_dict())
+        gid = self.get_group_id()
+        iid = self.get_item_id()
+        global_data[f"{__class__.__name__}_{self.userid}_{gid}_{iid}"] = self.get_dict()
+        return self.userid, gid, iid
 
     def __deserialize__(self, key, global_data):
         userid, gid, iid = key
