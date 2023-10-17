@@ -81,7 +81,6 @@ def __get_stock_journal_group__(group_dropdown_selected, reload=False):
             cache.set_cache({jrn_grp_id: jrn_grp})
             logger.trace(f'jrn_grp_id={jrn_grp_id} / jrn_grp={jrn_grp} / journals={list(str(j) for j in jrn_grp.get_journals()) if jrn_grp.get_journals() else []}')
     else:
-        from . import UserSettingController
         from .. import Global
         from ..Entities.StockJournalGroup import StockJournalGroup
         blank_jrn_grp = StockJournalGroup()

@@ -6,7 +6,7 @@ from .BaseEntity import BaseEntity
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 @anvil.server.portable_class
-class Account(BaseEntity()):
+class Account(BaseEntity):
     __db_column_def__ = ['userid', 'id', 'name', 'ccy', 'valid_from', 'valid_to', 'status']
     __property_def__ = __db_column_def__
     
