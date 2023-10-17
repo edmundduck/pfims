@@ -33,26 +33,6 @@ def generate_accounts_list():
         cur.close()
     return rows
 
-@anvil.server.callable("generate_ccy_dropdown")
-@logger.log_function
-def generate_ccy_dropdown():
-    """
-    Select CCY data from a DB table which stores currencies' detail to generate a dropdown list.
-
-    Not all currencies have symbols, so they can be empty.
-    
-    Returns:
-        list: A dropdown list of currency abbreviations, names and symbols as description, and currency abbreviations as ID.
-    """
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.ccy ORDER BY common_seq ASC, abbv ASC")
-        rows = cur.fetchall()
-        logger.trace("rows=", rows)
-        cur.close()
-    content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
-    return content
-
 @anvil.server.callable("get_selected_account_attr")
 @logger.log_function
 def get_selected_account_attr(selected_acct):

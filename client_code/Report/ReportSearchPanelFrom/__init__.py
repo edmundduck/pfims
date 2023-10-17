@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
+from ...Controllers import ReportSearchPanelController
 from ...Utils import Constants as const
 from ...Utils.ButtonModerator import ButtonModerator
 from ...Utils.ClientCache import ClientCache
@@ -25,13 +26,11 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        cache_interval = ClientCache('select_search_interval')
-        cache_settings = ClientCache('select_settings')
-        settings = cache_settings.get_cache()
-        self.dropdown_interval.items = cache_interval.get_cache()
-        self.dropdown_interval.selected_value = settings.get('default_interval')
-        self.time_datefrom.date = settings.get('default_datefrom')
-        self.time_dateto.date = settings.get('default_dateto')
+        from ... import Global
+        self.dropdown_interval.items = ReportSearchPanelController.generate_search_interval_dropdown()
+        self.dropdown_interval.selected_value = Global.settings.get_search_interval()
+        self.time_datefrom.date = Global.settings.get_search_datefrom()
+        self.time_dateto.date = Global.settings.get_search_dateto()
 
         if "Transaction" in subform.report_name.text:
             self.subform = TransactionReportForm()
@@ -152,9 +151,10 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.button_exp_search.enabled = True
   
     def _reset_search(self):
-        self.time_datefrom.date = ""
-        self.time_dateto.date = ""
-        self.dropdown_interval.items = cache_interval.get_cache()
+        from ... import Global
+        self.time_datefrom.date = Global.settings.get_search_datefrom()
+        self.time_dateto.date = Global.settings.get_search_dateto()
+        self.dropdown_interval.selected_value = Global.settings.get_search_interval()
         self.dropdown_symbol.items = []
         self._rmvall_selected_symbols()
         self._rmvall_selected_labels()
@@ -182,7 +182,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
   
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
-        if ("Transaction" or "P&L") in subform.report_name.text:
+        if ("Transaction" or "P&L") in self.subform.report_name.text:
             self._rmvall_selected_symbols()
             self._update_stock_enablement()
 
@@ -261,16 +261,11 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     @logger.log_function
     def button_exp_search_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_acct = ClientCache('generate_accounts_dropdown')
-        cache_labels = ClientCache('generate_labels_dropdown')
         label_list = self._getall_selected_labels()
         enddate = self._find_enddate()
         startdate = self._find_startdate()
 
         exp_list = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
-        # DL = {k: [dic[k] for dic in exp_list] for k in exp_list[0]}
-        # DL[const.ExpenseDBTableDefinion.Account] = [cache_acct.get_complete_key(i) for i in DL.get(const.ExpenseDBTableDefinion.Account)]
-        # self.subform.rpt_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         self.subform.rpt_panel.items = exp_list
 
     def button_exp_reset_click(self, **event_args):

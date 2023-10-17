@@ -23,8 +23,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = ExpenseInputController.generate_accounts_dropdown()
-        logger.trace("self.row_acct.selected_value=", self.row_acct.selected_value)
-        if self.row_acct.selected_value is not None: self.row_acct.selected_value = cache_acct.get_complete_key(self.row_acct.selected_value)
+        if self.row_acct.selected_value is not None: 
+            self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)

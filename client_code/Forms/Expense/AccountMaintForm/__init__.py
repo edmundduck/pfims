@@ -3,9 +3,7 @@ from anvil import *
 import anvil.server
 import anvil.users
 from ....Controllers import AccountMaintController
-from ....Utils import Constants as const
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.ClientCache import ClientCache
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -17,10 +15,9 @@ class AccountMaintForm(AccountMaintFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        cache_ccy = ClientCache('generate_ccy_dropdown')
-        self.dropdown_ccy.items = cache_ccy.get_cache()
+        self.dropdown_ccy.items = AccountMaintController.generate_currency_dropdown()
         self.dropdown_ccy.selected_value = None
-        self.dropdown_acct_list.items = AccountMaintController.generate_accounts_dropdown(reload=True)
+        self.dropdown_acct_list.items = AccountMaintController.generate_accounts_dropdown()
         self.dropdown_acct_list.selected_value = None
         self.button_accounts_update.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
         self.button_accounts_delete.enabled = False if self.dropdown_acct_list.selected_value in ('', None) else True
@@ -103,11 +100,12 @@ class AccountMaintForm(AccountMaintFormTemplate):
     @logger.log_function
     def button_accounts_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils.Constants import Alerts
         acct_id, acct_name = self.dropdown_acct_list.selected_value if self.dropdown_acct_list.selected_value is not None else [None, None]
         confirm = Label(text=f"Proceed account <{acct_name}> ({acct_id}) deletion by clicking DELETE.")
-        userconf = alert(content=confirm, title=f"Alert - Account Deletion", buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
+        userconf = alert(content=confirm, title=f"Alert - Account Deletion", buttons=[("DELETE", Alerts.CONFIRM), ("CANCEL", Alerts.CANCEL)])
     
-        if userconf == const.Alerts.CONFIRM:
+        if userconf == Alerts.CONFIRM:
             result = anvil.server.call('delete_account', acct_id)
             if result is not None and result > 0:
                 """ Reflect the change in account dropdown """

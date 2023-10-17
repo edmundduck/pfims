@@ -5,6 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ...Controllers import ExpenseFilePDFImportController
 from ...Utils import Routing
 from ...Utils import Constants as const
 from ...Utils.ButtonModerator import ButtonModerator
@@ -21,7 +22,6 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_acct = ClientCache('generate_accounts_dropdown')
         cache_labels = ClientCache('generate_labels_dropdown')
         cache_exptabs = ClientCache('generate_expensetabs_dropdown')
         self.dropdown_tabs.items = cache_exptabs.get_cache()
@@ -37,7 +37,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         logger.trace("DL=", DL)
         self.cols_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
         logger.trace("self.cols_mapping_panel.items=", self.cols_mapping_panel.items)
-        self.dropdown_account.items = cache_acct.get_cache()
+        self.dropdown_account.items = ExpenseFilePDFImportController.generate_accounts_dropdown()
         self.dropdown_account.visible = False
         self.dropdown_labels.items = cache_labels.get_cache()
         self.dropdown_labels.visible = False

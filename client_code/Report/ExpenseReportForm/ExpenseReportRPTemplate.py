@@ -2,7 +2,7 @@ from ._anvil_designer import ExpenseReportRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
-from ...Controllers import ExpenseInputController
+from ...Controllers import ExpenseReportController
 from ...Utils import Constants as const
 from ...Utils.ClientCache import ClientCache
 
@@ -38,5 +38,5 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
                     self.row_panel_labels.add_component(b, False, name=lbl_id)
 
         # Logic to generate account dropdowns
-        self.row_dropdown_acct.items = ExpenseInputController.generate_accounts_dropdown()
-        self.row_dropdown_acct.selected_value = cache_acct.get_complete_key(self.row_dropdown_acct.selected_value)
+        self.row_dropdown_acct.items = ExpenseReportController.generate_accounts_dropdown()
+        self.row_dropdown_acct.selected_value = ExpenseReportController.get_account_dropdown_selected_item(self.row_dropdown_acct.selected_value)
