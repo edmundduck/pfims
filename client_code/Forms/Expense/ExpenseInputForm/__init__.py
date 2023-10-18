@@ -31,12 +31,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.tab_name.text = tab_id[1]
             logger.debug("self.dropdown_tabs.selected_value=", self.dropdown_tabs.selected_value)
 
-        if data is None:
-            # Initiate repeating panel items to an empty list otherwise will throw NoneType error
-            self.input_repeating_panel.items = self._generate_blank_records()
-        else:
-            logger.info(f"{len(data)} rows are imported to {__name__}.")
-            self.input_repeating_panel.items = data
+        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(data)
         self._deleted_iid_row_reset()
         cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
         cache_del_iid.clear_cache()
@@ -68,10 +63,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         self.button_add_rows.enabled = False
         if self.tag['reload']:
-            self.reload_rp_data(extra=self._generate_blank_records())
+            # TODO - Integrate reload flag into populate_repeating_panel_items
+            self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items)
             self.tag['reload'] = False
         else:
-            self.input_repeating_panel.items = self._generate_blank_records() + self.input_repeating_panel.items
+            self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items() + self.input_repeating_panel.items
         self.button_add_rows.enabled = True
 
     def button_lbl_maint_click(self, **event_args):
@@ -97,9 +93,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
         selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
         tab_id, self.tab_name.text, self.input_repeating_panel.items = anvil.server.call('proc_exp_tab_change', selected_tid)
-        if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
-            diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
-            self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records(diff)
+        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items)
         self.button_delete_exptab.enabled = ExpenseInputController.enable_expense_group_delete_button(self.dropdown_tabs.selected_value)
         self._deleted_iid_row_reset()
         cache_del_iid.clear_cache()
@@ -154,7 +148,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
-        self.reload_rp_data()
+        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items)
         tab_name = self.tab_name.text
         tab_id, tab_original_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
@@ -173,13 +167,13 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 msg = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
                 logger.warning(msg)
             elif result_d is None:
-                self._replace_iid(result_u)
+                self.input_repeating_panel.items = ExpenseInputController.replace_repeating_panel_iid(result_u)
                 msg = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
                 logger.warning(msg)
             else:
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
-                self._replace_iid(result_u)
+                self.input_repeating_panel.items = ExpenseInputController.replace_repeating_panel_iid(result_u)
                 self._switch_to_submit_button()
                 msg = f"Expense tab {tab_name} has been saved successfully."
                 logger.info(msg)
@@ -201,7 +195,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             """ Reflect the change in template dropdown """
             self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
             self.dropdown_tabs.selected_value = None
-            tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
+            tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, ExpenseInputController.populate_repeating_panel_items()]
             self.button_delete_exptab.enabled = False
             msg = f"Expense tab {tab_name} has been submitted."
             logger.info(msg)
@@ -225,7 +219,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
                 self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
                 self.dropdown_tabs.selected_value = None
-                tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
+                tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, ExpenseInputController.populate_repeating_panel_items()]
                 self._deleted_iid_row_reset()
                 cache_del_iid.clear_cache()
                 msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
@@ -260,17 +254,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return True
         self.input_repeating_panel.items = extra + list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
-    def _replace_iid(self, iid, **event_args):
-        """
-        Replace repeating panel items IID.
-
-        Parameters:
-            iid (int): New IID.
-        """
-        DL = {k: [dic[k] for dic in self.input_repeating_panel.items] for k in self.input_repeating_panel.items[0]}
-        DL['iid'] = iid
-        self.input_repeating_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
-
     def _deleted_iid_row_active(self, **event_args):
         """
         Mark reload tag as True as row with IID has been deleted, reload repeating panel is required.
@@ -285,17 +268,3 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         Scenario 2 - Page/Tab has just been loaded or refreshed.
         """
         self.tag = {'reload': False}
-
-    def _generate_blank_records(self, num=const.ExpenseConfig.DEFAULT_ROW_NUM, **event_args):
-        """
-        Generate a list of blank records.
-
-        Parameters:
-            num: The number of blank records to generate. The default number is defined in Constants file.
-
-        Returns:
-            list: A list of blank records for repeating panel.
-        """
-        cache_blank = ClientCache('emptyexprecord')
-        return [cache_blank.get_cache().copy() for i in range(num)]
-        

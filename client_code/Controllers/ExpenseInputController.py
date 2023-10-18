@@ -1,5 +1,5 @@
 import anvil.server
-from ..Utils.Constants import CacheKey
+from ..Utils.Constants import CacheKey, ExpenseConfig
 from ..Utils.Logger import ClientLogger
 
 # This is a module.
@@ -85,3 +85,49 @@ def enable_expense_group_delete_button(group_selection):
     """
     group_id = group_selection[0] if isinstance(group_selection, (list, tuple)) else group_selection
     return False if group_id in (None, '') or str(group_id).isspace() else True
+
+def populate_repeating_panel_items(rp_items=None):
+    """
+    Populate repeating panel items with data padded with a list of blank items.
+
+    Number of blank items to pad is based on the number defined in Constants module.
+
+    Parameters:
+        rp_items (list of dict): Repeating panel item.
+
+    Returns:
+        result (list of dict): A list of data padded with blank items for repeating panel.
+    """
+    from ..Entities.ExpenseTransaction import ExpenseTransaction
+    def filter_valid_rows(row):
+        cache_del_iid = ClientCache(CacheKey.EXP_INPUT_DEL_IID, [])
+        if row.get('iid', None) and row.get('iid') in cache_del_iid.get_cache():
+            # Filter out all rows in deleted IID cache
+            return False
+        if all(v is None for v in row.values()):
+            # Filter out all None rows
+            return False
+        return True
+
+    if rp_items:
+        diff = ExpenseConfig.DEFAULT_ROW_NUM - len(rp_items)
+        result = list(filter(filter_valid_rows, rp_items)) + [ExpenseTransaction().copy().get_dict() for i in range(diff) if diff > 0]
+    else:
+        result = [ExpenseTransaction().copy().get_dict() for i in range(ExpenseConfig.DEFAULT_ROW_NUM)]
+    return result
+        
+def replace_repeating_panel_iid(iid, rp_items):
+    """
+    Replace repeating panel items IID.
+
+    Parameters:
+        iid (int): New IID.
+        rp_items (list of dict): Repeating panel item.
+
+    Returns:
+        LD (list of dict): Repeating panel item with replaced new IID.
+    """
+    DL = {k: [dic[k] for dic in rp_items] for k in rp_items[0]}
+    DL['iid'] = iid
+    LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    return LD
