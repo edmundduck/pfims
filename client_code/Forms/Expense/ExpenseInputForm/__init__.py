@@ -179,7 +179,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 logger.info(msg)
             logger.debug(f"Tab ID={tab_id}, IID list={result_u}, Deleted count={result_d}")
             Notification(msg).show()
-        except RuntimeError as err:
+        except Exception as err:
             logger.error(err)
             Notification(err).show()
 

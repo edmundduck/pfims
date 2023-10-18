@@ -131,3 +131,41 @@ def replace_repeating_panel_iid(iid, rp_items):
     DL['iid'] = iid
     LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
     return LD
+
+@logger.log_function
+def save_expense_transaction_group(group_dropdown_selected, group_name, transactions):
+    """
+    Convert the fields from the form for saving the expense transaction group change in backend.
+
+    Parameters:
+        group_dropdown_selected (list): The selected value in list from the expense transaction group dropdown.
+        group_name (string): The name of the selected expense transaction group.
+        transactions (list of dict): A list of transactions from repeating panel to be inserted or updated.
+        
+    Returns:
+        exp_tab (ExpenseTransactionGroup): An expense transaction group object.
+    """
+    from datetime import date, datetime
+    from .. import Global
+    from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID, None)
+
+    exp_tab_id_ori, exp_tab_name_ori = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
+
+    currenttime = datetime.now()
+    exp_tab = ExpenseTransactionGroup()
+    exp_tab = exp_tab.set_user_id(Global.userid).set_id(exp_tab_id_ori).set_name(group_name).set_transactions(transactions)\
+        .set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
+    # Has to assign to a variable otherwise value in cache will be updated by reference
+    del_iid = cache.get_cache()
+    exp_tab, result_update, result_delete = anvil.server.call('proc_save_exp_tab', exp_tab, del_iid)
+    if not exp_tab:
+        raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal group creation or update phase.")
+    elif result_update is None or result_delete is None:
+        # result_update and result_delete can be 0, but cannot be None.
+        raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal deletion or update phase.")
+    else:
+        logger.trace('exp_tab=', exp_tab)
+        cache.clear_cache()
+    return exp_tab
