@@ -158,7 +158,7 @@ def update_account(account):
                 cur.execute(stmt)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) update fail.".format(account.get_name()))
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account [{0}] update fail.".format(account.get_name()))
                 return cur.rowcount
         raise TypeError(f'The parameter is not an Account object.')
     except psycopg2.OperationalError as err:
@@ -195,7 +195,7 @@ def delete_account(account):
                 cur.execute(stmt)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(account.get_name()))
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account [{0}] deletion fail.".format(account.get_name()))
                 return cur.rowcount
         raise TypeError(f'The parameter is not an Account object.')
     except psycopg2.OperationalError as err:
