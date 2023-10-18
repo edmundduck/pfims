@@ -18,14 +18,14 @@ from ..Utils.Constants import Database
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("generate_labels_dropdown")
+@anvil.server.callable("generate_labels_list")
 @logger.log_function
-def generate_labels_dropdown():
+def generate_labels_list():
     """
-    Select data from a DB table which stores labels' detail to generate a dropdown list.
+    Select labels detail from the labels DB table.
 
     Returns:
-        content (list): A dropdown list of label names and IDs as description, and the same data formation in dict as ID.
+        rows (list of RealDictRow): A list of labels detail.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()

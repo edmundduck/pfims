@@ -1,5 +1,4 @@
 import anvil.server
-import anvil.users
 import datetime as datetime
 from .BaseEntity import BaseEntity
 

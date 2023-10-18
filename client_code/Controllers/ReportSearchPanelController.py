@@ -20,3 +20,18 @@ def generate_search_interval_dropdown(data=None):
     """
     from . import UserSettingController
     return UserSettingController.generate_search_interval_dropdown()
+
+@logger.log_function
+def generate_labels_dropdown(data=None, reload=False):
+    """
+    Access labels dropdown from either client cache or generate from DB data returned from server side.
+
+    Parameters:
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
+    Returns:
+        cache.get_cache (list): Labels dropdown formed by labels DB table data.
+    """
+    from . import LabelMaintController
+    return LabelMaintController.generate_labels_dropdown(data, reload)

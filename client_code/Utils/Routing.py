@@ -51,7 +51,7 @@ def open_upload_mapping_form(self, **event_args):
     anvil.get_open_form().content_panel.add_component(UploadMappingRulesForm())
 
 def open_lbl_maint_form(self, **event_args):
-    from ..Input.LabelMaintForm import LabelMaintForm
+    from ..Forms.Expense.LabelMaintForm import LabelMaintForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(LabelMaintForm())
     

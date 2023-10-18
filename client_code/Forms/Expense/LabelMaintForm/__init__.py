@@ -1,15 +1,11 @@
 from ._anvil_designer import LabelMaintFormTemplate
 from anvil import *
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ...Utils import Routing
-from ...Utils.ButtonModerator import ButtonModerator
-from ...Utils.ClientCache import ClientCache
-from ...Utils import Constants as const
-from ...Utils.Logger import ClientLogger
+from ....Controllers import LabelMaintController
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.ClientCache import ClientCache
+from ....Utils import Constants as const
+from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
@@ -22,26 +18,17 @@ class LabelMaintForm(LabelMaintFormTemplate):
         # Any code you write here will run before the form opens.
         # TODO - Enable after Move to logic is implemented
         self.button_labels_move.enabled = False
+        self.dropdown_lbl_list.items = LabelMaintController.generate_labels_dropdown()
+        self.dropdown_lbl_list.selected_value = None
+        self.dropdown_moveto.items = LabelMaintController.generate_labels_dropdown()
+        self.dropdown_moveto.selected_value = None
+        self.button_labels_update.enabled = LabelMaintController.enable_label_update_button(self.dropdown_lbl_list.selected_value)
+        self.button_labels_delete.enabled = LabelMaintController.enable_label_delete_button(self.dropdown_lbl_list.selected_value)
 
     def button_exp_input_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_exp_input_form(self)
-
-    def dropdown_lbl_list_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_lbl_list.items = cache_labels.get_cache()
-        self.dropdown_lbl_list.selected_value = None
-        self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
-        self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
-
-    def dropdown_moveto_show(self, **event_args):
-        """This method is called when the DropDown is shown on the screen"""
-        cache_labels = ClientCache('generate_labels_dropdown')
-        self.dropdown_moveto.items = cache_labels.get_cache()
-        self.dropdown_moveto.selected_value = None
-        # TODO - Enable after Move to logic is implemented
-        self.dropdown_moveto.enabled = False
 
     @logger.log_function
     def dropdown_lbl_list_change(self, **event_args):
@@ -51,8 +38,8 @@ class LabelMaintForm(LabelMaintFormTemplate):
         self.text_lbl_name.text, \
         self.text_keywords.text, \
         self.dropdown_status.selected_value = anvil.server.call('get_selected_label_attr', lbl_id)
-        self.button_labels_update.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
-        self.button_labels_delete.enabled = False if self.dropdown_lbl_list.selected_value in ('', None) else True
+        self.button_labels_update.enabled = LabelMaintController.enable_label_update_button(self.dropdown_lbl_list.selected_value)
+        self.button_labels_delete.enabled = LabelMaintController.enable_label_delete_button(self.dropdown_lbl_list.selected_value)
 
     def dropdown_status_show(self, **event_args):
         """This method is called when the DropDown is shown on the screen"""
@@ -63,7 +50,6 @@ class LabelMaintForm(LabelMaintFormTemplate):
     @logger.log_function
     def button_labels_create_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_labels = ClientCache('generate_labels_dropdown')
         lbl_name = self.text_lbl_name.text
         lbl_id = anvil.server.call('create_label', labels=[{'name':lbl_name, 'keywords':self.text_keywords.text, 'status':True}])
 
@@ -75,14 +61,13 @@ class LabelMaintForm(LabelMaintFormTemplate):
             logger.info(msg)
         else:
             """ Reflect the change in labels dropdown """
-            cache_labels.clear_cache()
-            self.dropdown_lbl_list.items = cache_labels.get_cache()
+            self.dropdown_lbl_list.items = LabelMaintController.generate_labels_dropdown(reload=True)
             logger.debug("self.dropdown_lbl_list.items=", self.dropdown_lbl_list.items)
             logger.debug("lbl_id=", lbl_id)
             self.dropdown_lbl_list.selected_value = [lbl_id[0], lbl_name]
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
-            self.button_labels_update.enabled = True
-            self.button_labels_delete.enabled = True
+            self.button_labels_update.enabled = LabelMaintController.enable_label_update_button(self.dropdown_lbl_list.selected_value)
+            self.button_labels_delete.enabled = LabelMaintController.enable_label_delete_button(self.dropdown_lbl_list.selected_value)
             msg = f"Label {lbl_name} has been created successfully."
             logger.info(msg)
         Notification(msg).show()
@@ -92,7 +77,6 @@ class LabelMaintForm(LabelMaintFormTemplate):
     @logger.log_function
     def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_labels = ClientCache('generate_labels_dropdown')
         lbl_id, lbl_name = self.dropdown_lbl_list.selected_value if self.dropdown_lbl_list.selected_value is not None else [None, None]
         # lbl_name retrieved should be replaced by text field value
         lbl_name = self.text_lbl_name.text
@@ -103,8 +87,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
             logger.error(msg)
         else:
             """ Reflect the change in labels dropdown """
-            cache_labels.clear_cache()
-            self.dropdown_lbl_list.items = cache_labels.get_cache()
+            self.dropdown_lbl_list.items = LabelMaintController.generate_labels_dropdown(reload=True)
             self.dropdown_lbl_list.selected_value = [lbl_id, lbl_name]
             msg = f"Label {lbl_name} has been updated successfully."
             logger.info(msg)
@@ -121,7 +104,6 @@ class LabelMaintForm(LabelMaintFormTemplate):
     @logger.log_function
     def button_labels_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_labels = ClientCache('generate_labels_dropdown')
         selected_lbl_id, selected_lbl_name = self.dropdown_lbl_list.selected_value if self.dropdown_lbl_list.selected_value is not None else [None, None]
         confirm = Label(text="Proceed label <{lbl_name}> ({lbl_id}) deletion by clicking DELETE.".format(lbl_name=selected_lbl_name, lbl_id=selected_lbl_id))
         userconf = alert(content=confirm,
@@ -129,10 +111,10 @@ class LabelMaintForm(LabelMaintFormTemplate):
                         buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
 
         if userconf == const.Alerts.CONFIRM:
-            cache_labels.clear_cache()
             result = anvil.server.call('delete_label', selected_lbl_id)
             if result is not None and result > 0:
                 """ Reflect the change in label dropdown """
+                self.dropdown_lbl_list.items = LabelMaintController.generate_labels_dropdown(reload=True)
                 self.clear()
                 msg = f"Label {selected_lbl_name} has been deleted."
                 logger.info(msg)
@@ -144,8 +126,10 @@ class LabelMaintForm(LabelMaintFormTemplate):
                 Notification(msg).show()
 
     def clear(self, **event_args):
-        self.dropdown_lbl_list_show()
+        self.dropdown_lbl_list.selected_value = None
         self.dropdown_status.selected_value = True
         self.dropdown_moveto.selected_value = None
+        self.button_labels_update.enabled = None
+        self.button_labels_delete.enabled = None
         self.text_lbl_name.text = None
         self.text_keywords.text = None

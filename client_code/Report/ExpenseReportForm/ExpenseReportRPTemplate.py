@@ -4,7 +4,6 @@ import anvil.users
 import anvil.server
 from ...Controllers import ExpenseReportController
 from ...Utils import Constants as const
-from ...Utils.ClientCache import ClientCache
 
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
@@ -18,11 +17,10 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         self.foreground = const.ColorSchemes.AMT_EXPENSE if self.item[const.ExpenseDBTableDefinion.Amount] < 0 else const.ColorSchemes.AMT_POS
 
         # Logic to generate label buttons
-        cache_labels = ClientCache('generate_labels_dropdown')
         if self.item[const.ExpenseDBTableDefinion.Labels] is not None:
             for j in self.item[const.ExpenseDBTableDefinion.Labels].split(","):
                 if j not in (None, ''):
-                    lbl_id, lbl_name = cache_labels.get_complete_key(int(j))
+                    lbl_id, lbl_name = ExpenseReportController.get_label_dropdown_selected_item(int(j))
                     b = Button(
                         text=lbl_name,
                         # icon=const.Icons.REMOVE,

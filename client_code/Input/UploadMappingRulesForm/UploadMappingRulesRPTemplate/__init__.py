@@ -23,11 +23,10 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
         cache_filetype = ClientCache('generate_mapping_type_dropdown')
         cache_extraaction = ClientCache('generate_upload_action_dropdown')
-        cache_labels = ClientCache('generate_labels_dropdown')
         self.row_dropdown_type.items = cache_filetype.get_cache()
         self.row_dropdown_datacol.items = cache_exp_tbl_def.get_cache()
         self.row_dropdown_extraact.items = cache_extraaction.get_cache()
-        self.row_dropdown_lbl.items = cache_labels.get_cache()
+        self.row_dropdown_lbl.items = UploadMappingRulesController.generate_labels_dropdown()
         self.row_dropdown_acct.items = UploadMappingRulesController.generate_accounts_dropdown()
 
         # Generate all rules in a mapping
@@ -131,10 +130,9 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
         cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
         cache_extraact = ClientCache('generate_upload_action_dropdown')
-        cache_labels = ClientCache('generate_labels_dropdown')
         dict_exp_tbl_def = {k[1][0]: k[1][1] for k in cache_exp_tbl_def.get_cache()}
         dict_extraact = {k[1][0]: k[1][1] for k in cache_extraact.get_cache()}
-        dict_lbl = {k[1][0]: k[1][1] for k in cache_labels.get_cache()}
+        dict_lbl = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_labels_dropdown()}
         dict_acct =  {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_accounts_dropdown()}
         datacol = dict_exp_tbl_def.get(datacol_id, None)
         extraact = dict_extraact.get(extraact_id, None)

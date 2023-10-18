@@ -20,10 +20,10 @@ class form_poc5(form_poc5Template):
 
     @logger.log_function
     def separate_call(self):
-        from ...Controllers import AccountMaintController
+        from ...Controllers import AccountMaintController, LabelMaintController
         a = anvil.server.call('generate_expense_tbl_def_dropdown')
         b = anvil.server.call('generate_upload_action_dropdown')
-        c = anvil.server.call('generate_labels_dropdown')
+        c = LabelMaintController.generate_labels_dropdown()
         d = AccountMaintController.generate_accounts_dropdown()
         return [a, b, c, d]
 

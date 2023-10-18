@@ -6,6 +6,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
 from datetime import date
+from ...Controllers import ExpenseInputController
 from ...Utils import Constants as const
 from ...Utils import Routing
 from ...Utils.ButtonModerator import ButtonModerator
@@ -24,9 +25,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_labels = ClientCache('generate_labels_dropdown')
         cache_exptabs = ClientCache('generate_expensetabs_dropdown')
-        self.dropdown_labels.items = cache_labels.get_cache()
+        self.dropdown_labels.items = ExpenseInputController.generate_labels_dropdown()
         self.dropdown_tabs.items = cache_exptabs.get_cache()
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
