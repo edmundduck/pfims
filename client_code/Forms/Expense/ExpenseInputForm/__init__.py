@@ -145,7 +145,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-stmt-dtl-visible', vis=not self.cb_hide_stmtdtl.checked)
 
-
     @btnmod.one_click_only
     @logger.log_function
     def button_save_click(self, **event_args):
