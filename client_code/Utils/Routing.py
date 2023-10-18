@@ -56,7 +56,7 @@ def open_lbl_maint_form(self, **event_args):
     anvil.get_open_form().content_panel.add_component(LabelMaintForm())
     
 def open_acct_maint_form(self, **event_args):
-    from ..Input.AccountMaintForm import AccountMaintForm
+    from ..Forms.Expense.AccountMaintForm import AccountMaintForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(AccountMaintForm())
 

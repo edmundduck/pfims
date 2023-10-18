@@ -2,6 +2,7 @@ import anvil.server
 import anvil.users
 import datetime as datetime
 from .BaseEntity import BaseEntity
+
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
@@ -111,11 +112,19 @@ class StockJournal(BaseEntity):
         if not total_cost or str(total_cost).isspace(): return False
         return True
 
-    def __serialize__(self, global_data):
-        global_data[f"{__class__.__name__}_{self.userid}_{self.get_group_id()}_{self.get_item_id()}"] = self.get_dict()
-        return [self.userid, self.get_group_id(), self.get_item_id()]
-
-    def __deserialize__(self, key, global_data):
-        userid, gid, iid = key
-        data = global_data[f"{__class__.__name__}_{userid}_{gid}_{iid}"]
-        self.__init__(data)
+    """
+    COMMENT OUT customized serialization logic since nesting StockJournal objects inside StockJournalGroup using same customized serialization causes error.
+    Ref: https://anvil.works/docs/server/portable-classes/custom-serialisation#controlling-object-construction
+    <Quote>
+        If your __serialize__ implementation stores portable objects in global_data, make sure only to store objects that do not themselves require global_data. 
+        (This can be because they don’t define a custom __serialize__ method, or because their __serialize__ method works OK when its global_data parameter is None.)
+    </Quote>
+    """
+    # def __serialize__(self, global_data):
+    #     global_data[f"{self.__class__.__name__}_{self.userid}_{self.get_group_id()}_{self.get_item_id()}"] = self.get_dict()
+    #     return [self.userid, self.get_group_id(), self.get_item_id()]
+    # 
+    # def __deserialize__(self, key, global_data):
+    #     userid, gid, iid = key
+    #     data = global_data[f"{self.__class__.__name__}_{userid}_{gid}_{iid}"]
+    #     self.__init__(data)

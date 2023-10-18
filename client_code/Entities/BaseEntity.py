@@ -33,6 +33,9 @@ class BaseEntity:
     def get_list(self):
         return [ getattr(self, self.__property_def__[i], None) for i in range(len(self.__property_def__)) ]
 
+    def get_db_col_list(self):
+        return [ getattr(self, self.__db_column_def__[i], None) for i in range(len(self.__db_column_def__)) ]
+
     def set(self, data):
         if data:
             if isinstance(data, dict):
@@ -56,10 +59,18 @@ class BaseEntity:
     def is_valid(self):
         raise NotImplementedError(f'Method is_valid() must be implemented in child class.')
 
-    def __serialize__(self, global_data):
-        global_data[f"{__class__.__name__}_{self.userid}"] = self.get_dict()
-        return self.userid
-
-    def __deserialize__(self, userid, global_data):
-        data = global_data[f"{__class__.__name__}_{userid}"]
-        self.__init__(data)
+    """
+    COMMENT OUT customized serialization logic since nesting StockJournal objects inside StockJournalGroup using same customized serialization causes error.
+    Ref: https://anvil.works/docs/server/portable-classes/custom-serialisation#controlling-object-construction
+    <Quote>
+        If your __serialize__ implementation stores portable objects in global_data, make sure only to store objects that do not themselves require global_data. 
+        (This can be because they don’t define a custom __serialize__ method, or because their __serialize__ method works OK when its global_data parameter is None.)
+    </Quote>
+    """
+    # def __serialize__(self, global_data):
+    #     global_data[f"{self.__class__.__name__}_{self.userid}"] = self.get_dict()
+    #     return self.userid
+    # 
+    # def __deserialize__(self, userid, global_data):
+    #     data = global_data[f"{self.__class__.__name__}_{userid}"]
+    #     self.__init__(data)

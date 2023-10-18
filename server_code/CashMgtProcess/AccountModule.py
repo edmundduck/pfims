@@ -1,13 +1,7 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from ..Entities.Account import Account
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..Utils.Constants import Database
@@ -18,47 +12,31 @@ logger = LoggingModule.ServerLogger()
 
 # For callable decorator to be used with other decorator, refer to following,
 # https://anvil.works/forum/t/fixed-multiple-decorators-in-forms/3582/5
-@anvil.server.callable("generate_accounts_dropdown")
+@anvil.server.callable("generate_accounts_list")
 @logger.log_function
-def generate_accounts_dropdown():
+def generate_accounts_list():
     """
-    Select accounts data from a DB table which stores accounts' detail to generate a dropdown list.
+    Select accounts detail from the accounts DB table.
 
     Returns:
-        list: A dropdown list of accounts names and IDs as description, and account names and IDs as ID.
+        rows (list of RealDictRow): A list of accounts detail.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC")
+        sql = "SELECT * FROM {schema}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(
+            schema=Database.SCHEMA_FIN,
+            userid=userid
+        )
+        cur.execute(sql)
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
-    return list((row['name'] + " (" + str(row['id']) + ")", [row['id'], row['name']]) for row in rows)
+    return rows
 
-@anvil.server.callable("generate_ccy_dropdown")
+@anvil.server.callable("select_account")
 @logger.log_function
-def generate_ccy_dropdown():
-    """
-    Select CCY data from a DB table which stores currencies' detail to generate a dropdown list.
-
-    Not all currencies have symbols, so they can be empty.
-    
-    Returns:
-        list: A dropdown list of currency abbreviations, names and symbols as description, and currency abbreviations as ID.
-    """
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.ccy ORDER BY common_seq ASC, abbv ASC")
-        rows = cur.fetchall()
-        logger.trace("rows=", rows)
-        cur.close()
-    content = list((row['abbv'] + " " + row['name'] + " (" + row['symbol'] + ")" if row['symbol'] else row['abbv'] + " " + row['name'], row['abbv']) for row in rows)
-    return content
-
-@anvil.server.callable("get_selected_account_attr")
-@logger.log_function
-def get_selected_account_attr(selected_acct):
+def select_account(selected_acct):
     """
     Select one particular account attributes from a DB table which stores accounts' detail.
 
@@ -66,53 +44,54 @@ def get_selected_account_attr(selected_acct):
         selected_acct (int): The ID of a selected account.
 
     Returns:
-        list: A row of accounts attributes including ID, name, base currency, date valid from, date valid to and status.
+        acct (Account): Account object corresponding to the selected account ID.
     """
-    if selected_acct in (None, ''):
-        return [None, None, None, None, None, True]
-    else:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "SELECT * FROM {schema}.accounts WHERE id=%s".format(schema=Database.SCHEMA_FIN)  
-            stmt = cur.mogrify(sql, (selected_acct, ))
-            cur.execute(stmt)
-            row = cur.fetchone()
-            logger.trace("row=", row)
-            cur.close()
-        return [row['id'], row['name'], row['ccy'], row['valid_from'], row['valid_to'], row['status']]
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT * FROM {schema}.accounts WHERE id=%s".format(
+            schema=Database.SCHEMA_FIN
+        )
+        stmt = cur.mogrify(sql, (selected_acct, ))
+        cur.execute(stmt)
+        row = cur.fetchone()
+        logger.trace("row=", row)
+        cur.close()
+        acct = Account(row).set_user_id(userid)
+        return acct
 
 @anvil.server.callable("create_account")
 @logger.log_function
-def create_account(name, ccy, valid_from, valid_to, status):
+def create_account(account):
     """
-    Create an account from account form to a DB table which stores accounts' detail.
+    Create a new account into the account DB table.
 
     In a successful update, a newly created account with new ID will be returned.
     
     Parameters:
-        name (str): The name of the account.
-        ccy (str): The base currency of the account.
-        valid_from (date): The date when account becomes valid.
-        valid_to (date): The date when account is no longer valid.
-        status (boolean): Current status of the account.
+        account (Account): The to-be-created account object.
 
     Returns:
-        id['id'] (int): The ID of the newly created or existing account, otherwise None
+        row['id'] (int): The newly created account's ID, otherwise None.
     """
     try:
-        userid = sysmod.get_current_userid()
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "INSERT INTO {schema}.accounts (userid, name, ccy, valid_from, valid_to, status) \
-            VALUES (%s,%s,%s,%s,%s,%s) RETURNING id".format(schema=Database.SCHEMA_FIN)
-            stmt = cur.mogrify(sql, (userid, name, ccy, valid_from, valid_to, status))
-            cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            id = cur.fetchone()
-            if id['id'] < 0: raise psycopg2.OperationalError("Account ({0}) creation fail.".format(name))
-            return id['id']
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(account, Account):
+            userid = sysmod.get_current_userid()
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "INSERT INTO {schema}.accounts (userid, name, ccy, valid_from, valid_to, status) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (userid, account.get_name(), account.get_base_currency(), account.get_valid_datefrom(), account.get_valid_dateto(), account.get_status()))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                row = cur.fetchone()
+                if row['id'] < 0: raise psycopg2.OperationalError("Account [{0}] creation fail.".format(account.get_name()))
+                return row['id']
+        raise TypeError(f'The parameter is not an Account object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -155,34 +134,34 @@ def create_multiple_accounts(accounts):
 
 @anvil.server.callable("update_account")
 @logger.log_function
-def update_account(id, name, ccy, valid_from, valid_to, status):
+def update_account(account):
     """
-    Update an existing account from account form to a DB table which stores accounts' detail.
+    Update an existing account change into the account DB table.
 
     Row count returned larger than 0 is considered as a successful update. 
     
     Parameters:
-        id (int): The ID of the account.
-        name (str): The name of the account.
-        ccy (str): The base currency of the account.
-        valid_from (date): The date when account becomes valid.
-        valid_to (date): The date when account is no longer valid.
-        status (boolean): Current status of the account.
+        account (Account): The to-be-updated account object.
 
     Returns:
-        cur.rowcount (int): Successful update row count, otherwise None
+        cur.rowcount (int): Successful update row count, otherwise None.
     """
     try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "UPDATE {schema}.accounts SET name=%s, ccy=%s, valid_from=%s, valid_to=%s, status=%s WHERE id=%s".format(schema=Database.SCHEMA_FIN)
-            stmt = cur.mogrify(sql, (name, ccy, valid_from, valid_to, status, id))
-            cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) update fail.".format(name))
-            return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(account, Account):
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "UPDATE {schema}.accounts SET name=%s, ccy=%s, valid_from=%s, valid_to=%s, status=%s WHERE id=%s".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (account.get_name(), account.get_base_currency(), account.get_valid_datefrom(), account.get_valid_dateto(), account.get_status(), account.get_id()))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) update fail.".format(account.get_name()))
+                return cur.rowcount
+        raise TypeError(f'The parameter is not an Account object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -192,29 +171,34 @@ def update_account(id, name, ccy, valid_from, valid_to, status):
 
 @anvil.server.callable("delete_account")
 @logger.log_function
-def delete_account(id):
+def delete_account(account):
     """
-    Delete an account from a DB table which stores accounts' detail.
+    Delete an account from the account DB table.
 
     Row count returned larger than 0 is considered as a successful update.
     
     Parameters:
-        id (int): The ID of the account.
+        account (Account): The to-be-deleted account object.
 
     Returns:
         cur.rowcount (int): Successful update row count, otherwise None
     """
     try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = "DELETE FROM {schema}.accounts WHERE id=%s".format(schema=Database.SCHEMA_FIN)
-            stmt = cur.mogrify(sql, (id, ))
-            cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(name))
-            return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(account, Account):
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "DELETE FROM {schema}.accounts WHERE id=%s".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (account.get_id(), ))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(account.get_name()))
+                return cur.rowcount
+        raise TypeError(f'The parameter is not an Account object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
