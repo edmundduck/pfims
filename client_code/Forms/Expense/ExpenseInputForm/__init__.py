@@ -1,19 +1,13 @@
 from ._anvil_designer import ExpenseInputFormTemplate
 from anvil import *
-import anvil.users
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 from datetime import date
-from ...Controllers import ExpenseInputController
-from ...Utils import Constants as const
-from ...Utils import Routing
-from ...Utils.ButtonModerator import ButtonModerator
-from ...Utils.ClientCache import ClientCache
-from ...Utils.Constants import ExpenseDBTableDefinion as exptbl
-from ...Utils.Validation import Validator
-from ...Utils.Logger import ClientLogger
+from ....Controllers import ExpenseInputController
+from ....Utils import Constants as const
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.ClientCache import ClientCache
+from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
+from ....Utils.Logger import ClientLogger
 from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 logger = ClientLogger()
@@ -25,9 +19,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
         self.dropdown_labels.items = ExpenseInputController.generate_labels_dropdown()
-        self.dropdown_tabs.items = cache_exptabs.get_cache()
+        self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown()
         self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
@@ -68,6 +61,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         
     def button_file_import_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_exp_file_upload_form(self)
         
     def button_add_rows_click(self, **event_args):
@@ -82,10 +76,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_lbl_maint_form(self)
 
     def button_acct_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_acct_maint_form(self)
 
     @logger.log_function
@@ -167,9 +163,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             tab_id, result_u, result_d = anvil.server.call('proc_save_exp_tab', tab_id, tab_name, self.input_repeating_panel.items, cache_del_iid.get_cache())
             if tab_name != tab_original_name or tab_id is None:
                 # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
-                cache_exptabs = ClientCache('generate_expensetabs_dropdown')
-                cache_exptabs.clear_cache()
-                self.dropdown_tabs.items = cache_exptabs.get_cache()
+                self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
                 self.dropdown_tabs.selected_value = [tab_id, tab_name]
             if result_u is None and result_d is None:
                 msg = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
@@ -206,9 +200,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         if result is not None and result > 0:
             """ Reflect the change in template dropdown """
-            cache_exptabs = ClientCache('generate_expensetabs_dropdown')
-            cache_exptabs.clear_cache()
-            self.dropdown_tabs.items = cache_exptabs.get_cache()
+            self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
             self.dropdown_tabs.selected_value = None
             tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
             self.button_delete_exptab.enabled = False
@@ -232,9 +224,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             if result is not None and result > 0:
                 """ Reflect the change in tab dropdown """
                 cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
-                cache_exptabs = ClientCache('generate_expensetabs_dropdown')
-                cache_exptabs.clear_cache()
-                self.dropdown_tabs.items = cache_exptabs.get_cache()
+                self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
                 self.dropdown_tabs.selected_value = None
                 tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, self._generate_blank_records()]
                 self._deleted_iid_row_reset()

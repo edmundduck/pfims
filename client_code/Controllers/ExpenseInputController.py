@@ -8,6 +8,29 @@ from ..Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 @logger.log_function
+def generate_expense_tabs_dropdown(data=None, reload=False):
+    """
+    Access expense tabs dropdown from either client cache or generate from DB data returned from server side.
+
+    Parameters:
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
+    Returns:
+        cache.get_cache (list): Expense tabs dropdown formed by expense tabs DB table data.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache_data = list((r['tab_name'] + " (" + str(r['tab_id']) + ")", [r['tab_id'], r['tab_name']]) for r in data) if data else None
+    cache = ClientCache(CacheKey.DD_EXPENSE_TAB, cache_data)
+    if reload:
+        cache.clear_cache()
+    if cache.is_empty():
+        rows = anvil.server.call('generate_expensetabs_dropdown')
+        new_dropdown = list((r['tab_name'] + " (" + str(r['tab_id']) + ")", [r['tab_id'], r['tab_name']]) for r in rows)
+        cache.set_cache(new_dropdown)
+    return cache.get_cache()
+
+@logger.log_function
 def generate_accounts_dropdown(data=None, reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.

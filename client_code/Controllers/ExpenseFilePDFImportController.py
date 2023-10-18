@@ -8,6 +8,21 @@ from ..Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 @logger.log_function
+def generate_expense_tabs_dropdown(data=None, reload=False):
+    """
+    Access expense tabs dropdown from either client cache or generate from DB data returned from server side.
+
+    Parameters:
+        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
+    Returns:
+        cache.get_cache (list): Expense tabs dropdown formed by expense tabs DB table data.
+    """
+    from . import ExpenseInputController
+    return ExpenseInputController.generate_expense_tabs_dropdown(data, reload)
+
+@logger.log_function
 def generate_accounts_dropdown(data=None, reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.

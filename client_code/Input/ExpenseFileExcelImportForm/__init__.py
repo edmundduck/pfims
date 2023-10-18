@@ -20,9 +20,8 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
         cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
-        self.dropdown_tabs.items = cache_exptabs.get_cache()
+        self.dropdown_tabs.items = ExpenseFileExcelImportController.generate_expense_tabs_dropdown()
         self.dropdown_actions_for_all_labels.items = cache_lbl_action.get_cache()
         self.dropdown_actions_for_all_accounts.items = cache_lbl_action.get_cache()
         self.tag = {'data': data}

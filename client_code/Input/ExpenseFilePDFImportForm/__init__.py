@@ -9,7 +9,6 @@ from ...Controllers import ExpenseFilePDFImportController
 from ...Utils import Routing
 from ...Utils import Constants as const
 from ...Utils.ButtonModerator import ButtonModerator
-from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 from ...Utils.Validation import Validator
 
@@ -22,8 +21,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_exptabs = ClientCache('generate_expensetabs_dropdown')
-        self.dropdown_tabs.items = cache_exptabs.get_cache()
+        self.dropdown_tabs.items =ExpenseFilePDFImportController.generate_expense_tabs_dropdown()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
