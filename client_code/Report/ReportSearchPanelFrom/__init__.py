@@ -9,7 +9,6 @@ from datetime import date
 from ...Controllers import ReportSearchPanelController
 from ...Utils import Constants as const
 from ...Utils.ButtonModerator import ButtonModerator
-from ...Utils.ClientCache import ClientCache
 from ...Utils.Logger import ClientLogger
 from ..TransactionReportForm import TransactionReportForm
 from ..PnLReportForm import PnLReportForm
@@ -138,8 +137,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         if interval in (None, ''):
             self._reset_search()
         else:
-            cache_labels = ClientCache('generate_labels_dropdown')
-            self.dropdown_label.items = cache_labels.get_cache()
+            self.dropdown_label.items = ReportSearchPanelController.generate_labels_dropdown()
             if interval != "SDR":
                 self.time_datefrom.enabled = False
                 self.time_dateto.enabled = False

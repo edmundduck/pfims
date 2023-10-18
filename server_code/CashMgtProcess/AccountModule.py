@@ -109,7 +109,7 @@ def create_multiple_accounts(accounts):
         accounts (list of dict): Contains list of account names and their attributes.
 
     Returns:
-        list: A list of successful created account IDs, otherwise None.
+        rows (list of int): A list of successful created accounts IDs, otherwise None.
     """
     userid = sysmod.get_current_userid()
     try:
@@ -158,7 +158,7 @@ def update_account(account):
                 cur.execute(stmt)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) update fail.".format(account.get_name()))
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account [{0}] update fail.".format(account.get_name()))
                 return cur.rowcount
         raise TypeError(f'The parameter is not an Account object.')
     except psycopg2.OperationalError as err:
@@ -195,7 +195,7 @@ def delete_account(account):
                 cur.execute(stmt)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account ({0}) deletion fail.".format(account.get_name()))
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Account [{0}] deletion fail.".format(account.get_name()))
                 return cur.rowcount
         raise TypeError(f'The parameter is not an Account object.')
     except psycopg2.OperationalError as err:

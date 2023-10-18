@@ -22,7 +22,6 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_labels = ClientCache('generate_labels_dropdown')
         cache_exptabs = ClientCache('generate_expensetabs_dropdown')
         self.dropdown_tabs.items = cache_exptabs.get_cache()
         self.tag = {'data': data}
@@ -39,7 +38,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         logger.trace("self.cols_mapping_panel.items=", self.cols_mapping_panel.items)
         self.dropdown_account.items = ExpenseFilePDFImportController.generate_accounts_dropdown()
         self.dropdown_account.visible = False
-        self.dropdown_labels.items = cache_labels.get_cache()
+        self.dropdown_labels.items = ExpenseFilePDFImportController.generate_labels_dropdown()
         self.dropdown_labels.visible = False
 
     def button_nav_upload_mapping_click(self, **event_args):

@@ -1,5 +1,4 @@
 import anvil.server
-import anvil.users
 from .BaseEntity import BaseEntity
 
 # This is a module.

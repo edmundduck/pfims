@@ -28,7 +28,7 @@ components:
       visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
-    name: hidden_lbl_id
+    name: spacer3
     layout_properties: {grid_position: 'ZDGNBU,ZBHOGB'}
   - type: Button
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,
@@ -84,7 +84,7 @@ components:
         include_placeholder: true
       name: dropdown_lbl_list
       layout_properties: {grid_position: 'OOWIVP,ESJAKD', full_width_row: false}
-      event_bindings: {show: dropdown_lbl_list_show, change: dropdown_lbl_list_change}
+      event_bindings: {change: dropdown_lbl_list_change}
     - type: TextBox
       properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Label name,
         border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -121,7 +121,7 @@ components:
         include_placeholder: true
       name: dropdown_moveto
       layout_properties: {grid_position: 'QBWBLW,FWZBRY'}
-      event_bindings: {show: dropdown_moveto_show}
+      event_bindings: {}
     - type: DropDown
       properties:
         role: null

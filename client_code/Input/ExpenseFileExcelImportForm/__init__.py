@@ -20,7 +20,6 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_labels = ClientCache('generate_labels_dropdown')
         cache_exptabs = ClientCache('generate_expensetabs_dropdown')
         cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
         self.dropdown_tabs.items = cache_exptabs.get_cache()
@@ -30,7 +29,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
         # Prefill "labels map to" dropdown by finding high proximity choices
-        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=cache_labels.get_cache())
+        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=ExpenseFileExcelImportController.generate_labels_dropdown())
         logger.debug("relevant_lbls=", relevant_lbls)
         # Transpose Dict of Lists (DL) to List of Dicts (LD)
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
@@ -75,9 +74,10 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
-        cache_labels = ClientCache('generate_labels_dropdown')
         logger.trace(f"labels_mapping={self.labels_mapping_panel.items}")
         df = anvil.server.call('proc_excel_update_mappings', data=self.tag.get('data'), mapping_lbls=self.labels_mapping_panel.items, mapping_accts=self.accounts_mapping_panel.items)
+        # TODO - Relocate the reload logic to improve performance
+        ExpenseFileExcelImportController.generate_labels_dropdown(reload=True)
         cache_labels.clear_cache()
         ExpenseFileExcelImportController.generate_accounts_dropdown(reload=True)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)

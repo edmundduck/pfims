@@ -5,6 +5,7 @@ import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from ....Controllers import ExpenseFileExcelImportController
 from ....Utils.ClientCache import ClientCache
 from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
@@ -18,9 +19,8 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
 
         # Any code you write here will run before the form opens.
         cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
-        cache_labels = ClientCache('generate_labels_dropdown')
         self.dropdown_lbl_action.items = cache_lbl_action.get_cache()
-        self.dropdown_lbl_map_to.items = cache_labels.get_cache()
+        self.dropdown_lbl_map_to.items = ExpenseFileExcelImportController.generate_labels_dropdown()
         self.dropdown_lbl_map_to.visible = False
         self.hidden_lbl_action.text = None
         self.input_label.visible = False
