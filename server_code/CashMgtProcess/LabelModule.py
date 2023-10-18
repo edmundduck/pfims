@@ -120,7 +120,7 @@ def create_label(labels):
                 conn.commit()
                 rows = cur.fetchall()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if not rows: raise psycopg2.OperationalError("Label [{0}] create fail.".format(name))
+                if not rows: raise psycopg2.OperationalError("Label [{0}] create fail.".format(label.get_name()))
                 return [r['id'] for r in rows]
             else:
                 return []
@@ -146,7 +146,7 @@ def update_label(label):
     """
     try:
         cur, conn = [None]*2
-        if isinstance(labels, Label):
+        if isinstance(label, Label):
             conn = sysmod.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "UPDATE {schema}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s".format(
@@ -156,7 +156,7 @@ def update_label(label):
                 cur.execute(stmt)
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if cur.rowcount <= 0: raise psycopg2.OperationalError("Label [{0}] update fail.".format(name))
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Label [{0}] update fail.".format(label.get_name()))
                 return cur.rowcount
         raise TypeError(f'The parameter is not a Label object.')
     except psycopg2.OperationalError as err:
@@ -169,7 +169,7 @@ def update_label(label):
 
 @anvil.server.callable("delete_label")
 @logger.log_function
-def delete_label(id):
+def delete_label(label):
     """
     Delete a label from the label DB table.
 
@@ -180,16 +180,21 @@ def delete_label(id):
         cur.rowcount (int): Successful delete row count, otherwise None.
     """
     try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = f"DELETE FROM {Database.SCHEMA_FIN}.labels WHERE id=%s"
-            stmt = cur.mogrify(sql, (id, ))
-            cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Label ({0}) deletion fail.".format(name))
-            return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(label, Label):
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "DELETE FROM {schema}.labels WHERE id=%s".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (label.get_id(), ))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Label [{0}] deletion fail.".format(label.get_name()))
+                return cur.rowcount
+        raise TypeError(f'The parameter is not a Label object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:

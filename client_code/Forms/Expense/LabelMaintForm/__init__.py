@@ -1,9 +1,7 @@
 from ._anvil_designer import LabelMaintFormTemplate
 from anvil import *
-import anvil.server
 from ....Controllers import LabelMaintController
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.ClientCache import ClientCache
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -73,7 +71,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
     def button_labels_update_click(self, **event_args):
         """This method is called when the button is clicked"""
         try:
-            label = LabelMaintController.create_label(
+            label = LabelMaintController.update_label(
                 self.dropdown_lbl_list.selected_value,
                 self.text_lbl_name.text,
                 self.text_keywords.text,
@@ -81,7 +79,8 @@ class LabelMaintForm(LabelMaintFormTemplate):
             )
             """ Reflect the change in labels dropdown """
             self.dropdown_lbl_list.items = LabelMaintController.generate_labels_dropdown(reload=True)
-            self.dropdown_lbl_list.selected_value = [label.get_id(), label.get_name()]
+            self.dropdown_lbl_list.selected_value = LabelMaintController.get_label_dropdown_selected_item(label.get_id())
+            self.dropdown_moveto.items = self.dropdown_lbl_list.items
             msg = f"Label {label.get_name()} ({label.get_id()}) has been updated successfully."
             logger.info(msg)
         except Exception as err:
@@ -104,11 +103,12 @@ class LabelMaintForm(LabelMaintFormTemplate):
         confirm = Label(text="Proceed label [{lbl_name}] deletion by clicking PROCEED.".format(lbl_name=lbl_name))
         userconf = alert(content=confirm, title='Alert - Confirm to delete label', buttons=[('PROCEED', Alerts.CONFIRM), ('CANCEL', Alerts.CANCEL)])
 
-        if userconf == const.Alerts.CONFIRM:
+        if userconf == Alerts.CONFIRM:
             try:
-                result = AccountMaintController.delete_account(self.dropdown_lbl_list.selected_value)
+                result = LabelMaintController.delete_label(self.dropdown_lbl_list.selected_value)
                 """ Reflect the change in label dropdown """
                 self.dropdown_lbl_list.items = LabelMaintController.generate_labels_dropdown(reload=True)
+                self.dropdown_moveto.items = self.dropdown_lbl_list.items
                 self.clear()
                 msg = f"Label {lbl_name} ({lbl_id}) has been deleted."
                 logger.info(msg)
@@ -116,7 +116,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
                 return btnmod.override_end_state(False)
             except Exception as err:
                 logger.error(err)
-                msg = f"ERROR: Fail to delete label {lbl_name}."
+                msg = f"ERROR occurs when deleting label {lbl_name}."
                 Notification(msg).show()
 
     def clear(self, **event_args):

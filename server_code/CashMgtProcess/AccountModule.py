@@ -109,7 +109,7 @@ def create_multiple_accounts(accounts):
         accounts (list of dict): Contains list of account names and their attributes.
 
     Returns:
-        list: A list of successful created account IDs, otherwise None.
+        rows (list of int): A list of successful created accounts IDs, otherwise None.
     """
     userid = sysmod.get_current_userid()
     try:
