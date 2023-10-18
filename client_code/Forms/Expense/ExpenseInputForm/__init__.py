@@ -21,7 +21,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         # Any code you write here will run when the form opens.
         self.dropdown_labels.items = ExpenseInputController.generate_labels_dropdown()
         self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown()
-        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
+        self.button_delete_exptab.enabled = ExpenseInputController.enable_expense_group_delete_button(self.dropdown_tabs.selected_value)
         self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
         self.input_repeating_panel.add_event_handler('x-deleted-row', self._deleted_iid_row_active)
@@ -100,7 +100,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if len(self.input_repeating_panel.items) < const.ExpenseConfig.DEFAULT_ROW_NUM:
             diff = const.ExpenseConfig.DEFAULT_ROW_NUM - len(self.input_repeating_panel.items)
             self.input_repeating_panel.items = self.input_repeating_panel.items + self._generate_blank_records(diff)
-        self.button_delete_exptab.enabled = False if self.dropdown_tabs.selected_value in ('', None) else True
+        self.button_delete_exptab.enabled = ExpenseInputController.enable_expense_group_delete_button(self.dropdown_tabs.selected_value)
         self._deleted_iid_row_reset()
         cache_del_iid.clear_cache()
 

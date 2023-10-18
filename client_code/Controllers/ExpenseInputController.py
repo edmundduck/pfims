@@ -72,3 +72,16 @@ def get_account_dropdown_selected_item(acct_id):
     """
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
+
+def enable_expense_group_delete_button(group_selection):
+    """
+    Enable or disable the expense group delete button.
+
+    Parameters:
+        group_selection (list): The selected value in list from the expense group dropdown.
+        
+    Returns:
+        Boolean: True for enable, false for disable.
+    """
+    group_id = group_selection[0] if isinstance(group_selection, (list, tuple)) else group_selection
+    return False if group_id in (None, '') or str(group_id).isspace() else True
