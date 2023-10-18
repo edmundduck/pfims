@@ -73,7 +73,13 @@ class StockJournalGroup(BaseEntity):
         if isinstance(journals, StockJournal):
             return self.set_single_attribute(8, [journals.set_group_id(self.get_id())])
         elif isinstance(journals, list):
-            return self.set_single_attribute(8, list(StockJournal(j).set_group_id(self.get_id()) for j in journals))
+            journal_list = []
+            for j in journals:
+                if isinstance(j, StockJournal):
+                    journal_list.append(j.set_group_id(self.get_id()))
+                elif isinstance(j, dict):
+                    journal_list.append(StockJournal(j).set_group_id(self.get_id()))
+            return self.set_single_attribute(8, journal_list)
 
     def copy(self):
         return StockJournalGroup(self.get_dict())

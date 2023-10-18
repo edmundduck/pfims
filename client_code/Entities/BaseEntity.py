@@ -68,7 +68,6 @@ class BaseEntity:
     </Quote>
     """
     # def __serialize__(self, global_data):
-    #     print(f"{self.__class__.__name__}_{self.userid}")
     #     global_data[f"{self.__class__.__name__}_{self.userid}"] = self.get_dict()
     #     return self.userid
     # 
