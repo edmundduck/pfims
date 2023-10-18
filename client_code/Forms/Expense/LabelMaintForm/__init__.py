@@ -57,7 +57,7 @@ class LabelMaintForm(LabelMaintFormTemplate):
             logger.debug("lbl_id=", label.get_id())
             """ Reflect the change in labels dropdown """
             self.dropdown_lbl_list.items = LabelMaintController.generate_labels_dropdown(reload=True)
-            self.dropdown_lbl_list.selected_value = [label.get_id(), label.get_name()]
+            self.dropdown_lbl_list.selected_value = LabelMaintController.get_label_dropdown_selected_item(label.get_id())
             self.dropdown_moveto.items = self.dropdown_lbl_list.items
             self.button_labels_update.enabled = LabelMaintController.enable_label_update_button(self.dropdown_lbl_list.selected_value)
             self.button_labels_delete.enabled = LabelMaintController.enable_label_delete_button(self.dropdown_lbl_list.selected_value)

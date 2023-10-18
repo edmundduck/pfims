@@ -118,8 +118,9 @@ def create_label(labels):
                 stmt = f"INSERT INTO {Database.SCHEMA_FIN}.labels (userid, name, keywords, status) VALUES %s RETURNING id"
                 cur.execute(stmt % mogstr)
                 conn.commit()
+                rows = cur.fetchall()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                return [r['id'] for r in cur.fetchall()]
+                return [r['id'] for r in rows]
             else:
                 return []
     except psycopg2.OperationalError as err:
@@ -132,15 +133,12 @@ def create_label(labels):
 
 @anvil.server.callable("update_label")
 @logger.log_function
-def update_label(id, name, keywords, status):
+def update_label(label):
     """
     Update existing label into the DB table which stores labels' detail.
 
     Parameters:
-        id (int): The label ID to be updated.
-        name (string): The label name to be updated.
-        keywords (list): The keywords relevant to the label.
-        status (boolean): The active status of the label.
+        label (Label): The to-be-updated label object.
 
     Returns:
         cur.rowcount (int): Successful update row count, otherwise None.

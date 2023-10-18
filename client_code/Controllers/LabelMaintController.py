@@ -158,13 +158,14 @@ def create_label(lbl_name, keywords, status):
     cache = ClientCache(CacheKey.OBJ_LABEL, None)
 
     lbl = Label().set_user_id(Global.userid).set_name(lbl_name).set_keywords(keywords).set_status(status)
-    id = anvil.server.call('create_label', lbl)
-    if not id:
+    id_list = anvil.server.call('create_label', lbl)
+    if not id_list or len(id_list) == 0:
         raise RuntimeError(f"Error occurs in create_label.")
     else:
+        id = id_list[0]
         logger.trace('id=', id)
         lbl = lbl.set_id(id)
-        cache.set_cache({lbl.get_id(): lbl})
+        cache.set_cache({id: lbl})
     return lbl
 
 @logger.log_function
