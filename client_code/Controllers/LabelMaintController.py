@@ -71,6 +71,48 @@ def __get_label__(label_dropdown_selected, reload=False):
         logger.trace(f'lbl_id={lbl.get_id()} / lbl={str(lbl)}')
     return lbl
 
+def get_label_name(label_dropdown_selected, reload=False):
+    """
+    Return the label name of the selected label.
+
+    Parameters:
+        label_dropdown_selected (list): The selected value in list from the label dropdown.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
+    Returns:
+        lbl.get_name (string): Selected label's name.
+    """
+    lbl = __get_label__(label_dropdown_selected, reload)
+    return lbl.get_name()
+
+def get_label_status(label_dropdown_selected, reload=False):
+    """
+    Return the label status of the selected label.
+
+    Parameters:
+        label_dropdown_selected (list): The selected value in list from the label dropdown.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
+    Returns:
+        lbl.get_status (date): Selected label's status.
+    """
+    lbl = __get_label__(label_dropdown_selected, reload)
+    return lbl.get_status()
+
+def get_label_keywords(label_dropdown_selected, reload=False):
+    """
+    Return the label keywords of the selected label.
+
+    Parameters:
+        label_dropdown_selected (list): The selected value in list from the label dropdown.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
+    Returns:
+        lbl.get_keywords (list of string): Selected label's keywords.
+    """
+    lbl = __get_label__(label_dropdown_selected, reload)
+    return lbl.get_keywords()
+
 def enable_label_update_button(label_selection):
     """
     Enable or disable the label update button.
@@ -97,3 +139,85 @@ def enable_label_delete_button(label_selection):
     label_id = label_selection[0] if isinstance(label_selection, (list, tuple)) else label_selection
     return False if label_id in (None, '') or str(label_id).isspace() else True
 
+@logger.log_function
+def create_label(lbl_name, keywords, status):
+    """
+    Convert the fields from the form for creating the label change in backend.
+
+    Parameters:
+        lbl_name (string): The name of the selected label.
+        keywords (list of string): The selected keywords in list from the label dropdown.
+        status (string): The status of the selected label.
+        
+    Returns:
+        lbl (Label): An label object.
+    """
+    from .. import Global
+    from ..Entities.Label import Label
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.OBJ_LABEL, None)
+
+    lbl = Label().set_user_id(Global.userid).set_name(lbl_name).set_keywords(keywords).set_status(status)
+    id = anvil.server.call('create_label', lbl)
+    if not id:
+        raise RuntimeError(f"Error occurs in create_label.")
+    else:
+        logger.trace('id=', id)
+        lbl = lbl.set_id(id)
+        cache.set_cache({lbl.get_id(): lbl})
+    return lbl
+
+@logger.log_function
+def update_label(label_dropdown_selected, lbl_name, keywords, status):
+    """
+    Convert the fields from the form for updating the label change in backend.
+
+    Parameters:
+        label_dropdown_selected (list): The selected value in list from the label dropdown.
+        lbl_name (string): The name of the selected label.
+        keywords (list of string): The selected keywords in list from the label dropdown.
+        status (string): The status of the selected label.
+        
+    Returns:
+        lbl (Label): An label object.
+    """
+    from .. import Global
+    from ..Entities.Label import Label
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.OBJ_LABEL, None)
+
+    lbl_id, _ = label_dropdown_selected if label_dropdown_selected is not None else [None, None]
+    lbl = Label().set_user_id(Global.userid).set_id(lbl_id).set_name(lbl_name).set_keywords(keywords).set_status(status)
+    result = anvil.server.call('update_label', lbl)
+    if not result:
+        raise RuntimeError(f"Error occurs in update_label.")
+    else:
+        logger.trace('result=', result)
+        cache.set_cache({lbl.get_id(): lbl})
+    return lbl
+
+@logger.log_function
+def delete_label(label_dropdown_selected):
+    """
+    Convert the fields from the form for deleting the label change in backend.
+
+    Parameters:
+        label_dropdown_selected (list): The selected value in list from the label dropdown.
+        
+    Returns:
+        result (int): Successful delete row count, otherwise None.
+    """
+    from .. import Global
+    from ..Entities.Label import Label
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.OBJ_LABEL, None)
+
+    lbl_id, lbl_name = label_dropdown_selected if label_dropdown_selected is not None else [None, None]
+    lbl = Label().set_user_id(Global.userid).set_id(lbl_id).set_name(lbl_name)
+    result = anvil.server.call('delete_label', lbl)
+    if not result:
+        raise RuntimeError(f"Error occurs in delete_label.")
+    else:
+        logger.trace('result=', result)
+        cache.clear_cache()
+    return result

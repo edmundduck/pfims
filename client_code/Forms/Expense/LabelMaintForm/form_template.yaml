@@ -28,7 +28,7 @@ components:
       visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
-    name: hidden_lbl_id
+    name: spacer3
     layout_properties: {grid_position: 'ZDGNBU,ZBHOGB'}
   - type: Button
     properties: {role: null, align: right, tooltip: '', border: '', enabled: true,

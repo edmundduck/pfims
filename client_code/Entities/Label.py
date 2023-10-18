@@ -4,6 +4,7 @@ from .BaseEntity import BaseEntity
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+@anvil.server.portable_class
 class Label(BaseEntity):
     __db_column_def__ = ['userid', 'id', 'name', 'status', 'keywords']
     __property_def__ = __db_column_def__
