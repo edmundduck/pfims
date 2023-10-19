@@ -201,8 +201,11 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         result (list of dict): A list of data padded with blank items for repeating panel.
     """
     from ..Entities.ExpenseTransaction import ExpenseTransaction
+    from ..Utils.ClientCache import ClientCache
+    
     def filter_valid_rows(row):
         cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID, [])
+        print("ROW\n", row)
         if row.get('iid', None) and row.get('iid') in cache.get_cache():
             # Filter out all rows in deleted IID cache
             return False

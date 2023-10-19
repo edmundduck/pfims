@@ -71,7 +71,7 @@ def select_transactions(exp_grp):
         exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
-        rows (list): A list of transactions.
+        rows (list of ExpenseTransaction): A list of transactions belonging to the group.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -96,61 +96,49 @@ def select_transactions(exp_grp):
         rows = helper.upper_dict_keys(rows, exprcd.data_list)
         cur.close()
         tnxs = list(ExpenseTransaction(r).set_user_id(userid) for r in rows)
-    return list(rows)
+    return tnxs
 
 @anvil.server.callable("upsert_transactions")
 @logger.log_function
-def upsert_transactions(tid, rows):
+def upsert_transactions(exp_grp):
     """
-    Insert of update transactions under one particular expense tab into a DB table.
+    Insert of update transactions under one particular expense transaction group into a DB table.
 
-    Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand
+    Column IID is not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
     
     Parameters:
-        tid (int): The ID of a selected expense tab.
-        rows (list): A list of transactions to be inserted or updated.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
         iid (list): List of IID following the same sequence as rows when updated successfully, otherwise None. If nothing to update (not error update) then empty list.
     """
-    conn = None
-    iid = None
     try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
-            # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
-            # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table
-                    
-            if len(rows) > 0:
-                # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
-                mogstr = []
-                for row in rows:
-                    record = exprcd(row).assign({'tab_id': tid})
-                    # decode('utf-8') is essential to allow mogrify function to work properly, reason unknown
-                    if record.isvalid(): mogstr.append(cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", record.to_list()).decode('utf-8'))
-                logger.trace("mogstr=", mogstr)
-                args = ','.join(mogstr)
-                if len(mogstr) > 0:
-                    cur.execute("INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, \
-                    remarks, stmt_dtl) VALUES {p1} ON CONFLICT (iid, tab_id) DO UPDATE SET \
-                    trandate=EXCLUDED.trandate, \
-                    account_id=EXCLUDED.account_id, \
-                    amount=EXCLUDED.amount, \
-                    labels=EXCLUDED.labels, \
-                    remarks=EXCLUDED.remarks, \
-                    stmt_dtl=EXCLUDED.stmt_dtl \
-                    WHERE exp_transactions.iid=EXCLUDED.iid AND exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=Database.SCHEMA_FIN, p1=args))
+        cur, conn, iid = [None]*3
+        if isinstance(exp_grp, ExpenseTransactionGroup):
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
+                # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
+                # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table                    
+                if len(exp_grp.get_transactions()) > 0:
+                    # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
+                    mogstr = [cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", r.get_db_col_list()).decode('utf-8') for r in exp_grp.get_transactions()]
+                    logger.trace("mogstr=", mogstr)
+                    sql = "INSERT INTO {schema}.exp_transactions (iid, tab_id, trandate, account_id, amount, labels, remarks, stmt_dtl) VALUES {p1} \
+                    ON CONFLICT (iid, tab_id) DO UPDATE SET trandate=EXCLUDED.trandate, account_id=EXCLUDED.account_id, amount=EXCLUDED.amount, \
+                    labels=EXCLUDED.labels, remarks=EXCLUDED.remarks, stmt_dtl=EXCLUDED.stmt_dtl WHERE exp_transactions.iid=EXCLUDED.iid AND \
+                    exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=Database.SCHEMA_FIN, p1=','.join(mogstr))
+                    cur.execute(sql)
                     conn.commit()
                     result = cur.fetchall()
                     iid = list(r['iid'] for r in result)
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                    if cur.rowcount != len(rows): raise psycopg2.OperationalError("Transactions (tab id:{0}) creation or update fail.".format(tid))
+                    logger.trace(f"iid list={iid}")
+                    if cur.rowcount != len(rows): raise psycopg2.OperationalError("Transactions under group [{0} ({1})] creation or update fail.".format(exp_grp.get_name(), exp_grp.get_id()))
                 else:
                     iid = []
-            else:
-                iid = []
-    except (Exception, psycopg2.OperationalError) as err:
+        raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -160,35 +148,40 @@ def upsert_transactions(tid, rows):
     
 @anvil.server.callable("delete_transactions")
 @logger.log_function
-def delete_transactions(tid, iid_list):
+def delete_transactions(exp_grp, iid_list):
     """
-    Delete transactions under one particular expense tab from a DB table.
+    Delete transactions under one particular expense transaction group from a DB table.
 
     One TID contains many transactions, so do many IID. 
     In order to remove some particular transactionsfrom one tab, add these IID into the iid_list.
 
     Parameters:
-        tid (int): The ID of a selected expense tab.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
         iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
 
     Returns:
-        count (int): Successful update row count, otherwise None.
+        cur.rowcount (int): Successful update row count, otherwise None.
     """
-    conn, cur, count = [None, None, None]
     try:
-        logger.debug("delete iid_list=", iid_list)
-        if iid_list is not None and len(iid_list) > 0:
-            conn = sysmod.db_connect()
-            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                args = "({0})".format(",".join(str(i) for i in iid_list))
-                cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.exp_transactions WHERE tab_id = {tid} AND iid IN {args}")
-                conn.commit()
-                count = cur.rowcount
-                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if count <= 0: raise psycopg2.OperationalError("Transactions (tab id:{0}) deletion fail.".format(tid))
-        else:
-            count = 0
-    except (Exception, psycopg2.OperationalError) as err:
+        conn, cur = [None] *2
+        if isinstance(exp_grp, ExpenseTransactionGroup):
+            logger.debug("delete iid_list=", iid_list)
+            if iid_list is not None and len(iid_list) > 0:
+                conn = sysmod.db_connect()
+                with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                    sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {tid} AND iid IN {args}".format(
+                        schema=Database.SCHEMA_FIN
+                    )
+                    stmt = cur.mogrify(sql, (exp.get_id(), tuple(iid_list)))
+                    cur.execute(stmt)
+                    conn.commit()
+                    count = cur.rowcount
+                    logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                    if cur.rowcount <= 0: raise psycopg2.OperationalError("Transactions under group [{0} ({1})] deletion fail.".format(exp_grp.get_name(), exp_grp.get_id()))
+                    return cur.rowcount
+            return 0
+        raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
