@@ -214,7 +214,7 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
     if rp_items:
         diff = ExpenseConfig.DEFAULT_ROW_NUM - len(rp_items)
         result = list(filter(filter_valid_rows, rp_items)) + [ExpenseTransaction().copy().get_dict() for i in range(diff) if diff > 0] if reload else \
-                [ExpenseTransaction().copy().get_dict() for i in range(diff) if diff > 0]
+                rp_items + [ExpenseTransaction().copy().get_dict() for i in range(diff)]
         logger.trace('rp_items with data and/or reload=', result)
     else:
         result = [ExpenseTransaction().copy().get_dict() for i in range(ExpenseConfig.DEFAULT_ROW_NUM)]
