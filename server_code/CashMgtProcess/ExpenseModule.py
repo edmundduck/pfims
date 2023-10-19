@@ -110,8 +110,24 @@ def upsert_transactions(exp_grp):
         exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
-        iid (list): List of IID following the same sequence as rows when updated successfully, otherwise None. If nothing to update (not error update) then empty list.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object updated with latest transaction IID.
     """
+    def replace_transactions_iid(rp_items, iid):
+        """
+        Replace all IID from the list of transactions.
+    
+        Parameters:
+            rp_items (list of dict): List of transactions in dict format.
+            iid (list of int): New IID list which follows the same order as journals in object.
+    
+        Returns:
+            LD (list of dict): List of transactions with replaced new IID.
+        """
+        DL = {k: [dic[k] for dic in rp_items] for k in rp_items[0]}
+        DL['iid'] = iid
+        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        return LD
+
     try:
         cur, conn, iid = [None]*3
         if isinstance(exp_grp, ExpenseTransactionGroup):
@@ -120,7 +136,9 @@ def upsert_transactions(exp_grp):
                 # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
                 # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
                 # 2. https://dba.stackexchange.com/questions/161127/column-reference-is-ambiguous-when-upserting-element-into-table                    
-                if len(exp_grp.get_transactions()) > 0:
+                num_rows = len(exp_grp.get_transactions())
+                logger.debug(f"num_rows={num_rows}")
+                if num_rows > 0:
                     # debugrecord = [(None, 3201, '2023-03-31', 601, '2', None, '3', '4'), (None, 3201, '2023-03-31', 601, '2', None, '3', '4')]
                     mogstr = [cur.mogrify("(%s, %s, %s, %s, %s, %s, %s, %s)", r.get_db_col_list()).decode('utf-8') for r in exp_grp.get_transactions()]
                     logger.trace("mogstr=", mogstr)
@@ -131,12 +149,14 @@ def upsert_transactions(exp_grp):
                     cur.execute(sql)
                     conn.commit()
                     result = cur.fetchall()
-                    iid = list(r['iid'] for r in result)
+                    iid_list = list(r['iid'] for r in result)
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                    logger.trace(f"iid list={iid}")
-                    if cur.rowcount != len(rows): raise psycopg2.OperationalError("Transactions under group [{0} ({1})] creation or update fail.".format(exp_grp.get_name(), exp_grp.get_id()))
-                else:
-                    iid = []
+                    logger.trace(f"iid list={iid_list}")
+                    if cur.rowcount != num_rows: raise psycopg2.OperationalError("Transactions under group [{0} ({1})] creation or update fail.".format(exp_grp.get_name(), exp_grp.get_id()))
+                    # Transform to list of dict (LD) for simple IID replacement
+                    list_tnx_dict = replace_transactions_iid(list(i.get_dict() for i in exp_grp.get_transactions()), iid_list)
+                    exp_grp.set_transactions(list_tnx_dict)
+                return exp_grp
         raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
     except psycopg2.OperationalError as err:
         logger.error(err)
@@ -169,10 +189,10 @@ def delete_transactions(exp_grp, iid_list):
             if iid_list is not None and len(iid_list) > 0:
                 conn = sysmod.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-                    sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = {tid} AND iid IN {args}".format(
+                    sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = %s AND iid IN %s".format(
                         schema=Database.SCHEMA_FIN
                     )
-                    stmt = cur.mogrify(sql, (exp.get_id(), tuple(iid_list)))
+                    stmt = cur.mogrify(sql, (exp_grp.get_id(), tuple(iid_list)))
                     cur.execute(stmt)
                     conn.commit()
                     count = cur.rowcount
@@ -187,7 +207,7 @@ def delete_transactions(exp_grp, iid_list):
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()        
-    return count
+    return None
 
 @anvil.server.callable("create_expense_group")
 @logger.log_function
@@ -371,25 +391,26 @@ def proc_select_expense_group(exp_grp):
     exp_grp = exp_grp.set_transactions(tnx_list)
     return exp_grp
 
-@anvil.server.callable("proc_save_exp_tab")
+@anvil.server.callable("proc_change_expense_group")
 @logger.log_function
-def proc_save_exp_tab(exp_grp, iid_list):
+def proc_change_expense_group(exp_grp, iid_list):
     """
-    Consolidated process for saving expense tab.
+    Consolidated process for making change on expense transaction group and transactions, including creation, update and deletion.
 
     Parameters:
-        exp_grp (ExpenseTransactionGroup): The to-be-updated expense transaction group object.
+        exp_grp (ExpenseTransactionGroup): The to-be-changed expense transaction group object.
         iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
 
     Returns:
-        list: A list of all functions return required by the save.
+        exp_grp (ExpenseTransactionGroup): The expense transaction group object updated with data from DB.
+        result_d (int): Successful delete row count, otherwise None.
     """
-    tab_id = create_expense_group(exp_grp) if exp_grp.get_id() else update_expense_group(exp_grp)
+    tab_id = update_expense_group(exp_grp) if exp_grp.get_id() else create_expense_group(exp_grp)
     if tab_id is None or tab_id <= 0:
-        raise RuntimeError(f"ERROR: Fail to save expense tab {exp_grp.get_name()}, aborting further update.")
-    result_u = upsert_transactions(exp_grp)
+        raise RuntimeError(f"ERROR occurs when creating or updating expense transaction group {exp_grp.get_name()}, aborting further update.")
+    exp_grp = upsert_transactions(exp_grp)
     result_d = delete_transactions(exp_grp, iid_list)
-    return [tab_id, result_u, result_d]
+    return [exp_grp, result_d]
 
 @anvil.server.callable("init_cache_expense_input")
 @logger.log_function

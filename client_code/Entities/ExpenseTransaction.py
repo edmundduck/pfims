@@ -7,8 +7,9 @@ from .BaseEntity import BaseEntity
 
 @anvil.server.portable_class
 class ExpenseTransaction(BaseEntity):
-    __db_column_def__ = ['iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl']
-    __property_def__ = ['userid', 'iid', 'tab_id', 'DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
+    # __db_column_def__ = ['iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl']
+    __db_column_def__ = ['iid', 'tab_id', 'DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
+    __property_def__ = ['userid'] + __db_column_def__
     
     def __init__(self, data=None):
         super().__init__(data)

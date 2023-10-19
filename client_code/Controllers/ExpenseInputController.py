@@ -205,8 +205,6 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
     
     def filter_valid_rows(row):
         cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID, [])
-        print("CACHE\n", cache)
-        print("ROW\n", row)
         if row.get('iid', None) and row.get('iid') in cache.get_cache():
             # Filter out all rows in deleted IID cache
             return False
@@ -225,22 +223,6 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         logger.trace('rp_items blank=', result)
     return result
         
-def replace_repeating_panel_iid(iid, rp_items):
-    """
-    Replace repeating panel items IID.
-
-    Parameters:
-        iid (int): New IID.
-        rp_items (list of dict): Repeating panel item.
-
-    Returns:
-        LD (list of dict): Repeating panel item with replaced new IID.
-    """
-    DL = {k: [dic[k] for dic in rp_items] for k in rp_items[0]}
-    DL['iid'] = iid
-    LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
-    return LD
-
 @logger.log_function
 def save_expense_transaction_group(group_dropdown_selected, group_name, transactions):
     """
@@ -252,7 +234,7 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
         transactions (list of dict): A list of transactions from repeating panel to be inserted or updated.
         
     Returns:
-        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
+        exp_grp (ExpenseTransactionGroup): The expense transaction group object updated with data from DB.
     """
     from datetime import date, datetime
     from .. import Global
@@ -268,12 +250,12 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
         .set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
     # Has to assign to a variable otherwise value in cache will be updated by reference
     del_iid = cache.get_cache()
-    exp_grp, result_update, result_delete = anvil.server.call('proc_save_exp_tab', exp_grp, del_iid)
+    exp_grp, result_delete = anvil.server.call('proc_change_expense_group', exp_grp, del_iid)
     if not exp_grp:
-        raise RuntimeError('Error occurs in proc_save_exp_grp expense transaction group creation or update phase.')
-    elif result_update is None or result_delete is None:
-        # result_update and result_delete can be 0, but cannot be None.
-        raise RuntimeError('Error occurs in proc_save_exp_grp transaction deletion or update phase.')
+        raise RuntimeError('Error occurs in proc_change_expense_group expense transaction group creation or update phase.')
+    elif result_delete is None:
+        # result_delete can be 0, but cannot be None.
+        raise RuntimeError('Error occurs in proc_change_expense_group transaction deletion or update phase.')
     else:
         logger.trace('exp_grp=', exp_grp)
         cache.clear_cache()
@@ -289,7 +271,7 @@ def submit_expense_transaction_group(group_dropdown_selected, submitted=True):
         submitted (boolean): The submitte status of the selected expense transaction group.
         
     Returns:
-        exp_grp (ExpenseTransactionGroup): A expense transaction group object.
+        exp_grp (ExpenseTransactionGroup): The expense transaction group object updated with data from DB.
     """
     from datetime import date, datetime
     from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
