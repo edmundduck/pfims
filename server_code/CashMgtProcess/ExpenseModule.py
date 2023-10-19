@@ -211,7 +211,7 @@ def create_expense_group(exp_grp):
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 tid = cur.fetchone()
-                if tid['tab_id'] < 0: raise psycopg2.OperationalError("Expense Transaction Group [{0}] creation fail.".format(exp_grp.get_name()))
+                if not tid or tid['tab_id'] < 0: raise psycopg2.OperationalError("Expense transaction group [{0}] creation fail.".format(exp_grp.get_name()))
                 return tid['tab_id']
         raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
     except psycopg2.OperationalError as err:
@@ -252,7 +252,7 @@ def update_expense_group(exp_grp):
                 conn.commit()
                 logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                 tid = cur.fetchone()
-                if tid['tab_id'] < 0: raise psycopg2.OperationalError("Expense Transaction Group [{0}] update fail.".format(exp_grp.get_name()))
+                if not tid or tid['tab_id'] < 0: raise psycopg2.OperationalError("Expense transaction group [{0} ({1})] update fail.".format(exp_grp.get_name()), exp_grp.get_id())
                 return tid['tab_id']
         raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
     except psycopg2.OperationalError as err:
@@ -263,37 +263,43 @@ def update_expense_group(exp_grp):
         if conn is not None: conn.close()        
     return None
 
-@anvil.server.callable("submit_expensetab")
+@anvil.server.callable("submit_expense_group")
 @logger.log_function
-def submit_expensetab(id, submitted):
+def submit_expense_group(exp_grp):
     """
-    Change an expense tab to either "Submitted" or "Not Submitted" in a DB table which stores expense tabs' detail.
+    Submit an expense transaction group to change this group to be either editable (unsubmitted) or not editable (submitted).
 
-    This function only updates expense tab's submit status and last saved time. Does not contain any transactions.
-    
     Parameters:
-        id (int): The ID of a selected expense tab.
-        submitted (boolean): The to-be-updated submit status of a selected expense tab.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
         tid['tab_id'] (int): The ID of the expense tab, otherwise None.
     """
     try:
-        currenttime = datetime.now()
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if submitted is True:
-                sql = f"UPDATE {Database.SCHEMA_FIN}.expensetab SET submitted={submitted}, tab_submitted='{currenttime}' \
-                WHERE tab_id={id} RETURNING tab_id"
-            else:
-                sql = f"UPDATE {Database.SCHEMA_FIN}.expensetab SET submitted={submitted} WHERE tab_id={id} RETURNING tab_id"
-            cur.execute(sql)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            tid = cur.fetchone()
-            if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) submission fail.".format(template_id))
-            return tid['tab_id']
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(exp_grp, ExpenseTransactionGroup):
+            currenttime = datetime.now()
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                submitted = exp_grp.get_submitted_status()
+                if submitted:
+                    sql = "UPDATE {schema}.expensetab SET submitted=%s, tab_submitted=%s WHERE tab_id=%s RETURNING tab_id".format(
+                        schema=Database.SCHEMA_FIN
+                    )
+                    stmt = cur.mogrify(sql, (submitted, exp_grp.get_submitted_time(), exp_grp.get_id()))
+                else:
+                    sql = "UPDATE {schema}.expensetab SET submitted=%s WHERE tab_id=%s RETURNING tab_id".format(
+                        schema=Database.SCHEMA_FIN
+                    )
+                    stmt = cur.mogrify(sql, (submitted, exp_grp.get_id()))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                tid = cur.fetchone()
+                if not tid or tid['tab_id'] < 0: raise psycopg2.OperationalError("Expense transaction group [{0} ({1})] submission fail.".format(exp_grp.get_name()), exp_grp.get_id())
+                return tid['tab_id']
+        raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -301,30 +307,37 @@ def submit_expensetab(id, submitted):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable("delete_expensetab")
+@anvil.server.callable("delete_expense_group")
 @logger.log_function
-def delete_expensetab(tab_id):
+def delete_expense_group(exp_grp):
     """
-    Delete an expense tab from a DB table which stores expense tabs' detail.
+    Delete an expense transaction group from the expense transaction group DB table.
 
     Delete cascade is implemented in expense tabs DB table "tab_id" column, hence transactions under particular tab will be deleted automatically.
     This function only updates expense tab's submit status and last saved time. Does not contain any transactions.
     
     Parameters:
-        tab_id (int): The ID of a selected expense tab.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
         cur.rowcount (int): Successful update row count, otherwise None.
     """
     try:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.expensetab WHERE tab_id = {tab_id}")
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            if cur.rowcount <= 0: raise psycopg2.OperationalError("Expense tab (id:{0}) deletion fail.".format(tab_id))
-            return cur.rowcount
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(exp_grp, ExpenseTransactionGroup):
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "DELETE FROM {schema}.expensetab WHERE tab_id = %s".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (exp_grp.get_id(), ))
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                if cur.rowcount <= 0: raise psycopg2.OperationalError("Expense transaction group [{0} ({1})] deletion fail.".format(exp_grp.get_name()), exp_grp.get_id())
+                return cur.rowcount
+        raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:

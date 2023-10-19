@@ -150,38 +150,23 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items)
         tab_name = self.tab_name.text
-        tab_id, tab_original_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
-        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
+        tab_original_id, tab_original_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         try:
-            tab_id, result_u, result_d = anvil.server.call('proc_save_exp_tab', tab_id, tab_name, self.input_repeating_panel.items, cache_del_iid.get_cache())
-            if tab_name != tab_original_name or tab_id is None:
+            tab_id, result_u, result_d = ExpenseInputController.save_expense_transaction_group(self.dropdown_tabs.selected_value, tab_name, self.input_repeating_panel.items)
+            if tab_name != tab_original_name or (not tab_original_id and tab_id):
                 # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
                 self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
-                self.dropdown_tabs.selected_value = [tab_id, tab_name]
-            if result_u is None and result_d is None:
-                msg = f"WARNING: Expense tab {tab_name} has been saved but technical problem occurs in saving transactions. Please try again."
-                logger.warning(msg)
-            elif result_u is None:
-                self._deleted_iid_row_reset()
-                cache_del_iid.clear_cache()
-                msg = f"WARNING: Expense tab {tab_name} has been saved and transactions are deleted successfully, but technical problem occurs in update, please try again."
-                logger.warning(msg)
-            elif result_d is None:
-                self.input_repeating_panel.items = ExpenseInputController.replace_repeating_panel_iid(result_u)
-                msg = f"WARNING: Expense tab {tab_name} has been saved and transactions are updated successfully, but technical problem occurs in deletion, please try again."
-                logger.warning(msg)
-            else:
-                self._deleted_iid_row_reset()
-                cache_del_iid.clear_cache()
-                self.input_repeating_panel.items = ExpenseInputController.replace_repeating_panel_iid(result_u)
-                self._switch_to_submit_button()
-                msg = f"Expense tab {tab_name} has been saved successfully."
-                logger.info(msg)
-            logger.debug(f"Tab ID={tab_id}, IID list={result_u}, Deleted count={result_d}")
-            Notification(msg).show()
+                self.dropdown_tabs.selected_value = ExpenseInputController.get_expense_tabs_dropdown_selected_item(tab_id)
+            self._deleted_iid_row_reset()
+            self.input_repeating_panel.items = ExpenseInputController.replace_repeating_panel_iid(result_u)
+            self._switch_to_submit_button()
+            msg = f"Expense transaction group {tab_name} has been saved successfully."
+            logger.info(msg)
+            logger.debug(f"Expense group ID={tab_id}, IID list={result_u}, deleted count={result_d}")
         except Exception as err:
             logger.error(err)
-            Notification(err).show()
+            msg = Notification(f"ERROR occurs when saving expense transaction group {tab_name} ({tab_id}).")
+        Notification(msg).show()
 
     @btnmod.one_click_only
     @logger.log_function

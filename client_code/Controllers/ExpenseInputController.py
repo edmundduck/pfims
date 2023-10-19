@@ -73,6 +73,23 @@ def get_account_dropdown_selected_item(acct_id):
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
 
+def get_expense_tabs_dropdown_selected_item(exp_grp_id):
+    """
+    Return a complete key based on a partial currency ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        exp_grp_id (int): The expense transaction group ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in expense transaction group dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.DD_EXPENSE_TAB, None)
+    if cache.is_empty():
+        generate_expense_tabs_dropdown()
+    selected_item = cache.get_complete_key(exp_grp_id)
+    return selected_item
+
 def enable_expense_group_delete_button(group_selection):
     """
     Enable or disable the expense group delete button.
