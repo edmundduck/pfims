@@ -29,7 +29,7 @@ class ClientCache:
         """
         self.name = funcname
         if ClientCache.cache_dict.get(funcname, None) is None:
-            if data:
+            if data is not None:
                 ClientCache.cache_dict[funcname] = data
                 logger.debug(f"Cache {self.name} initiated manually.")
             else:

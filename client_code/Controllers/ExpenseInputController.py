@@ -205,6 +205,7 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
     
     def filter_valid_rows(row):
         cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID, [])
+        print("CACHE\n", cache)
         print("ROW\n", row)
         if row.get('iid', None) and row.get('iid') in cache.get_cache():
             # Filter out all rows in deleted IID cache

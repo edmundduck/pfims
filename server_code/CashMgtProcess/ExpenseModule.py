@@ -384,7 +384,7 @@ def proc_save_exp_tab(exp_grp, iid_list):
     Returns:
         list: A list of all functions return required by the save.
     """
-    tab_id = save_expensetab(exp_grp.get_id(), exp_grp.get_name())
+    tab_id = create_expense_group(exp_grp) if exp_grp.get_id() else update_expense_group(exp_grp)
     if tab_id is None or tab_id <= 0:
         raise RuntimeError(f"ERROR: Fail to save expense tab {exp_grp.get_name()}, aborting further update.")
     result_u = upsert_transactions(tab_id, exp_grp.get_transactions())
