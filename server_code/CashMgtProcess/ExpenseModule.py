@@ -410,7 +410,7 @@ def proc_change_expense_group(exp_grp, iid_list):
         raise RuntimeError(f"ERROR occurs when creating or updating expense transaction group {exp_grp.get_name()}, aborting further update.")
     exp_grp = upsert_transactions(exp_grp)
     result_d = delete_transactions(exp_grp, iid_list)
-    return [exp_grp, result_d]
+    return exp_grp, result_d
 
 @anvil.server.callable("init_cache_expense_input")
 @logger.log_function
