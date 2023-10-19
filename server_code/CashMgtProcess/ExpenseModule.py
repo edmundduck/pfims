@@ -1,15 +1,9 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..DataObject.FinObject import ExpenseRecord as exprcd
+from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
@@ -186,39 +180,82 @@ def delete_transactions(tid, iid_list):
         if conn is not None: conn.close()        
     return count
 
-@anvil.server.callable("save_expensetab")
+@anvil.server.callable("create_expense_group")
 @logger.log_function
-def save_expensetab(id, name):
+def create_expense_group(exp_grp):
     """
-    Save a newly created or existing expense tab detail into a DB table which stores expense tabs' detail.
+    Create a newly created expense transaction group with detail into an expense transaction group DB table.
 
-    This function only saves expense tab's owner ID, name, creation time and last saved time. Does not contain any transactions.
+    This function only saves expense group's owner ID, name, creation time and last saved time. Does not contain any transactions.
     
     Parameters:
-        id (int): The ID of a selected expense tab.
-        name (string): The name of a selected expense tab.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
-        tid['tab_id'] (int): The ID of the newly created or existing expense tab, otherwise None.
+        tid['tab_id'] (int): The ID of the newly created expense transaction group, otherwise None.
     """
-    userid = sysmod.get_current_userid()
     try:
-        currenttime = datetime.now()
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            if id in (None, ''):
-                sql = f"INSERT INTO {Database.SCHEMA_FIN}.expensetab (userid, tab_name, submitted, tab_create, tab_lastsave) \
-                VALUES ({userid},'{name}',False,'{currenttime}','{currenttime}') RETURNING tab_id"
-            else:
-                sql = f"UPDATE {Database.SCHEMA_FIN}.expensetab SET tab_name='{name}', submitted=False, tab_create='{currenttime}', tab_lastsave='{currenttime}' \
-                WHERE userid={userid} AND tab_id={id} RETURNING tab_id"
-            cur.execute(sql)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            tid = cur.fetchone()
-            if tid['tab_id'] < 0: raise psycopg2.OperationalError("Tab (id:{0}) creation or update fail.".format(template_id))
-            return tid['tab_id']
-    except (Exception, psycopg2.OperationalError) as err:
+        cur, conn = [None]*2
+        if isinstance(exp_grp, ExpenseTransactionGroup):
+            userid = sysmod.get_current_userid()
+            currenttime = datetime.now()
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "INSERT INTO {schema}.expensetab (userid, tab_name, submitted, tab_create, tab_lastsave) \
+                VALUES (%s,%s,%s,%s,%s) RETURNING tab_id".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                mogstr = [exp_grp.get_userid(), exp_grp.get_name(), exp_grp.get_submitted_status(), exp_grp.get_created_time(), exp_grp.get_lastsaved_time()]
+                stmt = cur.mogrify(sql, mogstr)
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                tid = cur.fetchone()
+                if tid['tab_id'] < 0: raise psycopg2.OperationalError("Expense Transaction Group [{0}] creation fail.".format(exp_grp.get_name()))
+                return tid['tab_id']
+        raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
+    except psycopg2.OperationalError as err:
+        logger.error(err)
+        conn.rollback()
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()        
+    return None
+
+@anvil.server.callable("update_expense_group")
+@logger.log_function
+def update_expense_group(exp_grp):
+    """
+    Update existing expense transaction group with detail into an expense transaction group DB table.
+
+    This function only saves expense group's owner ID, name, creation time and last saved time. Does not contain any transactions.
+    
+    Parameters:
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
+
+    Returns:
+        tid['tab_id'] (int): The ID of the existing expense transaction group, otherwise None.
+    """
+    try:
+        cur, conn = [None]*2
+        if isinstance(exp_grp, ExpenseTransactionGroup):
+            userid = sysmod.get_current_userid()
+            currenttime = datetime.now()
+            conn = sysmod.db_connect()
+            with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                sql = "UPDATE {schema}.expensetab SET tab_name=%s, submitted=%s, tab_lastsave=%s WHERE userid=%s AND tab_id=%s RETURNING tab_id".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                mogstr = [exp_grp.get_name(), exp_grp.get_submitted_status(), exp_grp.get_lastsaved_time(), exp_grp.get_userid(), exp_grp.get_id()]
+                stmt = cur.mogrify(sql, mogstr)
+                cur.execute(stmt)
+                conn.commit()
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+                tid = cur.fetchone()
+                if tid['tab_id'] < 0: raise psycopg2.OperationalError("Expense Transaction Group [{0}] update fail.".format(exp_grp.get_name()))
+                return tid['tab_id']
+        raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
@@ -313,22 +350,20 @@ def proc_exp_tab_change(tab_id):
 
 @anvil.server.callable("proc_save_exp_tab")
 @logger.log_function
-def proc_save_exp_tab(tab_id, name, rows, iid_list):
+def proc_save_exp_tab(exp_grp, iid_list):
     """
     Consolidated process for saving expense tab.
 
     Parameters:
-        tab_id (int): The ID of a selected expense tab.
-        name (string): The name of a selected expense tab.
-        rows (list): A list of transactions to be inserted or updated.
+        exp_grp (ExpenseTransactionGroup): The to-be-updated expense transaction group object.
         iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
 
     Returns:
         list: A list of all functions return required by the save.
     """
-    tab_id = save_expensetab(tab_id, name)
+    tab_id = save_expensetab(exp_grp.get_id(), exp_grp.get_name())
     if tab_id is None or tab_id <= 0:
-        raise RuntimeError(f"ERROR: Fail to save expense tab {name}, aborting further update.")
-    result_u = upsert_transactions(tab_id, rows)
+        raise RuntimeError(f"ERROR: Fail to save expense tab {exp_grp.get_name()}, aborting further update.")
+    result_u = upsert_transactions(tab_id, exp_grp.get_transactions())
     result_d = delete_transactions(tab_id, iid_list)
     return [tab_id, result_u, result_d]

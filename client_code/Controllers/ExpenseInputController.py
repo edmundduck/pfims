@@ -143,7 +143,7 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
         transactions (list of dict): A list of transactions from repeating panel to be inserted or updated.
         
     Returns:
-        exp_tab (ExpenseTransactionGroup): An expense transaction group object.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
     """
     from datetime import date, datetime
     from .. import Global
@@ -151,21 +151,21 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID, None)
 
-    exp_tab_id_ori, exp_tab_name_ori = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
+    exp_grp_id_ori, exp_grp_name_ori = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
 
     currenttime = datetime.now()
-    exp_tab = ExpenseTransactionGroup()
-    exp_tab = exp_tab.set_user_id(Global.userid).set_id(exp_tab_id_ori).set_name(group_name).set_transactions(transactions)\
+    exp_grp = ExpenseTransactionGroup()
+    exp_grp = exp_grp.set_user_id(Global.userid).set_id(exp_grp_id_ori).set_name(group_name).set_transactions(transactions)\
         .set_submitted_status(False).set_created_time(currenttime).set_lastsaved_time(currenttime)
     # Has to assign to a variable otherwise value in cache will be updated by reference
     del_iid = cache.get_cache()
-    exp_tab, result_update, result_delete = anvil.server.call('proc_save_exp_tab', exp_tab, del_iid)
-    if not exp_tab:
-        raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal group creation or update phase.")
+    exp_grp, result_update, result_delete = anvil.server.call('proc_save_exp_tab', exp_grp, del_iid)
+    if not exp_grp:
+        raise RuntimeError(f"Error occurs in proc_save_exp_grp expense transaction group creation or update phase.")
     elif result_update is None or result_delete is None:
         # result_update and result_delete can be 0, but cannot be None.
-        raise RuntimeError(f"Error occurs in proc_save_group_and_journals journal deletion or update phase.")
+        raise RuntimeError(f"Error occurs in proc_save_exp_grp transaction deletion or update phase.")
     else:
-        logger.trace('exp_tab=', exp_tab)
+        logger.trace('exp_grp=', exp_grp)
         cache.clear_cache()
-    return exp_tab
+    return exp_grp
