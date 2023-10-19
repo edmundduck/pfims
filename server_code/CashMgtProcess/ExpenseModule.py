@@ -88,7 +88,7 @@ def select_transactions(exp_grp):
             schema=Database.SCHEMA_FIN
         )
         stmt = cur.mogrify(sql, (exp_grp.get_id(), ))
-        cur.execute()
+        cur.execute(stmt)
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
@@ -375,7 +375,7 @@ def proc_select_expense_group(exp_grp):
     """
     exp_grp = select_expense_group(exp_grp)
     tnx_list = select_transactions(exp_grp)
-    exp_grp.set_transactions(tnx_list)
+    exp_grp = exp_grp.set_transactions(tnx_list)
     return exp_grp
 
 @anvil.server.callable("proc_save_exp_tab")
@@ -397,3 +397,13 @@ def proc_save_exp_tab(exp_grp, iid_list):
     result_u = upsert_transactions(tab_id, exp_grp.get_transactions())
     result_d = delete_transactions(tab_id, iid_list)
     return [tab_id, result_u, result_d]
+
+@anvil.server.callable("init_cache_expense_input")
+@logger.log_function
+def init_cache_expense_input():
+    from . import AccountModule
+    from . import LabelModule
+    exp_grp_list = generate_expense_groups_list()
+    acct_list = AccountModule.generate_accounts_list()
+    lbl_list = LabelModule.generate_labels_list()
+    return exp_grp_list, acct_list, lbl_list

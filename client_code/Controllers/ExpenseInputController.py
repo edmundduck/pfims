@@ -13,14 +13,14 @@ def init_cache():
     Call one server function to preload all caches required by the form.
     """
     from ..Utils.ClientCache import ClientCache
-    data_to_cache = anvil.server.call('init_cache_stock_trading_txn_detail')
-    cache = ClientCache(CacheKey.DD_EXPENSE_TAB, cache_data)
-    cache = ClientCache(CacheKey.OBJ_EXPENSE_GRP, None)
-    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID, [])
-    cache = ClientCache(CacheKey.DD_ACCOUNT, cache_data)
-    cache = ClientCache(CacheKey.DD_LABEL, cache_data)
-    ClientCache(CacheKey.DD_BROKER, list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data_to_cache[0]))
-    ClientCache(CacheKey.DD_STOCK_JRN_GRP, list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data_to_cache[1]))
+    data_to_cache = anvil.server.call('init_cache_expense_input')
+    cache = ClientCache(CacheKey.DD_EXPENSE_TAB, list((r['tab_name'] + " (" + str(r['tab_id']) + ")", [r['tab_id'], r['tab_name']]) for r in data_to_cache[0]))
+    cache = ClientCache(CacheKey.DD_ACCOUNT, list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name']]) for r in data_to_cache[1]))
+    cache = ClientCache(CacheKey.DD_LABEL, list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in data_to_cache[2]))
+    cache_exp_grp_obj = ClientCache(CacheKey.OBJ_EXPENSE_GRP, None)
+    cache_del_iid = ClientCache(CacheKey.EXP_INPUT_DEL_IID, [])
+    cache_exp_grp_obj.clear_cache()
+    cache_del_iid.clear_cache()
 
 @logger.log_function
 def generate_expense_tabs_dropdown(data=None, reload=False):
@@ -45,7 +45,6 @@ def generate_expense_tabs_dropdown(data=None, reload=False):
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
-@logger.log_function
 def generate_accounts_dropdown(data=None, reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.
@@ -60,7 +59,6 @@ def generate_accounts_dropdown(data=None, reload=False):
     from . import AccountMaintController
     return AccountMaintController.generate_accounts_dropdown(data, reload)
 
-@logger.log_function
 def generate_labels_dropdown(data=None, reload=False):
     """
     Access labels dropdown from either client cache or generate from DB data returned from server side.
@@ -126,10 +124,10 @@ def __get_expense_transaction_group__(group_dropdown_selected, reload=False):
         if not reload and not cache.is_empty() and cache.get_cache().get(exp_grp_id, None):
             exp_grp = cache.get_cache().get(exp_grp_id, None)
         else:
-            exp_grp.set_id(exp_grp_id)
+            exp_grp = exp_grp.set_id(exp_grp_id)
             exp_grp = anvil.server.call('proc_select_expense_group', exp_grp)
             cache.set_cache({exp_grp_id: exp_grp})
-            logger.trace(f'exp_grp_id={exp_grp_id} / exp_grp={exp_grp} / transactions={list(str(j) for j in exp_grp.get_transactions()) if exp_grp.get_journals() else []}')
+            logger.trace(f'exp_grp_id={exp_grp_id} / exp_grp={exp_grp} / transactions={list(str(j) for j in exp_grp.get_transactions()) if exp_grp.get_transactions() else []}')
     return exp_grp
 
 def get_group_name(group_dropdown_selected, reload=False):
@@ -217,8 +215,10 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         diff = ExpenseConfig.DEFAULT_ROW_NUM - len(rp_items)
         result = list(filter(filter_valid_rows, rp_items)) + [ExpenseTransaction().copy().get_dict() for i in range(diff) if diff > 0] if reload else \
                 [ExpenseTransaction().copy().get_dict() for i in range(diff) if diff > 0]
+        logger.trace('rp_items with data and/or reload=', result)
     else:
         result = [ExpenseTransaction().copy().get_dict() for i in range(ExpenseConfig.DEFAULT_ROW_NUM)]
+        logger.trace('rp_items blank=', result)
     return result
         
 def replace_repeating_panel_iid(iid, rp_items):

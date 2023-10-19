@@ -1,14 +1,10 @@
 from ._anvil_designer import ExpenseInputFormTemplate
 from anvil import *
 import anvil.server
-from datetime import date
 from ....Controllers import ExpenseInputController
-from ....Utils import Constants as const
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.ClientCache import ClientCache
 from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ....Utils.Logger import ClientLogger
-from .ExpenseInputRPTemplate import ExpenseInputRPTemplate as expintmpl
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
@@ -19,6 +15,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        ExpenseInputController.init_cache()
         self.dropdown_labels.items = ExpenseInputController.generate_labels_dropdown()
         self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown()
         self.button_delete_exptab.enabled = ExpenseInputController.enable_expense_group_delete_button(self.dropdown_tabs.selected_value)
@@ -33,8 +30,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(data)
         self._deleted_iid_row_reset()
-        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
-        cache_del_iid.clear_cache()
 
     def _switch_to_submit_button(self, **event_args):
         """

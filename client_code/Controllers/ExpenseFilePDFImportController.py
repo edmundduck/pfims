@@ -22,7 +22,6 @@ def generate_expense_tabs_dropdown(data=None, reload=False):
     from . import ExpenseInputController
     return ExpenseInputController.generate_expense_tabs_dropdown(data, reload)
 
-@logger.log_function
 def generate_accounts_dropdown(data=None, reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.
@@ -37,7 +36,6 @@ def generate_accounts_dropdown(data=None, reload=False):
     from . import AccountMaintController
     return AccountMaintController.generate_accounts_dropdown(data, reload)
 
-@logger.log_function
 def generate_labels_dropdown(data=None, reload=False):
     """
     Access labels dropdown from either client cache or generate from DB data returned from server side.
