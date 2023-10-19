@@ -112,7 +112,7 @@ def get_journals(group_dropdown_selected, reload=False):
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
-        jrn_grp.get_serialized_journals (string): Selected stock journal group's journals in serialized form for frontend.
+        jrn_grp.get_journals (list of dict): Selected stock journal group's journals in serialized form for frontend.
     """
     jrn_grp = __get_stock_journal_group__(group_dropdown_selected, reload)
     return list(j.get_dict() for j in jrn_grp.get_journals()) if jrn_grp.get_journals() else []
@@ -224,12 +224,13 @@ def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropd
     return jrn_grp
 
 @logger.log_function
-def submit_stock_journal_group(group_dropdown_selected):
+def submit_stock_journal_group(group_dropdown_selected, submitted=True):
     """
     Convert the fields from the form for submitting the stock journal group change in backend.
 
     Parameters:
         group_dropdown_selected (list): The selected value in list from the stock journal group dropdown.
+        submitted (boolean): The submitte status of the selected stock journal group.
         
     Returns:
         jrn_grp (StockJournalGroup): A stock journal group object.
@@ -242,7 +243,7 @@ def submit_stock_journal_group(group_dropdown_selected):
     jrn_grp_id, jrn_grp_name = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     currenttime = datetime.now()
     jrn_grp = StockJournalGroup()
-    jrn_grp = jrn_grp.set_id(jrn_grp_id).set_name(jrn_grp_name).set_submitted_status(True).set_submitted_time(currenttime)
+    jrn_grp = jrn_grp.set_id(jrn_grp_id).set_name(jrn_grp_name).set_submitted_status(submitted).set_submitted_time(currenttime)
     result = anvil.server.call('submit_stock_journal_group', jrn_grp) if jrn_grp_id else None
     if not result:
         raise RuntimeError(f"Error occurs in submit_stock_journal_group.")

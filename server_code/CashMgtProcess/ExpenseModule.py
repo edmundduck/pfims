@@ -3,6 +3,7 @@ import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
 from ..DataObject.FinObject import ExpenseRecord as exprcd
+from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
@@ -13,74 +14,89 @@ from ..Utils.Constants import Database
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("generate_expensetabs_dropdown")
+@anvil.server.callable("generate_expense_groups_list")
 @logger.log_function
-def generate_expensetabs_dropdown():
+def generate_expense_groups_list():
     """
-    Select data from a DB table which stores expense tabs' detail to generate a dropdown list.
+    Select all unsubmitted expense transaction groups from the expense transaction group DB table.
 
     Returns:
-        list: A dropdown list of expense tab names and IDs as description, and also as ID.
+        rows (list of RealDictRow): A list of unsubmitted expense transaction group items.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC")
+        sql = "SELECT * FROM {schema}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC".format(
+            schema=Database.SCHEMA_FIN,
+            userid=userid
+        )
+        cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['tab_name'] + " (" + str(row['tab_id']) + ")", [row['tab_id'], row['tab_name']]) for row in rows)
-    return content
+        return rows
 
-@anvil.server.callable("get_selected_expensetab_attr")
+@anvil.server.callable("select_expense_group")
 @logger.log_function
-def get_selected_expensetab_attr(selected_tab):
+def select_expense_group(exp_grp):
     """
-    Select one particular expense tab attributes from a DB table which stores expense tabs' detail.
+    Return selected expense transaction group detail.
 
     Parameters:
-        selected_tab (int): The ID of a selected expense tab.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
-        list: A row of expense tab attributes including ID and name.
+        exp_grp (ExpenseTransactionGroup): The selected expense transaction group object filled with detail returned from the DB.
     """
-    if selected_tab is None or selected_tab == '':
-        return [None, None]
-    else:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.expensetab WHERE tab_id={selected_tab}")
-            row = cur.fetchone()
-            cur.close()
-        return [row['tab_id'], row['tab_name']]
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT {col_def} FROM {schema}.expensetab WHERE tab_id = %s".format(
+            col_def=ExpenseTransactionGroup.get_column_definition(),
+            schema=Database.SCHEMA_FIN
+        )
+        stmt = cur.mogrify(sql, (exp_grp.get_id(), ))
+        cur.execute(stmt)
+        row = cur.fetchone()
+        cur.close()
+    return ExpenseTransactionGroup(row)
 
 @anvil.server.callable("select_transactions")
 @logger.log_function
-def select_transactions(tid):
+def select_transactions(exp_grp):
     """
-    Select all transactions under one particular expense tab from a DB table which stores expense tabs' detail.
+    Return all transactions under a selected expense transaction group.
 
     Some keys under ExpenseDBTableDefinion require upper cases and convert explicitly as lower cases is default.
     
     Parameters:
-        tid (int): The ID of a selected expense tab.
+        exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
         rows (list): A list of transactions.
     """
-    if tid is not None:
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(f"SELECT iid, tab_id, trandate AS {exprcd.Date}, account_id AS {exprcd.Account}, \
-            amount AS {exprcd.Amount}, labels AS {exprcd.Labels}, remarks AS {exprcd.Remarks}, stmt_dtl AS {exprcd.StmtDtl} \
-            FROM {Database.SCHEMA_FIN}.exp_transactions WHERE tab_id = {tid} ORDER BY trandate DESC, iid DESC")
-            rows = cur.fetchall()
-            logger.trace("rows=", rows)
-            # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
-            # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-            rows = helper.upper_dict_keys(rows, exprcd.data_list)
-            cur.close()
-        return list(rows)
-    return []
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT iid, tab_id, trandate AS {tdate}, account_id AS {account}, amount AS {amount}, \
+        labels AS {labels}, remarks AS {remarks}, stmt_dtl AS {stmt_dtl} \
+        FROM {schema}.exp_transactions WHERE tab_id = %s ORDER BY trandate DESC, iid DESC".format(
+            tdate=exprcd.Date,
+            account=exprcd.Account,
+            amount=exprcd.Amount,
+            labels=exprcd.Labels,
+            remarks=exprcd.Remarks,
+            stmt_dtl=exprcd.StmtDtl,
+            schema=Database.SCHEMA_FIN
+        )
+        stmt = cur.mogrify(sql, (exp_grp.get_id(), ))
+        cur.execute()
+        rows = cur.fetchall()
+        logger.trace("rows=", rows)
+        # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
+        # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
+        rows = helper.upper_dict_keys(rows, exprcd.data_list)
+        cur.close()
+        tnxs = list(ExpenseTransaction(r).set_user_id(userid) for r in rows)
+    return list(rows)
 
 @anvil.server.callable("upsert_transactions")
 @logger.log_function
@@ -345,21 +361,22 @@ def delete_expense_group(exp_grp):
         if conn is not None: conn.close()
     return None
 
-@anvil.server.callable("proc_exp_tab_change")
+@anvil.server.callable("proc_select_expense_group")
 @logger.log_function
-def proc_exp_tab_change(tab_id):
+def proc_select_expense_group(exp_grp):
     """
-    Consolidated process for changing expense tab selection.
+    Consolidated process for selecting one expense transaction group.
 
     Parameters:
-        tab_id (int): The ID of a selected expense tab.
+        exp_grp (ExpenseTransactionGroup): The selected expense transaction group object.
 
     Returns:
-        list: A list of all functions return required by the selection change.
+        exp_grp (ExpenseTransactionGroup): The selected expense transaction group object filled with detail returned from the DB.
     """
-    id, name = get_selected_expensetab_attr(tab_id)
-    trx_list = select_transactions(tab_id)
-    return [id, name, trx_list]
+    exp_grp = select_expense_group(exp_grp)
+    tnx_list = select_transactions(exp_grp)
+    exp_grp.set_transactions(tnx_list)
+    return exp_grp
 
 @anvil.server.callable("proc_save_exp_tab")
 @logger.log_function

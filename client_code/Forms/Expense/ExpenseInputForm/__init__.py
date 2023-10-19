@@ -22,7 +22,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         self.dropdown_labels.items = ExpenseInputController.generate_labels_dropdown()
         self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown()
         self.button_delete_exptab.enabled = ExpenseInputController.enable_expense_group_delete_button(self.dropdown_tabs.selected_value)
-        self.button_add_rows.text = self.button_add_rows.text.replace('%n', str(const.ExpenseConfig.DEFAULT_ROW_NUM))
+        self.button_add_rows.text = ExpenseInputController.get_blank_row_button_text(self.button_add_rows.text)
         self.input_repeating_panel.add_event_handler('x-switch-to-save-button', self._switch_to_save_button)
         self.input_repeating_panel.add_event_handler('x-deleted-row', self._deleted_iid_row_active)
 
@@ -40,8 +40,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         Change the save button to submit.
         """
-        self.button_save_exptab.text = const.ExpenseConfig.BUTTON_SUBMIT_TEXT
-        self.button_save_exptab.background = const.ColorSchemes.THEME_PRIM
+        from ....Utils.Constants import ColorSchemes, ExpenseConfig
+        self.button_save_exptab.text = ExpenseConfig.BUTTON_SUBMIT_TEXT
+        self.button_save_exptab.background = ColorSchemes.THEME_PRIM
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_submit_click)
 
@@ -49,8 +50,9 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         Change the submit button to save.
         """
-        self.button_save_exptab.text = const.ExpenseConfig.BUTTON_DRAFT_TEXT
-        self.button_save_exptab.background = const.ColorSchemes.THEME_SEC
+        from ....Utils.Constants import ColorSchemes, ExpenseConfig
+        self.button_save_exptab.text = ExpenseConfig.BUTTON_DRAFT_TEXT
+        self.button_save_exptab.background = ColorSchemes.THEME_SEC
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_save_click)
         
@@ -58,17 +60,12 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
         Routing.open_exp_file_upload_form(self)
-        
+
+    @btnmod.one_click_only
     def button_add_rows_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.button_add_rows.enabled = False
-        if self.tag['reload']:
-            # TODO - Integrate reload flag into populate_repeating_panel_items
-            self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items)
-            self.tag['reload'] = False
-        else:
-            self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items() + self.input_repeating_panel.items
-        self.button_add_rows.enabled = True
+        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items() + ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items, reload=self.tag['reload'])
+        self._deleted_iid_row_reset()
 
     def button_lbl_maint_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -90,13 +87,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     @logger.log_function
     def dropdown_tabs_change(self, **event_args):
         """This method is called when an item is selected"""
-        cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
-        selected_tid = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        tab_id, self.tab_name.text, self.input_repeating_panel.items = anvil.server.call('proc_exp_tab_change', selected_tid)
-        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items)
+        self.tab_name.text = ExpenseInputController.get_group_name(self.dropdown_tabs.selected_value)
+        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(ExpenseInputController.get_transactions(self.dropdown_tabs.selected_value))
         self.button_delete_exptab.enabled = ExpenseInputController.enable_expense_group_delete_button(self.dropdown_tabs.selected_value)
         self._deleted_iid_row_reset()
-        cache_del_iid.clear_cache()
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
@@ -148,96 +142,78 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             return
 
         """This method is called when the button is clicked"""
-        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items)
-        tab_name = self.tab_name.text
+        self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items, reload=True)
         tab_original_id, tab_original_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
+        tab_name = self.tab_name.text
         try:
             tab_id, result_u, result_d = ExpenseInputController.save_expense_transaction_group(self.dropdown_tabs.selected_value, tab_name, self.input_repeating_panel.items)
             if tab_name != tab_original_name or (not tab_original_id and tab_id):
                 # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
                 self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
                 self.dropdown_tabs.selected_value = ExpenseInputController.get_expense_tabs_dropdown_selected_item(tab_id)
-            self._deleted_iid_row_reset()
             self.input_repeating_panel.items = ExpenseInputController.replace_repeating_panel_iid(result_u)
+            self._deleted_iid_row_reset()
             self._switch_to_submit_button()
-            msg = f"Expense transaction group {tab_name} has been saved successfully."
+            msg = f"Expense transaction group [{tab_name} ({tab_id})] has been saved successfully."
             logger.info(msg)
             logger.debug(f"Expense group ID={tab_id}, IID list={result_u}, deleted count={result_d}")
         except Exception as err:
             logger.error(err)
-            msg = Notification(f"ERROR occurs when saving expense transaction group {tab_name} ({tab_id}).")
+            msg = Notification(f"ERROR occurs when saving expense transaction group [{tab_name} ({tab_id})].")
         Notification(msg).show()
 
     @btnmod.one_click_only
     @logger.log_function
     def button_submit_click(self, **event_args):
         """This method is called when the button is clicked"""
-        tab_name = self.tab_name.text
-        tab_id = self.dropdown_tabs.selected_value[0] if self.dropdown_tabs.selected_value is not None else None
-        result = anvil.server.call('submit_expensetab', tab_id, True)
-
-        if result is not None and result > 0:
+        tab_id, tab_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
+        try:
+            result = ExpenseInputController.submit_expense_transaction_group(self.dropdown_tabs.selected_value)
             """ Reflect the change in template dropdown """
             self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
             self.dropdown_tabs.selected_value = None
-            tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, ExpenseInputController.populate_repeating_panel_items()]
+            self.tab_name.text = None
             self.button_delete_exptab.enabled = False
-            msg = f"Expense tab {tab_name} has been submitted."
+            self._deleted_iid_row_reset()
+            self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items()
+            msg = "Expense transaction group [{0} ({1})] has been submitted.".format(tab_name, tab_id)
             logger.info(msg)
-        else:
-            msg = f"ERROR: Fail to submit expense tab {tab_name}."
-            logger.error(msg)
+        except Exception as err:
+            logger.error(err)
+            msg = f"ERROR occurs when submitting expense transaction group [{tab_name} ({tab_id})]."
         Notification(msg).show()
 
     @btnmod.one_click_only
     @logger.log_function
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
-        to_be_del_tab_id, to_be_del_tab_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
-        msg = Label(text=f"Proceed expense tab <{to_be_del_tab_name}> deletion by clicking DELETE.")
-        userconf = alert(content=msg, title="Confirm Expense Tab Deletion", buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
+        from ....Utils.Constants import Alerts
+        exp_grp_id, exp_grp_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
+        confirm = Label(text=f"Proceed expense transaction group [{exp_grp_name} ({exp_grp_id})] deletion by clicking PROCEED.")
+        userconf = alert(content=confirm, title='Alert - Confirm to delete expense transaction group', buttons=[('PROCEED', Alerts.CONFIRM), ('CANCEL', Alerts.CANCEL)])
 
-        if userconf == const.Alerts.CONFIRM:
-            result = anvil.server.call('delete_expensetab', tab_id=to_be_del_tab_id)
-            if result is not None and result > 0:
+        if userconf == Alerts.CONFIRM:
+            try:
+                result = ExpenseInputController.delete_expense_transaction_group(self.dropdown_tabs.selected_value)
                 """ Reflect the change in tab dropdown """
-                cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
                 self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
                 self.dropdown_tabs.selected_value = None
-                tab_id, self.tab_name.text, self.input_repeating_panel.items = [None, None, ExpenseInputController.populate_repeating_panel_items()]
+                self.tab_name.text = None
+                self.button_delete_exptab.enabled = False
                 self._deleted_iid_row_reset()
-                cache_del_iid.clear_cache()
-                msg2 = f"Expense tab {to_be_del_tab_name} has been deleted."
-                logger.info(msg2)
-                Notification(msg2).show()
+                self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items()
+                msg = f"Expense tab [{exp_grp_name} ({exp_grp_id})] has been deleted."
+                logger.info(msg)
+                Notification(msg).show()
                 return btnmod.override_end_state(False)
-            else:
-                msg2 = f"ERROR: Fail to delete expense tab {to_be_del_tab_name}."
-                logger.error(msg2)
-                Notification(msg2).show()
+            except Exception as err:
+                logger.error(err)
+                msg = f"ERROR occurs when deleting expense transaction group [{exp_grp_name} ({exp_grp_id})]."
+                Notification(msg).show()
 
     def tab_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""
         self._switch_to_save_button()
-
-    @logger.log_function
-    def reload_rp_data(self, extra=[], **event_args):
-        """
-        Reload the repeating panel to allow changed rows (deleted, added or updated) to reflect properly.
-
-        Parameters:
-            extra (list): Extra list to add to resultant repeating panel.
-        """
-        def filter_valid_rows(row):
-            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
-            if row.get('iid', None) and row.get('iid') in cache_del_iid.get_cache():
-                # Filter out all rows in deleted IID cache
-                return False
-            if all(v is None for v in row.values()):
-                # Filter out all None rows
-                return False
-            return True
-        self.input_repeating_panel.items = extra + list(filter(filter_valid_rows, self.input_repeating_panel.items))
 
     def _deleted_iid_row_active(self, **event_args):
         """

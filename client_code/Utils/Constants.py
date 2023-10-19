@@ -8,7 +8,7 @@ class CacheKey:
     DD_ACCOUNT = 'generate_accounts_dropdown'
     DD_BROKER = 'broker_dropdown'
     DD_CURRENCY = 'ccy_dropdown'
-    DD_EXPENSE_TAB = 'generate_expensetabs_dropdown'
+    DD_EXPENSE_TAB = 'generate_expense_groups_list'
     DD_LABEL = 'generate_labels_dropdown'
     DD_SEARCH_INTERVAL = 'search_interval_dropdown'
     DD_STOCK_JRN_GRP = 'stock_journal_group_dropdown'
@@ -18,6 +18,7 @@ class CacheKey:
     Keys for objects
     """
     OBJ_ACCOUNT = 'account_object'
+    OBJ_EXPENSE_GRP = 'expense_transaction_group_object'
     OBJ_LABEL = 'label_object'
     OBJ_STOCK_JRN_GRP = 'stock_journal_group_object'
 
