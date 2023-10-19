@@ -214,7 +214,7 @@ def create_expense_group(exp_grp):
                 VALUES (%s,%s,%s,%s,%s) RETURNING tab_id".format(
                     schema=Database.SCHEMA_FIN
                 )
-                mogstr = [exp_grp.get_userid(), exp_grp.get_name(), exp_grp.get_submitted_status(), exp_grp.get_created_time(), exp_grp.get_lastsaved_time()]
+                mogstr = [exp_grp.get_user_id(), exp_grp.get_name(), exp_grp.get_submitted_status(), exp_grp.get_created_time(), exp_grp.get_lastsaved_time()]
                 stmt = cur.mogrify(sql, mogstr)
                 cur.execute(stmt)
                 conn.commit()
@@ -255,7 +255,7 @@ def update_expense_group(exp_grp):
                 sql = "UPDATE {schema}.expensetab SET tab_name=%s, submitted=%s, tab_lastsave=%s WHERE userid=%s AND tab_id=%s RETURNING tab_id".format(
                     schema=Database.SCHEMA_FIN
                 )
-                mogstr = [exp_grp.get_name(), exp_grp.get_submitted_status(), exp_grp.get_lastsaved_time(), exp_grp.get_userid(), exp_grp.get_id()]
+                mogstr = [exp_grp.get_name(), exp_grp.get_submitted_status(), exp_grp.get_lastsaved_time(), exp_grp.get_user_id(), exp_grp.get_id()]
                 stmt = cur.mogrify(sql, mogstr)
                 cur.execute(stmt)
                 conn.commit()
@@ -387,8 +387,8 @@ def proc_save_exp_tab(exp_grp, iid_list):
     tab_id = create_expense_group(exp_grp) if exp_grp.get_id() else update_expense_group(exp_grp)
     if tab_id is None or tab_id <= 0:
         raise RuntimeError(f"ERROR: Fail to save expense tab {exp_grp.get_name()}, aborting further update.")
-    result_u = upsert_transactions(tab_id, exp_grp.get_transactions())
-    result_d = delete_transactions(tab_id, iid_list)
+    result_u = upsert_transactions(exp_grp)
+    result_d = delete_transactions(exp_grp, iid_list)
     return [tab_id, result_u, result_d]
 
 @anvil.server.callable("init_cache_expense_input")

@@ -154,7 +154,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             logger.debug(f"Expense group ID={tab_id}, IID list={result_u}, deleted count={result_d}")
         except Exception as err:
             logger.error(err)
-            msg = Notification(f"ERROR occurs when saving expense transaction group [{tab_name} ({tab_id})].")
+            msg = Notification(f"ERROR occurs when saving expense transaction group [{tab_name} ({tab_original_id})].") if tab_original_id else \
+                Notification(f"ERROR occurs when saving expense transaction group [{tab_name}].") 
         Notification(msg).show()
 
     @btnmod.one_click_only
