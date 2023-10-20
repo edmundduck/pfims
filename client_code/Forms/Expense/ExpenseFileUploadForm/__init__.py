@@ -40,7 +40,8 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     @logger.log_function
     def file_loader_1_change(self, file, **event_args):
         """This method is called when a new file is loaded into this FileLoader"""
-        cache_filetype = ClientCache('generate_mapping_type_dropdown')
+        from ....Utils.Constants import FileImportType
+        
         self.sheet_tabs_panel.clear()
         if file is not None:
             self.valerror_title.visible = False
@@ -51,12 +52,12 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                 self.button_excel_next.visible = False
                 self.button_pdf_next.visible = True
                 self.dropdown_filetype.visible = True
-                self.dropdown_filetype.selected_value = cache_filetype.get_complete_key(const.FileImportType.PDF)
+                self.dropdown_filetype.selected_value = ExpenseFileUploadController.get_file_mapping_type_dropdown_selected_item(FileImportType.PDF)
             elif file.content_type in ("application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", \
                                       "application/vnd.ms-excel.sheet.macroEnabled.12", "application/x-excel", "text/csv"):
                 self.button_pdf_next.visible = False
                 self.dropdown_filetype.visible = True
-                self.dropdown_filetype.selected_value = cache_filetype.get_complete_key(const.FileImportType.Excel)
+                self.dropdown_filetype.selected_value = ExpenseFileUploadController.get_file_mapping_type_dropdown_selected_item(FileImportType.Excel)
                 xls = anvil.server.call('preview_file', file=file)
                 for i in xls:
                     cb = CheckBox(
