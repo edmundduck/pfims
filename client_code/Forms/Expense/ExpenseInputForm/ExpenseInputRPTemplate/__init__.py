@@ -1,11 +1,10 @@
 from ._anvil_designer import ExpenseInputRPTemplateTemplate
 from anvil import *
 from .....Controllers import ExpenseInputController
+from .....Entities.ExpenseTransaction import ExpenseTransaction
 from .....Utils import Constants as const
 from .....Utils.ButtonModerator import ButtonModerator
-from .....Utils.Constants import ExpenseDBTableDefinion as exptbl
 from .....Utils.ClientCache import ClientCache
-from .....Utils.Validation import Validator
 from .....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -18,8 +17,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
         # Any code you write here will run when the form opens.
         self.row_acct.items = ExpenseInputController.generate_accounts_dropdown()
-        if self.row_acct.selected_value is not None: 
-            self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)
+        self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)
         
         self._generateall_selected_labels(self.hidden_lbls_id.text)
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
@@ -65,8 +63,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc]
         else:
             self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[(loc+len(str(b.tag))+1):]
-        # Without self.item[exptbl.Labels] assignment the data binding won't work
-        self.item[exptbl.Labels] = self.hidden_lbls_id.text
+        # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
+        self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
@@ -86,8 +84,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             if self.hidden_lbls_id.text not in (None, '') and self.hidden_lbls_id.text[-1] != ',':
                 self.hidden_lbls_id.text = self.hidden_lbls_id.text + ','
             self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ','
-            # Without self.item[exptbl.Labels] assignment the data binding won't work
-            self.item[exptbl.Labels] = self.hidden_lbls_id.text
+            # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
+            self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             self.row_panel_labels.add_component(b, False, name=selected_lid)
             b.set_event_handler('click', self.label_button_minus_click)
@@ -95,6 +93,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
+        from .....Utils.Validation import Validator
         v = Validator()
 
         # To access the parent form, needs to access 3 parent levels ...
@@ -120,12 +119,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     @btnmod.one_click_only
     def button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        ExpenseInputController.delete_item(self.item.get('iid', None))
         if self.item.get('iid') is not None: 
-            cache_del_iid = ClientCache(const.CacheKey.EXP_INPUT_DEL_IID, [])
-            if cache_del_iid.is_empty():
-                cache_del_iid.set_cache([self.item.get('iid')])
-            else:
-                cache_del_iid.get_cache().append(self.item.get('iid'))
             self.parent.raise_event('x-deleted-row')
         self.parent.raise_event('x-switch-to-save-button')
         for i in self.item.keys():

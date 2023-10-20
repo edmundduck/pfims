@@ -315,3 +315,19 @@ def delete_expense_transaction_group(group_dropdown_selected):
         logger.trace('result=', result)
         cache.clear_cache()
     return result
+
+def delete_item(iid):
+    """
+    Add IID of a deleted item to client cache for later processing.
+
+    Parameters:
+        iid (int): The item ID (IID) of the deleted item.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID, None)
+
+    if iid:
+        if cache.is_empty():
+            cache.set_cache([iid])
+        else:
+            cache.get_cache().append(iid)

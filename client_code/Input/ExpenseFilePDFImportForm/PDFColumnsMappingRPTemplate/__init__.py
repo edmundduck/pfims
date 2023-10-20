@@ -9,7 +9,6 @@ from ....Utils.ClientCache import ClientCache
 from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
 from ....Utils.Validation import Validator
-from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
 
 logger = ClientLogger()
 
@@ -26,8 +25,9 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
 
     def dropdown_col_map_to_change(self, **event_args):
         """This method is called when an item is selected"""
+        from ....Entities.ExpenseTransaction import ExpenseTransaction
         logger.debug("self.dropdown_col_map_to.selected_value=", self.dropdown_col_map_to.selected_value)
-        if self.dropdown_col_map_to.selected_value is not None and self.dropdown_col_map_to.selected_value[0] == exptbl.Amount:
+        if self.dropdown_col_map_to.selected_value is not None and self.dropdown_col_map_to.selected_value[0] == ExpenseTransaction.field_amount():
             self.dropdown_sign.visible = True
         else:
             self.dropdown_sign.visible = False
@@ -44,13 +44,14 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
 
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Entities.ExpenseTransaction import ExpenseTransaction
         v = Validator()
         cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
 
         logger.trace("self.parent.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.parent.valerror_title)
         v.require_selected_dependent_on_checkbox(self.dropdown_col_map_to, self.cb_required, self.parent.parent.parent.parent.valerror_1, True)
-        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, cache_exp_tbl_def.get_complete_key(exptbl.Amount), self.parent.parent.parent.parent.valerror_2, True)
+        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, cache_exp_tbl_def.get_complete_key(ExpenseTransaction.field_amount()), self.parent.parent.parent.parent.valerror_2, True)
         v.highlight_when_invalid(self.dropdown_col_map_to, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
         v.highlight_when_invalid(self.dropdown_sign, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
 

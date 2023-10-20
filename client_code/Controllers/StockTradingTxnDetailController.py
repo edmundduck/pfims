@@ -308,7 +308,7 @@ def delete_item(iid):
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
 
-    if iid is not None:
+    if iid:
         if cache.is_empty():
             cache.set_cache([iid])
         else:

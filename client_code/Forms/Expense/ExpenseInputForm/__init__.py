@@ -3,7 +3,6 @@ from anvil import *
 import anvil.server
 from ....Controllers import ExpenseInputController
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.Constants import ExpenseDBTableDefinion as exptbl
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -89,42 +88,44 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
     def cb_hide_remarks_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
+        from ....Entities.ExpenseTransaction import ExpenseTransaction
         if self.cb_hide_remarks.checked:
-            column = [c for c in self.data_grid_1.columns if c['data_key'] == exptbl.Remarks][0]
+            column = [c for c in self.data_grid_1.columns if c['data_key'] == ExpenseTransaction.field_remarks()][0]
             self.hidden_data_grid.columns.append(column)
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
             pos = 0
             for c in self.data_grid_1.columns:
-                if c['data_key'] is not exptbl.Amount:
+                if c['data_key'] is not ExpenseTransaction.field_amount():
                     pos = pos + 1
                 else:
                     break
             first_half_col = self.data_grid_1.columns[:pos+1]
             second_half_col = self.data_grid_1.columns[pos+1:]
-            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == exptbl.Remarks][0]
+            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == ExpenseTransaction.field_remarks()][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-remarks-visible', vis=not self.cb_hide_remarks.checked)
 
     def cb_hide_stmtdtl_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""
+        from ....Entities.ExpenseTransaction import ExpenseTransaction
         if self.cb_hide_stmtdtl.checked:
             logger.debug("self.data_grid_1.columns=", self.data_grid_1.columns)
-            column = [c for c in self.data_grid_1.columns if c['data_key'] == exptbl.StmtDtl][0]
+            column = [c for c in self.data_grid_1.columns if c['data_key'] == ExpenseTransaction.field_statement_detail()][0]
             self.hidden_data_grid.columns.append(column)
             self.data_grid_1.columns.remove(column)
             self.data_grid_1.columns = self.data_grid_1.columns
         else:
             pos = 0
             for c in self.data_grid_1.columns:
-                if c['data_key'] is not exptbl.Amount:
+                if c['data_key'] is not ExpenseTransaction.field_amount():
                     pos = pos + 1
                 else:
                     break
-            first_half_col = self.data_grid_1.columns[:pos+2] if self.data_grid_1.columns[pos+1]['data_key'] == exptbl.Remarks else self.data_grid_1.columns[:pos+1] 
-            second_half_col = self.data_grid_1.columns[pos+2:] if self.data_grid_1.columns[pos+1]['data_key'] == exptbl.Remarks else self.data_grid_1.columns[pos+1:]
-            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == exptbl.StmtDtl][0]
+            first_half_col = self.data_grid_1.columns[:pos+2] if self.data_grid_1.columns[pos+1]['data_key'] == ExpenseTransaction.field_remarks() else self.data_grid_1.columns[:pos+1] 
+            second_half_col = self.data_grid_1.columns[pos+2:] if self.data_grid_1.columns[pos+1]['data_key'] == ExpenseTransaction.field_remarks() else self.data_grid_1.columns[pos+1:]
+            column = [c for c in self.hidden_data_grid.columns if c['data_key'] == ExpenseTransaction.field_statement_detail()][0]
             self.data_grid_1.columns = first_half_col + [column] + second_half_col
         self.input_repeating_panel.raise_event_on_children('x-set-stmt-dtl-visible', vis=not self.cb_hide_stmtdtl.checked)
 

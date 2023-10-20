@@ -14,11 +14,13 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.foreground = const.ColorSchemes.AMT_EXPENSE if self.item[const.ExpenseDBTableDefinion.Amount] < 0 else const.ColorSchemes.AMT_POS
+        from ...Entities.ExpenseTransaction import ExpenseTransaction
+        
+        self.foreground = const.ColorSchemes.AMT_EXPENSE if self.item[ExpenseTransaction.field_amount()] < 0 else const.ColorSchemes.AMT_POS
 
         # Logic to generate label buttons
-        if self.item[const.ExpenseDBTableDefinion.Labels] is not None:
-            for j in self.item[const.ExpenseDBTableDefinion.Labels].split(","):
+        if self.item[ExpenseTransaction.field_labels()] is not None:
+            for j in self.item[ExpenseTransaction.field_labels()].split(","):
                 if j not in (None, ''):
                     lbl_id, lbl_name = ExpenseReportController.get_label_dropdown_selected_item(int(j))
                     b = Button(

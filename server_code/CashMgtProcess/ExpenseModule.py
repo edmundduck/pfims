@@ -64,7 +64,7 @@ def select_transactions(exp_grp):
     """
     Return all transactions under a selected expense transaction group.
 
-    Some keys under ExpenseDBTableDefinion require upper cases and convert explicitly as lower cases is default.
+    Keys defined in __data_transform_def__ in ExpenseTransaction entity require upper cases and convert explicitly as lower cases is default.
     
     Parameters:
         exp_grp (ExpenseTransactionGroup): An expense transaction group object.
