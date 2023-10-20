@@ -250,8 +250,9 @@ def add_label_id_to_string(full_str, id):
         result (string): The string with all required labels added with the new label ID.
     """
     # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
+    result = full_str
     if full_str not in (None, '') and full_str[-1] != ',':
-        result = full_str + ','
+        result = result + ','
     result = result + str(id) + ','
     return result
 

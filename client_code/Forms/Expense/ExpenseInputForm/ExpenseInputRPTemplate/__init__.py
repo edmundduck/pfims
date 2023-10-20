@@ -120,6 +120,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
     def row_acct_change(self, **event_args):
         """This method is called when an item is selected"""
+        self.item[ExpenseTransaction.field_account()] = self.row_acct.selected_value[0] if isinstance(self.row_acct.selected_value, list) else self.row_acct.selected_value
         self.parent.raise_event('x-switch-to-save-button')
 
     def row_amt_change(self, **event_args):
