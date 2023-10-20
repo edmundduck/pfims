@@ -79,9 +79,7 @@ unique_ids:
     Utils.ButtonModerator: '1696342441149849584154945.8008'
   server_modules:
     AdminProcess: '167960502352321275840385.37744'
-    DataObject.FinObject: '1678927047037156167445546.5809'
     SysProcess.Constants: '1692972792565939324933583.6302'
-    DataObject: '1679603158086613851626628.8792'
     InvestmentProcess.ReportingModule: F5WT3XNIK7VFZ6ANI7HHS4N7VHWLWKRD
     InvestmentProcess.InputModule: X45I2HKCTR4L4RTO5ZJPFZDW2YWARRQR
     CashMgtProcess.FileUploadMappingModule: '1682547745565167613178875.7249'

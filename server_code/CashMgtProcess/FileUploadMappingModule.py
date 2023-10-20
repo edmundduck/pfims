@@ -12,7 +12,6 @@ from datetime import date, datetime
 from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
-from ..DataObject.FinObject import ExpenseRecord as exprcd
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
@@ -214,15 +213,16 @@ def select_mapping_matrix(id):
     Returns:
         rows (list of dict): All the mapping matrix which belongs to the logged on user.
     """
+    from ..Entities.ExpenseTransaction import ExpenseTransaction
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT datecol AS {exprcd.Date}, acctcol AS {exprcd.Account}, amtcol AS {exprcd.Amount}, remarkscol AS {exprcd.Remarks}, \
-        stmtdtlcol AS {exprcd.StmtDtl}, lblcol AS {exprcd.Labels} FROM {Database.SCHEMA_FIN}.mappingmatrix WHERE gid = {id}"
+        sql = f"SELECT datecol AS {ExpenseTransaction.field_date()}, acctcol AS {ExpenseTransaction.field_account()}, amtcol AS {ExpenseTransaction.field_amount()}, remarkscol AS {ExpenseTransaction.field_remarks()}, \
+        stmtdtlcol AS {ExpenseTransaction.field_statement_detail()}, lblcol AS {ExpenseTransaction.field_labels()} FROM {Database.SCHEMA_FIN}.mappingmatrix WHERE gid = {id}"
         cur.execute(sql)
         rows = cur.fetchall()
         # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
         # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-        rows = helper.upper_dict_keys(rows, exprcd.data_list)
+        rows = helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
     return rows
 

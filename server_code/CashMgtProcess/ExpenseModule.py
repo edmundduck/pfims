@@ -2,7 +2,6 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from ..DataObject.FinObject import ExpenseRecord as exprcd
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
 from ..ServerUtils import HelperModule as helper
@@ -79,12 +78,12 @@ def select_transactions(exp_grp):
         sql = "SELECT iid, tab_id, trandate AS {tdate}, account_id AS {account}, amount AS {amount}, \
         labels AS {labels}, remarks AS {remarks}, stmt_dtl AS {stmt_dtl} \
         FROM {schema}.exp_transactions WHERE tab_id = %s ORDER BY trandate DESC, iid DESC".format(
-            tdate=exprcd.Date,
-            account=exprcd.Account,
-            amount=exprcd.Amount,
-            labels=exprcd.Labels,
-            remarks=exprcd.Remarks,
-            stmt_dtl=exprcd.StmtDtl,
+            tdate=ExpenseTransaction.field_date(),
+            account=ExpenseTransaction.field_account(),
+            amount=ExpenseTransaction.field_amount(),
+            labels=ExpenseTransaction.field_labels(),
+            remarks=ExpenseTransaction.field_remarks(),
+            stmt_dtl=ExpenseTransaction.field_statement_detail(),
             schema=Database.SCHEMA_FIN
         )
         stmt = cur.mogrify(sql, (exp_grp.get_id(), ))
@@ -93,7 +92,7 @@ def select_transactions(exp_grp):
         logger.trace("rows=", rows)
         # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
         # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-        rows = helper.upper_dict_keys(rows, exprcd.data_list)
+        rows = helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
         tnxs = list(ExpenseTransaction(r).set_user_id(userid) for r in rows)
     return tnxs

@@ -10,6 +10,7 @@ class ExpenseTransaction(BaseEntity):
     # __db_column_def__ = ['iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl']
     __db_column_def__ = ['iid', 'tab_id', 'DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
     __property_def__ = ['userid'] + __db_column_def__
+    __data_transform_def__ = ['DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
     
     def __init__(self, data=None):
         super().__init__(data)
@@ -17,6 +18,34 @@ class ExpenseTransaction(BaseEntity):
     @staticmethod
     def get_column_definition():
         return ', '.join(c for c in ExpenseTransaction.__db_column_def__)
+
+    @staticmethod
+    def get_data_transform_definition():
+        return ExpenseTransaction.__data_transform_def__
+
+    @staticmethod
+    def field_date():
+        return ExpenseTransaction.__data_transform_def__[0]
+
+    @staticmethod
+    def field_account():
+        return ExpenseTransaction.__data_transform_def__[1]
+    
+    @staticmethod
+    def field_amount():
+        return ExpenseTransaction.__data_transform_def__[2]
+
+    @staticmethod
+    def field_labels():
+        return ExpenseTransaction.__data_transform_def__[3]
+
+    @staticmethod
+    def field_remarks():
+        return ExpenseTransaction.__data_transform_def__[4]
+
+    @staticmethod
+    def field_statement_detail():
+        return ExpenseTransaction.__data_transform_def__[5]
 
     def get_user_id(self):
         return getattr(self, self.__property_def__[0], None)
