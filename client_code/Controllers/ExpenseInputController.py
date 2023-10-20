@@ -87,7 +87,7 @@ def generate_labels_dict(data=None, reload=False):
     """
     from ..Utils import Helper
     from ..Utils.ClientCache import ClientCache
-    if isinstance(data, dict):
+    if not data or isinstance(data, dict):
         cache_data = data
         cache = ClientCache(CacheKey.DICT_LABEL, cache_data)
     else:
@@ -100,6 +100,40 @@ def generate_labels_dict(data=None, reload=False):
         cache.set_cache(new_dict)
     return cache.get_cache()
 
+def generate_label_objects(id_delimted_string):
+    """
+    Generate a list of label objects based on the given label ID list.
+
+    Relevant to function concat_label_id_string.
+    
+    Parameters:
+        id_delimted_string (string): A string of many label ID concatenated by commas.
+
+    Returns:
+        result (list of Label): List of label objects with ID and names.
+    """
+    from ..Entities.Label import Label
+
+    result = []
+    if id_delimted_string is not None and not isinstance(id_delimted_string, str):
+        raise TypeError('A string is expected in the parameter.')
+
+    if isinstance(id_delimted_string, str):
+        labels_dict = generate_labels_dict()
+        trimmed_list = list(filter(len, id_delimted_string.split(",")))
+        logger.trace(f"trimmed_list={trimmed_list}")
+        logger.trace(f"labels_dict={labels_dict}")
+        # Don't generate label if following conditions are met -
+        # 1. label ID is 0 (which is possible from file upload)
+        # 2. label ID is not integer
+        # 3. label ID is NaN
+        for i in trimmed_list:
+            if i.isdigit() and int(i) > 0:
+                index = labels_dict.get('id').index(int(i))
+                lbl = Label().set_id(int(i)).set_name(labels_dict.get('name')[index])
+                result.append(lbl)
+    return result
+    
 def get_account_dropdown_selected_item(acct_id):
     """
     Return a complete key based on a partial account ID which is a part of the key in a dropdown list.
@@ -202,6 +236,47 @@ def get_blank_row_button_text(button_text):
     result = button_text.replace('%n', str(ExpenseConfig.DEFAULT_ROW_NUM))
     return result
 
+def add_label_id_to_string(full_str, id):
+    """
+    Add a given label ID into a string of labels concatenated by commas.
+
+    Relevant to function generate_label_objects.
+
+    Parameters:
+        full_str (string): The string containing all required labels concatenated by commas.
+        id (int): The label ID to add into the string.
+        
+    Returns:
+        result (string): The string with all required labels added with the new label ID.
+    """
+    # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
+    if full_str not in (None, '') and full_str[-1] != ',':
+        result = full_str + ','
+    result = result + str(id) + ','
+    return result
+
+def remove_label_id_from_string(full_str, id):
+    """
+    Remove a given label ID from a string of labels concatenated by commas.
+
+    Relevant to function add_label_id_to_string.
+
+    Parameters:
+        full_str (string): The string containing all required labels concatenated by commas.
+        id (int): The label ID to remove from the string.
+        
+    Returns:
+        result (string): The string with all required labels without the removed label ID.
+    """
+    loc = full_str.find(str(id))
+    if loc+len(str(id))+1 >= len(full_str):
+        # When the to-be-removed ID is at the end of string
+        result = full_str[:loc]
+    else:
+        # When the to-be-removed ID is in front of other IDs.
+        result = full_str[:loc] + full_str[(loc+len(str(id))+1):]
+    return result
+
 def enable_expense_group_delete_button(group_selection):
     """
     Enable or disable the expense group delete button.
@@ -243,7 +318,7 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
     if rp_items:
         diff = ExpenseConfig.DEFAULT_ROW_NUM - len(rp_items)
         result = list(filter(filter_valid_rows, rp_items)) + [ExpenseTransaction().copy().get_dict() for i in range(diff) if diff > 0] if reload else \
-                rp_items + [ExpenseTransaction().copy().get_dict() for i in range(diff)]
+                rp_items + [ExpenseTransaction().copy().get_dict() for i in range(diff) if diff > 0]
         logger.trace('rp_items with data and/or reload=', result)
     else:
         result = [ExpenseTransaction().copy().get_dict() for i in range(ExpenseConfig.DEFAULT_ROW_NUM)]

@@ -26,42 +26,28 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # https://anvil.works/forum/t/add-component-and-dynamically-positioning-components-side-by-side/14793
         self.row_panel_labels.full_width_row = False
         
-    def _generateall_selected_labels(self, label_list):
+    def _generateall_selected_labels(self, label_id_list):
         from .....Utils.Constants import ColorSchemes, Icons
-        if label_list not in ('', None):
-            labels_dict = ExpenseInputController.generate_labels_dict()
-            # trimmed_list = label_list[:-1].split(",") if label_list[-1] == ',' else label_list.split(",")
-            trimmed_list = list(filter(len, label_list.split(",")))
-            logger.trace(f"trimmed_list={trimmed_list}")
-            logger.trace(f"labels_dict={labels_dict}")
-            for i in trimmed_list:
-                # Don't generate label if following conditions are met -
-                # 1. label ID is 0 (which is possible from file upload)
-                # 2. label ID is not integer
-                # 3. label ID is NaN
-                if i.isdigit() and int(i) != 0:
-                    lbl_name = labels_dict.get('name')[labels_dict.get('id').index(int(i))]
-                    b = Button(text=lbl_name,
-                            # icon=Icons.REMOVE,
-                            foreground=ColorSchemes.BUTTON_FG,
-                            background=ColorSchemes.BUTTON_BG,
-                            font_size=12,
-                            align="left",
-                            spacing_above="small",
-                            spacing_below="small",
-                            tag=i
-                            )
-                    # self.row_panel_labels.add_component(b, False, name=lbl_name, expand=True)
-                    self.row_panel_labels.add_component(b, False, name=lbl_name)
-                    b.set_event_handler('click', self.label_button_minus_click)
+        lbls_list = ExpenseInputController.generate_label_objects(label_id_list)
+        for lbl in lbls_list:
+            b = Button(
+                text=lbl.get_name(),
+                # icon=Icons.REMOVE,
+                foreground=ColorSchemes.BUTTON_FG,
+                background=ColorSchemes.BUTTON_BG,
+                font_size=12,
+                align="left",
+                spacing_above="small",
+                spacing_below="small",
+                tag=lbl.get_id()
+            )
+            # self.row_panel_labels.add_component(b, False, name=lbl.get_name(), expand=True)
+            self.row_panel_labels.add_component(b, False, name=lbl.get_name())
+            b.set_event_handler('click', self.label_button_minus_click)
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
-        loc = self.hidden_lbls_id.text.find(str(b.tag))
-        if loc+len(str(b.tag))+1 >= len(self.hidden_lbls_id.text):
-            self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc]
-        else:
-            self.hidden_lbls_id.text = self.hidden_lbls_id.text[:loc] + self.hidden_lbls_id.text[(loc+len(str(b.tag))+1):]
+        self.hidden_lbls_id.text = ExpenseInputController.remove_label_id_from_string(self.hidden_lbls_id.text, b.tag)
         # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
         self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
         b.remove_from_parent()
@@ -70,20 +56,18 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
         from .....Utils.Constants import ColorSchemes, Icons
         if self.row_cb_datarow.checked is True:
-            b = Button(text=selected_lname,
-                    # icon=Icons.REMOVE,
-                    foreground=ColorSchemes.BUTTON_FG,
-                    background=ColorSchemes.BUTTON_BG,
-                    font_size=12,
-                    align="left",
-                    spacing_above="small",
-                    spacing_below="small",
-                    tag=selected_lid
-                    )
-            # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
-            if self.hidden_lbls_id.text not in (None, '') and self.hidden_lbls_id.text[-1] != ',':
-                self.hidden_lbls_id.text = self.hidden_lbls_id.text + ','
-            self.hidden_lbls_id.text = self.hidden_lbls_id.text + str(selected_lid) + ','
+            b = Button(
+                text=selected_lname,
+                # icon=Icons.REMOVE,
+                foreground=ColorSchemes.BUTTON_FG,
+                background=ColorSchemes.BUTTON_BG,
+                font_size=12,
+                align="left",
+                spacing_above="small",
+                spacing_below="small",
+                tag=selected_lid
+            )
+            self.hidden_lbls_id.text = ExpenseInputController.add_label_id_to_string(self.hidden_lbls_id.text, selected_lid)
             # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
             self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
@@ -95,8 +79,8 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         """This method is called when the button is clicked"""
         from .....Utils.Constants import ColorSchemes
         from .....Utils.Validation import Validator
+        
         v = Validator()
-
         # To access the parent form, needs to access 3 parent levels ...
         # self.parent = Repeating Panel
         # self.parent.parent = Data Grid
