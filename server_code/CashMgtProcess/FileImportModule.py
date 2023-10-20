@@ -1,20 +1,11 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
-from io import BytesIO
-import pandas as pd
+import datetime
 import numpy as np
+import pandas as pd
 import pdfplumber
 import re
-import datetime
-from . import LabelModule as lbl_mod
-from . import AccountModule as acct_mod
-from . import FileUploadMappingModule
+from io import BytesIO
+from . import AccountModule, FileUploadMappingModule, LabelModule
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..SysProcess import LoggingModule
 from ..Utils import Helper
@@ -172,7 +163,7 @@ def update_labels_mapping(data, mapping):
         }
         # labels param is transposed from DL to LD (List of Dicts)
         lbl_list = [dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())]
-        lbl_id = lbl_mod.create_label(lbl_list)
+        lbl_id = LabelModule.create_label(lbl_list)
         logger.debug("Label created with ID lbl_id=", lbl_id)
         if lbl_id is None: raise Exception("Fail to create label.")
     
@@ -233,7 +224,7 @@ def update_accounts_mapping(data, mapping):
         }
         # labels param is transposed from DL to LD (List of Dicts)
         acct_list = [dict(zip(acct_mogstr, col)) for col in zip(*acct_mogstr.values())]
-        acct_id = acct_mod.create_multiple_accounts(acct_list)
+        acct_id = AccountModule.create_multiple_accounts(acct_list)
         logger.debug("Account created with ID acct_id=", acct_id)
         if acct_id is None: raise Exception("Fail to create account.")
     
@@ -563,9 +554,9 @@ def update_pdf_mapping(data, mapping, account, labels):
         logger.error(err)
     return None
 
-@anvil.server.callable("proc_excel_import_1st_stage")
+@anvil.server.callable("proc_preprocess_excel_import")
 @logger.log_function
-def proc_excel_import_1st_stage(rule_id, file, tablist):
+def proc_preprocess_excel_import(rule_id, file, tablist):
     """
     Consolidated process for importing excel in the 1st stage (which is in upload form prior to mapping labels).
 
@@ -575,12 +566,14 @@ def proc_excel_import_1st_stage(rule_id, file, tablist):
         tablist (list): A list of selected Excel tabs for processing.
 
     Returns:
-        list: A list of all functions return required by the selection change.
+        data_df (dataframe): Processed dataframe containing all transactions.
+        lbl_df (dataframe): Processed dataframe containing all labels.
+        acct_df (dataframe): Processed dataframe containing all accounts.
     """
     matrix = FileUploadMappingModule.select_mapping_matrix(rule_id)
     extra = FileUploadMappingModule.select_mapping_extra_actions(rule_id)
     data_df, lbls_df, acct_df = import_file(file, tablist, matrix, extra)
-    return [data_df, lbls_df, acct_df]
+    return data_df, lbls_df, acct_df
 
 @anvil.server.callable("proc_excel_update_mappings")
 @logger.log_function

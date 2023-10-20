@@ -1,10 +1,3 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
@@ -18,17 +11,17 @@ from ..Utils.Constants import Database
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("generate_mapping_dropdown")
+@anvil.server.callable("generate_mapping_list")
 @logger.log_function
-def generate_mapping_dropdown(ftype):
+def generate_mapping_list(ftype):
     """
-    Select mapping rules from a DB table which stores mapping groups' detail to generate a dropdown list for data mapping logic.
+    Select mapping groups from the mapping group DB table for data mapping logic based on selected file type.
 
     Parameters:
-        ftype (string): The selected file type for mapping rules.
+        ftype (string): The selected file type for corresponding mapping groups.
     
     Returns:
-        list: A dropdown list of mapping group names as description, and mapping group IDs as ID.
+        rows (list of RealDictRow): A list of mapping groups based on selected file type.
     """
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
@@ -37,27 +30,29 @@ def generate_mapping_dropdown(ftype):
         stmt = cur.mogrify(sql, (userid, ftype, ))
         cur.execute(stmt)
         rows = cur.fetchall()
+        logger.trace("rows=", rows)
         cur.close()
-    content = list((row['name'], row['id']) for row in rows)
-    return content
+        return rows
 
-@anvil.server.callable("generate_mapping_type_dropdown")
+@anvil.server.callable("generate_mapping_type_list")
 @logger.log_function
-def generate_mapping_type_dropdown():
+def generate_mapping_type_list():
     """
-    Select mapping file types from a DB table which stores import file types' detail to generate a dropdown list.
+    Select mapping file types from the import file DB table.
 
     Returns:
-        list: A dropdown list of mapping file type names as description, and mapping file type IDs and names as ID.
+        rows (list of RealDictRow): A list of import file types.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {Database.SCHEMA_REFDATA}.import_filetype ORDER BY seq ASC"
+        sql = "SELECT * FROM {schema}.import_filetype ORDER BY seq ASC".format(
+            schema=Database.SCHEMA_REFDATA
+        )
         cur.execute(sql)
         rows = cur.fetchall()
+        logger.trace("rows=", rows)
         cur.close()
-    content = list((row['name'], [row['id'], row['name']]) for row in rows)
-    return content
+        return rows
 
 @anvil.server.callable("generate_expense_tbl_def_dropdown")
 @logger.log_function
