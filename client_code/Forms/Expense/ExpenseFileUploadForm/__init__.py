@@ -98,15 +98,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
 
-        tablist = []
-        for i in self.sheet_tabs_panel.get_components():
-            if isinstance(i, CheckBox) and i.checked:
-                tablist.append(i.text)
-        logger.info(f"{len(tablist)} tabs are chosen in {__name__}.")
-        df, lbls, accts = anvil.server.call('proc_excel_import_1st_stage', self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, tablist)
-        logger.trace("df=", df)
-        logger.debug("lbls=", lbls)
-        logger.debug("accts=", accts)
+        df, lbls, accts = ExpenseFileUploadController.preprocess_excel_import(self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, self.sheet_tabs_panel.get_components())
         Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls, accounts=accts)
 
     @logger.log_function

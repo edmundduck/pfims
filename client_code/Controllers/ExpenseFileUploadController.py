@@ -1,8 +1,11 @@
 import anvil.server
 from ..Utils.Constants import CacheKey
+from ..Utils.Logger import ClientLogger
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
+
+logger = ClientLogger()
 
 @logger.log_function
 def generate_file_mapping_type_dropdown(data=None):
@@ -41,3 +44,28 @@ def get_file_mapping_type_dropdown_selected_item(filetype):
         generate_file_mapping_type_dropdown()
     selected_item = cache.get_complete_key(filetype)
     return selected_item
+
+@logger.log_function
+def preprocess_excel_import(selected_rule, file, components):
+    """
+    Pre-process of Excel file import.
+
+    Parameters:
+        selected_rule (int): The ID of a mapping rule.
+        file (object): The uploaded file object.
+        components (list of component): A list of UI components which contain checkboxes for tabs to import.
+
+    Returns:
+        list: A list of all functions return required by the selection change.
+    """
+    tablist = []
+    for i in components:
+        if isinstance(i, CheckBox) and i.checked:
+            tablist.append(i.text)
+    logger.info(f"{len(tablist)} tabs are chosen in {__name__}.")
+    
+    data_df, lbls_df, acct_df = anvil.server.call('proc_preprocess_excel_import', selected_rule, file, tablist)
+    logger.trace("data_df=", data_df)
+    logger.debug("lbls_df=", lbls_df)
+    logger.debug("acct_df=", acct_df)
+    return data_df, lbls_df, acct_df

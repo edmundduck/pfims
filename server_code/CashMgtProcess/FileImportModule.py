@@ -1,10 +1,3 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 from io import BytesIO
 import pandas as pd
@@ -563,9 +556,9 @@ def update_pdf_mapping(data, mapping, account, labels):
         logger.error(err)
     return None
 
-@anvil.server.callable("proc_excel_import_1st_stage")
+@anvil.server.callable("proc_preprocess_excel_import")
 @logger.log_function
-def proc_excel_import_1st_stage(rule_id, file, tablist):
+def proc_preprocess_excel_import(rule_id, file, tablist):
     """
     Consolidated process for importing excel in the 1st stage (which is in upload form prior to mapping labels).
 
@@ -580,7 +573,7 @@ def proc_excel_import_1st_stage(rule_id, file, tablist):
     matrix = FileUploadMappingModule.select_mapping_matrix(rule_id)
     extra = FileUploadMappingModule.select_mapping_extra_actions(rule_id)
     data_df, lbls_df, acct_df = import_file(file, tablist, matrix, extra)
-    return [data_df, lbls_df, acct_df]
+    return data_df, lbls_df, acct_df
 
 @anvil.server.callable("proc_excel_update_mappings")
 @logger.log_function
