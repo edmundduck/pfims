@@ -1,14 +1,9 @@
 from ._anvil_designer import ExpenseFileUploadFormTemplate
 from anvil import *
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ...Utils import Routing
-from ...Utils.ClientCache import ClientCache
-from ...Utils import Constants as const
-from ...Utils.Logger import ClientLogger
+from ....Utils.ClientCache import ClientCache
+from ....Utils import Constants as const
+from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
@@ -31,10 +26,12 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_upload_mapping_form(self)
 
     def button_nav_input_exp_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_exp_input_form(self)
 
     def dropdown_mapping_rule_change(self, **event_args):
@@ -98,6 +95,8 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     @logger.log_function
     def button_excel_next_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
+
         tablist = []
         for i in self.sheet_tabs_panel.get_components():
             if isinstance(i, CheckBox) and i.checked:
@@ -112,6 +111,8 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     @logger.log_function
     def button_pdf_next_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
+
         pdf_tbl = anvil.server.call('import_pdf_file', file=self.file_loader_1.file)
         logger.debug("pdf_tbl=", pdf_tbl)
         Routing.open_exp_file_pdf_import_form(self, data=pdf_tbl)
