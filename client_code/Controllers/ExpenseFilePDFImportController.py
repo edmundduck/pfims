@@ -62,3 +62,40 @@ def get_account_dropdown_selected_item(acct_id):
     """
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
+
+def populate_repeating_panel_items(data=None):
+    """
+    Populate repeating panel items with data padded with a list of blank items.
+
+    Parameters:
+        data (pdfplumber.PDF): pdfplumber.PDF object for transformation.
+
+    Returns:
+        result (list of dict): A list of data to populate to repeating panel.
+    """
+    DL = {
+        'srccol': data[0] if data is not None else None,
+        'tgtcol': [None for i in range(len(data[0]))] if data is not None else [None],
+        'sign': [None for i in range(len(data[0]))] if data is not None else [None]
+    }
+    logger.trace("DL=", DL)
+    result = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    return result
+
+@logger.log_function
+def update_pdf_import_mapping(file):
+    """
+    2nd process of PDF file import which is cropping the required statement detail part and then mapping accordingly.
+
+    Parameters:
+        data (dataframe/pdfplumber.PDF): The dataframe or PDF object to be updated with the mapping.
+        mapping (list): The list of column headers mapping from user's input.
+        account (int): The selected account ID requiring extra mapping.
+        labels (int): The selected label ID requiring extra mapping.
+
+    Returns:
+        pdf_tbl (pdfplumber.PDF): Processed pdfplumber.PDF object.
+    """
+    pdf_tbl = anvil.server.call('import_pdf_file', file=file)
+    logger.trace("pdf_tbl=", pdf_tbl)
+    return pdf_tbl

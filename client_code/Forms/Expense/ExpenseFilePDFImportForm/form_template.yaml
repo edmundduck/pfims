@@ -174,7 +174,7 @@ components:
     components:
     - type: RepeatingPanel
       properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-        visible: true, spacing_above: none, spacing_below: none, item_template: Input.ExpenseFilePDFImportForm.PDFColumnsMappingRPTemplate,
+        visible: true, spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFilePDFImportForm.PDFColumnsMappingRPTemplate,
         background: ''}
       name: cols_mapping_panel
       layout_properties: {}
