@@ -9,11 +9,10 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
-from ..DataObject.FinObject import ExpenseRecord as exprcd
-from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils import Helper
 from ..Utils.Constants import Database, Icons, PNLDrillMode
 
 # This is a server module. It runs on the Anvil server,
@@ -413,6 +412,7 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     Returns:
         rows (list): Transactions in list.
     """
+    from ..Entities.ExpenseTransaction import ExpenseTransaction
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     logger.debug("labels=", labels)
@@ -423,20 +423,21 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         conn_sql1 = " AND " if enddate_sql or startdate_sql or label_sql else ""
         conn_sql2 = " AND " if enddate_sql and (startdate_sql or label_sql) else ""
         conn_sql3 = " AND " if (enddate_sql or startdate_sql) and label_sql else ""
-        sql = f"SELECT j.iid, j.tab_id, j.trandate AS {exprcd.Date}, j.account_id AS {exprcd.Account}, j.amount AS {exprcd.Amount}, j.labels AS {exprcd.Labels}, \
-        j.remarks AS {exprcd.Remarks}, j.stmt_dtl AS {exprcd.StmtDtl} FROM {Database.SCHEMA_FIN}.exp_transactions j, {Database.SCHEMA_FIN}.expensetab t \
+        sql = f"SELECT j.iid, j.tab_id, j.trandate AS {ExpenseTransaction.field_date()}, j.account_id AS {ExpenseTransaction.field_account()}, \
+        j.amount AS {ExpenseTransaction.field_amount()}, j.labels AS {ExpenseTransaction.field_labels()}, j.remarks AS {ExpenseTransaction.field_remarks()}, \
+        j.stmt_dtl AS {ExpenseTransaction.field_statement_detail()} FROM {Database.SCHEMA_FIN}.exp_transactions j, {Database.SCHEMA_FIN}.expensetab t \
         WHERE t.userid = {userid} AND t.tab_id = j.tab_id {conn_sql1} {enddate_sql} {conn_sql2} \
         {startdate_sql} {conn_sql3} {label_sql} ORDER BY j.trandate DESC, j.iid ASC"
         cur.execute(sql)
         logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
         rows = cur.fetchall()
-        rows = helper.upper_dict_keys(rows, exprcd.data_list)
+        rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         logger.trace("rows=", rows)
         cur.close()
     return list(rows)
 
 def format_accounts_labels(rows):
-    DL = helper.to_dict_of_list(rows)
+    DL = Helper.to_dict_of_list(rows)
     return rows
 
 @anvil.server.callable("proc_search_expense_list")

@@ -4,7 +4,6 @@ import psycopg2.extras
 from datetime import date, datetime
 from ..Entities.StockJournalGroup import StockJournalGroup
 from ..Entities.StockJournal import StockJournal
-from ..DataObject import FinObject as fobj
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..Utils.Constants import Database

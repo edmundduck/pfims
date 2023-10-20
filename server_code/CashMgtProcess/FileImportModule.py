@@ -15,14 +15,14 @@ import datetime
 from . import LabelModule as lbl_mod
 from . import AccountModule as acct_mod
 from . import FileUploadMappingModule
-from ..ServerUtils import HelperModule as helper
+from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..SysProcess import LoggingModule
-from ..DataObject.FinObject import ExpenseRecord as exprcd
+from ..Utils import Helper
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
-col_name = exprcd.data_list
+col_name = ExpenseTransaction.get_data_transform_definition()
 regex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
 regex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy
 regex_mdy = '(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(\d{4}|\d{2})'        # mm-dd-yyyy / mmm-dd-yyyy
@@ -93,12 +93,12 @@ def import_file(file, tablist, rules, extra):
     """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
-    extra_dl = helper.to_dict_of_list(extra)
+    extra_dl = Helper.to_dict_of_list(extra)
 
     new_df = None
     has_acct_mapping = False
     for i in rules:
-        if i.get(exprcd.Account, None) not in (None, '') and not str(i.get(exprcd.Account)).isspace():
+        if i.get(ExpenseTransaction.field_account(), None) not in (None, '') and not str(i.get(ExpenseTransaction.field_account())).isspace():
             has_acct_mapping = True
         
         # Convert column in character ID to number for Pandas read_excel
@@ -123,9 +123,9 @@ def import_file(file, tablist, rules, extra):
             for c in common_col:
                 extra_dl_pointer = extra_dl.get('col').index(c)
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
-                    tmp_df[exprcd.Account] = int(extra_dl.get('etarget')[extra_dl_pointer])
+                    tmp_df[ExpenseTransaction.field_account()] = int(extra_dl.get('etarget')[extra_dl_pointer])
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
-                    tmp_df[exprcd.Labels] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df[exprcd.Labels] in (None, '') else tmp_df[exprcd.Labels] + extra_dl.get('etarget')[extra_dl_pointer]
+                    tmp_df[ExpenseTransaction.field_labels()] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df[ExpenseTransaction.field_labels()] in (None, '') else tmp_df[ExpenseTransaction.field_labels()] + extra_dl.get('etarget')[extra_dl_pointer]
                 logger.trace("4) Map extra action logic\ntmp_df=", tmp_df)
             
             # 5) Concat temp DF to the resultant DF
@@ -134,15 +134,15 @@ def import_file(file, tablist, rules, extra):
 
     # Ref - how to transform Pandas Dataframe to Anvil datatable
     # https://anvil.works/forum/t/add-row-to-data-table/2766/2
-    lbl_df = new_df.loc[:, [exprcd.Labels]]
+    lbl_df = new_df.loc[:, [ExpenseTransaction.field_labels()]]
     lbl_df.loc[:, ['Unnamed1', 'Unnamed2']] = None
 
     if has_acct_mapping:
-        acct_df = new_df.loc[:, [exprcd.Account]][exprcd.Account].dropna().unique()
+        acct_df = new_df.loc[:, [ExpenseTransaction.field_account()]][ExpenseTransaction.field_account()].dropna().unique()
     else:
         acct_df = None
 
-    return (new_df.dropna(subset=[exprcd.Amount, exprcd.Date], ignore_index=True)).to_dict(orient='records'), lbl_df[exprcd.Labels].dropna().unique(), acct_df
+    return (new_df.dropna(subset=[ExpenseTransaction.field_amount(), ExpenseTransaction.field_date()], ignore_index=True)).to_dict(orient='records'), lbl_df[ExpenseTransaction.field_labels()].dropna().unique(), acct_df
 
 @anvil.server.callable("update_labels_mapping")
 @logger.log_function
@@ -160,7 +160,7 @@ def update_labels_mapping(data, mapping):
     try:
         # 1. Get all items with action = 'C', and grab new field to create new labels
         # DL = Dict of Lists
-        DL = helper.to_dict_of_list(mapping)
+        DL = Helper.to_dict_of_list(mapping)
         # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
         DL_action = {'id': [dic[0] for dic in DL['action']]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
@@ -185,20 +185,20 @@ def update_labels_mapping(data, mapping):
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
         
-        LD = helper.to_list_of_dict(DL)
+        LD = Helper.to_list_of_dict(DL)
         if df is not None and LD is not None:
             for lbl_mapping in LD:
                 if lbl_mapping is not None:
                     if lbl_mapping.get('action')[0] == "S":
-                        df[exprcd.Labels].replace(lbl_mapping['srclbl'], None, inplace=True)                    
+                        df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], None, inplace=True)                    
                     elif lbl_mapping.get('tgtlbl') is not None:
                         id = lbl_mapping['tgtlbl'][0]
-                        df[exprcd.Labels].replace(lbl_mapping['srclbl'], id, inplace=True)
+                        df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], id, inplace=True)
         logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
         logger.trace("df=", df)
-        # df.fillna(value={exprcd.Remarks:None, exprcd.StmtDtl:None, exprcd.Amount:0}, inplace=True)
+        # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.replace([np.nan], [None]).sort_values(by=exprcd.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        return df.replace([np.nan], [None]).sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(err)
     return None
@@ -219,7 +219,7 @@ def update_accounts_mapping(data, mapping):
     try:
         # 1. Get all items with action = 'C', and grab new field to create new accounts
         # DL = Dict of Lists
-        DL = helper.to_dict_of_list(mapping)
+        DL = Helper.to_dict_of_list(mapping)
         # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
         DL_action = {'id': [dic[0] for dic in DL['action']]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
@@ -246,20 +246,20 @@ def update_accounts_mapping(data, mapping):
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
         
-        LD = helper.to_list_of_dict(DL)
+        LD = Helper.to_list_of_dict(DL)
         if df is not None and LD is not None:
             for acct_mapping in LD:
                 if acct_mapping is not None:
                     if acct_mapping.get('action')[0] == "S":
-                        df[exprcd.Account].replace(acct_mapping['srcacct'], None, inplace=True)                    
+                        df[ExpenseTransaction.field_account()].replace(acct_mapping['srcacct'], None, inplace=True)                    
                     elif acct_mapping.get('tgtacct') is not None:
                         id = acct_mapping['tgtacct'][0]
-                        df[exprcd.Account].replace(acct_mapping['srcacct'], id, inplace=True)
+                        df[ExpenseTransaction.field_account()].replace(acct_mapping['srcacct'], id, inplace=True)
         logger.trace("3) Replace accounts with action = 'M' and 'C' to the target account codes in df")
         logger.trace("df=", df)
-        # df.fillna(value={exprcd.Remarks:None, exprcd.StmtDtl:None, exprcd.Amount:0}, inplace=True)
+        # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
         # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.replace([np.nan], [None]).sort_values(by=exprcd.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        return df.replace([np.nan], [None]).sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(err)
     return None
@@ -440,10 +440,10 @@ def update_pdf_mapping(data, mapping, account, labels):
     # Logic of merging all amount columns
     def merge_amt_cols(row):
         logger.trace(f"merge_amt_cols row={row}")
-        if all(pd.isna(row[c]) for c in matrix.get(exprcd.Amount, None)):
+        if all(pd.isna(row[c]) for c in matrix.get(ExpenseTransaction.field_amount(), None)):
             return np.nan
         else:
-            for c in matrix.get(exprcd.Amount, None):
+            for c in matrix.get(ExpenseTransaction.field_amount(), None):
                 logger.trace(f"merge_amt_cols c={c}/row[c]={row[c]}/float(row[c])={float(row[c])}")
                 if pd.notna(row[c]) and float(row[c]):
                     return row[c]
@@ -493,8 +493,8 @@ def update_pdf_mapping(data, mapping, account, labels):
         nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
         
         # Merge all amount columns into one for later row merge actions
-        df[exprcd.Amount] = df.apply(merge_amt_cols, axis='columns')
-        matrix[exprcd.Amount] = [exprcd.Amount]
+        df[ExpenseTransaction.field_amount()] = df.apply(merge_amt_cols, axis='columns')
+        matrix[ExpenseTransaction.field_amount()] = [ExpenseTransaction.field_amount()]
         
         # Generate mapping matrix which has unique columns each
         # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
@@ -514,9 +514,9 @@ def update_pdf_mapping(data, mapping, account, labels):
         df = new_df
 
         # 4) Format date and other columns data accordingly and merge rows
-        df[exprcd.Date] = pd.to_datetime(df[exprcd.Date], errors='coerce').dt.date
-        date_not_null_df = df[df[exprcd.Date].notnull()]
-        amt_not_null_df = df[df[exprcd.Amount].notnull()]
+        df[ExpenseTransaction.field_date()] = pd.to_datetime(df[ExpenseTransaction.field_date()], errors='coerce').dt.date
+        date_not_null_df = df[df[ExpenseTransaction.field_date()].notnull()]
+        amt_not_null_df = df[df[ExpenseTransaction.field_amount()].notnull()]
         logger.trace(f"date_not_null_df=\n{date_not_null_df}")
         new_df = None
         firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df is not None and amt_not_null_df.size > 0 else None
@@ -531,8 +531,8 @@ def update_pdf_mapping(data, mapping, account, labels):
                 logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
                 logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
                 # Deal with a row in date_not_null_df without a date (e.g. multiple transactions in one date but only one date found in date column)
-                if pd.isna(df.loc[curRowId, exprcd.Date]):
-                    df.loc[curRowId, exprcd.Date] = df.loc[dateId][exprcd.Date]                
+                if pd.isna(df.loc[curRowId, ExpenseTransaction.field_date()]):
+                    df.loc[curRowId, ExpenseTransaction.field_date()] = df.loc[dateId][ExpenseTransaction.field_date()]                
                 if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
                     tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
@@ -555,10 +555,10 @@ def update_pdf_mapping(data, mapping, account, labels):
                     pass
         df = new_df
         
-        if account is not None: df[exprcd.Account] = account
-        if labels is not None: df[exprcd.Labels] = labels
-        return df.dropna(subset=[exprcd.Amount, exprcd.Date], ignore_index=True).replace([np.nan], [None])\
-            .sort_values(by=exprcd.Date, key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
+        if account is not None: df[ExpenseTransaction.field_account()] = account
+        if labels is not None: df[ExpenseTransaction.field_labels()] = labels
+        return df.dropna(subset=[ExpenseTransaction.field_amount(), ExpenseTransaction.field_date()], ignore_index=True).replace([np.nan], [None])\
+            .sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
     except (Exception) as err:
         logger.error(err)
     return None

@@ -196,7 +196,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Input.ExpenseInputForm.ExpenseInputRPTemplate,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseInputForm.ExpenseInputRPTemplate,
       background: ''}
     layout_properties: {}
     name: input_repeating_panel
@@ -249,7 +249,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: false, spacing_above: none, spacing_below: none, item_template: Input.ExpenseInputForm.HiddenRPTemplate,
+      visible: false, spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseInputForm.HiddenRPTemplate,
       background: ''}
     layout_properties: {}
     name: repeating_panel_1
