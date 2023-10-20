@@ -16,8 +16,8 @@ from . import LabelModule as lbl_mod
 from . import AccountModule as acct_mod
 from . import FileUploadMappingModule
 from ..Entities.ExpenseTransaction import ExpenseTransaction
-from ..ServerUtils import HelperModule as helper
 from ..SysProcess import LoggingModule
+from ..Utils import Helper
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -93,7 +93,7 @@ def import_file(file, tablist, rules, extra):
     """
     ef = pd.ExcelFile(BytesIO(file.get_bytes()))
     df = pd.read_excel(ef, sheet_name=tablist)
-    extra_dl = helper.to_dict_of_list(extra)
+    extra_dl = Helper.to_dict_of_list(extra)
 
     new_df = None
     has_acct_mapping = False
@@ -160,7 +160,7 @@ def update_labels_mapping(data, mapping):
     try:
         # 1. Get all items with action = 'C', and grab new field to create new labels
         # DL = Dict of Lists
-        DL = helper.to_dict_of_list(mapping)
+        DL = Helper.to_dict_of_list(mapping)
         # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
         DL_action = {'id': [dic[0] for dic in DL['action']]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
@@ -185,7 +185,7 @@ def update_labels_mapping(data, mapping):
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
         
-        LD = helper.to_list_of_dict(DL)
+        LD = Helper.to_list_of_dict(DL)
         if df is not None and LD is not None:
             for lbl_mapping in LD:
                 if lbl_mapping is not None:
@@ -219,7 +219,7 @@ def update_accounts_mapping(data, mapping):
     try:
         # 1. Get all items with action = 'C', and grab new field to create new accounts
         # DL = Dict of Lists
-        DL = helper.to_dict_of_list(mapping)
+        DL = Helper.to_dict_of_list(mapping)
         # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
         DL_action = {'id': [dic[0] for dic in DL['action']]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
@@ -246,7 +246,7 @@ def update_accounts_mapping(data, mapping):
         # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
         df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
         
-        LD = helper.to_list_of_dict(DL)
+        LD = Helper.to_list_of_dict(DL)
         if df is not None and LD is not None:
             for acct_mapping in LD:
                 if acct_mapping is not None:

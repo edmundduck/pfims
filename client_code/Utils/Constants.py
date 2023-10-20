@@ -15,6 +15,11 @@ class CacheKey:
     DD_SUBMITTED_JRN_GRP = 'submitted_journal_group_dropdown'
 
     """
+    Keys for dicts
+    """
+    DICT_LABEL = 'labels_dict'
+    
+    """
     Keys for objects
     """
     OBJ_ACCOUNT = 'account_object'

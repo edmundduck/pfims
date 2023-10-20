@@ -4,9 +4,9 @@ import psycopg2.extras
 from datetime import date, datetime
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
-from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils import Helper
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
@@ -92,7 +92,7 @@ def select_transactions(exp_grp):
         logger.trace("rows=", rows)
         # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
         # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-        rows = helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
+        rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
         tnxs = list(ExpenseTransaction(r).set_user_id(userid) for r in rows)
     return tnxs

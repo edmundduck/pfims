@@ -9,10 +9,10 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
-from ..ServerUtils import HelperModule as helper
 from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils import Helper
 from ..Utils.Constants import Database, Icons, PNLDrillMode
 
 # This is a server module. It runs on the Anvil server,
@@ -431,13 +431,13 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         cur.execute(sql)
         logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
         rows = cur.fetchall()
-        rows = helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
+        rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         logger.trace("rows=", rows)
         cur.close()
     return list(rows)
 
 def format_accounts_labels(rows):
-    DL = helper.to_dict_of_list(rows)
+    DL = Helper.to_dict_of_list(rows)
     return rows
 
 @anvil.server.callable("proc_search_expense_list")

@@ -1,15 +1,5 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-import anvil.server
-import psycopg2.extras
-
-# This is a server module. It runs on the Anvil server,
-# rather than in the user's browser.
+# This is a module.
+# You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 def upper_dict_keys(rows, key_list=None):
     """

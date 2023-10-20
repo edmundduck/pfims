@@ -85,16 +85,19 @@ def generate_labels_dict(data=None, reload=False):
     Returns:
         cache.get_cache (dict of list): Labels dict formed by labels DB table data.
     """
+    from ..Utils import Helper
     from ..Utils.ClientCache import ClientCache
     if isinstance(data, dict):
-    cache_data = list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_LABEL, cache_data)
+        cache_data = data
+        cache = ClientCache(CacheKey.DICT_LABEL, cache_data)
+    else:
+        raise TypeError('A dictionary is expected in the parameter.')
     if reload:
         cache.clear_cache()
     if cache.is_empty():
         rows = anvil.server.call('generate_labels_list')
-        new_dropdown = list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in rows)
-        cache.set_cache(new_dropdown)
+        new_dict = Helper.to_dict_of_list(rows)
+        cache.set_cache(new_dict)
     return cache.get_cache()
 
 def get_account_dropdown_selected_item(acct_id):

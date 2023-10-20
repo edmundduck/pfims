@@ -3,9 +3,9 @@ import psycopg2
 import psycopg2.extras
 from fuzzywuzzy import fuzz
 from ..Entities.Label import Label
-from ..ServerUtils import HelperModule as helper
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
+from ..Utils import Helper
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
@@ -44,7 +44,7 @@ def generate_labels_dict_of_list():
         cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
         cur.close()
-    return helper.to_dict_of_list(rows)
+    return Helper.to_dict_of_list(rows)
 
 @anvil.server.callable("generate_labels_mapping_action_dropdown")
 @logger.log_function
