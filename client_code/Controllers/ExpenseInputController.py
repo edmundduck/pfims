@@ -73,6 +73,30 @@ def generate_labels_dropdown(data=None, reload=False):
     from . import LabelMaintController
     return LabelMaintController.generate_labels_dropdown(data, reload)
 
+@logger.log_function
+def generate_labels_dict(data=None, reload=False):
+    """
+    Access labels in dict of list format from either client cache or generate from DB data returned from server side.
+
+    Parameters:
+        data (dict of list): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        reload (Boolean): Optional. True if clear cache is required. False by default.
+
+    Returns:
+        cache.get_cache (dict of list): Labels dict formed by labels DB table data.
+    """
+    from ..Utils.ClientCache import ClientCache
+    if isinstance(data, dict):
+    cache_data = list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in data) if data else None
+    cache = ClientCache(CacheKey.DD_LABEL, cache_data)
+    if reload:
+        cache.clear_cache()
+    if cache.is_empty():
+        rows = anvil.server.call('generate_labels_list')
+        new_dropdown = list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in rows)
+        cache.set_cache(new_dropdown)
+    return cache.get_cache()
+
 def get_account_dropdown_selected_item(acct_id):
     """
     Return a complete key based on a partial account ID which is a part of the key in a dropdown list.
