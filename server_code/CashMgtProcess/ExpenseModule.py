@@ -34,7 +34,6 @@ def generate_expense_groups_list():
         cur.close()
         return rows
 
-@anvil.server.callable("select_expense_group")
 @logger.log_function
 def select_expense_group(exp_grp):
     """
@@ -58,7 +57,6 @@ def select_expense_group(exp_grp):
         cur.close()
     return ExpenseTransactionGroup(row)
 
-@anvil.server.callable("select_transactions")
 @logger.log_function
 def select_transactions(exp_grp):
     """
@@ -208,7 +206,6 @@ def delete_transactions(exp_grp, iid_list):
         if conn is not None: conn.close()        
     return None
 
-@anvil.server.callable("create_expense_group")
 @logger.log_function
 def create_expense_group(exp_grp):
     """
@@ -250,7 +247,6 @@ def create_expense_group(exp_grp):
         if conn is not None: conn.close()        
     return None
 
-@anvil.server.callable("update_expense_group")
 @logger.log_function
 def update_expense_group(exp_grp):
     """

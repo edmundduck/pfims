@@ -29,23 +29,6 @@ def generate_labels_list():
         cur.close()
     return rows
 
-@anvil.server.callable("generate_labels_dict_of_list")
-@logger.log_function
-def generate_labels_dict_of_list():
-    """
-    Select data from a DB table which stores labels' detail as transformed dictionary of list.
-
-    Returns:
-        dict: A dictionary of each column as key, where value is the list of the data belonging to that particular column.
-    """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-        cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.labels WHERE userid = {userid} ORDER BY name ASC")
-        rows = cur.fetchall()
-        cur.close()
-    return Helper.to_dict_of_list(rows)
-
 @anvil.server.callable("generate_labels_mapping_action_dropdown")
 @logger.log_function
 def generate_labels_mapping_action_dropdown():

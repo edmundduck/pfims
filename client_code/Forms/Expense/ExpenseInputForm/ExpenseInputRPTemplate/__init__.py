@@ -3,7 +3,6 @@ from anvil import *
 from .....Controllers import ExpenseInputController
 from .....Entities.ExpenseTransaction import ExpenseTransaction
 from .....Utils.ButtonModerator import ButtonModerator
-from .....Utils.ClientCache import ClientCache
 from .....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
