@@ -34,7 +34,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
         DL = {
             'srclbl': labels,
-            'action': [ None for i in range(len(labels))],
+            'action': [ None for i in range(len(labels))] if labels is not None else [ None ],
             'tgtlbl': relevant_lbls,
             'new': labels
         }
@@ -42,8 +42,8 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         logger.trace("accounts=", accounts)
         DL_acct = {
             'srcacct': accounts,
-            'action': [ None for i in range(len(accounts))],
-            'tgtacct': [ None for i in range(len(accounts))],
+            'action': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
+            'tgtacct': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
             'newacct': accounts
         }
         self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
