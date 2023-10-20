@@ -39,6 +39,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
             'new': labels
         }
         logger.trace("DL=", DL)
+        logger.trace("accounts=", accounts)
         DL_acct = {
             'srcacct': accounts,
             'action': [ None for i in range(len(accounts))],

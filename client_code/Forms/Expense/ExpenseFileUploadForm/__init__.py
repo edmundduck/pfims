@@ -1,9 +1,6 @@
 from ._anvil_designer import ExpenseFileUploadFormTemplate
 from anvil import *
-import anvil.server
 from ....Controllers import ExpenseFileUploadController
-from ....Utils.ClientCache import ClientCache
-from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -58,8 +55,8 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                 self.button_pdf_next.visible = False
                 self.dropdown_filetype.visible = True
                 self.dropdown_filetype.selected_value = ExpenseFileUploadController.get_file_mapping_type_dropdown_selected_item(FileImportType.Excel)
-                xls = anvil.server.call('preview_file', file=file)
-                for i in xls:
+                tabs = ExpenseFileUploadController.preview_excel_file(file)
+                for i in tabs:
                     cb = CheckBox(
                         text=i,
                         font_size=12,
@@ -69,7 +66,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     )
                     self.sheet_tabs_panel.add_component(cb)
                     cb.set_event_handler('change', self.enable_excel_next_button)
-                self.dropdown_mapping_rule.items = anvil.server.call('generate_mapping_dropdown', self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None)
+                self.dropdown_mapping_rule.items = ExpenseFileUploadController.generate_file_mapping_group_dropdown(self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None)
                 self.flow_panel_mappingrule.visible = True
             else:
                 self.flow_panel_mappingrule.visible = False
@@ -86,7 +83,6 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         self.button_excel_next.visible = False
         if cb.checked:
             self.button_excel_next.visible = True
-            break
         else:
             for i in cb.parent.get_components():
                 if isinstance(i, CheckBox) and i.checked:
@@ -106,6 +102,5 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
 
-        pdf_tbl = anvil.server.call('import_pdf_file', file=self.file_loader_1.file)
-        logger.debug("pdf_tbl=", pdf_tbl)
+        pdf_tbl = ExpenseFileUploadController.preprocess_pdf_import(self.file_loader_1.file)
         Routing.open_exp_file_pdf_import_form(self, data=pdf_tbl)

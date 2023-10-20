@@ -8,23 +8,37 @@ from ..Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 @logger.log_function
-def generate_file_mapping_type_dropdown(data=None):
+def generate_file_mapping_type_dropdown():
     """
     Access reference data - file mapping type dropdown from either client cache or generate from DB data returned from server side.
-
-    Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
-        reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): File mapping type dropdown formed by import file type DB table data.
     """
     from ..Utils.ClientCache import ClientCache
-    cache_data = list((r['name'], [r['id'], r['name']]) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_IMPORT_FILE_TYPE, cache_data)
+    cache = ClientCache(CacheKey.DD_IMPORT_FILE_TYPE, None)
     if cache.is_empty():
-        rows = anvil.server.call('generate_mapping_type_dropdown')
+        rows = anvil.server.call('generate_mapping_type_list')
         new_dropdown = list((r['name'], [r['id'], r['name']]) for r in rows)
+        cache.set_cache(new_dropdown)
+    return cache.get_cache()
+
+@logger.log_function
+def generate_file_mapping_group_dropdown(selected_filetype):
+    """
+    Access file mapping groups dropdown from either client cache or generate from DB data returned from server side.
+
+    Parameters:
+        selected_filetype (string): The selected file type ID.
+
+    Returns:
+        cache.get_cache (list): File mapping group dropdown formed by mapping group DB table data.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.DD_IMPORT_MAPPING_GRP, None)
+    if cache.is_empty():
+        rows = anvil.server.call('generate_mapping_list', selected_filetype)
+        new_dropdown = list((r['name'], r['id']) for r in rows)
         cache.set_cache(new_dropdown)
     return cache.get_cache()
 
@@ -46,6 +60,21 @@ def get_file_mapping_type_dropdown_selected_item(filetype):
     return selected_item
 
 @logger.log_function
+def preview_excel_file(file):
+    """
+    Preview the uploaded Excel file.
+
+    Parameters:
+        file (object): The uploaded file object.
+
+    Returns:
+        sheets (list): List of tab names in the uploaded Excel file.
+    """
+    sheets = anvil.server.call('preview_file', file=file)
+    logger.trace("sheets=", sheets)
+    return sheets
+
+@logger.log_function
 def preprocess_excel_import(selected_rule, file, components):
     """
     Pre-process of Excel file import.
@@ -56,8 +85,12 @@ def preprocess_excel_import(selected_rule, file, components):
         components (list of component): A list of UI components which contain checkboxes for tabs to import.
 
     Returns:
-        list: A list of all functions return required by the selection change.
+        data_df (dataframe): Processed dataframe containing all transactions.
+        lbl_df (dataframe): Processed dataframe containing all labels.
+        acct_df (dataframe): Processed dataframe containing all accounts.
     """
+    from anvil import CheckBox
+    
     tablist = []
     for i in components:
         if isinstance(i, CheckBox) and i.checked:
@@ -69,3 +102,18 @@ def preprocess_excel_import(selected_rule, file, components):
     logger.debug("lbls_df=", lbls_df)
     logger.debug("acct_df=", acct_df)
     return data_df, lbls_df, acct_df
+
+@logger.log_function
+def preprocess_pdf_import(file):
+    """
+    Pre-process of PDF file import.
+
+    Parameters:
+        file (object): The uploaded file object.
+
+    Returns:
+        pdf_tbl (pdfplumber.PDF): Processed pdfplumber.PDF object.
+    """
+    pdf_tbl = anvil.server.call('import_pdf_file', file=file)
+    logger.trace("pdf_tbl=", pdf_tbl)
+    return pdf_tbl
