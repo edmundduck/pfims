@@ -83,14 +83,15 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
 
     def enable_excel_next_button(self, **event_args):
         cb = event_args['sender']
-        vis = False
+        self.button_excel_next.visible = False
         if cb.checked:
-            vis = True
+            self.button_excel_next.visible = True
+            break
         else:
             for i in cb.parent.get_components():
                 if isinstance(i, CheckBox) and i.checked:
-                    vis = True
-        self.button_excel_next.visible = vis
+                    self.button_excel_next.visible = True
+                    break
 
     @logger.log_function
     def button_excel_next_click(self, **event_args):
