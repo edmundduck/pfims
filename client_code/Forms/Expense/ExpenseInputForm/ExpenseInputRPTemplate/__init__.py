@@ -2,7 +2,6 @@ from ._anvil_designer import ExpenseInputRPTemplateTemplate
 from anvil import *
 from .....Controllers import ExpenseInputController
 from .....Entities.ExpenseTransaction import ExpenseTransaction
-from .....Utils import Constants as const
 from .....Utils.ButtonModerator import ButtonModerator
 from .....Utils.ClientCache import ClientCache
 from .....Utils.Logger import ClientLogger
@@ -28,6 +27,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_panel_labels.full_width_row = False
         
     def _generateall_selected_labels(self, label_list):
+        from .....Utils.Constants import ColorSchemes, Icons
         if label_list not in ('', None):
             cache_labels_list = ClientCache('generate_labels_dict_of_list')
             lbls = cache_labels_list.get_cache()
@@ -43,9 +43,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 if i.isdigit() and int(i) != 0:
                     lbl_name = lbls.get('name')[lbls.get('id').index(int(i))]
                     b = Button(text=lbl_name,
-                            # icon=const.Icons.REMOVE,
-                            foreground=const.ColorSchemes.BUTTON_FG,
-                            background=const.ColorSchemes.BUTTON_BG,
+                            # icon=Icons.REMOVE,
+                            foreground=ColorSchemes.BUTTON_FG,
+                            background=ColorSchemes.BUTTON_BG,
                             font_size=12,
                             align="left",
                             spacing_above="small",
@@ -69,11 +69,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.parent.raise_event('x-switch-to-save-button')
 
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
+        from .....Utils.Constants import ColorSchemes, Icons
         if self.row_cb_datarow.checked is True:
             b = Button(text=selected_lname,
-                    # icon=const.Icons.REMOVE,
-                    foreground=const.ColorSchemes.BUTTON_FG,
-                    background=const.ColorSchemes.BUTTON_BG,
+                    # icon=Icons.REMOVE,
+                    foreground=ColorSchemes.BUTTON_FG,
+                    background=ColorSchemes.BUTTON_BG,
                     font_size=12,
                     align="left",
                     spacing_above="small",
@@ -93,6 +94,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
+        from .....Utils.Constants import ColorSchemes
         from .....Utils.Validation import Validator
         v = Validator()
 
@@ -104,9 +106,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
         v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
-        v.highlight_when_invalid(self.row_date, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
-        v.highlight_when_invalid(self.row_acct, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
-        v.highlight_when_invalid(self.row_amt, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.row_date, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.row_acct, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.row_amt, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
 
         return v.is_valid()
 
