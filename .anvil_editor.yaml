@@ -70,6 +70,7 @@ unique_ids:
     Controllers.AccountMaintController: '1697532762628626134936453.2079'
     Forms.Investment: '1697017930782851544912961.1171'
     Entities.Account: '1696720136425815587229121.0371'
+    Controllers.ExpenseFileUploadController: '1697815203466807999044689.3457'
     Utils: '168088722499519584900829.258568'
     Controllers.UploadMappingRulesController: '1697538292953229620541616.99762'
     Controllers.ExpenseFileExcelImportController: '1697538091207142795890728.2163'

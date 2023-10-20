@@ -41,9 +41,9 @@ def generate_mapping_dropdown(ftype):
     content = list((row['name'], row['id']) for row in rows)
     return content
 
-@anvil.server.callable("generate_mapping_type_dropdown")
+@anvil.server.callable("generate_mapping_type_list")
 @logger.log_function
-def generate_mapping_type_dropdown():
+def generate_mapping_type_list():
     """
     Select mapping file types from a DB table which stores import file types' detail to generate a dropdown list.
 
@@ -52,12 +52,13 @@ def generate_mapping_type_dropdown():
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT * FROM {Database.SCHEMA_REFDATA}.import_filetype ORDER BY seq ASC"
+        sql = "SELECT * FROM {schema}.import_filetype ORDER BY seq ASC".format(
+            schema=Database.SCHEMA_REFDATA
+        )
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['name'], [row['id'], row['name']]) for row in rows)
-    return content
+        return rows
 
 @anvil.server.callable("generate_expense_tbl_def_dropdown")
 @logger.log_function

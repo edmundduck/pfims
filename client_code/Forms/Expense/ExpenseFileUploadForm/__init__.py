@@ -1,6 +1,7 @@
 from ._anvil_designer import ExpenseFileUploadFormTemplate
 from anvil import *
 import anvil.server
+from ....Controllers import ExpenseFileUploadController
 from ....Utils.ClientCache import ClientCache
 from ....Utils import Constants as const
 from ....Utils.Logger import ClientLogger
@@ -20,9 +21,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
         self.flow_panel_xlstab.visible = False
         self.valerror_title.visible = False
         self.valerror_1.visible = False
-
-        cache_filetype = ClientCache('generate_mapping_type_dropdown')
-        self.dropdown_filetype.items = cache_filetype.get_cache()
+        self.dropdown_filetype.items = ExpenseFileUploadController.generate_file_mapping_type_dropdown()
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""

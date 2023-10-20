@@ -9,6 +9,7 @@ class CacheKey:
     DD_BROKER = 'broker_dropdown'
     DD_CURRENCY = 'ccy_dropdown'
     DD_EXPENSE_TAB = 'generate_expense_groups_list'
+    DD_IMPORT_FILE_TYPE = 'generate_mapping_type_list'
     DD_LABEL = 'generate_labels_dropdown'
     DD_SEARCH_INTERVAL = 'search_interval_dropdown'
     DD_STOCK_JRN_GRP = 'stock_journal_group_dropdown'
