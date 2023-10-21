@@ -1,5 +1,6 @@
 from ._anvil_designer import PDFColumnsMappingRPTemplateTemplate
 from anvil import *
+import anvil.server
 from .....Utils.ClientCache import ClientCache
 from .....Utils import Constants as const
 from .....Utils.Logger import ClientLogger

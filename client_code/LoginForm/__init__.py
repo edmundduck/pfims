@@ -1,5 +1,6 @@
 from ._anvil_designer import LoginFormTemplate
 from anvil import *
+import anvil.server
 import anvil.users
 from ..Utils import Routing
 
