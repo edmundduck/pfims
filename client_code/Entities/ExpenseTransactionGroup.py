@@ -45,6 +45,10 @@ class ExpenseTransactionGroup(BaseEntity):
         return self.set_single_attribute(0, userid)
 
     def set_id(self, id):
+        tnx = self.get_transactions()
+        if tnx and len(tnx) > 0:
+            for t in tnx:
+                t.set_group_id(id)
         return self.set_single_attribute(1, id)
         
     def set_name(self, name):
