@@ -337,7 +337,8 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
         transactions (list of dict): A list of transactions from repeating panel to be inserted or updated.
         
     Returns:
-        exp_grp (ExpenseTransactionGroup): The expense transaction group object updated with data from DB.
+        exp_grp.get_id (int): The expense transaction group ID.
+        tnx_list (list of dict): All the expense transactions belong to the group.
     """
     from datetime import date, datetime
     from .. import Global
@@ -354,15 +355,19 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
     # Has to assign to a variable otherwise value in cache will be updated by reference
     del_iid = cache.get_cache()
     exp_grp, result_delete = anvil.server.call('proc_change_expense_group', exp_grp, del_iid)
+
+    tnx_list = []
     if not exp_grp:
         raise RuntimeError('Error occurs in proc_change_expense_group expense transaction group creation or update phase.')
     elif result_delete is None:
         # result_delete can be 0, but cannot be None.
         raise RuntimeError('Error occurs in proc_change_expense_group transaction deletion or update phase.')
     else:
-        logger.trace('exp_grp.get_transactions=', list(str(t) for t in exp_grp.get_transactions()))
+        for t in exp_grp.get_transactions():        
+            logger.trace('transaction=', str(t))
+            tnx_list.append(t.get_dict())
         cache.clear_cache()
-    return exp_grp
+    return exp_grp.get_id(), tnx_list
 
 @logger.log_function
 def submit_expense_transaction_group(group_dropdown_selected, submitted=True):

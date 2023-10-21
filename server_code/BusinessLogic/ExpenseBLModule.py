@@ -1,7 +1,9 @@
 import anvil.server
 from ..DataAccess import ExpenseDAModule
+from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.Setting import Setting
 from ..SysProcess import LoggingModule
+from ..SysProcess import SystemModule as sysmod
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -29,9 +31,14 @@ def proc_select_expense_group(exp_grp):
     Returns:
         exp_grp (ExpenseTransactionGroup): The selected expense transaction group object filled with detail returned from the DB.
     """
+    from ..Utils import Helper
+    userid = sysmod.get_current_userid()
     exp_grp = ExpenseDAModule.select_expense_group(exp_grp)
     tnx_list = ExpenseDAModule.select_transactions(exp_grp)
-    exp_grp = exp_grp.set_transactions(tnx_list)
+    # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
+    # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
+    tnx_list = Helper.upper_dict_keys(tnx_list, ExpenseTransaction.get_data_transform_definition())
+    exp_grp = exp_grp.set_transactions(list(ExpenseTransaction(r).set_user_id(userid) for r in tnx_list))
     return exp_grp
 
 @anvil.server.callable("proc_change_expense_group")
@@ -57,7 +64,7 @@ def proc_change_expense_group(exp_grp, del_iid_list):
     # Replace all IID from the list of transactions.
     tnx_list = list(i.get_dict() for i in exp_grp.get_transactions())
     DL = {k: [dic[k] for dic in tnx_list] for k in tnx_list[0]}
-    DL['iid'] = updated_iid
+    DL['iid'] = list(r['iid'] for r in updated_iid)
     updated_tnx_list = [dict(zip(DL, col)) for col in zip(*DL.values())]
     exp_grp = exp_grp.set_transactions(updated_tnx_list)
 

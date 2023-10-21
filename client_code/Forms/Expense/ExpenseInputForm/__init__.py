@@ -142,14 +142,14 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         tab_original_id, tab_original_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         tab_name = self.tab_name.text
         try:
-            exp_grp = ExpenseInputController.save_expense_transaction_group(self.dropdown_tabs.selected_value, tab_name, self.input_repeating_panel.items)
-            if tab_name != tab_original_name or (not tab_original_id and exp_grp.get_id()):
+            tab_id, self.input_repeating_panel.items = ExpenseInputController.save_expense_transaction_group(self.dropdown_tabs.selected_value, tab_name, self.input_repeating_panel.items)
+            if tab_name != tab_original_name or (not tab_original_id and tab_id):
                 # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
                 self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
-                self.dropdown_tabs.selected_value = ExpenseInputController.get_expense_tabs_dropdown_selected_item(exp_grp.get_id())
+                self.dropdown_tabs.selected_value = ExpenseInputController.get_expense_tabs_dropdown_selected_item(tab_id)
             self._deleted_iid_row_reset()
             self._switch_to_submit_button()
-            msg = f"Expense transaction group [{tab_name} ({exp_grp.get_id()})] has been saved successfully."
+            msg = f"Expense transaction group [{tab_name} ({tab_id})] has been saved successfully."
             logger.info(msg)
         except Exception as err:
             logger.error(err)

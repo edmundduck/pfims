@@ -6,7 +6,6 @@ from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
-from ..Utils import Helper
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
@@ -68,9 +67,8 @@ def select_transactions(exp_grp):
         exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
-        rows (list of ExpenseTransaction): A list of transactions belonging to the group.
+        rows (list of RealDictRow): A list of transactions belonging to the group.
     """
-    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT iid, tab_id, trandate AS {tdate}, account_id AS {account}, amount AS {amount}, \
@@ -88,12 +86,8 @@ def select_transactions(exp_grp):
         cur.execute(stmt)
         rows = cur.fetchall()
         logger.trace("rows=", rows)
-        # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
-        # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-        rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
-        tnxs = list(ExpenseTransaction(r).set_user_id(userid) for r in rows)
-    return tnxs
+    return rows
 
 @logger.log_function
 def upsert_transactions(exp_grp):
@@ -107,7 +101,7 @@ def upsert_transactions(exp_grp):
 
     Returns:
         exp_grp (ExpenseTransactionGroup): An expense transaction group object updated with latest transaction IID.
-        result (list of RealDictRow): A list of IID in sequence of the list order in the insert SQL if successful, otherwise None.
+        rows (list of RealDictRow): A list of IID in sequence of the list order in the insert SQL if successful, otherwise None.
     """
     try:
         cur, conn, iid = [None]*3
@@ -129,10 +123,10 @@ def upsert_transactions(exp_grp):
                     exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=Database.SCHEMA_FIN, p1=','.join(mogstr))
                     cur.execute(sql)
                     conn.commit()
-                    result = cur.fetchall()
+                    rows = cur.fetchall()
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
                     if cur.rowcount != num_rows: raise psycopg2.OperationalError("Transactions under group [{0} ({1})] creation or update fail.".format(exp_grp.get_name(), exp_grp.get_id()))
-                    return result
+                    return rows
                 return []
         raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
     except psycopg2.OperationalError as err:

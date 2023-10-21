@@ -14,7 +14,7 @@ components:
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: '', font_size: 8, font: '', spacing_above: small, icon_align: left,
+      visible: false, text: '', font_size: 8, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: row_iid
