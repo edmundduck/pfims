@@ -19,7 +19,8 @@ components:
       icon: ''}
     name: row_iid
     layout_properties: {column: JNEVXO}
-    data_bindings: []
+    data_bindings:
+    - {property: text, code: 'self.item[''iid'']'}
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
       border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,

@@ -6,7 +6,6 @@ from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
-from ..Utils import Helper
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
@@ -68,9 +67,8 @@ def select_transactions(exp_grp):
         exp_grp (ExpenseTransactionGroup): An expense transaction group object.
 
     Returns:
-        rows (list of ExpenseTransaction): A list of transactions belonging to the group.
+        rows (list of RealDictRow): A list of transactions belonging to the group.
     """
-    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT iid, tab_id, trandate AS {tdate}, account_id AS {account}, amount AS {amount}, \
@@ -88,14 +86,9 @@ def select_transactions(exp_grp):
         cur.execute(stmt)
         rows = cur.fetchall()
         logger.trace("rows=", rows)
-        # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
-        # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-        rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
-        tnxs = list(ExpenseTransaction(r).set_user_id(userid) for r in rows)
-    return tnxs
+    return rows
 
-@anvil.server.callable("upsert_transactions")
 @logger.log_function
 def upsert_transactions(exp_grp):
     """
@@ -108,23 +101,8 @@ def upsert_transactions(exp_grp):
 
     Returns:
         exp_grp (ExpenseTransactionGroup): An expense transaction group object updated with latest transaction IID.
+        rows (list of RealDictRow): A list of IID in sequence of the list order in the insert SQL if successful, otherwise None.
     """
-    def replace_transactions_iid(rp_items, iid):
-        """
-        Replace all IID from the list of transactions.
-    
-        Parameters:
-            rp_items (list of dict): List of transactions in dict format.
-            iid (list of int): New IID list which follows the same order as journals in object.
-    
-        Returns:
-            LD (list of dict): List of transactions with replaced new IID.
-        """
-        DL = {k: [dic[k] for dic in rp_items] for k in rp_items[0]}
-        DL['iid'] = iid
-        LD = [dict(zip(DL, col)) for col in zip(*DL.values())]
-        return LD
-
     try:
         cur, conn, iid = [None]*3
         if isinstance(exp_grp, ExpenseTransactionGroup):
@@ -145,15 +123,11 @@ def upsert_transactions(exp_grp):
                     exp_transactions.tab_id=EXCLUDED.tab_id RETURNING iid".format(schema=Database.SCHEMA_FIN, p1=','.join(mogstr))
                     cur.execute(sql)
                     conn.commit()
-                    result = cur.fetchall()
-                    iid_list = list(r['iid'] for r in result)
+                    rows = cur.fetchall()
                     logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                    logger.trace(f"iid list={iid_list}")
                     if cur.rowcount != num_rows: raise psycopg2.OperationalError("Transactions under group [{0} ({1})] creation or update fail.".format(exp_grp.get_name(), exp_grp.get_id()))
-                    # Transform to list of dict (LD) for simple IID replacement
-                    list_tnx_dict = replace_transactions_iid(list(i.get_dict() for i in exp_grp.get_transactions()), iid_list)
-                    exp_grp.set_transactions(list_tnx_dict)
-                return exp_grp
+                    return rows
+                return []
         raise TypeError('The parameter is not an ExpenseTransactionGroup object.')
     except psycopg2.OperationalError as err:
         logger.error(err)
@@ -161,9 +135,8 @@ def upsert_transactions(exp_grp):
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()        
-    return iid
+    return None
     
-@anvil.server.callable("delete_transactions")
 @logger.log_function
 def delete_transactions(exp_grp, iid_list):
     """
@@ -368,51 +341,3 @@ def delete_expense_group(exp_grp):
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
-
-@anvil.server.callable("proc_select_expense_group")
-@logger.log_function
-def proc_select_expense_group(exp_grp):
-    """
-    Consolidated process for selecting one expense transaction group.
-
-    Parameters:
-        exp_grp (ExpenseTransactionGroup): The selected expense transaction group object.
-
-    Returns:
-        exp_grp (ExpenseTransactionGroup): The selected expense transaction group object filled with detail returned from the DB.
-    """
-    exp_grp = select_expense_group(exp_grp)
-    tnx_list = select_transactions(exp_grp)
-    exp_grp = exp_grp.set_transactions(tnx_list)
-    return exp_grp
-
-@anvil.server.callable("proc_change_expense_group")
-@logger.log_function
-def proc_change_expense_group(exp_grp, iid_list):
-    """
-    Consolidated process for making change on expense transaction group and transactions, including creation, update and deletion.
-
-    Parameters:
-        exp_grp (ExpenseTransactionGroup): The to-be-changed expense transaction group object.
-        iid_list (list): A list of IID (item ID) to be deleted, every transaction has an IID.
-
-    Returns:
-        exp_grp (ExpenseTransactionGroup): The expense transaction group object updated with data from DB.
-        result_d (int): Successful delete row count, otherwise None.
-    """
-    tab_id = update_expense_group(exp_grp) if exp_grp.get_id() else create_expense_group(exp_grp)
-    if tab_id is None or tab_id <= 0:
-        raise RuntimeError(f"ERROR occurs when creating or updating expense transaction group {exp_grp.get_name()}, aborting further update.")
-    exp_grp = upsert_transactions(exp_grp)
-    result_d = delete_transactions(exp_grp, iid_list)
-    return exp_grp, result_d
-
-@anvil.server.callable("init_cache_expense_input")
-@logger.log_function
-def init_cache_expense_input():
-    from . import AccountModule
-    from . import LabelModule
-    exp_grp_list = generate_expense_groups_list()
-    acct_list = AccountModule.generate_accounts_list()
-    lbl_list = LabelModule.generate_labels_list()
-    return exp_grp_list, acct_list, lbl_list

@@ -1,14 +1,10 @@
 from ._anvil_designer import PDFColumnsMappingRPTemplateTemplate
 from anvil import *
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ....Utils.ClientCache import ClientCache
-from ....Utils import Constants as const
-from ....Utils.Logger import ClientLogger
-from ....Utils.Validation import Validator
+from .....Utils.ClientCache import ClientCache
+from .....Utils import Constants as const
+from .....Utils.Logger import ClientLogger
+from .....Utils.Validation import Validator
 
 logger = ClientLogger()
 
@@ -25,7 +21,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
 
     def dropdown_col_map_to_change(self, **event_args):
         """This method is called when an item is selected"""
-        from ....Entities.ExpenseTransaction import ExpenseTransaction
+        from .....Entities.ExpenseTransaction import ExpenseTransaction
         logger.debug("self.dropdown_col_map_to.selected_value=", self.dropdown_col_map_to.selected_value)
         if self.dropdown_col_map_to.selected_value is not None and self.dropdown_col_map_to.selected_value[0] == ExpenseTransaction.field_amount():
             self.dropdown_sign.visible = True
@@ -44,7 +40,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
 
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
-        from ....Entities.ExpenseTransaction import ExpenseTransaction
+        from .....Entities.ExpenseTransaction import ExpenseTransaction
         v = Validator()
         cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
 

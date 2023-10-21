@@ -545,7 +545,7 @@ def update_pdf_mapping(data, mapping, account, labels):
                 else:
                     pass
         df = new_df
-        
+
         if account is not None: df[ExpenseTransaction.field_account()] = account
         if labels is not None: df[ExpenseTransaction.field_labels()] = labels
         return df.dropna(subset=[ExpenseTransaction.field_amount(), ExpenseTransaction.field_date()], ignore_index=True).replace([np.nan], [None])\

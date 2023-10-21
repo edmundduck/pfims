@@ -62,3 +62,45 @@ def get_account_dropdown_selected_item(acct_id):
     """
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
+
+def populate_repeating_panel_items(data=None):
+    """
+    Populate repeating panel items with data padded with a list of blank items.
+
+    Parameters:
+        data (pdfplumber.PDF): pdfplumber.PDF object for transformation.
+
+    Returns:
+        result (list of dict): A list of data to populate to repeating panel.
+    """
+    DL = {
+        'srccol': data[0] if data is not None else None,
+        'tgtcol': [None for i in range(len(data[0]))] if data is not None else [None],
+        'sign': [None for i in range(len(data[0]))] if data is not None else [None]
+    }
+    logger.trace("DL=", DL)
+    result = [dict(zip(DL, col)) for col in zip(*DL.values())]
+    return result
+
+@logger.log_function
+def update_pdf_import_mapping(data, rp_items, account_selection, label_selection):
+    """
+    2nd process of PDF file import which is cropping the required statement detail part and then mapping accordingly.
+
+    Parameters:
+        data (dataframe/pdfplumber.PDF): The dataframe or PDF object to be updated with the mapping.
+        rp_items (list of dict): The list of column headers mapping from user's input.
+        account_selection (int): The selected account dropdown value requiring extra mapping.
+        label_selection (int): The selected label dropdown value requiring extra mapping.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
+    logger.trace("rp_items=", rp_items)
+    logger.trace("account_selection=", account_selection)
+    logger.trace("label_selection=", label_selection)
+    account = account_selection[0] if account_selection is not None and isinstance(account_selection, (list, tuple)) else  account_selection
+    label = label_selection[0] if label_selection is not None and isinstance(label_selection, (list, tuple)) else  label_selection
+    df = anvil.server.call('update_pdf_mapping', data=data, mapping=rp_items, account=account, labels=label)
+    logger.trace("df=", df)
+    return df
