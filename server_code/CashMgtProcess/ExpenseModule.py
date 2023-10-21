@@ -403,6 +403,7 @@ def proc_change_expense_group(exp_grp, iid_list):
     tab_id = update_expense_group(exp_grp) if exp_grp.get_id() else create_expense_group(exp_grp)
     if tab_id is None or tab_id <= 0:
         raise RuntimeError(f"ERROR occurs when creating or updating expense transaction group {exp_grp.get_name()}, aborting further update.")
+    exp_grp = exp_grp.set_id(tab_id)
     exp_grp = upsert_transactions(exp_grp)
     result_d = delete_transactions(exp_grp, iid_list)
     return exp_grp, result_d

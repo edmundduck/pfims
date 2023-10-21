@@ -96,6 +96,11 @@ def update_pdf_import_mapping(data, rp_items, account_selection, label_selection
     Returns:
         df (dataframe): Processed dataframe.
     """
-    df = anvil.server.call('update_pdf_mapping', data=data, mapping=rp_items, account=account_selection, labels=label_selection)
+    logger.trace("rp_items=", rp_items)
+    logger.trace("account_selection=", account_selection)
+    logger.trace("label_selection=", label_selection)
+    account = account_selection[0] if account_selection is not None and isinstance(account_selection, (list, tuple)) else  account_selection
+    label = label_selection[0] if label_selection is not None and isinstance(label_selection, (list, tuple)) else  label_selection
+    df = anvil.server.call('update_pdf_mapping', data=data, mapping=rp_items, account=account, labels=label)
     logger.trace("df=", df)
     return df
