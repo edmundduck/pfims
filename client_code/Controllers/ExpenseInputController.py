@@ -360,7 +360,7 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
         # result_delete can be 0, but cannot be None.
         raise RuntimeError('Error occurs in proc_change_expense_group transaction deletion or update phase.')
     else:
-        logger.trace('exp_grp=', exp_grp)
+        logger.trace('exp_grp.get_transactions=', list(str(t) for t in exp_grp.get_transactions()))
         cache.clear_cache()
     return exp_grp
 
@@ -389,7 +389,6 @@ def submit_expense_transaction_group(group_dropdown_selected, submitted=True):
     if not result:
         raise RuntimeError('Error occurs in submit_expense_group.')
     else:
-        logger.trace('result=', result)
         cache.clear_cache()
     return result
 
@@ -415,7 +414,6 @@ def delete_expense_transaction_group(group_dropdown_selected):
     if not result:
         raise RuntimeError('Error occurs in delete_expense_group.')
     else:
-        logger.trace('result=', result)
         cache.clear_cache()
     return result
 

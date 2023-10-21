@@ -169,7 +169,7 @@ components:
     columns:
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '15', $$hashKey: 'object:40092'}
     - {id: TOZXSD, title: '', data_key: LBL, width: '8', $$hashKey: 'object:40093'}
-    - {id: JNEVXO, title: '', data_key: iid, width: '8', $$hashKey: 'object:40081'}
+    - {id: JNEVXO, title: '', data_key: iid, width: '30', $$hashKey: 'object:40081'}
     - {id: SBYHGF, title: '', data_key: cb, $$hashKey: 'object:131320', width: '15'}
     - {id: DNGCRO, title: Date, data_key: DTE, width: '110', $$hashKey: 'object:40082'}
     - {id: RMITXR, title: Account, data_key: ACC, width: '150', $$hashKey: 'object:40084'}
