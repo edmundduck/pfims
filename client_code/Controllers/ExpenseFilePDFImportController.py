@@ -83,19 +83,19 @@ def populate_repeating_panel_items(data=None):
     return result
 
 @logger.log_function
-def update_pdf_import_mapping(file):
+def update_pdf_import_mapping(data, rp_items, account_selection, label_selection):
     """
     2nd process of PDF file import which is cropping the required statement detail part and then mapping accordingly.
 
     Parameters:
         data (dataframe/pdfplumber.PDF): The dataframe or PDF object to be updated with the mapping.
-        mapping (list): The list of column headers mapping from user's input.
-        account (int): The selected account ID requiring extra mapping.
-        labels (int): The selected label ID requiring extra mapping.
+        rp_items (list of dict): The list of column headers mapping from user's input.
+        account_selection (int): The selected account dropdown value requiring extra mapping.
+        label_selection (int): The selected label dropdown value requiring extra mapping.
 
     Returns:
-        pdf_tbl (pdfplumber.PDF): Processed pdfplumber.PDF object.
+        df (dataframe): Processed dataframe.
     """
-    pdf_tbl = anvil.server.call('import_pdf_file', file=file)
-    logger.trace("pdf_tbl=", pdf_tbl)
-    return pdf_tbl
+    df = anvil.server.call('update_pdf_mapping', data=data, mapping=rp_items, account=account_selection, labels=label_selection)
+    logger.trace("df=", df)
+    return df

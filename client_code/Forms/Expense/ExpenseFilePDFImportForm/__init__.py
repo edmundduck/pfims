@@ -1,10 +1,9 @@
 from ._anvil_designer import ExpenseFilePDFImportFormTemplate
 from anvil import *
-import anvil.server
-from ...Controllers import ExpenseFilePDFImportController
-from ...Utils.ButtonModerator import ButtonModerator
-from ...Utils.Logger import ClientLogger
-from ...Utils.Validation import Validator
+from ....Controllers import ExpenseFilePDFImportController
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.Logger import ClientLogger
+from ....Utils.Validation import Validator
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
@@ -58,9 +57,7 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
             return
 
         if v.is_valid():
-            selected_account = self.dropdown_account.selected_value[0] if self.dropdown_account.selected_value else None
-            selected_label = self.dropdown_labels.selected_value[0] if self.dropdown_labels.selected_value else None
-            df = anvil.server.call('update_pdf_mapping', self.tag.get('data'), self.cols_mapping_panel.items, selected_account, selected_label)
+            df = ExpenseFilePDFImportController.update_pdf_import_mapping(self.tag.get('data'), self.cols_mapping_panel.items, self.dropdown_account.selected_value, self.dropdown_labels.selected_value)
             Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def cb_account_change(self, **event_args):
