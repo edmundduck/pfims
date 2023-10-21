@@ -20,31 +20,13 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
-        # Prefill "labels map to" dropdown by finding high proximity choices
-        relevant_lbls = anvil.server.call('predict_relevant_labels', srclbl=labels, curlbl=ExpenseFileExcelImportController.generate_labels_dropdown())
-        logger.debug("relevant_lbls=", relevant_lbls)
-        # Transpose Dict of Lists (DL) to List of Dicts (LD)
-        # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
-        DL = {
-            'srclbl': labels,
-            'action': [ None for i in range(len(labels))] if labels is not None else [ None ],
-            'tgtlbl': relevant_lbls,
-            'new': labels
-        }
-        logger.trace("DL=", DL)
-        logger.trace("accounts=", accounts)
-        DL_acct = {
-            'srcacct': accounts,
-            'action': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
-            'tgtacct': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
-            'newacct': accounts
-        }
-        self.labels_mapping_panel.items = [dict(zip(DL, col)) for col in zip(*DL.values())]
+        self.labels_mapping_panel.items = ExpenseFileExcelImportController.populate_labels_repeating_panel_items(labels)
         logger.trace("self.labels_mapping_panel.items=", self.labels_mapping_panel.items)
         if accounts is None:
             self.flow_panel_step7.visible = False
         else:
-            self.accounts_mapping_panel.items = [dict(zip(DL_acct, col)) for col in zip(*DL_acct.values())]
+            self.accounts_mapping_panel.items = ExpenseFileExcelImportController.populate_accounts_repeating_panel_items(accounts)
+            logger.trace("self.accounts_mapping_panel.items=", self.accounts_mapping_panel.items)
             self.flow_panel_step7.visible = True
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
@@ -60,10 +42,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         Routing.open_exp_input_form(self)
 
     def enable_next_button(self, **event_args):
-        if self.hidden_action_count.text == 0:
-            self.button_next.visible = True
-        else:
-            self.button_next.visible = False
+        self.button_next.visible = True if self.hidden_action_count.text == 0 else False
 
     @btnmod.one_click_only
     @logger.log_function
@@ -75,7 +54,6 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         df = anvil.server.call('proc_excel_update_mappings', data=self.tag.get('data'), mapping_lbls=self.labels_mapping_panel.items, mapping_accts=self.accounts_mapping_panel.items)
         # TODO - Relocate the reload logic to improve performance
         ExpenseFileExcelImportController.generate_labels_dropdown(reload=True)
-        cache_labels.clear_cache()
         ExpenseFileExcelImportController.generate_accounts_dropdown(reload=True)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 

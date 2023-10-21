@@ -95,3 +95,70 @@ def get_labels_mapping_action_dropdown_selected_item(action):
         generate_labels_mapping_action_dropdown()
     selected_item = cache.get_complete_key(action)
     return selected_item
+
+def populate_accounts_repeating_panel_items(data=None):
+    """
+    Populate accounts repeating panel items with data.
+
+    Parameters:
+        data (dataframe): Dataframe containing all transactions.
+
+    Returns:
+        result (list of dict): A list of data to populate to repeating panel.
+    """
+    DL_acct = {
+        'srcacct': accounts,
+        'action': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
+        'tgtacct': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
+        'newacct': accounts
+    }
+    logger.trace("DL_acct=", DL_acct)
+    result = [dict(zip(DL_acct, col)) for col in zip(*DL_acct.values())]
+    return result
+
+def populate_labels_repeating_panel_items(data=None):
+    """
+    Populate labels repeating panel items with data.
+
+    Parameters:
+        data (dataframe): Dataframe containing all transactions.
+
+    Returns:
+        result (list of dict): A list of data to populate to repeating panel.
+    """
+    # Transpose Dict of Lists (DL) to List of Dicts (LD)
+    # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
+    DL_lbl = {
+        'srclbl': labels,
+        'action': [ None for i in range(len(labels))] if labels is not None else [ None ],
+        # Prefill "labels map to" dropdown by finding high proximity choices
+        'tgtlbl': predict_relevant_labels(labels, generate_labels_dropdown()),
+        'new': labels
+    }
+    logger.trace("DL_lbl=", DL_lbl)
+    result = [dict(zip(DL_lbl, col)) for col in zip(*DL_lbl.values())]
+    return result
+
+def predict_relevant_labels(srclbl, curlbl):
+    """
+    Return a label which has the highest proximity (a.k.a. the most matched) from the DB from the source label.
+
+    Parameters:
+        srclbl (list): The labels extracted from Excel to be compared.
+        curlbl (list): The label dropdown from the DB labels table.
+
+    Returns:
+        score (list): Proximity score of each label, its order follows the order of the srclbl.
+    """
+    # Max 100, min 0
+    min_proximity = 40
+    score = []
+    for s in srclbl:
+        highscore = [0, None]
+        for lbl in curlbl:
+            similarity = fuzz.ratio(s, lbl[1][1])
+            logger.trace(f"lbl={lbl[1][1]}, similarity={similarity}, highscore[0]={highscore[0]}")
+            if similarity > highscore[0]:
+                highscore = [similarity, [lbl[1][0], lbl[1][1]]]
+        score.append(highscore[1] if highscore[0] > min_proximity else None)
+    return score
