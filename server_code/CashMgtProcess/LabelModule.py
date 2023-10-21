@@ -29,22 +29,21 @@ def generate_labels_list():
         cur.close()
     return rows
 
-@anvil.server.callable("generate_labels_mapping_action_dropdown")
+@anvil.server.callable("generate_labels_mapping_action_list")
 @logger.log_function
-def generate_labels_mapping_action_dropdown():
+def generate_labels_mapping_action_list():
     """
     Select data from the DB table which stores label mapping actions' detail to generate a dropdown list.
 
     Returns:
-        content (list): A list of label mapping action name as description, and ID and name as ID.
+        rows (list of RealDictRow): A list of label mapping actions.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.label_mapping_action ORDER BY seq ASC")
         rows = cur.fetchall()
         cur.close()
-    content = list((row['action'], [row['id'], row['action']]) for row in rows)
-    return content
+        return rows
 
 @anvil.server.callable("select_label")
 @logger.log_function

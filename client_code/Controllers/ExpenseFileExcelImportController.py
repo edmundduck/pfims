@@ -50,6 +50,22 @@ def generate_labels_dropdown(data=None, reload=False):
     from . import LabelMaintController
     return LabelMaintController.generate_labels_dropdown(data, reload)
 
+@logger.log_function
+def generate_labels_mapping_action_dropdown():
+    """
+    Access reference data - labels mappiong action dropdown from either client cache or generate from DB data returned from server side.
+
+    Returns:
+        cache.get_cache (list): Labels mappiong action dropdown formed by labels mappiong action DB table data.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.DD_LABEL_MAPPING_ACTION, None)
+    if cache.is_empty():
+        rows = anvil.server.call('generate_labels_mapping_action_list')
+        new_dropdown = list((r['action'], [r['id'], r['action']]) for r in rows)
+        cache.set_cache(new_dropdown)
+    return cache.get_cache()
+
 def get_account_dropdown_selected_item(acct_id):
     """
     Return a complete key based on a partial account ID which is a part of the key in a dropdown list.
@@ -62,3 +78,20 @@ def get_account_dropdown_selected_item(acct_id):
     """
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
+
+def get_labels_mapping_action_dropdown_selected_item(action):
+    """
+    Return a complete key based on a partial currency ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        action (string): The labels mapping action ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in labels mapping action dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.DD_LABEL_MAPPING_ACTION, None)
+    if cache.is_empty():
+        generate_labels_mapping_action_dropdown()
+    selected_item = cache.get_complete_key(action)
+    return selected_item

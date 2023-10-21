@@ -1,15 +1,9 @@
 from ._anvil_designer import ExpenseFileExcelImportFormTemplate
 from anvil import *
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ...Controllers import ExpenseFileExcelImportController
-from ...Utils import Routing
-from ...Utils.ButtonModerator import ButtonModerator
-from ...Utils.ClientCache import ClientCache
-from ...Utils.Logger import ClientLogger
+from ....Controllers import ExpenseFileExcelImportController
+from ....Utils.ButtonModerator import ButtonModerator
+from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
@@ -20,10 +14,9 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        cache_lbl_action = ClientCache('generate_labels_mapping_action_dropdown')
         self.dropdown_tabs.items = ExpenseFileExcelImportController.generate_expense_tabs_dropdown()
-        self.dropdown_actions_for_all_labels.items = cache_lbl_action.get_cache()
-        self.dropdown_actions_for_all_accounts.items = cache_lbl_action.get_cache()
+        self.dropdown_actions_for_all_labels.items = ExpenseFileExcelImportController.generate_labels_mapping_action_dropdown()
+        self.dropdown_actions_for_all_accounts.items = ExpenseFileExcelImportController.generate_labels_mapping_action_dropdown()
         self.tag = {'data': data}
         logger.debug("self.tag=", self.tag)
         self.button_next.visible = False
@@ -58,10 +51,12 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_upload_mapping_form(self)
 
     def button_nav_input_exp_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_exp_input_form(self)
 
     def enable_next_button(self, **event_args):
@@ -74,6 +69,8 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
     @logger.log_function
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
+
         logger.trace(f"labels_mapping={self.labels_mapping_panel.items}")
         df = anvil.server.call('proc_excel_update_mappings', data=self.tag.get('data'), mapping_lbls=self.labels_mapping_panel.items, mapping_accts=self.accounts_mapping_panel.items)
         # TODO - Relocate the reload logic to improve performance

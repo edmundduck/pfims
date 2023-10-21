@@ -1,14 +1,7 @@
 from ._anvil_designer import ExcelAccountsMappingRPTemplateTemplate
 from anvil import *
-import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ....Controllers import ExpenseFileExcelImportController
-from ....Utils.ClientCache import ClientCache
-from ....Utils import Constants as const
-from ....Utils.Logger import ClientLogger
+from .....Controllers import ExpenseFileExcelImportController
+from .....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
@@ -18,8 +11,7 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        cache_acct_action = ClientCache('generate_labels_mapping_action_dropdown')
-        self.dropdown_acct_action.items = cache_acct_action.get_cache()
+        self.dropdown_acct_action.items = ExpenseFileExcelImportController.generate_labels_mapping_action_dropdown()
         self.dropdown_acct_map_to.items = ExpenseFileExcelImportController.generate_accounts_dropdown()
         self.dropdown_acct_map_to.visible = False
         self.hidden_acct_action.text = None
@@ -33,14 +25,16 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
     @logger.log_function
     def dropdown_acct_action_change(self, **event_args):
         """This method is called when an item is selected"""
+        from .....Utils.Constants import FileImportLabelExtraAction
+        
         action, action_desc = self.dropdown_acct_action.selected_value if self.dropdown_acct_action.selected_value is not None else [None, None]
-        if action in (None, const.FileImportLabelExtraAction.SKIP):
+        if action in (None, FileImportLabelExtraAction.SKIP):
             self.dropdown_acct_map_to.visible = False
             self.input_account.visible = False
-        elif action == const.FileImportLabelExtraAction.MAP:
+        elif action == FileImportLabelExtraAction.MAP:
             self.dropdown_acct_map_to.visible = True
             self.input_account.visible = False
-        elif action == const.FileImportLabelExtraAction.CREATE:
+        elif action == FileImportLabelExtraAction.CREATE:
             self.dropdown_acct_map_to.visible = False
             self.input_account.visible = True
         prev = self.hidden_acct_action.text
@@ -48,7 +42,6 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
         self.parent.raise_event('x-handle-action-count', action=action, prev=prev)
 
     def apply_action_to_all_accounts(self, action, **event_args):
-        cache_acct_action = ClientCache('generate_labels_mapping_action_dropdown')
-        self.dropdown_acct_action.selected_value = cache_acct_action.get_complete_key(action)
-        self.item['action'] = cache_acct_action.get_complete_key(action)
+        self.dropdown_acct_action.selected_value = ExpenseFileExcelImportController.get_labels_mapping_action_dropdown_selected_item(action)
+        self.item['action'] = ExpenseFileExcelImportController.get_labels_mapping_action_dropdown_selected_item(action)
         self.dropdown_acct_action_change()

@@ -13,6 +13,7 @@ class CacheKey:
     DD_IMPORT_FILE_TYPE = 'generate_mapping_type_dropdown'
     DD_IMPORT_MAPPING_GRP = 'generate_mapping_dropdown'
     DD_LABEL = 'generate_labels_dropdown'
+    DD_LABEL_MAPPING_ACTION = 'generate_labels_mapping_action_dropdown'
     DD_SEARCH_INTERVAL = 'search_interval_dropdown'
     DD_STOCK_JRN_GRP = 'stock_journal_group_dropdown'
     DD_SUBMITTED_JRN_GRP = 'submitted_journal_group_dropdown'
