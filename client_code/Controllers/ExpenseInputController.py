@@ -299,6 +299,7 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
 
     Parameters:
         rp_items (list of dict): Repeating panel item.
+        reload (boolean): Reload the whole repeating panel to filter unwanted rows if True.
 
     Returns:
         result (list of dict): A list of data padded with blank items for repeating panel.

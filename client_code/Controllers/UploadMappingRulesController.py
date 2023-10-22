@@ -47,3 +47,23 @@ def get_account_dropdown_selected_item(acct_id):
     """
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
+
+def populate_repeating_panel_items(rp_items=None):
+    """
+    Populate repeating panel items with either mapping from server or blank record.
+
+    Parameters:
+        rp_items (list of dict): Repeating panel item.
+
+    Returns:
+        result (list of dict): A list of data padded with blank items for repeating panel.
+    """
+    if rp_items:
+        mappings = anvil.server.call('select_mapping_rules')
+        result = mappings if mappings else [{} for i in range(1)]
+        logger.trace('rp_items with data=', result)
+    else:
+        result = [{} for i in range(1)]
+        logger.trace('rp_items blank=', result)
+    return result
+        
