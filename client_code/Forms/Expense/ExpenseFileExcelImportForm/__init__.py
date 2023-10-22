@@ -50,10 +50,16 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
 
-        df = ExpenseFileExcelImportController.update_excel_import_mapping(self.tag.get('data'), self.labels_mapping_panel.items, self.accounts_mapping_panel.items)
-        ExpenseFileExcelImportController.generate_labels_dropdown(reload=True)
-        ExpenseFileExcelImportController.generate_accounts_dropdown(reload=True)
-        Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
+        try:
+            df = ExpenseFileExcelImportController.update_excel_import_mapping(self.tag.get('data'), self.labels_mapping_panel.items, self.accounts_mapping_panel.items)
+        except Exception as err:
+            logger.error(err)
+            n = Notification('ERROR occurs when processing field mapping in Excel file import.')
+            n.show()
+        else:
+            ExpenseFileExcelImportController.generate_labels_dropdown(reload=True)
+            ExpenseFileExcelImportController.generate_accounts_dropdown(reload=True)
+            Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def handle_action_count(self, action, prev, **event_args):
         if action is None:

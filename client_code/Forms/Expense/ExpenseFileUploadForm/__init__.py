@@ -97,15 +97,25 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def button_excel_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
-
-        df, lbls, accts = ExpenseFileUploadController.preprocess_excel_import(self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, self.sheet_tabs_panel.get_components())
-        Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls, accounts=accts)
+        try:
+            df, lbls, accts = ExpenseFileUploadController.preprocess_excel_import(self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, self.sheet_tabs_panel.get_components())
+        except Exception as err:
+            logger.error(err)
+            n = Notification('ERROR occurs when preprocessing Excel file import.')
+            n.show()
+        else:
+            Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls, accounts=accts)
 
     @btnmod.one_click_only
     @logger.log_function
     def button_pdf_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
-
-        pdf_tbl = ExpenseFileUploadController.preprocess_pdf_import(self.file_loader_1.file)
-        Routing.open_exp_file_pdf_import_form(self, data=pdf_tbl)
+        try:
+            pdf_tbl = ExpenseFileUploadController.preprocess_pdf_import(self.file_loader_1.file)
+        except Exception as err:
+            logger.error(err)
+            n = Notification('ERROR occurs when preprocessing PDF file import.')
+            n.show()
+        else:
+            Routing.open_exp_file_pdf_import_form(self, data=pdf_tbl)
