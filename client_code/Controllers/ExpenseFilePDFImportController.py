@@ -65,7 +65,7 @@ def get_account_dropdown_selected_item(acct_id):
 
 def populate_repeating_panel_items(data=None):
     """
-    Populate repeating panel items with data padded with a list of blank items.
+    Populate repeating panel items with data.
 
     Parameters:
         data (pdfplumber.PDF): pdfplumber.PDF object for transformation.

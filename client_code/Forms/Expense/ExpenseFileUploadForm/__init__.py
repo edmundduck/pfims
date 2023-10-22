@@ -2,9 +2,11 @@ from ._anvil_designer import ExpenseFileUploadFormTemplate
 from anvil import *
 import anvil.server
 from ....Controllers import ExpenseFileUploadController
+from ....Utils.ButtonModerator import ButtonModerator
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
+btnmod = ButtonModerator()
 
 class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
     def __init__(self, **properties):
@@ -90,18 +92,30 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     self.button_excel_next.visible = True
                     break
 
+    @btnmod.one_click_only
     @logger.log_function
     def button_excel_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
+        try:
+            df, lbls, accts = ExpenseFileUploadController.preprocess_excel_import(self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, self.sheet_tabs_panel.get_components())
+        except Exception as err:
+            logger.error(err)
+            n = Notification('ERROR occurs when preprocessing Excel file import.')
+            n.show()
+        else:
+            Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls, accounts=accts)
 
-        df, lbls, accts = ExpenseFileUploadController.preprocess_excel_import(self.dropdown_mapping_rule.selected_value, self.file_loader_1.file, self.sheet_tabs_panel.get_components())
-        Routing.open_exp_file_excel_import_form(self, data=df, labels=lbls, accounts=accts)
-
+    @btnmod.one_click_only
     @logger.log_function
     def button_pdf_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
-
-        pdf_tbl = ExpenseFileUploadController.preprocess_pdf_import(self.file_loader_1.file)
-        Routing.open_exp_file_pdf_import_form(self, data=pdf_tbl)
+        try:
+            pdf_tbl = ExpenseFileUploadController.preprocess_pdf_import(self.file_loader_1.file)
+        except Exception as err:
+            logger.error(err)
+            n = Notification('ERROR occurs when preprocessing PDF file import.')
+            n.show()
+        else:
+            Routing.open_exp_file_pdf_import_form(self, data=pdf_tbl)

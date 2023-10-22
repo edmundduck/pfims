@@ -58,8 +58,14 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
             return
 
         if v.is_valid():
-            df = ExpenseFilePDFImportController.update_pdf_import_mapping(self.tag.get('data'), self.cols_mapping_panel.items, self.dropdown_account.selected_value, self.dropdown_labels.selected_value)
-            Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
+            try:
+                df = ExpenseFilePDFImportController.update_pdf_import_mapping(self.tag.get('data'), self.cols_mapping_panel.items, self.dropdown_account.selected_value, self.dropdown_labels.selected_value)
+            except Exception as err:
+                logger.error(err)
+                n = Notification('ERROR occurs when processing field mapping in PDF file import.')
+                n.show()
+            else:
+                Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
 
     def cb_account_change(self, **event_args):
         """This method is called when this checkbox is checked or unchecked"""

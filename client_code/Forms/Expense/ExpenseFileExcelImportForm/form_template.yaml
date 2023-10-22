@@ -154,7 +154,7 @@ components:
         layout_properties: {}
         event_bindings: {change: dropdown_actions_for_all_labels_change}
     - type: RepeatingPanel
-      properties: {spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
+      properties: {spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
       name: labels_mapping_panel
       layout_properties: {}
 - type: FlowPanel
@@ -231,7 +231,7 @@ components:
         event_bindings: {change: dropdown_actions_for_all_accounts_change}
     - type: RepeatingPanel
       properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-        visible: true, spacing_above: none, spacing_below: none, item_template: Input.ExpenseFileExcelImportForm.ExcelAccountsMappingRPTemplate,
+        visible: true, spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFileExcelImportForm.ExcelAccountsMappingRPTemplate,
         background: ''}
       name: accounts_mapping_panel
       layout_properties: {}

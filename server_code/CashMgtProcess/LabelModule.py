@@ -1,7 +1,6 @@
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from fuzzywuzzy import fuzz
 from ..Entities.Label import Label
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
@@ -29,22 +28,21 @@ def generate_labels_list():
         cur.close()
     return rows
 
-@anvil.server.callable("generate_labels_mapping_action_dropdown")
+@anvil.server.callable("generate_labels_mapping_action_list")
 @logger.log_function
-def generate_labels_mapping_action_dropdown():
+def generate_labels_mapping_action_list():
     """
     Select data from the DB table which stores label mapping actions' detail to generate a dropdown list.
 
     Returns:
-        content (list): A list of label mapping action name as description, and ID and name as ID.
+        rows (list of RealDictRow): A list of label mapping actions.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.label_mapping_action ORDER BY seq ASC")
         rows = cur.fetchall()
         cur.close()
-    content = list((row['action'], [row['id'], row['action']]) for row in rows)
-    return content
+        return rows
 
 @anvil.server.callable("select_label")
 @logger.log_function
@@ -184,29 +182,3 @@ def delete_label(label):
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
-
-@anvil.server.callable("predict_relevant_labels")
-@logger.log_function
-def predict_relevant_labels(srclbl, curlbl):
-    """
-    Return a label which has the highest proximity (a.k.a. the most matched) from the DB from the source label.
-
-    Parameters:
-        srclbl (list): The labels extracted from Excel to be compared.
-        curlbl (list): The label dropdown from the DB labels table.
-
-    Returns:
-        score (list): Proximity score of each label, its order follows the order of the srclbl.
-    """
-    # Max 100, min 0
-    min_proximity = 40
-    score = []
-    for s in srclbl:
-        highscore = [0, None]
-        for lbl in curlbl:
-            similarity = fuzz.ratio(s, lbl[1][1])
-            logger.trace(f"lbl={lbl[1][1]}, similarity={similarity}, highscore[0]={highscore[0]}")
-            if similarity > highscore[0]:
-                highscore = [similarity, [lbl[1][0], lbl[1][1]]]
-        score.append(highscore[1] if highscore[0] > min_proximity else None)
-    return score

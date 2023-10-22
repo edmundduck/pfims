@@ -4,14 +4,16 @@ import numpy as np
 import pandas as pd
 import pdfplumber
 import re
+from fuzzywuzzy import fuzz
 from io import BytesIO
-from . import AccountModule, FileUploadMappingModule, LabelModule
+from ..CashMgtProcess import AccountModule, FileUploadMappingModule, LabelModule
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..SysProcess import LoggingModule
 from ..Utils import Helper
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+
 logger = LoggingModule.ServerLogger()
 col_name = ExpenseTransaction.get_data_transform_definition()
 regex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
@@ -50,6 +52,33 @@ pdf_table_settings = {
     # "intersection_x_tolerance": 15,
     # "intersection_y_tolerance": 3,
 }
+
+# As package fuzzywuzzy is not available in client code, this function has to be in server side.
+@anvil.server.callable('predict_relevant_labels')
+@logger.log_function
+def predict_relevant_labels(srclbl, curlbl):
+    """
+    Return a label which has the highest proximity (a.k.a. the most matched) from the DB from the source label.
+
+    Parameters:
+        srclbl (list): The labels extracted from Excel to be compared.
+        curlbl (list): The label dropdown from the DB labels table.
+
+    Returns:
+        score (list): Proximity score of each label, its order follows the order of the srclbl.
+    """
+    # Max 100, min 0
+    min_proximity = 40
+    score = []
+    for s in srclbl:
+        highscore = [0, None]
+        for lbl in curlbl:
+            similarity = fuzz.ratio(s, lbl[1][1])
+            # logger.trace(f"lbl={lbl[1][1]}, similarity={similarity}, highscore[0]={highscore[0]}")
+            if similarity > highscore[0]:
+                highscore = (similarity, [lbl[1][0], lbl[1][1]])
+        score.append(highscore[1] if highscore[0] > min_proximity else None)
+    return score
 
 @anvil.server.callable
 def preview_file(file):
@@ -148,51 +177,47 @@ def update_labels_mapping(data, mapping):
     Returns:
         df (dataframe): Processed dataframe.
     """
-    try:
-        # 1. Get all items with action = 'C', and grab new field to create new labels
-        # DL = Dict of Lists
-        DL = Helper.to_dict_of_list(mapping)
-        # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
-        DL_action = {'id': [dic[0] for dic in DL['action']]}
-        pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
-        logger.debug("pos_create=", pos_create)
-        lbl_mogstr = {
-            'name': [DL['new'][x] for x in pos_create],
-            'keywords': [ None for i in range(len(pos_create)) ],
-            'status': [ True for i in range(len(pos_create)) ]
-        }
-        # labels param is transposed from DL to LD (List of Dicts)
-        lbl_list = [dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())]
-        lbl_id = LabelModule.create_label(lbl_list)
-        logger.debug("Label created with ID lbl_id=", lbl_id)
-        if lbl_id is None: raise Exception("Fail to create label.")
+    # 1. Get all items with action = 'C', and grab new field to create new labels
+    # DL = Dict of Lists
+    DL = Helper.to_dict_of_list(mapping)
+    # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
+    DL_action = {'id': [dic[0] for dic in DL['action']]}
+    pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
+    logger.debug("pos_create=", pos_create)
+    lbl_mogstr = {
+        'name': [DL['new'][x] for x in pos_create],
+        'keywords': [ None for i in range(len(pos_create)) ],
+        'status': [ True for i in range(len(pos_create)) ]
+    }
+    # labels param is transposed from DL to LD (List of Dicts)
+    lbl_list = [dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())]
+    lbl_id = LabelModule.create_label(lbl_list)
+    logger.debug("Label created with ID lbl_id=", lbl_id)
+    if lbl_id is None: raise Exception("Fail to create label.")
+
+    # 2. Replace labels with action = 'C' to the newly created label codes in step 1
+    for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = [lbl_id[lbl_loc], lbl_list[lbl_loc].get('name')]
+    logger.trace("2) Replace labels with action = 'C' to the newly created label codes in step 1")
+    logger.trace("DL['tgtlbl']=", DL['tgtlbl'])
+
+    # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
+    # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
+    df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
     
-        # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-        for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = [lbl_id[lbl_loc], lbl_list[lbl_loc].get('name')]
-        logger.trace("2) Replace labels with action = 'C' to the newly created label codes in step 1")
-        logger.trace("DL['tgtlbl']=", DL['tgtlbl'])
-    
-        # 3. Replace labels with action = 'M' and 'C' to the target label codes in df
-        # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
-        df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
-        
-        LD = Helper.to_list_of_dict(DL)
-        if df is not None and LD is not None:
-            for lbl_mapping in LD:
-                if lbl_mapping is not None:
-                    if lbl_mapping.get('action')[0] == "S":
-                        df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], None, inplace=True)                    
-                    elif lbl_mapping.get('tgtlbl') is not None:
-                        id = lbl_mapping['tgtlbl'][0]
-                        df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], id, inplace=True)
-        logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
-        logger.trace("df=", df)
-        # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
-        # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.replace([np.nan], [None]).sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
-    except (Exception) as err:
-        logger.error(err)
-    return None
+    LD = Helper.to_list_of_dict(DL)
+    if df is not None and LD is not None:
+        for lbl_mapping in LD:
+            if lbl_mapping is not None:
+                if lbl_mapping.get('action')[0] == "S":
+                    df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], None, inplace=True)                    
+                elif lbl_mapping.get('tgtlbl') is not None:
+                    id = lbl_mapping['tgtlbl'][0]
+                    df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], id, inplace=True)
+    logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
+    logger.trace("df=", df)
+    # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
+    # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
+    return df.replace([np.nan], [None]).sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
 
 @anvil.server.callable("update_accounts_mapping")
 @logger.log_function
@@ -207,53 +232,49 @@ def update_accounts_mapping(data, mapping):
     Returns:
         df (dataframe): Processed dataframe.
     """
-    try:
-        # 1. Get all items with action = 'C', and grab new field to create new accounts
-        # DL = Dict of Lists
-        DL = Helper.to_dict_of_list(mapping)
-        # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
-        DL_action = {'id': [dic[0] for dic in DL['action']]}
-        pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
-        logger.debug("pos_create=", pos_create)
-        acct_mogstr = {
-            'name': [DL['newacct'][x] for x in pos_create],
-            'ccy': [ None for i in range(len(pos_create)) ],
-            'valid_from': [ None for i in range(len(pos_create)) ],
-            'valid_to': [ None for i in range(len(pos_create)) ],
-            'status': [ True for i in range(len(pos_create)) ]
-        }
-        # labels param is transposed from DL to LD (List of Dicts)
-        acct_list = [dict(zip(acct_mogstr, col)) for col in zip(*acct_mogstr.values())]
-        acct_id = AccountModule.create_multiple_accounts(acct_list)
-        logger.debug("Account created with ID acct_id=", acct_id)
-        if acct_id is None: raise Exception("Fail to create account.")
+    # 1. Get all items with action = 'C', and grab new field to create new accounts
+    # DL = Dict of Lists
+    DL = Helper.to_dict_of_list(mapping)
+    # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
+    DL_action = {'id': [dic[0] for dic in DL['action']]}
+    pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
+    logger.debug("pos_create=", pos_create)
+    acct_mogstr = {
+        'name': [DL['newacct'][x] for x in pos_create],
+        'ccy': [ None for i in range(len(pos_create)) ],
+        'valid_from': [ None for i in range(len(pos_create)) ],
+        'valid_to': [ None for i in range(len(pos_create)) ],
+        'status': [ True for i in range(len(pos_create)) ]
+    }
+    # labels param is transposed from DL to LD (List of Dicts)
+    acct_list = [dict(zip(acct_mogstr, col)) for col in zip(*acct_mogstr.values())]
+    acct_id = AccountModule.create_multiple_accounts(acct_list)
+    logger.debug("Account created with ID acct_id=", acct_id)
+    if acct_id is None: raise Exception("Fail to create account.")
+
+    # 2. Replace accounts with action = 'C' to the newly created account codes in step 1
+    for acct_loc in range(len(acct_id)): DL['tgtacct'][pos_create[acct_loc]] = [acct_id[acct_loc], acct_list[acct_loc].get('name')]
+    logger.trace("2) Replace accounts with action = 'C' to the newly created account codes in step 1")
+    logger.trace("DL['tgtacct']=", DL['tgtacct'])
+
+    # 3. Replace accounts with action = 'M' and 'C' to the target account codes in df
+    # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
+    df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
     
-        # 2. Replace accounts with action = 'C' to the newly created account codes in step 1
-        for acct_loc in range(len(acct_id)): DL['tgtacct'][pos_create[acct_loc]] = [acct_id[acct_loc], acct_list[acct_loc].get('name')]
-        logger.trace("2) Replace accounts with action = 'C' to the newly created account codes in step 1")
-        logger.trace("DL['tgtacct']=", DL['tgtacct'])
-    
-        # 3. Replace accounts with action = 'M' and 'C' to the target account codes in df
-        # df_transpose = {k: [dic[k] for dic in self.tag.get('dataframe')] for k in self.tag.get('dataframe')[0]}
-        df = pd.DataFrame({k: [dic[k] for dic in data] for k in data[0]})
-        
-        LD = Helper.to_list_of_dict(DL)
-        if df is not None and LD is not None:
-            for acct_mapping in LD:
-                if acct_mapping is not None:
-                    if acct_mapping.get('action')[0] == "S":
-                        df[ExpenseTransaction.field_account()].replace(acct_mapping['srcacct'], None, inplace=True)                    
-                    elif acct_mapping.get('tgtacct') is not None:
-                        id = acct_mapping['tgtacct'][0]
-                        df[ExpenseTransaction.field_account()].replace(acct_mapping['srcacct'], id, inplace=True)
-        logger.trace("3) Replace accounts with action = 'M' and 'C' to the target account codes in df")
-        logger.trace("df=", df)
-        # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
-        # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
-        return df.replace([np.nan], [None]).sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
-    except (Exception) as err:
-        logger.error(err)
-    return None
+    LD = Helper.to_list_of_dict(DL)
+    if df is not None and LD is not None:
+        for acct_mapping in LD:
+            if acct_mapping is not None:
+                if acct_mapping.get('action')[0] == "S":
+                    df[ExpenseTransaction.field_account()].replace(acct_mapping['srcacct'], None, inplace=True)                    
+                elif acct_mapping.get('tgtacct') is not None:
+                    id = acct_mapping['tgtacct'][0]
+                    df[ExpenseTransaction.field_account()].replace(acct_mapping['srcacct'], id, inplace=True)
+    logger.trace("3) Replace accounts with action = 'M' and 'C' to the target account codes in df")
+    logger.trace("df=", df)
+    # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
+    # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
+    return df.replace([np.nan], [None]).sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
 
 def format_comparable_word(word):
     """
@@ -459,100 +480,96 @@ def update_pdf_mapping(data, mapping, account, labels):
             logger.trace(f"merge_rows result=\n{result}")
             return pd.Series(result)
             
-    try:
-        column_headers, unwantedList = [], []
-        col_num = 0
-        df = pd.DataFrame(data=data)
-        matrix = {}
-        logger.debug(f"data={data}")
-        logger.debug(f"mapping={mapping}")
-        for x in mapping:
-            # Amount sign handling
-            if x.get('sign') is not None:
-                df[col_num] = -(pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')
-            if x.get('tgtcol') is not None:
-                column_headers.append(x.get('tgtcol')[0])
-                if matrix.get(x.get('tgtcol')[0], None) is None:
-                    matrix[x.get('tgtcol')[0]] = [col_num]
-                else:
-                    matrix[x.get('tgtcol')[0]].append(col_num)
+    column_headers, unwantedList = [], []
+    col_num = 0
+    df = pd.DataFrame(data=data)
+    matrix = {}
+    logger.debug(f"data={data}")
+    logger.debug(f"mapping={mapping}")
+    for x in mapping:
+        # Amount sign handling
+        if x.get('sign') is not None:
+            df[col_num] = -(pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')) if x.get('sign') == '-' else pd.to_numeric(df[col_num].astype(str).str.replace(',',''), errors='coerce')
+        if x.get('tgtcol') is not None:
+            column_headers.append(x.get('tgtcol')[0])
+            if matrix.get(x.get('tgtcol')[0], None) is None:
+                matrix[x.get('tgtcol')[0]] = [col_num]
             else:
-                unwantedList.append(col_num)
-            col_num += 1
-                
-        logger.debug(f"matrix={matrix}, column_headers={column_headers}")
-        nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
-        
-        # Merge all amount columns into one for later row merge actions
-        df[ExpenseTransaction.field_amount()] = df.apply(merge_amt_cols, axis='columns')
-        matrix[ExpenseTransaction.field_amount()] = [ExpenseTransaction.field_amount()]
-        
-        # Generate mapping matrix which has unique columns each
-        # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
-        logger.debug(f"nonNanList={nonNanList}, nanList={nanList}")
-        mapping_matrix = FileUploadMappingModule.generate_mapping_matrix(matrix, nonNanList.copy())
+                matrix[x.get('tgtcol')[0]].append(col_num)
+        else:
+            unwantedList.append(col_num)
+        col_num += 1
+            
+    logger.debug(f"matrix={matrix}, column_headers={column_headers}")
+    nonNanList, nanList = ([c for c in col_name if c in column_headers], [c for c in col_name if c not in column_headers])
+    
+    # Merge all amount columns into one for later row merge actions
+    df[ExpenseTransaction.field_amount()] = df.apply(merge_amt_cols, axis='columns')
+    matrix[ExpenseTransaction.field_amount()] = [ExpenseTransaction.field_amount()]
+    
+    # Generate mapping matrix which has unique columns each
+    # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
+    logger.debug(f"nonNanList={nonNanList}, nanList={nanList}")
+    mapping_matrix = FileUploadMappingModule.generate_mapping_matrix(matrix, nonNanList.copy())
 
-        new_df = None
-        for m in mapping_matrix:
-            # 1) Filter required columns per mapping matrix
-            tmp_df = df.loc[:, m]
-            logger.trace(f"tmp_df={tmp_df.to_string()}")
-            # 2) Rename columns
-            tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
-            # 3) Add 'not in rule' fields to the end
-            tmp_df.loc[:, nanList] = None
-            new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
-        df = new_df
+    new_df = None
+    for m in mapping_matrix:
+        # 1) Filter required columns per mapping matrix
+        tmp_df = df.loc[:, m]
+        logger.trace(f"tmp_df={tmp_df.to_string()}")
+        # 2) Rename columns
+        tmp_df = tmp_df.rename(dict([(tmp_df.columns[x], nonNanList[x]) for x in range(len(nonNanList))]), axis='columns')
+        # 3) Add 'not in rule' fields to the end
+        tmp_df.loc[:, nanList] = None
+        new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
+    df = new_df
 
-        # 4) Format date and other columns data accordingly and merge rows
-        df[ExpenseTransaction.field_date()] = pd.to_datetime(df[ExpenseTransaction.field_date()], errors='coerce').dt.date
-        date_not_null_df = df[df[ExpenseTransaction.field_date()].notnull()]
-        amt_not_null_df = df[df[ExpenseTransaction.field_amount()].notnull()]
-        logger.trace(f"date_not_null_df=\n{date_not_null_df}")
-        new_df = None
-        firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df is not None and amt_not_null_df.size > 0 else None
-        for i in range(date_not_null_df.index.size):
-            curRowId = int(date_not_null_df.iloc[i].name)
-            dateId = curRowId
-            try:
-                nextRowId = int(date_not_null_df.iloc[i+1].name)
-            except (IndexError) as err:
-                nextRowId = None
-            while amt_not_null_df is not None and amt_not_null_df.size > 0 and firstAmtId and nextRowId and firstAmtId < nextRowId:
-                logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
-                logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
-                # Deal with a row in date_not_null_df without a date (e.g. multiple transactions in one date but only one date found in date column)
-                if pd.isna(df.loc[curRowId, ExpenseTransaction.field_date()]):
-                    df.loc[curRowId, ExpenseTransaction.field_date()] = df.loc[dateId][ExpenseTransaction.field_date()]                
-                if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
-                    tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
+    # 4) Format date and other columns data accordingly and merge rows
+    df[ExpenseTransaction.field_date()] = pd.to_datetime(df[ExpenseTransaction.field_date()], errors='coerce').dt.date
+    date_not_null_df = df[df[ExpenseTransaction.field_date()].notnull()]
+    amt_not_null_df = df[df[ExpenseTransaction.field_amount()].notnull()]
+    logger.trace(f"date_not_null_df=\n{date_not_null_df}")
+    new_df = None
+    firstAmtId = int(amt_not_null_df.iloc[0].name) if amt_not_null_df is not None and amt_not_null_df.size > 0 else None
+    for i in range(date_not_null_df.index.size):
+        curRowId = int(date_not_null_df.iloc[i].name)
+        dateId = curRowId
+        try:
+            nextRowId = int(date_not_null_df.iloc[i+1].name)
+        except (IndexError) as err:
+            nextRowId = None
+        while amt_not_null_df is not None and amt_not_null_df.size > 0 and firstAmtId and nextRowId and firstAmtId < nextRowId:
+            logger.trace(f"amt_not_null_df=\n{amt_not_null_df}")
+            logger.trace(f"curRowId={curRowId}, nextRowId={nextRowId}, firstAmtId={firstAmtId}")
+            # Deal with a row in date_not_null_df without a date (e.g. multiple transactions in one date but only one date found in date column)
+            if pd.isna(df.loc[curRowId, ExpenseTransaction.field_date()]):
+                df.loc[curRowId, ExpenseTransaction.field_date()] = df.loc[dateId][ExpenseTransaction.field_date()]                
+            if firstAmtId != curRowId and firstAmtId in range(curRowId, nextRowId):
+                tmp_df = df.apply(merge_rows, args=(curRowId, firstAmtId, dateId), axis='index', result_type=None)
+                new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
+                logger.debug(f"Case 1 - Diff index names for 1st date and 1st amt, merge all rows in between - new_df=\n{new_df.to_string()}")
+                amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                curRowId = firstAmtId + 1
+                firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
+            elif firstAmtId == curRowId:
+                oneline_df = df.loc[[firstAmtId]]
+                amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
+                firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
+                if firstAmtId and min(firstAmtId, nextRowId) - curRowId > 1:
+                    tmp_df = df.apply(merge_rows, args=(curRowId, min(firstAmtId, nextRowId)-1, dateId), axis='index', result_type=None)
                     new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
-                    logger.debug(f"Case 1 - Diff index names for 1st date and 1st amt, merge all rows in between - new_df=\n{new_df.to_string()}")
-                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
-                    curRowId = firstAmtId + 1
-                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
-                elif firstAmtId == curRowId:
-                    oneline_df = df.loc[[firstAmtId]]
-                    amt_not_null_df = amt_not_null_df.drop(firstAmtId, axis='index')
-                    firstAmtId = int(amt_not_null_df.iloc[0].name) if not amt_not_null_df.empty else None
-                    if firstAmtId and min(firstAmtId, nextRowId) - curRowId > 1:
-                        tmp_df = df.apply(merge_rows, args=(curRowId, min(firstAmtId, nextRowId)-1, dateId), axis='index', result_type=None)
-                        new_df = pd.concat(tmp_df, ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df], ignore_index=True, join="outer")
-                        logger.debug(f"Case 2a - Same index names for both 1st row in date df and amt df (nexN row without date and amt require to merge) - new_df=\n{new_df.to_string()}")
-                    else:
-                        new_df = pd.concat([oneline_df], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, oneline_df], ignore_index=True, join="outer")
-                        logger.debug(f"Case 2b - Same index names for both 1st row in date df and amt df (No next row to merge) - new_df=\n{new_df.to_string()}")
+                    logger.debug(f"Case 2a - Same index names for both 1st row in date df and amt df (nexN row without date and amt require to merge) - new_df=\n{new_df.to_string()}")
                 else:
-                    pass
-        df = new_df
+                    new_df = pd.concat([oneline_df], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, oneline_df], ignore_index=True, join="outer")
+                    logger.debug(f"Case 2b - Same index names for both 1st row in date df and amt df (No next row to merge) - new_df=\n{new_df.to_string()}")
+            else:
+                pass
+    df = new_df
 
-        if account is not None: df[ExpenseTransaction.field_account()] = account
-        if labels is not None: df[ExpenseTransaction.field_labels()] = labels
-        return df.dropna(subset=[ExpenseTransaction.field_amount(), ExpenseTransaction.field_date()], ignore_index=True).replace([np.nan], [None])\
-            .sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
-    except (Exception) as err:
-        logger.error(err)
-    return None
+    if account is not None: df[ExpenseTransaction.field_account()] = account
+    if labels is not None: df[ExpenseTransaction.field_labels()] = labels
+    return df.dropna(subset=[ExpenseTransaction.field_amount(), ExpenseTransaction.field_date()], ignore_index=True).replace([np.nan], [None])\
+        .sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')
 
 @anvil.server.callable("proc_preprocess_excel_import")
 @logger.log_function
@@ -590,6 +607,8 @@ def proc_excel_update_mappings(data, mapping_lbls, mapping_accts):
         df (dataframe): Processed dataframe.
     """
     df = data.copy()
-    df = update_labels_mapping(df, mapping_lbls)
-    df = update_accounts_mapping(df, mapping_accts)
+    if mapping_lbls:
+        df = update_labels_mapping(df, mapping_lbls)
+    if mapping_accts:
+        df = update_accounts_mapping(df, mapping_accts)
     return df

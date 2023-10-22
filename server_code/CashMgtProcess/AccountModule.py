@@ -124,7 +124,7 @@ def create_multiple_accounts(accounts):
                 return [r['id'] for r in cur.fetchall()]
             else:
                 return []
-    except (Exception, psycopg2.OperationalError) as err:
+    except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
     finally:
