@@ -29,6 +29,6 @@ def predict_relevant_labels(srclbl, curlbl):
             similarity = fuzz.ratio(s, lbl[1][1])
             # logger.trace(f"lbl={lbl[1][1]}, similarity={similarity}, highscore[0]={highscore[0]}")
             if similarity > highscore[0]:
-                highscore = (similarity, tuple([lbl[1][0], lbl[1][1]]))
+                highscore = (similarity, [lbl[1][0], lbl[1][1]])
         score.append(highscore[1] if highscore[0] > min_proximity else None)
     return score

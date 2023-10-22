@@ -20,8 +20,6 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
 
         # Prefill "labels map to" dropdown by finding high proximity choices
         self.dropdown_lbl_map_to.selected_value = ExpenseFileExcelImportController.get_label_dropdown_selected_item(self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None)
-        print(self.item['tgtlbl'])
-        print(self.dropdown_lbl_map_to.selected_value)
         self.add_event_handler('x-apply-action-to-all-labels', self.apply_action_to_all_labels)
 
     @logger.log_function
