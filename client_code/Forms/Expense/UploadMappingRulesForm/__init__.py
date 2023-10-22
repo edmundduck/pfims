@@ -1,12 +1,7 @@
 from ._anvil_designer import UploadMappingRulesFormTemplate
 from anvil import *
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ...Utils import Routing
-from ...Utils.Logger import ClientLogger
+from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
@@ -27,6 +22,7 @@ class UploadMappingRulesForm(UploadMappingRulesFormTemplate):
     @logger.log_function
     def button_file_import_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Utils import Routing
         Routing.open_exp_file_upload_form(self)
 
     @logger.log_function

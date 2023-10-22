@@ -48,7 +48,7 @@ components:
       grid_position: HMSPPM,NLZTAV
     event_bindings: {click: button_file_import_click}
 - type: RepeatingPanel
-  properties: {item_template: Input.UploadMappingRulesForm.UploadMappingRulesRPTemplate}
+  properties: {item_template: Forms.Expense.UploadMappingRulesForm.UploadMappingRulesRPTemplate}
   name: repeating_panel_1
   layout_properties: {grid_position: 'LTOPDH,LKKWHN'}
 is_package: true
