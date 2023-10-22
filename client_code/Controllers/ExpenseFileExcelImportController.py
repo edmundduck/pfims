@@ -179,16 +179,10 @@ def populate_labels_repeating_panel_items(data):
     Returns:
         result (list of dict): A list of data to populate to repeating panel.
     """
-    # Label items have to be converted from list to tuple as tuple has to be converted to list by Anvil from server to client
+    # Label items have to be converted from list to tuple as tuple has been converted to list by Anvil from server to client.
+    # If the label dropdown items are list instead of tuple then this is not necessary.
     # Ref - https://anvil.works/forum/t/tuples-transformed-to-lists-in-server-call-bug/11792/7
-    predicted_lbl = anvil.server.call('predict_relevant_labels', data, generate_labels_dropdown())
-    tuple_converted_lbl = [tuple(i) if i is not None else None for i in predicted_lbl]
-    # tuple_converted_lbl = []
-    # for i in predicted_lbl:
-    #     if i:
-    #         tuple_converted_lbl.append(tuple(i))
-    #     else:
-    #         tuple_converted_lbl.append(None)
+    tuple_converted_lbl = [tuple(i) if i is not None else None for i in anvil.server.call('predict_relevant_labels', data, generate_labels_dropdown())]
     # Transpose Dict of Lists (DL) to List of Dicts (LD)
     # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
     DL_lbl = {
