@@ -1,5 +1,4 @@
 import anvil.server
-from fuzzywuzzy import fuzz
 from ..Utils.Constants import CacheKey, FileImportLabelExtraAction
 from ..Utils.Logger import ClientLogger
 
@@ -80,6 +79,19 @@ def get_account_dropdown_selected_item(acct_id):
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
 
+def get_label_dropdown_selected_item(lbl_id):
+    """
+    Return a complete key based on a partial label ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        lbl_id (int): The label ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in label dropdown.
+    """
+    from . import LabelMaintController
+    return LabelMaintController.get_label_dropdown_selected_item(lbl_id)
+
 def get_labels_mapping_action_dropdown_selected_item(action):
     """
     Return a complete key based on a partial currency ID which is a part of the key in a dropdown list.
@@ -135,6 +147,7 @@ def visible_account_label_textfield(action_selection):
         result = True
     return result
 
+@logger.log_function
 def populate_accounts_repeating_panel_items(data):
     """
     Populate accounts repeating panel items with data.
@@ -155,6 +168,7 @@ def populate_accounts_repeating_panel_items(data):
     result = [dict(zip(DL_acct, col)) for col in zip(*DL_acct.values())]
     return result
 
+@logger.log_function
 def populate_labels_repeating_panel_items(data):
     """
     Populate labels repeating panel items with data.
@@ -171,36 +185,12 @@ def populate_labels_repeating_panel_items(data):
         'srclbl': data,
         'action': [ None for i in range(len(data))] if data is not None else [ None ],
         # Prefill "labels map to" dropdown by finding high proximity choices
-        'tgtlbl': predict_relevant_labels(data, generate_labels_dropdown()),
+        'tgtlbl': anvil.server.call('predict_relevant_labels', data, generate_labels_dropdown()),
         'new': data
     }
     logger.trace("DL_lbl=", DL_lbl)
     result = [dict(zip(DL_lbl, col)) for col in zip(*DL_lbl.values())]
     return result
-
-def predict_relevant_labels(srclbl, curlbl):
-    """
-    Return a label which has the highest proximity (a.k.a. the most matched) from the DB from the source label.
-
-    Parameters:
-        srclbl (list): The labels extracted from Excel to be compared.
-        curlbl (list): The label dropdown from the DB labels table.
-
-    Returns:
-        score (list): Proximity score of each label, its order follows the order of the srclbl.
-    """
-    # Max 100, min 0
-    min_proximity = 40
-    score = []
-    for s in srclbl:
-        highscore = [0, None]
-        for lbl in curlbl:
-            similarity = fuzz.ratio(s, lbl[1][1])
-            logger.trace(f"lbl={lbl[1][1]}, similarity={similarity}, highscore[0]={highscore[0]}")
-            if similarity > highscore[0]:
-                highscore = [similarity, [lbl[1][0], lbl[1][1]]]
-        score.append(highscore[1] if highscore[0] > min_proximity else None)
-    return score
 
 @logger.log_function
 def update_excel_import_mapping(data, mapping_lbls, mapping_accts):
