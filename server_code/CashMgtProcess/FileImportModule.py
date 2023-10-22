@@ -211,6 +211,7 @@ def update_accounts_mapping(data, mapping):
         # 1. Get all items with action = 'C', and grab new field to create new accounts
         # DL = Dict of Lists
         DL = Helper.to_dict_of_list(mapping)
+        print("\nDEBUG=", DL)
         # DL_action = {k: [dic[k] for dic in DL['action']] for k in DL['action'][0]}   // dict id,text structure
         DL_action = {'id': [dic[0] for dic in DL['action']]}
         pos_create = [x for x in range(len(DL_action['id'])) if DL_action['id'][x] == 'C']
@@ -590,6 +591,8 @@ def proc_excel_update_mappings(data, mapping_lbls, mapping_accts):
         df (dataframe): Processed dataframe.
     """
     df = data.copy()
-    df = update_labels_mapping(df, mapping_lbls)
-    df = update_accounts_mapping(df, mapping_accts)
+    if mapping_lbls:
+        df = update_labels_mapping(df, mapping_lbls)
+    if mapping_accts:
+        df = update_accounts_mapping(df, mapping_accts)
     return df
