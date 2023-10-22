@@ -1,7 +1,6 @@
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from fuzzywuzzy import fuzz
 from ..Entities.Label import Label
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule

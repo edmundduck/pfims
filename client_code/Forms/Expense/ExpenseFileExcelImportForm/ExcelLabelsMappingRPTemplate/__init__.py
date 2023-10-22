@@ -26,16 +26,9 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         """This method is called when an item is selected"""
         from .....Utils.Constants import FileImportLabelExtraAction
         
-        action, action_desc = self.dropdown_lbl_action.selected_value if self.dropdown_lbl_action.selected_value is not None else [None, None]
-        if action in (None, FileImportLabelExtraAction.SKIP):
-            self.dropdown_lbl_map_to.visible = False
-            self.input_label.visible = False
-        elif action == FileImportLabelExtraAction.MAP:
-            self.dropdown_lbl_map_to.visible = True
-            self.input_label.visible = False
-        elif action == FileImportLabelExtraAction.CREATE:
-            self.dropdown_lbl_map_to.visible = False
-            self.input_label.visible = True
+        action, _ = self.dropdown_lbl_action.selected_value if self.dropdown_lbl_action.selected_value is not None else [None, None]
+        self.dropdown_lbl_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_dropdown(self.dropdown_lbl_action.selected_value)
+        self.input_label.visible = ExpenseFileExcelImportController.visible_account_label_textfield(self.dropdown_lbl_action.selected_value)
         prev = self.hidden_lbl_action.text
         self.hidden_lbl_action.text = action
         self.parent.raise_event('x-handle-action-count', action=action, prev=prev)

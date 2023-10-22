@@ -1,6 +1,5 @@
 from ._anvil_designer import ExpenseFileExcelImportFormTemplate
 from anvil import *
-import anvil.server
 from ....Controllers import ExpenseFileExcelImportController
 from ....Utils.ButtonModerator import ButtonModerator
 from ....Utils.Logger import ClientLogger
@@ -50,9 +49,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
 
-        logger.trace(f"labels_mapping={self.labels_mapping_panel.items}")
-        df = anvil.server.call('proc_excel_update_mappings', data=self.tag.get('data'), mapping_lbls=self.labels_mapping_panel.items, mapping_accts=self.accounts_mapping_panel.items)
-        # TODO - Relocate the reload logic to improve performance
+        df = ExpenseFileExcelImportController.update_excel_import_mapping(self.tag.get('data'), self.labels_mapping_panel.items, self.accounts_mapping_panel.items)
         ExpenseFileExcelImportController.generate_labels_dropdown(reload=True)
         ExpenseFileExcelImportController.generate_accounts_dropdown(reload=True)
         Routing.open_exp_input_form(self, tab_id=self.dropdown_tabs.selected_value, data=df)
@@ -68,10 +65,10 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
 
     def dropdown_actions_for_all_labels_change(self, **event_args):
         """This method is called when an item is selected"""
-        action, action_desc = self.dropdown_actions_for_all_labels.selected_value if self.dropdown_actions_for_all_labels.selected_value is not None else [None, None]
+        action, _ = self.dropdown_actions_for_all_labels.selected_value if self.dropdown_actions_for_all_labels.selected_value is not None else [None, None]
         self.labels_mapping_panel.raise_event_on_children('x-apply-action-to-all-labels', action=action)
 
     def dropdown_actions_for_all_accounts_change(self, **event_args):
         """This method is called when an item is selected"""
-        action, action_desc = self.dropdown_actions_for_all_accounts.selected_value if self.dropdown_actions_for_all_accounts.selected_value is not None else [None, None]
+        action, _ = self.dropdown_actions_for_all_accounts.selected_value if self.dropdown_actions_for_all_accounts.selected_value is not None else [None, None]
         self.accounts_mapping_panel.raise_event_on_children('x-apply-action-to-all-accounts', action=action)

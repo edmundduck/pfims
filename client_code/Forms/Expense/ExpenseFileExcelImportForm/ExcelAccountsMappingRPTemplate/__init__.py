@@ -16,9 +16,6 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
         self.dropdown_acct_map_to.visible = False
         self.hidden_acct_action.text = None
         self.input_account.visible = False
-
-        ### TO DO ###
-        # Prefill "labels map to" dropdown by finding high proximity choices
         self.dropdown_acct_map_to.selected_value = self.item['tgtacct'] if self.item['tgtacct'] is not None else None
         self.add_event_handler('x-apply-action-to-all-accounts', self.apply_action_to_all_accounts)
 
@@ -27,16 +24,9 @@ class ExcelAccountsMappingRPTemplate(ExcelAccountsMappingRPTemplateTemplate):
         """This method is called when an item is selected"""
         from .....Utils.Constants import FileImportLabelExtraAction
         
-        action, action_desc = self.dropdown_acct_action.selected_value if self.dropdown_acct_action.selected_value is not None else [None, None]
-        if action in (None, FileImportLabelExtraAction.SKIP):
-            self.dropdown_acct_map_to.visible = False
-            self.input_account.visible = False
-        elif action == FileImportLabelExtraAction.MAP:
-            self.dropdown_acct_map_to.visible = True
-            self.input_account.visible = False
-        elif action == FileImportLabelExtraAction.CREATE:
-            self.dropdown_acct_map_to.visible = False
-            self.input_account.visible = True
+        action, _ = self.dropdown_acct_action.selected_value if self.dropdown_acct_action.selected_value is not None else [None, None]
+        self.dropdown_acct_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_dropdown(self.dropdown_acct_action.selected_value)
+        self.input_account.visible = ExpenseFileExcelImportController.visible_account_label_textfield(self.dropdown_acct_action.selected_value)
         prev = self.hidden_acct_action.text
         self.hidden_acct_action.text = action
         self.parent.raise_event('x-handle-action-count', action=action, prev=prev)

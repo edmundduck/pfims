@@ -1,5 +1,6 @@
 import anvil.server
-from ..Utils.Constants import CacheKey
+from fuzzywuzzy import fuzz
+from ..Utils.Constants import CacheKey, FileImportLabelExtraAction
 from ..Utils.Logger import ClientLogger
 
 # This is a module.
@@ -96,7 +97,45 @@ def get_labels_mapping_action_dropdown_selected_item(action):
     selected_item = cache.get_complete_key(action)
     return selected_item
 
-def populate_accounts_repeating_panel_items(data=None):
+def visible_account_label_map_to_dropdown(action_selection):
+    """
+    Make the account map to dropdown visible or invisible.
+
+    Parameters:
+        action_selection (list): Selected action from dropdown.
+
+    Returns:
+        result (boolean): True for visible, false for invisible.
+    """
+    action, _ = action_selection if action_selection is not None else [None, None]
+    if action in (None, FileImportLabelExtraAction.SKIP):
+        result = False
+    elif action == FileImportLabelExtraAction.MAP:
+        result = True
+    elif action == FileImportLabelExtraAction.CREATE:
+        result = False
+    return result
+
+def visible_account_label_textfield(action_selection):
+    """
+    Make the account text field visible or invisible.
+
+    Parameters:
+        action_selection (list): Selected action from dropdown.
+
+    Returns:
+        result (boolean): True for visible, false for invisible.
+    """
+    action, _ = action_selection if action_selection is not None else [None, None]
+    if action in (None, FileImportLabelExtraAction.SKIP):
+        result = False
+    elif action == FileImportLabelExtraAction.MAP:
+        result = False
+    elif action == FileImportLabelExtraAction.CREATE:
+        result = True
+    return result
+
+def populate_accounts_repeating_panel_items(data):
     """
     Populate accounts repeating panel items with data.
 
@@ -107,16 +146,16 @@ def populate_accounts_repeating_panel_items(data=None):
         result (list of dict): A list of data to populate to repeating panel.
     """
     DL_acct = {
-        'srcacct': accounts,
-        'action': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
-        'tgtacct': [ None for i in range(len(accounts))] if accounts is not None else [ None ] ,
-        'newacct': accounts
+        'srcacct': data,
+        'action': [ None for i in range(len(data))] if data is not None else [ None ] ,
+        'tgtacct': [ None for i in range(len(data))] if data is not None else [ None ] ,
+        'newacct': data
     }
     logger.trace("DL_acct=", DL_acct)
     result = [dict(zip(DL_acct, col)) for col in zip(*DL_acct.values())]
     return result
 
-def populate_labels_repeating_panel_items(data=None):
+def populate_labels_repeating_panel_items(data):
     """
     Populate labels repeating panel items with data.
 
@@ -129,11 +168,11 @@ def populate_labels_repeating_panel_items(data=None):
     # Transpose Dict of Lists (DL) to List of Dicts (LD)
     # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
     DL_lbl = {
-        'srclbl': labels,
-        'action': [ None for i in range(len(labels))] if labels is not None else [ None ],
+        'srclbl': data,
+        'action': [ None for i in range(len(data))] if data is not None else [ None ],
         # Prefill "labels map to" dropdown by finding high proximity choices
-        'tgtlbl': predict_relevant_labels(labels, generate_labels_dropdown()),
-        'new': labels
+        'tgtlbl': predict_relevant_labels(data, generate_labels_dropdown()),
+        'new': data
     }
     logger.trace("DL_lbl=", DL_lbl)
     result = [dict(zip(DL_lbl, col)) for col in zip(*DL_lbl.values())]
@@ -162,3 +201,22 @@ def predict_relevant_labels(srclbl, curlbl):
                 highscore = [similarity, [lbl[1][0], lbl[1][1]]]
         score.append(highscore[1] if highscore[0] > min_proximity else None)
     return score
+
+@logger.log_function
+def update_excel_import_mapping(data, mapping_lbls, mapping_accts):
+    """
+    2nd process of Excel file import which is cropping the required statement detail part and then mapping accordingly.
+
+    Parameters:
+        data (dataframe): The dataframe to be updated with the mapping.
+        mapping_lbls (list): The list of labels mapping from user's input.
+        mapping_accts (list): The list of accounts mapping from user's input.
+
+    Returns:
+        df (dataframe): Processed dataframe.
+    """
+    logger.trace("mapping_lbls=", mapping_lbls)
+    logger.trace("mapping_accts=", mapping_accts)
+    df = anvil.server.call('proc_excel_update_mappings', data, mapping_lbls, mapping_accts)
+    logger.trace("df=", df)
+    return df
