@@ -7,7 +7,6 @@ from ..Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
-@logger.log_function
 def generate_file_mapping_type_dropdown():
     """
     Access reference data - file mapping type dropdown from either client cache or generate from DB data returned from server side.

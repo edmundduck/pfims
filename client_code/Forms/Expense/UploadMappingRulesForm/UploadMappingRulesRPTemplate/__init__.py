@@ -1,11 +1,9 @@
 from ._anvil_designer import UploadMappingRulesRPTemplateTemplate
 from anvil import *
 import anvil.server
-from ....Controllers import UploadMappingRulesController
-from ....Utils import Constants as const
-from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.ClientCache import ClientCache
-from ....Utils.Logger import ClientLogger
+from .....Controllers import UploadMappingRulesController
+from .....Utils.ButtonModerator import ButtonModerator
+from .....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
@@ -16,12 +14,9 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
-        cache_filetype = ClientCache('generate_mapping_type_dropdown')
-        cache_extraaction = ClientCache('generate_upload_action_dropdown')
-        self.row_dropdown_type.items = cache_filetype.get_cache()
-        self.row_dropdown_datacol.items = cache_exp_tbl_def.get_cache()
-        self.row_dropdown_extraact.items = cache_extraaction.get_cache()
+        self.row_dropdown_type.items = UploadMappingRulesController.generate_file_mapping_type_dropdown()
+        self.row_dropdown_datacol.items = UploadMappingRulesController.generate_expense_table_definition_dropdown()
+        self.row_dropdown_extraact.items = UploadMappingRulesController.generate_import_extra_action_dropdown()
         self.row_dropdown_lbl.items = UploadMappingRulesController.generate_labels_dropdown()
         self.row_dropdown_acct.items = UploadMappingRulesController.generate_accounts_dropdown()
 
@@ -84,14 +79,15 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def row_button_delete_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from .....Utils.Constants import Alerts
         to_be_del_id = self.row_hidden_id.text
         to_be_del_name = self.row_mapping_name.text
         confirm = Label(text=f"Proceed mapping <{to_be_del_name}> deletion by clicking DELETE.")
         userconf = alert(content=confirm,
                         title=f"Alert - mapping Deletion",
-                        buttons=[("DELETE", const.Alerts.CONFIRM), ("CANCEL", const.Alerts.CANCEL)])
+                        buttons=[("DELETE", Alerts.CONFIRM), ("CANCEL", Alerts.CANCEL)])
 
-        if userconf == const.Alerts.CONFIRM:
+        if userconf == Alerts.CONFIRM:
             # Save the self.parent first so that remove_from_parent can be called before raising event
             #https://anvil.works/forum/t/children-to-parent-update/6324/4
             parent = self.parent
@@ -123,11 +119,10 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
     @logger.log_function
     def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
+        from .....Utils.Constants import ColorSchemes, Icons
         logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
-        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
-        cache_extraact = ClientCache('generate_upload_action_dropdown')
-        dict_exp_tbl_def = {k[1][0]: k[1][1] for k in cache_exp_tbl_def.get_cache()}
-        dict_extraact = {k[1][0]: k[1][1] for k in cache_extraact.get_cache()}
+        dict_exp_tbl_def = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_expense_table_definition_dropdown()}
+        dict_extraact = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_import_extra_action_dropdown()}
         dict_lbl = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_labels_dropdown()}
         dict_acct =  {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_accounts_dropdown()}
         datacol = dict_exp_tbl_def.get(datacol_id, None)
@@ -136,11 +131,11 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
         rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
         
-        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=const.Icons.BULLETPOINT)
+        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=Icons.BULLETPOINT)
         fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule, is_new])
         b = Button(
-            icon=const.Icons.REMOVE,
-            foreground=const.ColorSchemes.BUTTON_BG,
+            icon=Icons.REMOVE,
+            foreground=ColorSchemes.BUTTON_BG,
             font_size=12,
             align="left",
             spacing_above="small",

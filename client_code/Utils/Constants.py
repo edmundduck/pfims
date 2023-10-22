@@ -10,6 +10,8 @@ class CacheKey:
     DD_BROKER = 'broker_dropdown'
     DD_CURRENCY = 'ccy_dropdown'
     DD_EXPENSE_TAB = 'generate_expense_groups_list'
+    DD_EXPENSE_TBL_DEF = 'generate_expense_table_definition_dropdown'
+    DD_IMPORT_EXTRA_ACTION = 'generate_upload_action_dropdown'
     DD_IMPORT_FILE_TYPE = 'generate_mapping_type_dropdown'
     DD_IMPORT_MAPPING_GRP = 'generate_mapping_dropdown'
     DD_LABEL = 'generate_labels_dropdown'
