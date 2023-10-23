@@ -95,48 +95,6 @@ def generate_upload_action_list():
         return rows
 
 @logger.log_function
-def generate_mapping_matrix(matrix, col_def):
-    """
-    Generate the whole mapping matrix to be used by Pandas columns combination based on mapping rules.
-
-    Examples as follow,
-    matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
-    col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
-    result= [{'DTE': 'J', 'ACC': '', 'AMT': 'C', 'RMK': 'H', 'STD': '', 'LBL': 'B'}, {'DTE': 'J', 'ACC': '', 'AMT': 'F', 'RMK': 'H', 'STD': '', 'LBL': 'B'}]
-
-    Parameters:
-        matrix (dict of list): The matrix of Excel column ID and column type mapping.
-        col_def (list): The column type definition.
-
-    Returns:
-        result (list of dict): The matrix of all Excel column ID combinations under the single column type definition (each column type occurs only onces).
-    """
-    logger.debug("matrix=", matrix)
-    logger.debug("col_def=", col_def)
-    if len(col_def) < 1:
-        return [[]]
-    col_val = matrix.get(col_def.pop(0))
-    r = generate_mapping_matrix(matrix, col_def)
-    result = None
-    for ri in r:
-        if col_val is not None and len(col_val) > 0:
-            for i in col_val:
-                # Duplicate result according to filter param size
-                y = ri.copy()
-                # TODO - the column sequence has to be fixed as matrixstr is stored in list instead of object
-                y.insert(0, i)
-                result = [y] + result if result is not None else [y]
-        else:
-            # Duplicate result according to filter param size
-            y = ri.copy()
-            # TODO - the column sequence has to be fixed as matrixstr is stored in list instead of object
-            y.insert(0, '')
-            result = [y] + result if result is not None else [y]
-    if result is None: result = r
-    logger.trace("result=", result)
-    return result
-
-@logger.log_function
 def select_expense_tbl_def_id():
     """
     Select all expense table definition column code.
@@ -254,8 +212,6 @@ def save_mapping_rules(id, name, filetype_id, rules, mapping_rules, del_iid=None
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # First insert/update mapping group
             currenttime = datetime.now()
-            print("DEBUG\n")
-            raise psycopg2.OperationalError(f"DEBUG")
             if id is not None:
                 sql = f"INSERT INTO {Database.SCHEMA_FIN}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
                 ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"

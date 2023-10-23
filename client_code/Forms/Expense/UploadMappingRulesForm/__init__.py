@@ -1,5 +1,6 @@
 from ._anvil_designer import UploadMappingRulesFormTemplate
 from anvil import *
+import anvil.server
 from ....Controllers import UploadMappingRulesController
 from ....Utils.Logger import ClientLogger
 
