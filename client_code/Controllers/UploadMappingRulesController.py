@@ -177,10 +177,10 @@ def add_mapping_rules_criteria(user_input, is_new=False):
     """
     from ..Utils.Constants import FileImportExcelColumnMappingExtraAction, UploadMappingRulesInput
     excel = user_input.get(UploadMappingRulesInput.EXCEL_COL)
-    data = user_input.get(UploadMappingRulesInput.DATA_COL)[0] if isinstance(user_input.get(UploadMappingRulesInput.DATA_COL), list) else user_input.get(UploadMappingRulesInput.DATA_COL)
-    action = user_input.get(UploadMappingRulesInput.ACTION)[0] if isinstance(user_input.get(UploadMappingRulesInput.ACTION), list) else user_input.get(UploadMappingRulesInput.ACTION)
-    acct = user_input.get(UploadMappingRulesInput.ACCOUNT)[0] if isinstance(user_input.get(UploadMappingRulesInput.ACCOUNT), list) else user_input.get(UploadMappingRulesInput.ACCOUNT)
-    lbl = user_input.get(UploadMappingRulesInput.LABEL)[0] if isinstance(user_input.get(UploadMappingRulesInput.LABEL), list) else user_input.get(UploadMappingRulesInput.LABEL)
+    data = user_input.get(UploadMappingRulesInput.DATA_COL)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.DATA_COL), list) else user_input.get(UploadMappingRulesInput.DATA_COL)
+    action = user_input.get(UploadMappingRulesInput.ACTION)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.ACTION), list) else user_input.get(UploadMappingRulesInput.ACTION)
+    acct = user_input.get(UploadMappingRulesInput.ACCOUNT)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.ACCOUNT), list) else user_input.get(UploadMappingRulesInput.ACCOUNT)
+    lbl = user_input.get(UploadMappingRulesInput.LABEL)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.LABEL), list) else user_input.get(UploadMappingRulesInput.LABEL)
     target_id = lbl if action == FileImportExcelColumnMappingExtraAction.LABEL else acct
     properties_list, rule = _generate_mapping_rule(excel, data, action, target_id)
     return properties_list, rule
