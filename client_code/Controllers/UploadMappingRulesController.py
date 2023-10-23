@@ -189,9 +189,9 @@ def add_mapping_rules_criteria(user_input, is_new=False):
 def _generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
     from ..Utils.Constants import ColorSchemes, FileImportExcelColumnMappingExtraAction, Icons
     logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
-    datacol_id, datacol_name = datacol_id if datacol_id and isinstance(datacol_id, list) else get_expense_table_definition_dropdown_selected_item(datacol_id)
-    action_id, action_name = extraact_id if extraact_id and isinstance(extraact_id, list) else get_import_extra_action_dropdown_selected_item(extraact_id)
-    target_id, target_name = extratgt_id if extratgt_id and isinstance(extratgt_id, list) else (
+    datacol_id, datacol_name = datacol_id if datacol_id and isinstance(datacol_id, list) else get_expense_table_definition_dropdown_selected_item(datacol_id) if datacol_id else [None, None]
+    action_id, action_name = extraact_id if extraact_id and isinstance(extraact_id, list) else get_import_extra_action_dropdown_selected_item(extraact_id) if extraact_id else [None, None]
+    target_id, target_name = [None, None] if not extratgt_id else extratgt_id if extratgt_id and isinstance(extratgt_id, list) else (
         get_label_dropdown_selected_item(extratgt_id) if action_id == FileImportExcelColumnMappingExtraAction.LABEL else get_account_dropdown_selected_item(extratgt_id)
     )
     rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol_name}."
