@@ -201,8 +201,9 @@ def _generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_ne
 
 @logger.log_function
 def _generate_all_mapping_rules(self, rules, **event):
+    print(f"DEBUG\n{len(rules)}\n{rules}")
     for r in rules:
         excelcol, datacol_id, extraact_id, extratgt_id = r
         # Without converting to int it cannot fetch the value in get method below
         extratgt_id = int(extratgt_id) if extratgt_id is not None else extratgt_id
-        self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id)
+        _generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id)

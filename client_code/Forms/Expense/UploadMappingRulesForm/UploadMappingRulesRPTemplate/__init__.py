@@ -22,7 +22,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:
-            self._generate_all_mapping_rules(self.item['rule'])
+            UploadMappingRulesController._generate_all_mapping_rules(self.item['rule'])
 
     @logger.log_function
     def row_button_add_click(self, **event_args):
@@ -133,41 +133,3 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         """This method is called when an item is selected"""
         self.row_dropdown_lbl.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "L" else False
         self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "A" else False
-
-    @logger.log_function
-    def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
-        from .....Utils.Constants import ColorSchemes, Icons
-        logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
-        dict_exp_tbl_def = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_expense_table_definition_dropdown()}
-        dict_extraact = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_import_extra_action_dropdown()}
-        dict_lbl = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_labels_dropdown()}
-        dict_acct =  {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_accounts_dropdown()}
-        datacol = dict_exp_tbl_def.get(datacol_id, None)
-        extraact = dict_extraact.get(extraact_id, None)
-        extratgt = dict_lbl.get(extratgt_id, None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
-        rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
-        rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
-        
-        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=Icons.BULLETPOINT)
-        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule, is_new])
-        b = Button(
-            icon=Icons.REMOVE,
-            foreground=ColorSchemes.BUTTON_BG,
-            font_size=12,
-            align="left",
-            spacing_above="small",
-            spacing_below="small",
-        )
-        self.add_component(fp)
-        fp.add_component(lbl_obj)
-        fp.add_component(b)
-        b.set_event_handler('click', self.mapping_button_minus_click)
-
-    @logger.log_function
-    def _generate_all_mapping_rules(self, rules, **event):
-        for r in rules:
-            excelcol, datacol_id, extraact_id, extratgt_id = r
-            # Without converting to int it cannot fetch the value in get method below
-            extratgt_id = int(extratgt_id) if extratgt_id is not None else extratgt_id
-            self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id)
-        
