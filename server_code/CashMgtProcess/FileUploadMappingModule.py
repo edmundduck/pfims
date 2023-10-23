@@ -9,6 +9,7 @@ from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+
 logger = LoggingModule.ServerLogger()
 
 @anvil.server.callable("generate_mapping_list")
@@ -23,7 +24,6 @@ def generate_mapping_list(ftype):
     Returns:
         rows (list of RealDictRow): A list of mapping groups based on selected file type.
     """
-    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC".format(
@@ -185,105 +185,70 @@ def select_mapping_matrix(id):
         cur.close()
     return rows
 
-@anvil.server.callable("save_mapping_rules")
 @logger.log_function
-def save_mapping_rules(id, name, filetype_id, rules, mapping_rules, del_iid=None):
+def save_mapping_group_rules(id, mogstr_group, mogstr_rules, mogstr_matrix, mogstr_delete):
     """
-    Save the mapping and rules.
+    Save the mapping group, rules and matrix into the DB table.
 
     Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
 
     Parameters:
-        id (int): The ID of the mapping group.
-        name (string): The mapping group name.
-        filetype (list): The selected filetype ID.
-        rules (list): The list of criteria of the rule to be saved.
-        del_iid (string): The string of IID concatenated by comma to be deleted
-
-    Returns:
-        dict: Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
+        mogstr_group (string): Mogrified string for mapping group SQL.
+        mogstr_rules (string): Mogrified string for mapping rules SQL.
+        mogstr_matrix (string): Mogrified string for mapping matrix SQL.
+        mogstr_delete (string): Mogrified string for mapping rules deletion SQL.
     """
     conn = None
-    count = None
-    dcount = None
-    userid = sysmod.get_current_userid()
     try:
+        userid = sysmod.get_current_userid()
         conn = sysmod.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # First insert/update mapping group
-            currenttime = datetime.now()
-            if id is not None:
-                sql = f"INSERT INTO {Database.SCHEMA_FIN}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) \
-                ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id"
-                stmt = cur.mogrify(sql, (int(userid), id, name, filetype_id, currenttime))
+            if id:
+                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET \
+                name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id".format(
+                    schema=Database.SCHEMA_FIN
+                )
             else:
-                sql = f"INSERT INTO {Database.SCHEMA_FIN}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id"
-                stmt = cur.mogrify(sql, (int(userid), name, filetype_id, currenttime))
+                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id".format(
+                    schema=Database.SCHEMA_FIN
+                )
+            stmt = cur.mogrify(sql, mogstr_group)
             cur.execute(stmt)
-            conn.commit()
-            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-            id = (cur.fetchone())['id']
-            if id < 0:
-                raise psycopg2.OperationalError(f"Fail to save the mapping ({name}).")
 
             # Second insert/update mapping rules
-            mogstr = []
-            # For later on the mapping matrix 
-            matrixobj = {}
-            tbl_def = select_expense_tbl_def_id()
-            for c in tbl_def:
-                matrixobj[c] = []
-            for rule in rules:
-                col_id = f"{rule[0]}"
-                column = f"{rule[1]}"
-                eaction = f"{rule[2]}" if rule[2] not in (None, '') else None
-                etarget = f"{rule[3]}" if rule[2] not in (None, '') and rule[3] not in (None, '') else None
-                rule = f"{rule[4]}"
-                mogstr.append([id, col_id, column, eaction, etarget, rule])
-                matrixobj[column].append(col_id)
-            logger.trace("matrixobj=", matrixobj)
-            if len(mogstr) > 0:
-                cur.executemany(f"INSERT INTO {Database.SCHEMA_FIN}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
+            if len(mogstr_rules) > 0:
+                sql = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                 (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
-                etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col", mogstr)
-                conn.commit()
-                count = cur.rowcount
-                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if count <= 0: raise psycopg2.OperationalError(f"Fail to save mapping rules (Mapping name={name}).")
-            else:
-                count = 0
+                etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                cur.executemany(sql, mogstr_rules)
 
             # Third insert/update mapping matrix
-            matrixstr = generate_mapping_matrix(matrixobj, tbl_def)
-            if len(matrixstr) > 0:
+            if len(mogstr_matrix) > 0:
                 sql = "DELETE FROM {schema}.mappingmatrix WHERE gid = %s".format(
                     schema=Database.SCHEMA_FIN
                 )
                 stmt = cur.mogrify(sql, (id, ))
                 cur.execute(stmt)
-                conn.commit()
-                dcount = cur.rowcount
 
-                # TODO - the column sequence has to be fixed as matrixstr is stored in list instead of object
-                cur.executemany(f"INSERT INTO {Database.SCHEMA_FIN}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
-                VALUES ({id}, %s, %s, %s, %s, %s, %s)", matrixstr)
-                conn.commit()
-                count = cur.rowcount
-                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if count <= 0 or dcount < 0: raise psycopg2.OperationalError(f"Fail to save mapping matrix (Mapping name={name}).")
+                sql = "INSERT INTO {schema}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
+                VALUES ({id}, %s, %s, %s, %s, %s, %s)".format(
+                    schema=Database.SCHEMA_FIN,
+                    id=id
+                )
+                cur.executemany(sql, mogstr_matrix)
 
             # At last perform rules deletion (if any)
-            if del_iid not in (None, ''):
-                args = "({0})".format(",".join(f"'{i}'" for i in del_iid))
-                sql = f"DELETE FROM {Database.SCHEMA_FIN}.mappingrules WHERE gid = {id} AND col IN {args}"
+            if mogstr_delete:
+                sql = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN %s".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (id, mogstr_delete))
                 cur.execute(sql)
-                conn.commit()
-                dcount = cur.rowcount
-                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
-                if dcount <= 0: raise psycopg2.OperationalError(f"Fail to remove deleted mapping rules (Mapping name={name}).")
-            else:
-                dcount = 0
-            cur.close()            
+
+            conn.commit()
     except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
@@ -291,7 +256,7 @@ def save_mapping_rules(id, name, filetype_id, rules, mapping_rules, del_iid=None
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()        
-    return {"id": id, "count": count, "dcount": dcount}
+    return None
 
 @anvil.server.callable("select_mapping_extra_actions")
 @logger.log_function

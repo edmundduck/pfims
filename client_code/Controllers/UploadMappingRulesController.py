@@ -231,9 +231,9 @@ def save_mapping_rule(id, name, filetype, rules, del_iid):
         id = None
     filetype_id, _ = filetype if filetype and isinstance(filetype, list) else [filetype, None]
     del_iid = del_iid[:-1].split(",") if del_iid else None
-    result = anvil.server.call('save_mapping_rules', id, name, filetype_id, rules, del_iid)
+    result = anvil.server.call('save_import_mapping', id, name, filetype_id, rules, del_iid)
     if not result:
-        raise RuntimeError('Error occurs in save_mapping_rules.')
+        raise RuntimeError('Error occurs in save_import_mapping.')
     return result
 
 @logger.log_function
