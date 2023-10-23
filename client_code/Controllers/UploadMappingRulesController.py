@@ -45,7 +45,7 @@ def generate_expense_table_definition_dropdown():
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.DD_EXPENSE_TBL_DEF, None)
     if cache.is_empty():
-        rows = anvil.server.call('generate_expense_tbl_def_dropdown')
+        rows = anvil.server.call('generate_expense_tbl_def_list')
         new_dropdown = list((r['col_name'], [r['col_code'], r['col_name']]) for r in rows)
         cache.set_cache(new_dropdown)
     return cache.get_cache()
@@ -87,6 +87,53 @@ def get_account_dropdown_selected_item(acct_id):
     """
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
+
+def get_label_dropdown_selected_item(lbl_id):
+    """
+    Return a complete key based on a partial label ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        lbl_id (int): The label ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in label dropdown.
+    """
+    from . import LabelMaintController
+    return LabelMaintController.get_label_dropdown_selected_item(lbl_id)
+
+def get_expense_table_definition_dropdown_selected_item(id):
+    """
+    Return a complete key based on a partial label ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        id (int): The DB table column definition ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in expense table definition dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.DD_EXPENSE_TBL_DEF, None)
+    if cache.is_empty():
+        generate_expense_table_definition_dropdown()
+    selected_item = cache.get_complete_key(id)
+    return selected_item
+
+def get_import_extra_action_dropdown_selected_item(id):
+    """
+    Return a complete key based on a partial label ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        id (int): The import extra action ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in import extra action dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.DD_IMPORT_EXTRA_ACTION, None)
+    if cache.is_empty():
+        generate_import_extra_action_dropdown()
+    selected_item = cache.get_complete_key(id)
+    return selected_item
 
 def populate_repeating_panel_items(rp_items=None, reload=False, del_iid=None):
     """
@@ -135,37 +182,22 @@ def add_mapping_rules_criteria(user_input, is_new=False):
     acct = user_input.get(UploadMappingRulesInput.ACCOUNT)[0] if isinstance(user_input.get(UploadMappingRulesInput.ACCOUNT), list) else user_input.get(UploadMappingRulesInput.ACCOUNT)
     lbl = user_input.get(UploadMappingRulesInput.LABEL)[0] if isinstance(user_input.get(UploadMappingRulesInput.LABEL), list) else user_input.get(UploadMappingRulesInput.LABEL)
     target_id = lbl if action == FileImportExcelColumnMappingExtraAction.LABEL else acct
-    _generate_mapping_rule(excel, data, action, target_id)
-    return result
+    properties_list, rule = _generate_mapping_rule(excel, data, action, target_id)
+    return properties_list, rule
 
 @logger.log_function
-def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
-    from .....Utils.Constants import ColorSchemes, Icons
+def _generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
+    from ..Utils.Constants import ColorSchemes, FileImportExcelColumnMappingExtraAction, Icons
     logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
-    dict_exp_tbl_def = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_expense_table_definition_dropdown()}
-    dict_extraact = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_import_extra_action_dropdown()}
-    dict_lbl = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_labels_dropdown()}
-    dict_acct =  {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_accounts_dropdown()}
-    datacol = dict_exp_tbl_def.get(datacol_id, None)
-    extraact = dict_extraact.get(extraact_id, None)
-    extratgt = dict_lbl.get(extratgt_id, None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
-    rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
-    rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
-    
-    lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=Icons.BULLETPOINT)
-    fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule, is_new])
-    b = Button(
-        icon=Icons.REMOVE,
-        foreground=ColorSchemes.BUTTON_BG,
-        font_size=12,
-        align="left",
-        spacing_above="small",
-        spacing_below="small",
+    datacol_id, datacol_name = datacol_id if isinstance(datacol_id, list) else get_expense_table_definition_dropdown_selected_item(datacol_id)
+    action_id, action_name = extraact_id if isinstance(extraact_id, list) else get_import_extra_action_dropdown_selected_item(extraact_id)
+    target_id, target_name = extratgt_id if isinstance(extratgt_id, list) else (
+        get_label_dropdown_selected_item(extratgt_id) if action_id == FileImportExcelColumnMappingExtraAction.LABEL else get_account_dropdown_selected_item(extratgt_id)
     )
-    self.add_component(fp)
-    fp.add_component(lbl_obj)
-    fp.add_component(b)
-    b.set_event_handler('click', self.mapping_button_minus_click)
+    rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol_name}."
+    rule = f"{rule} Extra action(s): {action_name} {target_name}" if action_name is not None else rule
+
+    return [excelcol, datacol_id, action_id, target_id, rule, is_new], rule
 
 @logger.log_function
 def _generate_all_mapping_rules(self, rules, **event):

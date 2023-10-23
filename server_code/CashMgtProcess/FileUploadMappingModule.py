@@ -54,14 +54,14 @@ def generate_mapping_type_list():
         cur.close()
         return rows
 
-@anvil.server.callable("generate_expense_tbl_def_dropdown")
+@anvil.server.callable("generate_expense_tbl_def_list")
 @logger.log_function
-def generate_expense_tbl_def_dropdown():
+def generate_expense_tbl_def_list():
     """
-    Select expense table definition data from a DB table to generate each column type as dropdown list.
+    Select expense table definition of each column type from the expense table definition DB table.
 
     Returns:
-        list: A dropdown list of column type names as description, and column type codes and names as ID.
+        rows (list of RealDictRow): A list of column types.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -69,8 +69,7 @@ def generate_expense_tbl_def_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['col_name'], [row['col_code'], row['col_name']]) for row in rows)
-    return content
+        return rows
 
 @anvil.server.callable("generate_upload_action_dropdown")
 @logger.log_function
