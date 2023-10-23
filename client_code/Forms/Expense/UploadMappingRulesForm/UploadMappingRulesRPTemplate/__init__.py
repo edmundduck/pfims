@@ -27,6 +27,14 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from .....Utils.Constants import UploadMappingRulesInput
+        user_input = {
+            UploadMappingRulesInput.EXCEL_COL: self.row_dropdown_excelcol.selected_value,
+            UploadMappingRulesInput.DATA_COL: self.row_dropdown_datacol.selected_value,
+            UploadMappingRulesInput.ACTION: self.row_dropdown_extraact.selected_value,
+            UploadMappingRulesInput.ACCOUNT: self.row_dropdown_acct.selected_value,
+            UploadMappingRulesInput.LABEL: self.row_dropdown_lbl.selected_value
+        }
         excelcol = self.row_dropdown_excelcol.selected_value
         # Remove the column from to be deleted list (row_hidden_del_fid) if it's updated (removed and added back)
         self.row_hidden_del_fid.text = ",".join([x for x in self.row_hidden_del_fid.text.split(",") if x != excelcol])

@@ -116,4 +116,61 @@ def populate_repeating_panel_items(rp_items=None, reload=False, del_iid=None):
         result = mappings if mappings else [{} for i in range(1)]
         logger.trace('rp_items with data=', result)
     return result
-        
+
+def add_mapping_rules_criteria(user_input, is_new=False):
+    """
+    Add criteria into mapping rule.
+
+    Parameters:
+        user_input (dict): Dictionary of all user selected dropdown values.
+        is_new (boolean): True if this criteria is newly created by user.
+
+    Returns:
+        result (list of dict): A list of data padded with blank items for repeating panel.
+    """
+    from ..Utils.Constants import FileImportExcelColumnMappingExtraAction, UploadMappingRulesInput
+    excel = user_input.get(UploadMappingRulesInput.EXCEL_COL)
+    data = user_input.get(UploadMappingRulesInput.DATA_COL)[0] if isinstance(user_input.get(UploadMappingRulesInput.DATA_COL), list) else user_input.get(UploadMappingRulesInput.DATA_COL)
+    action = user_input.get(UploadMappingRulesInput.ACTION)[0] if isinstance(user_input.get(UploadMappingRulesInput.ACTION), list) else user_input.get(UploadMappingRulesInput.ACTION)
+    acct = user_input.get(UploadMappingRulesInput.ACCOUNT)[0] if isinstance(user_input.get(UploadMappingRulesInput.ACCOUNT), list) else user_input.get(UploadMappingRulesInput.ACCOUNT)
+    lbl = user_input.get(UploadMappingRulesInput.LABEL)[0] if isinstance(user_input.get(UploadMappingRulesInput.LABEL), list) else user_input.get(UploadMappingRulesInput.LABEL)
+    target_id = lbl if action == FileImportExcelColumnMappingExtraAction.LABEL else acct
+    _generate_mapping_rule(excel, data, action, target_id)
+    return result
+
+@logger.log_function
+def _generate_mapping_rule(self, excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
+    from .....Utils.Constants import ColorSchemes, Icons
+    logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
+    dict_exp_tbl_def = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_expense_table_definition_dropdown()}
+    dict_extraact = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_import_extra_action_dropdown()}
+    dict_lbl = {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_labels_dropdown()}
+    dict_acct =  {k[1][0]: k[1][1] for k in UploadMappingRulesController.generate_accounts_dropdown()}
+    datacol = dict_exp_tbl_def.get(datacol_id, None)
+    extraact = dict_extraact.get(extraact_id, None)
+    extratgt = dict_lbl.get(extratgt_id, None) if extraact_id == "L" else dict_acct.get(extratgt_id, None)
+    rule = f"{self.row_lbl_1.text}{excelcol}{self.row_lbl_2.text}{datacol}."
+    rule = f"{rule} Extra action(s): {extraact} {extratgt}" if extraact is not None else rule
+    
+    lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=Icons.BULLETPOINT)
+    fp = FlowPanel(spacing_above="small", spacing_below="small", tag=[excelcol, datacol_id, extraact_id, extratgt_id, rule, is_new])
+    b = Button(
+        icon=Icons.REMOVE,
+        foreground=ColorSchemes.BUTTON_BG,
+        font_size=12,
+        align="left",
+        spacing_above="small",
+        spacing_below="small",
+    )
+    self.add_component(fp)
+    fp.add_component(lbl_obj)
+    fp.add_component(b)
+    b.set_event_handler('click', self.mapping_button_minus_click)
+
+@logger.log_function
+def _generate_all_mapping_rules(self, rules, **event):
+    for r in rules:
+        excelcol, datacol_id, extraact_id, extratgt_id = r
+        # Without converting to int it cannot fetch the value in get method below
+        extratgt_id = int(extratgt_id) if extratgt_id is not None else extratgt_id
+        self._generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id)

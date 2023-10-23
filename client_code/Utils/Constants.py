@@ -63,13 +63,30 @@ class FileImportType:
     Excel = 'E'
     PDF = 'P'
 
-class FileImportLabelExtraAction:
+class FileImportLabelMappingExtraAction:
     """
     Label mapping extra action required by Excel file import.
     """
     SKIP = 'S'
     MAP = 'M'
     CREATE = 'C'
+
+class FileImportExcelColumnMappingExtraAction:
+    """
+    Excel column mapping extra action required by Excel file import.
+    """
+    LABEL = 'L'
+    ACCOUNT = 'A'
+
+class UploadMappingRulesInput:
+    """
+    Dictionsary keys of upload mapping rules.
+    """
+    EXCEL_COL= 'excelcol',
+    DATA_COL = 'datacol',
+    ACTION = 'action',
+    ACCOUNT = 'acct',
+    LABEL = 'lbl'
 
 class SearchInterval:
     """
