@@ -54,16 +54,12 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
-        id = self.row_hidden_id.text if self.row_hidden_id.text not in (None, '') else None
-        name = self.row_mapping_name.text
-        filetype_id, filetype = self.row_dropdown_type.selected_value
         rules = []
-        del_iid = self.row_hidden_del_fid.text[:-1].split(",") if self.row_hidden_del_fid.text else None
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 rules.append(i.tag)
                 i.remove_from_parent()
-        result = anvil.server.call('save_mapping_rules', id=id, mapping_rules={"name":name, "filetype":filetype_id, "rules":rules}, del_iid=del_iid)
+        result = UploadMappingRulesController.save_mapping_rule(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
 
         id = result['id']
         if id is not None and result['count'] is not None and result['dcount'] is not None:
@@ -95,18 +91,19 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
             # Save the self.parent first so that remove_from_parent can be called before raising event
             #https://anvil.works/forum/t/children-to-parent-update/6324/4
             parent = self.parent
-            if to_be_del_id not in (None, ''):
-                result = anvil.server.call('delete_mapping', id=to_be_del_id)
-                if result is not None and result > 0:
-                    """ Reflect the change in tab dropdown """
+            if to_be_del_id:
+                try:
+                    result = UploadMappingRulesController.delete_mapping_rule(to_be_del_id)
+                except Exception as err:
+                    logger.error(err)
+                    msg = f"ERROR: Fail to delete mapping {to_be_del_name}."
+                else:
                     self.remove_from_parent()
                     msg = f"Mapping {to_be_del_name} has been deleted."
                     logger.info(msg)
                     parent.raise_event('x-reload-rp', del_id=to_be_del_id)
-                else:
-                    msg = f"ERROR: Fail to delete mapping {to_be_del_name}."
-                    logger.error(msg)
-                Notification(msg).show()
+                finally:
+                    Notification(msg).show()
             else:
                 self.remove_from_parent()
                 parent.raise_event('x-reload-rp')

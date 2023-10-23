@@ -176,13 +176,16 @@ def add_mapping_rules_criteria(user_input, is_new=False):
         result (list of dict): A list of data padded with blank items for repeating panel.
     """
     from ..Utils.Constants import FileImportExcelColumnMappingExtraAction, UploadMappingRulesInput
-    excel = user_input.get(UploadMappingRulesInput.EXCEL_COL)
-    data = user_input.get(UploadMappingRulesInput.DATA_COL)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.DATA_COL), list) else user_input.get(UploadMappingRulesInput.DATA_COL)
     action = user_input.get(UploadMappingRulesInput.ACTION)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.ACTION), list) else user_input.get(UploadMappingRulesInput.ACTION)
     acct = user_input.get(UploadMappingRulesInput.ACCOUNT)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.ACCOUNT), list) else user_input.get(UploadMappingRulesInput.ACCOUNT)
     lbl = user_input.get(UploadMappingRulesInput.LABEL)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.LABEL), list) else user_input.get(UploadMappingRulesInput.LABEL)
     target_id = lbl if action == FileImportExcelColumnMappingExtraAction.LABEL else acct
-    properties_list, rule = _generate_mapping_rule(excel, data, action, target_id)
+    properties_list, rule = _generate_mapping_rule(
+        user_input.get(UploadMappingRulesInput.EXCEL_COL),
+        user_input.get(UploadMappingRulesInput.DATA_COL),
+        user_input.get(UploadMappingRulesInput.ACTION),
+        target_id
+    )
     return properties_list, rule
 
 @logger.log_function
@@ -207,4 +210,44 @@ def _generate_all_mapping_rules(rules):
         # Without converting to int it cannot fetch the value in get method below
         extratgt_id = int(extratgt_id) if extratgt_id is not None else extratgt_id
         result.append(_generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id))
+    return result
+
+@logger.log_function
+def save_mapping_rule(id, name, filetype, rules, del_iid):
+    """
+    Convert the fields from the form for saving the mapping rule change in backend.
+
+    Parameters:
+        id (int): The mapping rule ID to be saved.
+        name (string): The mapping rule name.
+        filetype (list): The selected filetype from dropdown.
+        rules (list): The list of criteria of the rule to be saved.
+        del_iid (string): The criteria item ID (iid) to be removed during the update.
+        
+    Returns:
+        result (dict): Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
+    """
+    if not id:
+        id = None
+    filetype_id, _ = filetype if filetype and isinstance(filetype, list) else [filetype, None]
+    del_iid = del_iid[:-1].split(",") if del_iid else None
+    result = anvil.server.call('save_mapping_rules', id, name, filetype_id, rules, del_iid)
+    if not result:
+        raise RuntimeError('Error occurs in save_mapping_rules.')
+    return result
+
+@logger.log_function
+def delete_mapping_rule(id):
+    """
+    Convert the fields from the form for deleting the mapping rule change in backend.
+
+    Parameters:
+        id (int): The mapping rule ID to be deleted.
+        
+    Returns:
+        result (int): Successful delete row count, otherwise None.
+    """
+    result = anvil.server.call('delete_mapping', id)
+    if not result:
+        raise RuntimeError('Error occurs in delete_mapping.')
     return result
