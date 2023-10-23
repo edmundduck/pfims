@@ -71,14 +71,14 @@ def generate_expense_tbl_def_list():
         cur.close()
         return rows
 
-@anvil.server.callable("generate_upload_action_dropdown")
+@anvil.server.callable("generate_upload_action_list")
 @logger.log_function
-def generate_upload_action_dropdown():
+def generate_upload_action_list():
     """
-    Select import file upload action data which is static data from a DB table to generate a dropdown list.
+    Select import file upload action data from the import file upload action DB table.
 
     Returns:
-        list: A dropdown list of upload action names as description, and upload action IDs and names as ID.
+        rows (list of RealDictRow): A list of upload actions.
     """
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -86,8 +86,7 @@ def generate_upload_action_dropdown():
         cur.execute(sql)
         rows = cur.fetchall()
         cur.close()
-    content = list((row['action'], [row['id'], row['action']]) for row in rows)
-    return content
+        return rows
 
 @logger.log_function
 def generate_mapping_matrix(matrix, col_def):
