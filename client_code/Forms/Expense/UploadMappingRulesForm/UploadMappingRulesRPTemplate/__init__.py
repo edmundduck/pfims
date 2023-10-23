@@ -22,12 +22,15 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:
-            UploadMappingRulesController._generate_all_mapping_rules(self.item['rule'])
+            result = UploadMappingRulesController._generate_all_mapping_rules(self.item['rule'])
+            for r in result:
+                properties_list, rule = r
+                self.add_mapping_rules_criteria(properties_list, rule)
 
     @logger.log_function
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
-        from .....Utils.Constants import ColorSchemes, Icons, UploadMappingRulesInput
+        from .....Utils.Constants import UploadMappingRulesInput
         user_input = {
             UploadMappingRulesInput.EXCEL_COL: self.row_dropdown_excelcol.selected_value,
             UploadMappingRulesInput.DATA_COL: self.row_dropdown_datacol.selected_value,
@@ -38,21 +41,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         # Remove the column from to be deleted list (row_hidden_del_fid) if it's updated (removed and added back)
         self.row_hidden_del_fid.text = ",".join([x for x in self.row_hidden_del_fid.text.split(",") if x != self.row_dropdown_excelcol.selected_value])
         properties_list, rule = UploadMappingRulesController.add_mapping_rules_criteria(user_input, True)
-
-        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=Icons.BULLETPOINT)
-        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=properties_list)
-        b = Button(
-            icon=Icons.REMOVE,
-            foreground=ColorSchemes.BUTTON_BG,
-            font_size=12,
-            align="left",
-            spacing_above="small",
-            spacing_below="small",
-        )
-        self.add_component(fp)
-        fp.add_component(lbl_obj)
-        fp.add_component(b)
-        b.set_event_handler('click', self.mapping_button_minus_click)
+        self.add_mapping_rules_criteria(properties_list, rule)
 
     @logger.log_function
     def mapping_button_minus_click(self, **event_args):
@@ -99,10 +88,8 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         from .....Utils.Constants import Alerts
         to_be_del_id = self.row_hidden_id.text
         to_be_del_name = self.row_mapping_name.text
-        confirm = Label(text=f"Proceed mapping <{to_be_del_name}> deletion by clicking DELETE.")
-        userconf = alert(content=confirm,
-                        title=f"Alert - mapping Deletion",
-                        buttons=[("DELETE", Alerts.CONFIRM), ("CANCEL", Alerts.CANCEL)])
+        confirm = Label(text=f"Proceed mapping [{to_be_del_name}] deletion by clicking PROCEED.")
+        userconf = alert(content=confirm, title='Alert - Confirm to delete mapping rule', buttons=[('PROCEED', Alerts.CONFIRM), ('CANCEL', Alerts.CANCEL)])
 
         if userconf == Alerts.CONFIRM:
             # Save the self.parent first so that remove_from_parent can be called before raising event
@@ -133,3 +120,20 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         """This method is called when an item is selected"""
         self.row_dropdown_lbl.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "L" else False
         self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "A" else False
+
+    def add_mapping_rules_criteria(self, tag_value, rule, **event_args):
+        from .....Utils.Constants import ColorSchemes, Icons
+        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=Icons.BULLETPOINT)
+        fp = FlowPanel(spacing_above="small", spacing_below="small", tag=tag_value)
+        b = Button(
+            icon=Icons.REMOVE,
+            foreground=ColorSchemes.BUTTON_BG,
+            font_size=12,
+            align="left",
+            spacing_above="small",
+            spacing_below="small",
+        )
+        self.add_component(fp)
+        fp.add_component(lbl_obj)
+        fp.add_component(b)
+        b.set_event_handler('click', self.mapping_button_minus_click)
