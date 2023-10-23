@@ -27,7 +27,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def row_button_add_click(self, **event_args):
         """This method is called when the button is clicked"""
-        from .....Utils.Constants import UploadMappingRulesInput
+        from .....Utils.Constants import ColorSchemes, Icons, UploadMappingRulesInput
         user_input = {
             UploadMappingRulesInput.EXCEL_COL: self.row_dropdown_excelcol.selected_value,
             UploadMappingRulesInput.DATA_COL: self.row_dropdown_datacol.selected_value,
