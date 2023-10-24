@@ -253,7 +253,7 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, mogstr_delete):
 
             # At last perform rules deletion (if any)
             if mogstr_delete:
-                sql = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN %s".format(
+                sql = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN (%s)".format(
                     schema=Database.SCHEMA_FIN
                 )
                 stmt = cur.mogrify(sql, (id, mogstr_delete))

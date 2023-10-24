@@ -94,8 +94,7 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
     logger.trace('mmatrix=', mmatrix)
     
     # Prepare deletion for mappingrules
-    # mdelete = "({0})".format(",".join(f"'{i}'" for i in del_iid))
-    mdelete = del_iid
+    mdelete = ','.join(i for i in del_iid) if del_iid else None
     logger.trace('mdelete=', mdelete)
 
     # Save mappingrules, mappingmatrix and mappingrules deletion
