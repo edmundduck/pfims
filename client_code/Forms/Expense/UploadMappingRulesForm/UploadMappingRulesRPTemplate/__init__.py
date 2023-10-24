@@ -70,7 +70,8 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         else:
             msg = f"WARNING: Problem occurs when saving mapping {name}."
             logger.warning(msg)
-        self.item = (anvil.server.call('select_mapping_rules', id))[0]
+        # self.item = (anvil.server.call('select_mapping_rules', id))[0]
+        self.item = UploadMappingRulesController.save_mapping_rule(id)
         self.row_dropdown_type.selected_value = [filetype_id, filetype]
         if self.item.get('rule', None) is not None:
             self._generate_all_mapping_rules(self.item['rule'])

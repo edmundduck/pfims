@@ -94,25 +94,6 @@ def generate_upload_action_list():
         cur.close()
         return rows
 
-@logger.log_function
-def select_expense_tbl_def_id():
-    """
-    Select all expense table definition column code.
-
-    Returns:
-        content (list): The list of all column codes.
-    """
-    conn = sysmod.db_connect()
-    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.expense_tbl_def ORDER BY seq ASC".format(
-            schema=Database.SCHEMA_REFDATA
-        )
-        cur.execute(sql)
-        rows = cur.fetchall()
-        cur.close()
-    content = list(row['col_code'] for row in rows)
-    return content
-
 @anvil.server.callable("select_mapping_rules")
 @logger.log_function
 def select_mapping_rules(gid=None):
@@ -215,7 +196,72 @@ def save_mapping_group_rules(id, mogstr_group, mogstr_rules, mogstr_matrix, mogs
                 )
             stmt = cur.mogrify(sql, mogstr_group)
             cur.execute(stmt)
+            conn.commit()
+            result = cur.fetchone()
+            if result:
+                id = result.get('id')
+            else:
+                raise psycopg2.OperationalError("Fail to update mapping group with ID. Aborting further update.")
 
+            # Second insert/update mapping rules
+            if len(mogstr_rules) > 0:
+                sql = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
+                (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
+                etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                cur.executemany(sql, mogstr_rules)
+
+            # Third insert/update mapping matrix
+            if len(mogstr_matrix) > 0:
+                sql = "DELETE FROM {schema}.mappingmatrix WHERE gid = %s".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (id, ))
+                cur.execute(stmt)
+
+                sql = "INSERT INTO {schema}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
+                VALUES ({id}, %s, %s, %s, %s, %s, %s)".format(
+                    schema=Database.SCHEMA_FIN,
+                    id=id
+                )
+                cur.executemany(sql, mogstr_matrix)
+
+            # At last perform rules deletion (if any)
+            if mogstr_delete:
+                sql = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN %s".format(
+                    schema=Database.SCHEMA_FIN
+                )
+                stmt = cur.mogrify(sql, (id, mogstr_delete))
+                cur.execute(sql)
+
+            conn.commit()
+    except psycopg2.OperationalError as err:
+        logger.error(err)
+        conn.rollback()
+        raise psycopg2.OperationalError(err)
+    finally:
+        if cur is not None: cur.close()
+        if conn is not None: conn.close()        
+    return None
+
+@logger.log_function
+def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, mogstr_delete):
+    """
+    Save the mapping rules and matrix into the DB table.
+
+    Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
+
+    Parameters:
+        mogstr_rules (string): Mogrified string for mapping rules SQL.
+        mogstr_matrix (string): Mogrified string for mapping matrix SQL.
+        mogstr_delete (string): Mogrified string for mapping rules deletion SQL.
+    """
+    conn = None
+    try:
+        userid = sysmod.get_current_userid()
+        conn = sysmod.db_connect()
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             # Second insert/update mapping rules
             if len(mogstr_rules) > 0:
                 sql = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
