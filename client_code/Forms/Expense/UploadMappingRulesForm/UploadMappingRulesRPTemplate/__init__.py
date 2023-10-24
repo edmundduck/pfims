@@ -59,24 +59,25 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 rules.append(i.tag)
                 i.remove_from_parent()
-        result = UploadMappingRulesController.save_mapping_rule(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
 
-        id = result['id']
-        if id is not None and result['count'] is not None and result['dcount'] is not None:
+        try:
+            result = UploadMappingRulesController.save_mapping_rule(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
+        except Exception as err:
+            logger.error(err)
+            msg = f"Error occurs when saving mapping group [{name}]."
+        else:
             self.row_hidden_id.text = id
             self.row_hidden_del_fid.text = ''
-            msg = f"Mapping {name} has been saved successfully."
+            msg = f"Mapping group [{self.row_mapping_name.text}] has been saved successfully."
             logger.info(msg)
-        else:
-            msg = f"WARNING: Problem occurs when saving mapping {name}."
-            logger.warning(msg)
-        # self.item = (anvil.server.call('select_mapping_rules', id))[0]
-        self.item = UploadMappingRulesController.save_mapping_rule(id)
-        self.row_dropdown_type.selected_value = [filetype_id, filetype]
-        if self.item.get('rule', None) is not None:
-            self._generate_all_mapping_rules(self.item['rule'])
-        Notification(msg).show()
-        self.parent.raise_event('x-reload-rp')
+
+            # self.item = (anvil.server.call('select_mapping_rules', id))[0]
+            self.item = UploadMappingRulesController.save_mapping_rule(id)
+            self.row_dropdown_type.selected_value = [filetype_id, filetype]
+            if self.item.get('rule', None) is not None:
+                self._generate_all_mapping_rules(self.item['rule'])
+            Notification(msg).show()
+            self.parent.raise_event('x-reload-rp')
 
     @btnmod.one_click_only
     @logger.log_function
