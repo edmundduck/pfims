@@ -181,7 +181,7 @@ def add_mapping_rules_criteria(user_input, is_new=False):
     acct = user_input.get(UploadMappingRulesInput.ACCOUNT)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.ACCOUNT), list) else user_input.get(UploadMappingRulesInput.ACCOUNT)
     lbl = user_input.get(UploadMappingRulesInput.LABEL)[0] if user_input and isinstance(user_input.get(UploadMappingRulesInput.LABEL), list) else user_input.get(UploadMappingRulesInput.LABEL)
     target_id = lbl if action == FileImportExcelColumnMappingExtraAction.LABEL else acct
-    properties_list, rule = _generate_mapping_rule(
+    properties_list, rule = _generate_single_mapping_rule(
         user_input.get(UploadMappingRulesInput.EXCEL_COL),
         user_input.get(UploadMappingRulesInput.DATA_COL),
         user_input.get(UploadMappingRulesInput.ACTION),
@@ -190,7 +190,7 @@ def add_mapping_rules_criteria(user_input, is_new=False):
     return properties_list, rule
 
 @logger.log_function
-def _generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
+def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
     from ..Utils.Constants import ColorSchemes, FileImportExcelColumnMappingExtraAction, Icons
     logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
     datacol_id, datacol_name = datacol_id if datacol_id and isinstance(datacol_id, list) else get_expense_table_definition_dropdown_selected_item(datacol_id) if datacol_id else [None, None]
@@ -210,7 +210,7 @@ def generate_all_mapping_rules(rules):
         excelcol, datacol_id, extraact_id, extratgt_id = r
         # Without converting to int it cannot fetch the value in get method below
         extratgt_id = int(extratgt_id) if extratgt_id is not None else extratgt_id
-        result.append(_generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id))
+        result.append(_generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id))
     return result
 
 @logger.log_function
@@ -238,7 +238,7 @@ def save_mapping_criteria(id, name, filetype, rules, del_iid):
     return id
 
 @logger.log_function
-def delete_mapping_rule(id):
+def delete_mapping_criteria(id):
     """
     Convert the fields from the form for deleting the mapping rule change in backend.
 

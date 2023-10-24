@@ -141,7 +141,6 @@ def select_mapping_rules(gid=None):
         cur.close()
     return list(result.values())
 
-@anvil.server.callable("select_mapping_matrix")
 @logger.log_function
 def select_mapping_matrix(id):
     """
@@ -156,15 +155,24 @@ def select_mapping_matrix(id):
     from ..Entities.ExpenseTransaction import ExpenseTransaction
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = f"SELECT datecol AS {ExpenseTransaction.field_date()}, acctcol AS {ExpenseTransaction.field_account()}, amtcol AS {ExpenseTransaction.field_amount()}, remarkscol AS {ExpenseTransaction.field_remarks()}, \
-        stmtdtlcol AS {ExpenseTransaction.field_statement_detail()}, lblcol AS {ExpenseTransaction.field_labels()} FROM {Database.SCHEMA_FIN}.mappingmatrix WHERE gid = {id}"
-        cur.execute(sql)
+        sql = "SELECT datecol AS {datecol}, acctcol AS {acctcol}, amtcol AS {amtcol}, remarkscol AS {}, stmtdtlcol AS {stmtdtlcol}, lblcol AS {lblcol} \
+        FROM {schema}.mappingmatrix WHERE gid = %s".format(
+            datecol=ExpenseTransaction.field_date(),
+            acctcol=ExpenseTransaction.field_account(),
+            amtcol=ExpenseTransaction.field_amount(),
+            remarkscol=ExpenseTransaction.field_remarks(),
+            stmtdtlcol=ExpenseTransaction.field_statement_detail(),
+            lblcol=ExpenseTransaction.field_labels(),
+            schema=Database.SCHEMA_FIN
+        )
+        stmt = cur.mogrify(sql, (id, ))
+        cur.execute(stmt)
         rows = cur.fetchall()
         # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
         # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
         rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
-    return rows
+        return rows
 
 @logger.log_function
 def save_mapping_group(id, mogstr_group):
@@ -279,7 +287,6 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, mogstr_delete):
         if conn is not None: conn.close()        
     return None
 
-@anvil.server.callable("select_mapping_extra_actions")
 @logger.log_function
 def select_mapping_extra_actions(id):
     """

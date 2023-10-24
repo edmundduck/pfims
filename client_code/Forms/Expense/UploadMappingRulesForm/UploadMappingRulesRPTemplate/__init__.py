@@ -90,7 +90,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
             parent = self.parent
             if to_be_del_id:
                 try:
-                    result = UploadMappingRulesController.delete_mapping_rule(to_be_del_id)
+                    result = UploadMappingRulesController.delete_mapping_criteria(to_be_del_id)
                 except Exception as err:
                     logger.error(err)
                     msg = f"ERROR: Fail to delete mapping {to_be_del_name}."
