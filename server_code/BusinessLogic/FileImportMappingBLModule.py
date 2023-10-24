@@ -54,7 +54,7 @@ def generate_mapping_matrix(matrix, col_def):
 
 @anvil.server.callable("proc_save_mapping")
 @logger.log_function
-def proc_save_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=None):
+def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
     """
     Process data for updating import mapping data.
 

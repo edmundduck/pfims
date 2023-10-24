@@ -257,7 +257,7 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, mogstr_delete):
                     schema=Database.SCHEMA_FIN
                 )
                 stmt = cur.mogrify(sql, (id, mogstr_delete))
-                cur.execute(sql)
+                cur.execute(stmt)
 
             # Reconciliation
             sql = "SELECT g.userid, g.id, g.name, g.filetype, m.datecol, m.acctcol, m.amtcol, m.remarkscol, m.stmtdtlcol, m.lblcol FROM \
