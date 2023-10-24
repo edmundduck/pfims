@@ -259,7 +259,17 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, mogstr_delete):
                 stmt = cur.mogrify(sql, (id, mogstr_delete))
                 cur.execute(sql)
 
+            # Reconciliation
+            sql = "SELECT g.userid, g.id, g.name, g.filetype, m.datecol, m.acctcol, m.amtcol, m.remarkscol, m.stmtdtlcol, m.lblcol FROM \
+            {schema}.mappinggroup g LEFT JOIN fin.mappingmatrix m ON g.id = m.gid WHERE g.id = %s".format(
+                schema=Database.SCHEMA_FIN
+            )
+            stmt = cur.mogrify(sql, (id, ))
+            cur.execute(stmt)
             conn.commit()
+            rows = cur.fetchall()
+            if len(rows) != len(mogstr_matrix): raise psycopg2.OperationalError("Row counts returned don't match with the input. Please reenter the mapping detail.")
+            return len(rows)
     except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
