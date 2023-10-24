@@ -22,7 +22,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
         # Generate all rules in a mapping
         if self.item.get('rule', None) is not None:
-            result = UploadMappingRulesController._generate_all_mapping_rules(self.item['rule'])
+            result = UploadMappingRulesController.generate_all_mapping_rules(self.item['rule'])
             for r in result:
                 properties_list, rule = r
                 self.add_mapping_rules_criteria(properties_list, rule)
@@ -72,7 +72,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
             self.item = result
             if self.item.get('rule', None) is not None:
-                self._generate_all_mapping_rules(self.item['rule'])
+                UploadMappingRulesController.generate_all_mapping_rules(self.item['rule'])
             msg = f"Mapping group [{self.row_mapping_name.text}] has been saved successfully."
             logger.info(msg)
             Notification(msg).show()

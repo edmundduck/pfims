@@ -147,7 +147,7 @@ def populate_repeating_panel_items(rp_items=None, reload=False, del_iid=None):
         result (list of dict): A list of data padded with blank items for repeating panel.
     """
     def filter_valid_rows(row):
-        if del_iid and row.get('id') == del_iid:
+        if del_iid and row.get('id') == int(del_iid):
             # Filter out all rows in deleted IID cache
             return False
         if all(v is None for v in row.values()):
@@ -155,15 +155,14 @@ def populate_repeating_panel_items(rp_items=None, reload=False, del_iid=None):
             return False
         return True
 
+    logger.trace(f"Param={rp_items} / {reload} / {del_iid}")
     if rp_items:
-        print("DEBUG\n")
-        print(del_iid)
         result = list(filter(filter_valid_rows, rp_items)) if reload else [{} for i in range(1)] + rp_items
-        logger.trace('rp_items blank=', result)
+        logger.trace('rp_items with filter=', result)
     else:
         mappings = anvil.server.call('select_mapping_rules')
         result = mappings if mappings else [{} for i in range(1)]
-        logger.trace('rp_items with data=', result)
+        logger.trace('rp_items init load', result)
     return result
 
 def add_mapping_rules_criteria(user_input, is_new=False):
@@ -205,7 +204,7 @@ def _generate_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_ne
     return [excelcol, datacol_id, action_id, target_id, rule, is_new], rule
 
 @logger.log_function
-def _generate_all_mapping_rules(rules):
+def generate_all_mapping_rules(rules):
     result = []
     for r in rules:
         excelcol, datacol_id, extraact_id, extratgt_id = r
@@ -227,7 +226,7 @@ def save_mapping_group(id, name, filetype, rules, del_iid):
         del_iid (string): The criteria item ID (iid) to be removed during the update.
         
     Returns:
-        result (dict): Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
+        result[0] (dict): Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
     """
     if not id:
         id = None
@@ -236,7 +235,7 @@ def save_mapping_group(id, name, filetype, rules, del_iid):
     result = anvil.server.call('save_import_mapping', id, name, filetype_id, rules, del_iid)
     if not result:
         raise RuntimeError('Error occurs in save_import_mapping.')
-    return result
+    return result[0]
 
 @logger.log_function
 def delete_mapping_rule(id):
