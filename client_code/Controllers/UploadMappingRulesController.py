@@ -156,6 +156,8 @@ def populate_repeating_panel_items(rp_items=None, reload=False, del_iid=None):
         return True
 
     if rp_items:
+        print("DEBUG\n")
+        print(del_iid)
         result = list(filter(filter_valid_rows, rp_items)) if reload else [{} for i in range(1)] + rp_items
         logger.trace('rp_items blank=', result)
     else:

@@ -65,6 +65,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         except Exception as err:
             logger.error(err)
             msg = f"ERROR occurs when saving mapping group [{name}]."
+            Notification(msg).show()
         else:
             self.row_hidden_id.text = id
             self.row_hidden_del_fid.text = ''
@@ -74,9 +75,8 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
                 self._generate_all_mapping_rules(self.item['rule'])
             msg = f"Mapping group [{self.row_mapping_name.text}] has been saved successfully."
             logger.info(msg)
-            self.parent.raise_event('x-reload-rp')
-        finally:
             Notification(msg).show()
+            self.parent.raise_event('x-reload-rp')
 
     @btnmod.one_click_only
     @logger.log_function
