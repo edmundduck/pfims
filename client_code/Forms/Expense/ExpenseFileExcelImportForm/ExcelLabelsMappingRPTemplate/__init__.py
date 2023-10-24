@@ -25,7 +25,7 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
     @logger.log_function
     def dropdown_lbl_action_change(self, **event_args):
         """This method is called when an item is selected"""
-        from .....Utils.Constants import FileImportLabelExtraAction
+        from .....Utils.Constants import FileImportLabelMappingExtraAction
         
         action, _ = self.dropdown_lbl_action.selected_value if self.dropdown_lbl_action.selected_value is not None else [None, None]
         self.dropdown_lbl_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_dropdown(self.dropdown_lbl_action.selected_value)

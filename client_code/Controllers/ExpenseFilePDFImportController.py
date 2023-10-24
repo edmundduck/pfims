@@ -50,6 +50,16 @@ def generate_labels_dropdown(data=None, reload=False):
     from . import LabelMaintController
     return LabelMaintController.generate_labels_dropdown(data, reload)
 
+def generate_expense_table_definition_dropdown():
+    """
+    Access reference data - expense table definition dropdown from either client cache or generate from DB data returned from server side.
+
+    Returns:
+        cache.get_cache (list): Expense table definition dropdown formed by expense table definition DB table data.
+    """
+    from . import UploadMappingRulesController
+    return UploadMappingRulesController.generate_expense_table_definition_dropdown()
+
 def get_account_dropdown_selected_item(acct_id):
     """
     Return a complete key based on a partial account ID which is a part of the key in a dropdown list.
@@ -62,6 +72,23 @@ def get_account_dropdown_selected_item(acct_id):
     """
     from . import AccountMaintController
     return AccountMaintController.get_account_dropdown_selected_item(acct_id)
+
+def get_expense_table_definition_dropdown_selected_item(id):
+    """
+    Return a complete key based on a partial table column ID which is a part of the key in a dropdown list.
+
+    Parameters:
+        id (int): The table column ID.
+
+    Returns:
+        selected_item (list): Complete key of the selected item in expense table definition dropdown.
+    """
+    from ..Utils.ClientCache import ClientCache
+    cache = ClientCache(CacheKey.DD_EXPENSE_TBL_DEF, None)
+    if cache.is_empty():
+        generate_expense_table_definition_dropdown()
+    selected_item = cache.get_complete_key(id)
+    return selected_item
 
 def populate_repeating_panel_items(data=None):
     """

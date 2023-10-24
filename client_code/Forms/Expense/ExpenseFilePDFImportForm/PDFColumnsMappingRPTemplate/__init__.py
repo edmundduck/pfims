@@ -1,10 +1,8 @@
 from ._anvil_designer import PDFColumnsMappingRPTemplateTemplate
 from anvil import *
 import anvil.server
-from .....Utils.ClientCache import ClientCache
-from .....Utils import Constants as const
+from .....Controllers import ExpenseFilePDFImportController
 from .....Utils.Logger import ClientLogger
-from .....Utils.Validation import Validator
 
 logger = ClientLogger()
 
@@ -14,8 +12,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
-        self.dropdown_col_map_to.items = cache_exp_tbl_def.get_cache()
+        self.dropdown_col_map_to.items = ExpenseFilePDFImportController.generate_expense_table_definition_dropdown()
         self.dropdown_sign.items = (('+ Inflow', '+'), ('- Outflow', '-'))
         self.dropdown_sign.visible = False
 
@@ -41,14 +38,15 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
         from .....Entities.ExpenseTransaction import ExpenseTransaction
+        from .....Utils.Constants import ColorSchemes
+        from .....Utils.Validation import Validator
         v = Validator()
-        cache_exp_tbl_def = ClientCache('generate_expense_tbl_def_dropdown')
 
         logger.trace("self.parent.parent.parent.parent.valerror_1.text=", self.parent.parent.parent.parent.valerror_1.text)
         v.display_when_invalid(self.parent.parent.parent.parent.valerror_title)
         v.require_selected_dependent_on_checkbox(self.dropdown_col_map_to, self.cb_required, self.parent.parent.parent.parent.valerror_1, True)
-        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, cache_exp_tbl_def.get_complete_key(ExpenseTransaction.field_amount()), self.parent.parent.parent.parent.valerror_2, True)
-        v.highlight_when_invalid(self.dropdown_col_map_to, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
-        v.highlight_when_invalid(self.dropdown_sign, const.ColorSchemes.VALID_ERROR, const.ColorSchemes.VALID_NORMAL)
+        v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, ExpenseFilePDFImportController.get_expense_table_definition_dropdown_selected_item(ExpenseTransaction.field_amount()), self.parent.parent.parent.parent.valerror_2, True)
+        v.highlight_when_invalid(self.dropdown_col_map_to, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.dropdown_sign, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
 
         return v.is_valid()

@@ -1,5 +1,5 @@
 import anvil.server
-from ..Utils.Constants import CacheKey, FileImportLabelExtraAction
+from ..Utils.Constants import CacheKey, FileImportLabelMappingExtraAction
 from ..Utils.Logger import ClientLogger
 
 # This is a module.
@@ -53,10 +53,10 @@ def generate_labels_dropdown(data=None, reload=False):
 @logger.log_function
 def generate_labels_mapping_action_dropdown():
     """
-    Access reference data - labels mappiong action dropdown from either client cache or generate from DB data returned from server side.
+    Access reference data - labels mapping action dropdown from either client cache or generate from DB data returned from server side.
 
     Returns:
-        cache.get_cache (list): Labels mappiong action dropdown formed by labels mappiong action DB table data.
+        cache.get_cache (list): Labels mapping action dropdown formed by labels mapping action DB table data.
     """
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.DD_LABEL_MAPPING_ACTION, None)
@@ -120,11 +120,11 @@ def visible_account_label_map_to_dropdown(action_selection):
         result (boolean): True for visible, false for invisible.
     """
     action, _ = action_selection if action_selection is not None else [None, None]
-    if action in (None, FileImportLabelExtraAction.SKIP):
+    if action in (None, FileImportLabelMappingExtraAction.SKIP):
         result = False
-    elif action == FileImportLabelExtraAction.MAP:
+    elif action == FileImportLabelMappingExtraAction.MAP:
         result = True
-    elif action == FileImportLabelExtraAction.CREATE:
+    elif action == FileImportLabelMappingExtraAction.CREATE:
         result = False
     return result
 
@@ -139,11 +139,11 @@ def visible_account_label_textfield(action_selection):
         result (boolean): True for visible, false for invisible.
     """
     action, _ = action_selection if action_selection is not None else [None, None]
-    if action in (None, FileImportLabelExtraAction.SKIP):
+    if action in (None, FileImportLabelMappingExtraAction.SKIP):
         result = False
-    elif action == FileImportLabelExtraAction.MAP:
+    elif action == FileImportLabelMappingExtraAction.MAP:
         result = False
-    elif action == FileImportLabelExtraAction.CREATE:
+    elif action == FileImportLabelMappingExtraAction.CREATE:
         result = True
     return result
 
