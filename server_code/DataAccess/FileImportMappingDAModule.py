@@ -219,7 +219,7 @@ def save_mapping_group(id, mogstr_group):
         return id
 
 @logger.log_function
-def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, mogstr_delete):
+def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
     """
     Save the mapping rules and matrix into the DB table.
 
@@ -228,64 +228,67 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, mogstr_delete):
     Parameters:
         mogstr_rules (string): Mogrified string for mapping rules SQL.
         mogstr_matrix (string): Mogrified string for mapping matrix SQL.
-        mogstr_delete (string): Mogrified string for mapping rules deletion SQL.
+        del_iid (string): The string of IID concatenated by comma to be deleted
     """
-    conn = None
-    try:
-        userid = sysmod.get_current_userid()
-        conn = sysmod.db_connect()
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+    userid = sysmod.get_current_userid()
+    conn = sysmod.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        try:
             # Second insert/update mapping rules
             if len(mogstr_rules) > 0:
-                sql = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
+                sql1 = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
                 (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
                 etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col".format(
                     schema=Database.SCHEMA_FIN
                 )
-                cur.executemany(sql, mogstr_rules)
+                cur.executemany(sql1, mogstr_rules)
 
             # Third insert/update mapping matrix
             if len(mogstr_matrix) > 0:
-                sql = "DELETE FROM {schema}.mappingmatrix WHERE gid = %s".format(
+                sql2 = "DELETE FROM {schema}.mappingmatrix WHERE gid = %s".format(
                     schema=Database.SCHEMA_FIN
                 )
-                stmt = cur.mogrify(sql, (id, ))
-                cur.execute(stmt)
+                stmt2 = cur.mogrify(sql2, (id, ))
+                cur.execute(stmt2)
 
-                sql = "INSERT INTO {schema}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
+                sql3 = "INSERT INTO {schema}.mappingmatrix (gid, datecol, acctcol, amtcol, lblcol, remarkscol, stmtdtlcol) \
                 VALUES ({id}, %s, %s, %s, %s, %s, %s)".format(
                     schema=Database.SCHEMA_FIN,
                     id=id
                 )
-                cur.executemany(sql, mogstr_matrix)
+                cur.executemany(sql3, mogstr_matrix)
 
             # At last perform rules deletion (if any)
-            if mogstr_delete:
-                sql = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN (%s)".format(
-                    schema=Database.SCHEMA_FIN
+            if del_iid:
+                mogstr_delete = ','.join(cur.mogrify("%s", (d, )).decode('utf-8') for d in del_iid)
+                logger.trace('mogstr_delete=', mogstr_delete)
+                sql4 = "DELETE FROM {schema}.mappingrules WHERE gid = {gid} AND col IN ({iid})".format(
+                    schema=Database.SCHEMA_FIN,
+                    gid=id,
+                    iid=mogstr_delete
                 )
-                stmt = cur.mogrify(sql, (id, mogstr_delete))
-                cur.execute(stmt)
+                cur.execute(sql4)
 
             # Reconciliation
-            sql = "SELECT g.userid, g.id, g.name, g.filetype, m.datecol, m.acctcol, m.amtcol, m.remarkscol, m.stmtdtlcol, m.lblcol FROM \
+            sql5 = "SELECT g.userid, g.id, g.name, g.filetype, m.datecol, m.acctcol, m.amtcol, m.remarkscol, m.stmtdtlcol, m.lblcol FROM \
             {schema}.mappinggroup g LEFT JOIN fin.mappingmatrix m ON g.id = m.gid WHERE g.id = %s".format(
                 schema=Database.SCHEMA_FIN
             )
-            stmt = cur.mogrify(sql, (id, ))
-            cur.execute(stmt)
+            stmt5 = cur.mogrify(sql5, (id, ))
+            cur.execute(stmt5)
             conn.commit()
             rows = cur.fetchall()
+            logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if len(rows) != len(mogstr_matrix): raise psycopg2.OperationalError("Row counts returned don't match with the input. Please reenter the mapping detail.")
             return len(rows)
-    except psycopg2.OperationalError as err:
-        logger.error(err)
-        conn.rollback()
-        raise psycopg2.OperationalError(err)
-    finally:
-        if cur is not None: cur.close()
-        if conn is not None: conn.close()        
-    return None
+        except psycopg2.OperationalError as err:
+            logger.error(err)
+            conn.rollback()
+            raise psycopg2.OperationalError(err)
+        finally:
+            if cur is not None: cur.close()
+            if conn is not None: conn.close()
+        return None
 
 @logger.log_function
 def select_mapping_extra_actions(id):

@@ -18,7 +18,7 @@ def generate_mapping_matrix(matrix, col_def):
     Examples as follow,
     matrix= {'D': ['A', 'L'], 'AC': ['D'], 'AM': ['C', 'K'], 'L': ['E'], 'R': ['B'], 'SD': []}
     col_def= ['D', 'AC', 'AM', 'L', 'R', 'SD']
-    result= [{'DTE': 'J', 'ACC': '', 'AMT': 'C', 'RMK': 'H', 'STD': '', 'LBL': 'B'}, {'DTE': 'J', 'ACC': '', 'AMT': 'F', 'RMK': 'H', 'STD': '', 'LBL': 'B'}]
+    result= [['J', '', 'C', 'H', '', 'B'], ['J', '', 'F', 'H', '', 'B']]
 
     Parameters:
         matrix (dict of list): The matrix of Excel column ID and column type mapping.
@@ -94,11 +94,11 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
     logger.trace('mmatrix=', mmatrix)
     
     # Prepare deletion for mappingrules
-    mdelete = ','.join(i for i in del_iid) if del_iid else None
-    logger.trace('mdelete=', mdelete)
+    # mdelete = ','.join(i for i in del_iid) if del_iid else None
+    # logger.trace('mdelete=', mdelete)
 
     # Save mappingrules, mappingmatrix and mappingrules deletion
-    count = FileImportMappingDAModule.save_mapping_rules_n_matrix(id, mrules, mmatrix, mdelete)
+    count = FileImportMappingDAModule.save_mapping_rules_n_matrix(id, mrules, mmatrix, del_iid)
 
     # Return the saved mapping group and rules 
     result = FileImportMappingDAModule.select_mapping_rules(id)
