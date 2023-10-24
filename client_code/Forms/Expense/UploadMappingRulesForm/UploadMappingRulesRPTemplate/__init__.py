@@ -58,10 +58,10 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         for i in self.get_components():
             if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
                 rules.append(i.tag)
-                i.remove_from_parent()
+                # i.remove_from_parent()
 
         try:
-            result = UploadMappingRulesController.save_mapping_group(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
+            id = UploadMappingRulesController.save_mapping_criteria(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
         except Exception as err:
             logger.error(err)
             msg = f"ERROR occurs when saving mapping group [{name}]."
@@ -69,17 +69,9 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         else:
             self.row_hidden_id.text = id
             self.row_hidden_del_fid.text = ''
-
-            self.item = result
-            if self.item.get('rule', None) is not None:
-                result = UploadMappingRulesController.generate_all_mapping_rules(self.item['rule'])
-                for r in result:
-                    properties_list, rule = r
-                    self.add_mapping_rules_criteria(properties_list, rule)
             msg = f"Mapping group [{self.row_mapping_name.text}] has been saved successfully."
             logger.info(msg)
             Notification(msg).show()
-            self.parent.raise_event('x-reload-rp')
 
     @btnmod.one_click_only
     @logger.log_function

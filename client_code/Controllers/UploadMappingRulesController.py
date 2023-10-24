@@ -214,7 +214,7 @@ def generate_all_mapping_rules(rules):
     return result
 
 @logger.log_function
-def save_mapping_group(id, name, filetype, rules, del_iid):
+def save_mapping_criteria(id, name, filetype, rules, del_iid):
     """
     Convert the fields from the form for saving the mapping rule change in backend.
 
@@ -232,10 +232,10 @@ def save_mapping_group(id, name, filetype, rules, del_iid):
         id = None
     filetype_id, _ = filetype if filetype and isinstance(filetype, list) else [filetype, None]
     del_iid = del_iid[:-1].split(",") if del_iid else None
-    result = anvil.server.call('save_import_mapping', id, name, filetype_id, rules, del_iid)
+    id, _, result = anvil.server.call('proc_save_mapping', id, name, filetype_id, rules, del_iid)
     if not result:
-        raise RuntimeError('Error occurs in save_import_mapping.')
-    return result[0]
+        raise RuntimeError('Error occurs in proc_save_mapping.')
+    return id
 
 @logger.log_function
 def delete_mapping_rule(id):

@@ -52,9 +52,9 @@ def generate_mapping_matrix(matrix, col_def):
     logger.trace("result=", result)
     return result
 
-@anvil.server.callable("save_import_mapping")
+@anvil.server.callable("proc_save_mapping")
 @logger.log_function
-def save_import_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=None):
+def proc_save_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=None):
     """
     Process data for updating import mapping data.
 
@@ -66,6 +66,8 @@ def save_import_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=Non
         del_iid (string): The string of IID concatenated by comma to be deleted
 
     Returns:
+        id (int): The ID of the mapping group.
+        count (int): The mapping matrix row count.
         result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
     """
 
@@ -101,4 +103,4 @@ def save_import_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=Non
 
     # Return the saved mapping group and rules 
     result = FileUploadMappingModule.select_mapping_rules(id)
-    return result
+    return id, count, result
