@@ -66,7 +66,7 @@ def save_import_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=Non
         del_iid (string): The string of IID concatenated by comma to be deleted
 
     Returns:
-        count (int): The row count of mapping matrix.
+        result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
     """
 
     userid = sysmod.get_current_userid()
@@ -98,4 +98,7 @@ def save_import_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=Non
 
     # Save mappingrules, mappingmatrix and mappingrules deletion
     count = FileUploadMappingModule.save_mapping_rules_n_matrix(id, mrules, mmatrix, mdelete)
-    return count
+
+    # Return the saved mapping group and rules 
+    result = FileUploadMappingModule.select_mapping_rules(id)
+    return result

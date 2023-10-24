@@ -61,23 +61,22 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
                 i.remove_from_parent()
 
         try:
-            result = UploadMappingRulesController.save_mapping_rule(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
+            result = UploadMappingRulesController.save_mapping_group(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
         except Exception as err:
             logger.error(err)
-            msg = f"Error occurs when saving mapping group [{name}]."
+            msg = f"ERROR occurs when saving mapping group [{name}]."
         else:
             self.row_hidden_id.text = id
             self.row_hidden_del_fid.text = ''
-            msg = f"Mapping group [{self.row_mapping_name.text}] has been saved successfully."
-            logger.info(msg)
 
-            # self.item = (anvil.server.call('select_mapping_rules', id))[0]
-            self.item = UploadMappingRulesController.save_mapping_rule(id)
-            self.row_dropdown_type.selected_value = [filetype_id, filetype]
+            self.item = result
             if self.item.get('rule', None) is not None:
                 self._generate_all_mapping_rules(self.item['rule'])
-            Notification(msg).show()
+            msg = f"Mapping group [{self.row_mapping_name.text}] has been saved successfully."
+            logger.info(msg)
             self.parent.raise_event('x-reload-rp')
+        finally:
+            Notification(msg).show()
 
     @btnmod.one_click_only
     @logger.log_function

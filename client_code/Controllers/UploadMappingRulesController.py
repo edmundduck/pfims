@@ -213,7 +213,7 @@ def _generate_all_mapping_rules(rules):
     return result
 
 @logger.log_function
-def save_mapping_rule(id, name, filetype, rules, del_iid):
+def save_mapping_group(id, name, filetype, rules, del_iid):
     """
     Convert the fields from the form for saving the mapping rule change in backend.
 

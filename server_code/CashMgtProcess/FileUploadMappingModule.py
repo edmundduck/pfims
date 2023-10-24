@@ -320,7 +320,7 @@ def delete_mapping(id):
                 schema=Database.SCHEMA_FIN
             )
             stmt = cur.mogrify(sql, (id, ))
-            cur.execute()
+            cur.execute(stmt)
             conn.commit()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
             if cur.rowcount <= 0: raise psycopg2.OperationalError("Delete mapping group fail with rowcount <= 0.")
