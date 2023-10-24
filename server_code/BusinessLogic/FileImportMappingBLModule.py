@@ -1,6 +1,6 @@
 import anvil.server
 from datetime import date, datetime
-from ..CashMgtProcess import FileUploadMappingModule
+from ..DataAccess import FileImportMappingDAModule
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..Utils import Helper
@@ -78,10 +78,10 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
     mgroup = (int(userid), id, name, filetype_id, currenttime) if id else (int(userid), name, filetype_id, currenttime)
     logger.trace('mgroup=', mgroup)
     # Save mappinggroup
-    id = FileUploadMappingModule.save_mapping_group(id, mgroup)
+    id = FileImportMappingDAModule.save_mapping_group(id, mgroup)
     
     # Prepare data for mappingrules
-    tbl_def_dict = Helper.to_dict_of_list(FileUploadMappingModule.generate_expense_tbl_def_list())
+    tbl_def_dict = Helper.to_dict_of_list(FileImportMappingDAModule.generate_expense_tbl_def_list())
     mrules = []
     matrixobj = {k: [] for k in tbl_def_dict.get('col_code')}
     for rule in rules:
@@ -98,8 +98,8 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
     logger.trace('mdelete=', mdelete)
 
     # Save mappingrules, mappingmatrix and mappingrules deletion
-    count = FileUploadMappingModule.save_mapping_rules_n_matrix(id, mrules, mmatrix, mdelete)
+    count = FileImportMappingDAModule.save_mapping_rules_n_matrix(id, mrules, mmatrix, mdelete)
 
     # Return the saved mapping group and rules 
-    result = FileUploadMappingModule.select_mapping_rules(id)
+    result = FileImportMappingDAModule.select_mapping_rules(id)
     return id, count, result

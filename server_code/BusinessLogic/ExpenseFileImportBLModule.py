@@ -6,7 +6,8 @@ import pdfplumber
 import re
 from fuzzywuzzy import fuzz
 from io import BytesIO
-from ..CashMgtProcess import AccountModule, FileUploadMappingModule, LabelModule
+from ..CashMgtProcess import AccountModule, LabelModule
+from ..DataAccess import FileImportMappingDAModule
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..SysProcess import LoggingModule
 from ..Utils import Helper
@@ -510,7 +511,7 @@ def update_pdf_mapping(data, mapping, account, labels):
     # Generate mapping matrix which has unique columns each
     # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
     logger.debug(f"nonNanList={nonNanList}, nanList={nanList}")
-    mapping_matrix = FileUploadMappingModule.generate_mapping_matrix(matrix, nonNanList.copy())
+    mapping_matrix = FileImportMappingDAModule.generate_mapping_matrix(matrix, nonNanList.copy())
 
     new_df = None
     for m in mapping_matrix:
@@ -587,8 +588,8 @@ def proc_preprocess_excel_import(rule_id, file, tablist):
         lbl_df (dataframe): Processed dataframe containing all labels.
         acct_df (dataframe): Processed dataframe containing all accounts.
     """
-    matrix = FileUploadMappingModule.select_mapping_matrix(rule_id)
-    extra = FileUploadMappingModule.select_mapping_extra_actions(rule_id)
+    matrix = FileImportMappingDAModule.select_mapping_matrix(rule_id)
+    extra = FileImportMappingDAModule.select_mapping_extra_actions(rule_id)
     data_df, lbls_df, acct_df = import_file(file, tablist, matrix, extra)
     return data_df, lbls_df, acct_df
 
