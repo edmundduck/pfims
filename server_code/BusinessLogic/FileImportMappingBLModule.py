@@ -72,7 +72,10 @@ def save_import_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=Non
     # Prepare data for mappinggroup
     mgroup = (int(userid), id, name, filetype_id, currenttime) if id else (int(userid), name, filetype_id, currenttime)
     logger.trace('mgroup=', mgroup)
+    # Save mappinggroup
+    id = FileUploadMappingModule.save_mapping_group(id, mgroup)
     
+    # Prepare data for mappingrules
     tbl_def_dict = Helper.to_dict_of_list(FileUploadMappingModule.generate_expense_tbl_def_list())
     mrules = []
     matrixobj = {k: [] for k in tbl_def_dict.get('col_code')}
@@ -81,11 +84,15 @@ def save_import_mapping(id, name, filetype_id, rules, mapping_rules, del_iid=Non
         matrixobj[rule[1]] = matrixobj[rule[1]] + [rule[0]] if matrixobj[rule[1]] else [rule[0]]
     logger.trace('mrules=', mrules)
     
+    # Prepare data for mappingmatrix
     mmatrix = generate_mapping_matrix(matrixobj, tbl_def_dict.get('col_code'))
     logger.trace('mmatrix=', mmatrix)
     
+    # Prepare deletion for mappingrules
     # mdelete = "({0})".format(",".join(f"'{i}'" for i in del_iid))
     mdelete = del_iid
     logger.trace('mdelete=', mdelete)
 
-    return FileUploadMappingModule.save_mapping_group_rules(id, mgroup, mrules, mmatrix, mdelete)
+    # Save mappingrules, mappingmatrix and mappingrules deletion
+    FileUploadMappingModule.save_mapping_rules_n_matrix(id, mrules, mmatrix, mdelete)
+    return 
