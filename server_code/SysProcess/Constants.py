@@ -8,15 +8,6 @@ import anvil.server
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-class SettingConfig:
-    """
-    Config for Setting page.
-
-    Database col definition change may be required should the values are adjusted here.
-    """
-    BROKER_ID_PREFIX = 'BR'
-    BROKER_SUFFIX_LEN = 5
-
 class SearchInterval:
     """
     Search interval modes used in Report search panel and config.

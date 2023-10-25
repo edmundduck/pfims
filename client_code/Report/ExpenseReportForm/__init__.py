@@ -20,3 +20,4 @@ class ExpenseReportForm(ExpenseReportFormTemplate):
     def dropdown_displayrow_change(self, **event_args):
         """This method is called when an item is selected"""
         self.data_grid.rows_per_page = self.dropdown_displayrow.selected_value
+        

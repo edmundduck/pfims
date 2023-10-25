@@ -1,69 +1,77 @@
+is_package: true
+container:
+  type: ColumnPanel
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+    spacing_below: small, background: ''}
 components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
-  name: flow_panel_1
   layout_properties: {grid_position: 'EGWQSM,IAUJDY'}
+  name: flow_panel_1
   components:
   - type: Label
     properties: {}
-    name: spacer4
     layout_properties: {}
+    name: spacer4
   - type: Label
     properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: Expense List Report, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: ''}
-    name: report_name
     layout_properties: {}
+    name: report_name
 - type: DataGrid
   properties:
     role: null
     columns:
-    - {id: JNEVXO, title: '', data_key: iid, width: '0'}
-    - {id: DNGCRO, title: Transaction Date, data_key: tran_date, width: '90'}
-    - {id: RMITXR, title: Category, data_key: category, width: '80'}
-    - {id: DMKCOL, title: Source, data_key: src, width: '80'}
-    - {id: JRLRWP, title: Cash Flow, data_key: amt, width: '100'}
-    - {id: WXPMEY, title: Debt, data_key: debt, width: '100'}
-    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70'}
-    - {id: NMAPTI, title: Remarks, data_key: remarks, expand: false, width: '200'}
+    - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:4903'}
+    - {id: DNGCRO, title: Date, data_key: DTE, width: '80', $$hashKey: 'object:4904'}
+    - {id: DMKCOL, title: Account, data_key: ACC, width: '150', $$hashKey: 'object:4906'}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: '80', $$hashKey: 'object:4907'}
+    - {id: NMAPTI, title: Remarks, data_key: RMK, expand: true, width: '150', $$hashKey: 'object:4910'}
+    - {id: UNZWYW, title: Statement Detail, data_key: STD, $$hashKey: 'object:4958',
+      width: '150', expand: true}
+    - {id: RMITXR, title: Labels, data_key: LBL, width: '100', $$hashKey: 'object:4905',
+      expand: true}
+    - {id: WXPMEY, title: Debt, data_key: debt, width: '70', $$hashKey: 'object:4908'}
+    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70', $$hashKey: 'object:4909'}
     auto_header: true
     tooltip: ''
     border: ''
     foreground: ''
-    rows_per_page: 20
+    rows_per_page: 50
     visible: true
     wrap_on: never
     show_page_controls: true
     spacing_above: small
     spacing_below: small
     background: ''
-  name: data_grid
   layout_properties:
     col_widths: {}
     grid_position: ZLVMXC,LTILAR
+  name: data_grid
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: Report.ExpenseReportForm.ExpenseReportRPTemplate,
       background: ''}
-    name: rpt_panel
     layout_properties: {}
-    data_bindings: []
+    name: rpt_panel
   - type: FlowPanel
     properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
       foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
-    name: flow_panel_4
     layout_properties: {slot: footer}
+    name: flow_panel_4
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Rows per Page, font_size: null, font: '', spacing_above: small,
+        visible: true, text: Rows per Page, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
-      name: label_4
       layout_properties: {}
+      name: label_4
     - type: DropDown
       properties:
         role: null
@@ -75,7 +83,7 @@ components:
         foreground: ''
         items: ['20', '50', '100']
         visible: true
-        font_size: null
+        font_size: 12
         font: ''
         spacing_above: small
         spacing_below: small
@@ -84,13 +92,6 @@ components:
         bold: false
         underline: false
         include_placeholder: false
-      name: dropdown_displayrow
       layout_properties: {}
       event_bindings: {change: dropdown_displayrow_change}
-  data_bindings: []
-container:
-  type: ColumnPanel
-  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
-    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
-    spacing_below: small, background: ''}
-is_package: true
+      name: dropdown_displayrow

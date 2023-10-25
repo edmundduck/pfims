@@ -2,9 +2,7 @@ from ._anvil_designer import ExpenseReportRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
+from ...Controllers import ExpenseReportController
 from ...Utils import Constants as const
 
 # About amount formatting in design page's data binding field
@@ -16,16 +14,29 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        if self.item['pnl'] < 0:
-            self.foreground = const.ColorSchemes.AMT_NEG
-        else:
-            self.foreground = const.ColorSchemes.AMT_POS
+        from ...Entities.ExpenseTransaction import ExpenseTransaction
+        
+        self.foreground = const.ColorSchemes.AMT_EXPENSE if self.item[ExpenseTransaction.field_amount()] < 0 else const.ColorSchemes.AMT_POS
 
-    def row_link_symbol_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        # TODO - To be implemented with hash routing in the future
-        #newform = SettingForm(symname=self.row_link_symbol.text, 
-        #                    symid=self.row_hidden_iid.text, 
-        #                    symtemplid=self.row_hidden_templ_id.text)
-        #open_form(newform)
-        pass
+        # Logic to generate label buttons
+        if self.item[ExpenseTransaction.field_labels()] is not None:
+            for j in self.item[ExpenseTransaction.field_labels()].split(","):
+                if j not in (None, ''):
+                    lbl_id, lbl_name = ExpenseReportController.get_label_dropdown_selected_item(int(j))
+                    b = Button(
+                        text=lbl_name,
+                        # icon=const.Icons.REMOVE,
+                        foreground=const.ColorSchemes.BUTTON_FG,
+                        background=const.ColorSchemes.BUTTON_BG,
+                        font_size=12,
+                        align="left",
+                        spacing_above="small",
+                        spacing_below="small",
+                        tag=lbl_id,
+                        enabled=False
+                    )
+                    self.row_panel_labels.add_component(b, False, name=lbl_id)
+
+        # Logic to generate account dropdowns
+        self.row_dropdown_acct.items = ExpenseReportController.generate_accounts_dropdown()
+        self.row_dropdown_acct.selected_value = ExpenseReportController.get_account_dropdown_selected_item(self.row_dropdown_acct.selected_value)

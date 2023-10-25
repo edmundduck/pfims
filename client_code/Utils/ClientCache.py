@@ -29,12 +29,15 @@ class ClientCache:
         """
         self.name = funcname
         if ClientCache.cache_dict.get(funcname, None) is None:
-            try:
-                ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
-                logger.debug(f"Cache {self.name} (function) initiated.")
-            except (anvil.server.NoServerFunctionError) as err:
+            if data is not None:
                 ClientCache.cache_dict[funcname] = data
-                logger.debug(f"Cache {self.name} (manual) initiated.")
+                logger.debug(f"Cache {self.name} initiated manually.")
+            else:
+                try:
+                    ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
+                    logger.debug(f"Cache {self.name} initiated by calling function.")
+                except (anvil.server.NoServerFunctionError) as err:
+                    logger.warning(f"{funcname} cannot be found. Client cache cannot be initiated.")
 
     def __str__(self):
         return "Cache {0} name:{1} includes -\n{2}".format(
@@ -83,7 +86,8 @@ class ClientCache:
         """
         Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
         """
-        del ClientCache.cache_dict[self.name]
+        if ClientCache.cache_dict.get(self.name, None):
+            del ClientCache.cache_dict[self.name]
         logger.debug(f"Cache {self.name} cleared.")
 
     def get_complete_key(self, partial_key):
@@ -95,7 +99,7 @@ class ClientCache:
         """
         if ClientCache.cache_dict.get(self.name, None) is not None:
             cache = ClientCache.cache_dict.get(self.name, None)
-            if any(isinstance(i, list) for i in cache):
+            if partial_key and any(isinstance(i, (list, tuple)) for i in cache):
                 return next((item[1] for item in cache if partial_key in item[1]), partial_key)
             else:
                 return partial_key

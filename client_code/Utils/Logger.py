@@ -1,8 +1,4 @@
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import datetime
 import time
 
@@ -37,14 +33,9 @@ class ClientLogger:
         self.set_level()
 
     def set_level(self):
-        # from .Caching import get_client_loglevel, set_client_loglevel, client_loglevel_reset
-        # TODO implement caching (have to resolve the circular import issue first ...)
-        # self.logging_level = get_client_loglevel()
-        # if self.logging_level is None:
-        #     self.debug(f"Client logging_level is None ...")
-            userlevel = anvil.server.call('set_user_logging_level')
-            self.logging_level = userlevel if userlevel is not None else self.logging_level
-            # set_client_loglevel(self.logging_level)
+        from .. import Global
+        userlevel = Global.settings.get_logging_level()
+        self.logging_level = userlevel if userlevel is not None else self.logging_level
 
     def log_function(self, func):
         def wrapper(*args, **kwargs):
@@ -71,10 +62,10 @@ class ClientLogger:
             print(output)
 
     def trace(self, msg=None, *args, **kwargs):
-        self._log(TRACE, msg, *args, **kwargs)
+        self._log(TRACE, msg + "\n****************", *args, **kwargs)
 
     def debug(self, msg=None, *args, **kwargs):
-        self._log(DEBUG, msg, *args, **kwargs)
+        self._log(DEBUG, msg + "\n********", *args, **kwargs)
 
     def info(self, msg=None, *args, **kwargs):
         self._log(INFO, msg, *args, **kwargs)
