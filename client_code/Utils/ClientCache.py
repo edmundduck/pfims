@@ -66,7 +66,7 @@ class ClientCache:
         """
         if ClientCache.cache_dict.get(self.name, None) is None:
             try:
-                ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
+                 ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
                 logger.debug(f"Cache {self.name} initiated from get_cache.")
             except (anvil.server.NoServerFunctionError) as err:
                 logger.debug(f"Cache {self.name} cannot be initiated as function. No data retrieved.")
