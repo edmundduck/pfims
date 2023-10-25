@@ -1,5 +1,5 @@
 import anvil.server
-from date import datetime, timedelta
+from datetime import datetime, timedelta
 from ..Utils.Constants import CacheExpiry
 
 # This is a module.
@@ -30,10 +30,10 @@ class Node:
         return True if datetime.now() > self.expirytime else False
 
     def set_next(self, data):
-        self.next = Node(data)
+        self.next = data
 
     def set_prev(self, data):
-        self.prev = Node(data)
+        self.prev = data
 
     def set_key(self, data):
         self.key = data
@@ -47,8 +47,19 @@ class DoubleLinkedList:
         self.head = None
         self.tail = None
 
-    def add_to_head(self, data):
-        new_node = Node(data)
+    def __str__(self):
+        whole_list = []
+        current_node = self.head
+        while current_node:
+            whole_list.append(current_node.get_key())
+            current_node = current_node.get_next()
+        return "Cache {0} structure -\n{1}".format(
+            self.__class__,
+            str(whole_list)
+        )
+
+    def add_to_head(self, key, data):
+        new_node = Node(key, data)
         if self.head:
             new_node.set_next(self.head)
             self.head.set_prev(new_node)
@@ -58,8 +69,8 @@ class DoubleLinkedList:
             self.tail = new_node
             new_node.set_prev(None)
 
-    def add_to_tail(self, data):
-        new_node = Node(data)
+    def add_to_tail(self, key, data):
+        new_node = Node(key, data)
         if self.tail:
             new_node.set_prev(self.tail)
             self.tail.set_next(new_node)
@@ -88,7 +99,7 @@ class DoubleLinkedList:
         return unwanted_node.get_value()
 
     def pop(self, data):
-        node_to_search = this.head
+        node_to_search = self.head
         while node_to_search:
             if node_to_search.get_key() == data:
                 if not node_to_search.get_prev():

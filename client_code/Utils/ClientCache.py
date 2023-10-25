@@ -1,9 +1,6 @@
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 from .Logger import ClientLogger
+from ..Entities.CacheListNode import DoubleLinkedList
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -15,8 +12,32 @@ class ClientCache:
 
     # Class variable to store cache
     cache_dict = {}
+    cache_list = DoubleLinkedList()
 
-    def __init__(self, funcname, data=None):
+    # def __init__(self, funcname, data=None):
+    #     """
+    #     Initialize the cache by either running as a server function or creating data manually.
+
+    #     If the function name which is a parameter is not a valid server function name, NoServerFunctionError will throw.
+    #     Then the cache will use the invalid 'function name' as the key of cache and load data which is an optional parameter into it.
+
+    #     Parameters:
+    #         funcname (string): A server function name or a string as cache key (invalid function name).
+    #         data (any Object): Data to load manually if funcname is an invalid function name.
+    #     """
+    #     self.name = funcname
+    #     if ClientCache.cache_dict.get(funcname, None) is None:
+    #         if data is not None:
+    #             ClientCache.cache_dict[funcname] = data
+    #             logger.debug(f"Cache {self.name} initiated manually.")
+    #         else:
+    #             try:
+    #                 ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
+    #                 logger.debug(f"Cache {self.name} initiated by calling function.")
+    #             except (anvil.server.NoServerFunctionError) as err:
+    #                 logger.warning(f"{funcname} cannot be found. Client cache cannot be initiated.")
+
+    def __init__(self, funcname):
         """
         Initialize the cache by either running as a server function or creating data manually.
 
@@ -28,16 +49,6 @@ class ClientCache:
             data (any Object): Data to load manually if funcname is an invalid function name.
         """
         self.name = funcname
-        if ClientCache.cache_dict.get(funcname, None) is None:
-            if data is not None:
-                ClientCache.cache_dict[funcname] = data
-                logger.debug(f"Cache {self.name} initiated manually.")
-            else:
-                try:
-                    ClientCache.cache_dict[funcname] = anvil.server.call(funcname)
-                    logger.debug(f"Cache {self.name} initiated by calling function.")
-                except (anvil.server.NoServerFunctionError) as err:
-                    logger.warning(f"{funcname} cannot be found. Client cache cannot be initiated.")
 
     def __str__(self):
         return "Cache {0} name:{1} includes -\n{2}".format(
@@ -57,6 +68,21 @@ class ClientCache:
             return True
         return False
     
+    # def get_cache(self):
+    #     """
+    #     Generic get cache data.
+    
+    #     Returns:
+    #         ClientCache.cache_dict.get (list): Cache in list given the provided key.
+    #     """
+    #     if ClientCache.cache_dict.get(self.name, None) is None:
+    #         try:
+    #             ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
+    #             logger.debug(f"Cache {self.name} initiated from get_cache.")
+    #         except (anvil.server.NoServerFunctionError) as err:
+    #             logger.debug(f"Cache {self.name} cannot be initiated as function. No data retrieved.")
+    #     return ClientCache.cache_dict.get(self.name, None)
+    
     def get_cache(self):
         """
         Generic get cache data.
@@ -64,13 +90,28 @@ class ClientCache:
         Returns:
             ClientCache.cache_dict.get (list): Cache in list given the provided key.
         """
-        if ClientCache.cache_dict.get(self.name, None) is None:
-            try:
-                ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
-                logger.debug(f"Cache {self.name} initiated from get_cache.")
-            except (anvil.server.NoServerFunctionError) as err:
-                logger.debug(f"Cache {self.name} cannot be initiated as function. No data retrieved.")
-        return ClientCache.cache_dict.get(self.name, None)
+        data = ClientCache.cache_list.pop(self.name)
+        if data:
+            ClientCache.cache_list.add_to_head(data)
+        else:
+            self.set_cache(anvil.server.call(self.name))
+        # if ClientCache.cache_dict.get(self.name, None) is None:
+        #     try:
+        #         ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
+        #         logger.debug(f"Cache {self.name} initiated from get_cache.")
+        #     except (anvil.server.NoServerFunctionError) as err:
+        #         logger.debug(f"Cache {self.name} cannot be initiated as function. No data retrieved.")
+        return data
+    
+    # def set_cache(self, data):
+    #     """
+    #     Generic set cache data.
+    
+    #     Parameters:
+    #         data (any Object): Data to load manually.
+    #     """
+    #     ClientCache.cache_dict[self.name] = data
+    #     logger.debug(f"Cache {self.name} set manually from set_cache.")
     
     def set_cache(self, data):
         """
@@ -79,7 +120,8 @@ class ClientCache:
         Parameters:
             data (any Object): Data to load manually.
         """
-        ClientCache.cache_dict[self.name] = data
+        ClientCache.cache_list.add_to_head(self.name, data)
+        print(str(ClientCache.cache_list))
         logger.debug(f"Cache {self.name} set manually from set_cache.")
     
     def clear_cache(self):
