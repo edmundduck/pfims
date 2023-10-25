@@ -2,6 +2,12 @@ import anvil.server
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+class CacheExpiry:
+    """
+    Expiry for cache in minutes
+    """
+    MINUTES = 20
+
 class CacheKey:
     """
     Keys for dropdowns
@@ -82,10 +88,10 @@ class UploadMappingRulesInput:
     """
     Dictionsary keys of upload mapping rules.
     """
-    EXCEL_COL= 'excelcol',
-    DATA_COL = 'datacol',
-    ACTION = 'action',
-    ACCOUNT = 'acct',
+    EXCEL_COL= 'excelcol'
+    DATA_COL = 'datacol'
+    ACTION = 'action'
+    ACCOUNT = 'acct'
     LABEL = 'lbl'
 
 class SearchInterval:

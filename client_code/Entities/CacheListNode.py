@@ -1,13 +1,18 @@
 import anvil.server
+from date import datetime, timedelta
+from ..Utils.Constants import CacheExpiry
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 class Node:
-    def __init__(self, data):
+    def __init__(self, key, data, minutes=None):
+        self.key = key
         self.data = data
         self.prev = None
         self.next = None
+        self.duration = minutes if minutes else CacheExpiry.MINUTES
+        self.expirytime = datetime.now() + timedelta(minutes=self.duration)
 
     def get_next(self):
         return self.next
@@ -15,8 +20,14 @@ class Node:
     def get_prev(self):
         return self.prev
 
+    def get_key(self):
+        return self.key
+    
     def get_value(self):
         return self.data
+
+    def is_expired(self):
+        return True if datetime.now() > self.expirytime else False
 
     def set_next(self, data):
         self.next = Node(data)
@@ -24,8 +35,12 @@ class Node:
     def set_prev(self, data):
         self.prev = Node(data)
 
+    def set_key(self, data):
+        self.key = data
+
     def set_value(self, data):
         self.data = data
+        self.expirytime = datetime.now() + timedelta(minutes=self.duration)
 
 class DoubleLinkedList:
     def __init__(self):
@@ -75,7 +90,7 @@ class DoubleLinkedList:
     def pop(self, data):
         node_to_search = this.head
         while node_to_search:
-            if node_to_search.get_value() == data:
+            if node_to_search.get_key() == data:
                 if not node_to_search.get_prev():
                     return self.remove_from_head()
                 elif not node_to_search.get_next():
