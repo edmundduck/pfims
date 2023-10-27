@@ -5,11 +5,8 @@ from ..Utils.Constants import CacheKey
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-def generator_test(data):
-    return list((r['tab_name'] + ' (' + str(r['tab_id']) + ')', [r['tab_id'], r['tab_name']]) for r in data)
-
 DROPDOWN_MAPPPING = {
-    CacheKey.DD_EXPENSE_TAB: ['generate_expense_groups_list', generator_test]
+    CacheKey.DD_EXPENSE_TAB: ['generate_expense_groups_list', lambda d: list((r['tab_name'] + ' (' + str(r['tab_id']) + ')', [r['tab_id'], r['tab_name']]) for r in d)]
 }
     
 class DropdownCache(ClientCache):
