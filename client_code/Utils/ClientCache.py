@@ -182,6 +182,9 @@ class ClientCache:
         return partial_key
 
 class ClientDropdownCache(ClientCache):
+    def __init__(self, funcname):
+        super().__init__(funcname)
+
     def get_cache(self):
         result = None
         mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
@@ -193,3 +196,15 @@ class ClientDropdownCache(ClientCache):
                 cache = super().get_cache()
                 result = transform(cache)
         return result
+
+    def get_complete_key(self, partial_key):
+        """
+        Return a complete key based on a partial key which is a part of the key in a list.
+    
+        Returns:
+            string: A complete key, otherwise the original partial key if not found.
+        """
+        if self.is_empty():
+            self.get_cache()
+        cache = super().get_complete_key(partial_key)
+        return cache
