@@ -10,6 +10,10 @@ class CacheExpiry:
 
 class CacheKey:
     """
+    POC
+    """
+    NEWDD_EXPENSE_TAB = ""
+    """
     Keys for dropdowns
     """
     DD_ACCOUNT = 'generate_accounts_dropdown'
