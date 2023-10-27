@@ -6,12 +6,21 @@ import anvil.users
 
 def visible_test_env_label():
     """
-    Return current environment name (testing or None for production).
+    Make the testing environment label visible or invisible.
 
     Returns:
         anvil.app.environment.name (string): Anvil testing environment name, None for production.
     """
     return anvil.app.environment.name if anvil.app.environment.name in 'Dev' else None
+
+def visible_poc_link():
+    """
+    Make the POC (proof of concept) link visible or invisible.
+
+    Returns:
+        vis (boolean): True for testing environment, False otherwise.
+    """
+    return True if anvil.app.environment.name in 'Dev' else False
 
 def switch_role(role):
     """

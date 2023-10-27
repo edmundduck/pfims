@@ -8,6 +8,7 @@ from ..Entities.CacheListNode import DoubleLinkedList
 # The logger cannot be placed inside __init__, otherwise performance will be dragged down dramatically.
 logger = ClientLogger()
 
+@anvil.server.portable_class
 class ClientCache:
 
     # Class variable to store cache
