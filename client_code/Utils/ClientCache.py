@@ -92,9 +92,10 @@ class ClientCache:
         """
         data = ClientCache.cache_list.pop(self.name)
         if data:
-            ClientCache.cache_list.add_to_head(data)
+            ClientCache.cache_list.add_to_head(self.name, data)
+            logger.debug(f"Data {self.name} retrieved from cache.")
         else:
-            self.set_cache(anvil.server.call(self.name))
+            data = self.set_cache(anvil.server.call(self.name))
         # if ClientCache.cache_dict.get(self.name, None) is None:
         #     try:
         #         ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
@@ -123,6 +124,7 @@ class ClientCache:
         ClientCache.cache_list.add_to_head(self.name, data)
         print(str(ClientCache.cache_list))
         logger.debug(f"Cache {self.name} set manually from set_cache.")
+        return data
     
     def clear_cache(self):
         """

@@ -15,6 +15,11 @@ class form_poc4(form_poc4Template):
 
         # Any code you write here will run before the form opens.
 
-    def button_1_click(self, **event_args):
+    def button_generate_click(self, **event_args):
         """This method is called when the button is clicked"""
-        self.drop_down_1.items = cache.get_cache()
+        self.drop_down_expense_tab.items = list((r['tab_name'] + " (" + str(r['tab_id']) + ")", [r['tab_id'], r['tab_name']]) for r in cache.get_cache())
+
+    def button_clear_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.drop_down_expense_tab.items = []
+
