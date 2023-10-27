@@ -1,4 +1,5 @@
 import anvil.server
+from .Constants import CacheDropdown
 from .Logger import ClientLogger
 from ..Entities.CacheListNode import DoubleLinkedList
 
@@ -58,6 +59,17 @@ class ClientCache:
             ClientCache.cache_dict.get(self.name, None)
         )
         
+    # def is_empty(self):
+    #     """
+    #     Check if the cache is empty.
+    
+    #     Returns:
+    #         boolean: Return True if the cache is empty.
+    #     """
+    #     if self.name is None or ClientCache.cache_dict.get(self.name, None) is None:
+    #         return True
+    #     return False
+
     def is_empty(self):
         """
         Check if the cache is empty.
@@ -65,7 +77,7 @@ class ClientCache:
         Returns:
             boolean: Return True if the cache is empty.
         """
-        if self.name is None or ClientCache.cache_dict.get(self.name, None) is None:
+        if self.name is None or ClientCache.cache_list.loc(self.name) < 0:
             return True
         return False
     
@@ -95,8 +107,6 @@ class ClientCache:
         if data:
             ClientCache.cache_list.add_to_head(self.name, data)
             logger.debug(f"Data {self.name} retrieved from cache.")
-        else:
-            data = self.set_cache(anvil.server.call(self.name))
         # if ClientCache.cache_dict.get(self.name, None) is None:
         #     try:
         #         ClientCache.cache_dict[self.name] = anvil.server.call(self.name)
@@ -123,17 +133,38 @@ class ClientCache:
             data (any Object): Data to load manually.
         """
         ClientCache.cache_list.add_to_head(self.name, data)
-        print(str(ClientCache.cache_list))
         logger.debug(f"Cache {self.name} set manually from set_cache.")
         return data
     
+    # def clear_cache(self):
+    #     """
+    #     Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
+    #     """
+    #     if ClientCache.cache_dict.get(self.name, None):
+    #         del ClientCache.cache_dict[self.name]
+    #     logger.debug(f"Cache {self.name} cleared.")
+
     def clear_cache(self):
         """
         Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
         """
-        if ClientCache.cache_dict.get(self.name, None):
-            del ClientCache.cache_dict[self.name]
         logger.debug(f"Cache {self.name} cleared.")
+        return ClientCache.cache_list.pop(self.name)
+
+    # def get_complete_key(self, partial_key):
+    #     """
+    #     Return a complete key based on a partial key which is a part of the key in a list.
+    
+    #     Returns:
+    #         string: A complete key, otherwise the original partial key if not found.
+    #     """
+    #     if ClientCache.cache_dict.get(self.name, None) is not None:
+    #         cache = ClientCache.cache_dict.get(self.name, None)
+    #         if partial_key and any(isinstance(i, (list, tuple)) for i in cache):
+    #             return next((item[1] for item in cache if partial_key in item[1]), partial_key)
+    #         else:
+    #             return partial_key
+    #     return partial_key
 
     def get_complete_key(self, partial_key):
         """
@@ -142,10 +173,23 @@ class ClientCache:
         Returns:
             string: A complete key, otherwise the original partial key if not found.
         """
-        if ClientCache.cache_dict.get(self.name, None) is not None:
-            cache = ClientCache.cache_dict.get(self.name, None)
+        cache = ClientCache.cache_list.pop(self.name)
+        if cache is not None:
             if partial_key and any(isinstance(i, (list, tuple)) for i in cache):
                 return next((item[1] for item in cache if partial_key in item[1]), partial_key)
             else:
                 return partial_key
-        return partial_key        
+        return partial_key
+
+class ClientDropdownCache(ClientCache):
+    def get_cache(self):
+        result = None
+        mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
+        if mapping:
+            func, transform = mapping
+            if self.is_empty():
+                result = transform(self.set_cache(anvil.server.call(func)))
+            else:
+                cache = super().get_cache()
+                result = transform(cache)
+        return result

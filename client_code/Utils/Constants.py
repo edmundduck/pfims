@@ -10,10 +10,6 @@ class CacheExpiry:
 
 class CacheKey:
     """
-    POC
-    """
-    NEWDD_EXPENSE_TAB = ""
-    """
     Keys for dropdowns
     """
     DD_ACCOUNT = 'generate_accounts_dropdown'
@@ -48,6 +44,23 @@ class CacheKey:
     """
     STOCK_INPUT_DEL_IID = 'stock_input_delete_row_iid'
     EXP_INPUT_DEL_IID = 'exp_input_delete_row_iid'
+
+class CacheDropdown:
+    DROPDOWN_MAPPPING = {
+        CacheKey.DD_ACCOUNT: ['generate_accounts_list', lambda d: list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name']]) for r in d)],
+        CacheKey.DD_BROKER: ['generate_brokers_simplified_list', lambda d: list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in d)],
+        CacheKey.DD_CURRENCY: ['generate_currency_list', lambda : list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in d)],
+        CacheKey.DD_EXPENSE_TAB: ['generate_expense_groups_list', lambda d: list((r['tab_name'] + ' (' + str(r['tab_id']) + ')', [r['tab_id'], r['tab_name']]) for r in d)],
+        CacheKey.DD_EXPENSE_TBL_DEF: ['generate_expense_tbl_def_list', lambda d: list((r['col_name'], [r['col_code'], r['col_name']]) for r in d)],
+        CacheKey.DD_IMPORT_EXTRA_ACTION: ['generate_upload_action_list', lambda d: list((r['action'], [r['id'], r['action']]) for r in d)],
+        CacheKey.DD_IMPORT_FILE_TYPE: ['generate_mapping_type_list', lambda d: list((r['name'], [r['id'], r['name']]) for r in d)],
+        CacheKey.DD_IMPORT_MAPPING_GRP: ['generate_mapping_list', lambda d: list((r['name'], r['id']) for r in d)],
+        CacheKey.DD_LABEL: ['generate_labels_list', lambda d: list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in d)],
+        CacheKey.DD_LABEL_MAPPING_ACTION: ['generate_labels_mapping_action_list', lambda d: list((r['action'], [r['id'], r['action']]) for r in d)],
+        CacheKey.DD_SEARCH_INTERVAL: ['generate_search_interval_list', lambda d: list((r['name'], r['id']) for r in d)], 
+        CacheKey.DD_STOCK_JRN_GRP: ['generate_drafting_stock_journal_groups_list', lambda d: list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in d)],
+        CacheKey.DD_SUBMITTED_JRN_GRP: ['generate_submitted_journal_groups_list', lambda d: list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in d)]
+    }
 
 class SettingConfig:
     """

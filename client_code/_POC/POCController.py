@@ -14,8 +14,12 @@ class DropdownCache(ClientCache):
         result = None
         mapping = DROPDOWN_MAPPPING.get(self.name, None)
         if mapping:
-            transform = mapping[1]
-            result = transform(super().get_cache())
+            func, transform = mapping
+            if self.is_empty():
+                result = transform(self.set_cache(anvil.server.call(func)))
+            else:
+                cache = super().get_cache()
+                result = transform(cache)
         return result
 
 def generate_dropdown():
