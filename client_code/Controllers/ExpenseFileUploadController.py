@@ -14,12 +14,8 @@ def generate_file_mapping_type_dropdown():
     Returns:
         cache.get_cache (list): File mapping type dropdown formed by import file type DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_IMPORT_FILE_TYPE, None)
-    if cache.is_empty():
-        rows = anvil.server.call('generate_mapping_type_list')
-        new_dropdown = list((r['name'], [r['id'], r['name']]) for r in rows)
-        cache.set_cache(new_dropdown)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_IMPORT_FILE_TYPE)
     return cache.get_cache()
 
 @logger.log_function
@@ -33,9 +29,10 @@ def generate_file_mapping_group_dropdown(selected_filetype):
     Returns:
         cache.get_cache (list): File mapping group dropdown formed by mapping group DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_IMPORT_MAPPING_GRP, None)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_IMPORT_MAPPING_GRP)
     if cache.is_empty():
+        # TODO - Fix the design of this generate dropdown function which requires parameter ...
         rows = anvil.server.call('generate_mapping_list', selected_filetype)
         new_dropdown = list((r['name'], r['id']) for r in rows)
         cache.set_cache(new_dropdown)
@@ -51,10 +48,8 @@ def get_file_mapping_type_dropdown_selected_item(filetype):
     Returns:
         selected_item (list): Complete key of the selected item in import file type dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_IMPORT_FILE_TYPE, None)
-    if cache.is_empty():
-        generate_file_mapping_type_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_IMPORT_FILE_TYPE)
     selected_item = cache.get_complete_key(filetype)
     return selected_item
 

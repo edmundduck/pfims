@@ -42,7 +42,6 @@ class ClientCache:
         Returns:
             boolean: Return True if the cache is empty.
         """
-        print("IS_EMPTY\n", self)
         if self.name is None or ClientCache.cache_list.loc(self.name) < 0:
             return True
         return False
@@ -86,7 +85,6 @@ class ClientDropdownCache(ClientCache):
         super().__init__(funcname)
 
     def get_cache(self):
-        print("GET_CACHE\n", self)
         result = None
         mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
         if mapping:
@@ -105,13 +103,7 @@ class ClientDropdownCache(ClientCache):
         Returns:
             string: A complete key, otherwise the original partial key if not found.
         """
-        cache = ClientCache.cache_list.pop(self.name)
-        mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
-        if mapping:
-            _, transform = mapping
-            data = transform(cache)
-        else:
-            data = cache
+        data = self.get_cache()
         if data is not None:
             if partial_key and any(isinstance(i, (list, tuple)) for i in data):
                 return next((item[1] for item in data if partial_key in item[1]), partial_key)

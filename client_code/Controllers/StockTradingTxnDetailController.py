@@ -21,27 +21,25 @@ def init_cache():
     cache2.set_cache(data_to_cache[1])
 
 @logger.log_function
-def generate_brokers_dropdown(data=None, reload=False):
+def generate_brokers_dropdown(reload=False):
     """
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
     """
     from . import UserSettingController
-    return UserSettingController.generate_brokers_dropdown(data, reload)
+    return UserSettingController.generate_brokers_dropdown(reload)
 
 @logger.log_function
-def generate_stock_journal_groups_dropdown(data=None, reload=False):
+def generate_stock_journal_groups_dropdown(reload=False):
     """
     Access stock journal groups dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
