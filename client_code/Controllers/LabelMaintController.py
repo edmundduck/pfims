@@ -89,6 +89,8 @@ def get_label_status(label_dropdown_selected, reload=False):
         lbl.get_status (date): Selected label's status.
     """
     lbl = __get_label__(label_dropdown_selected, reload)
+    if lbl.get_status() is None:
+        lbl = lbl.set_status(True)
     return lbl.get_status()
 
 def get_label_keywords(label_dropdown_selected, reload=False):

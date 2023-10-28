@@ -155,6 +155,8 @@ def get_account_status(account_dropdown_selected, reload=False):
         acct.get_status (date): Selected account's status.
     """
     acct = __get_account__(account_dropdown_selected, reload)
+    if acct.get_status() is None:
+        acct = acct.set_status(True)
     return acct.get_status()
 
 def enable_account_update_button(account_selection):

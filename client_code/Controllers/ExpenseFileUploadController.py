@@ -27,16 +27,11 @@ def generate_file_mapping_group_dropdown(selected_filetype):
         selected_filetype (string): The selected file type ID.
 
     Returns:
-        cache.get_cache (list): File mapping group dropdown formed by mapping group DB table data.
+        new_dropdown (list): File mapping group dropdown formed by mapping group DB table data.
     """
-    from ..Utils.ClientCache import ClientDropdownCache
-    cache = ClientDropdownCache(CacheKey.DD_IMPORT_MAPPING_GRP)
-    if cache.is_empty():
-        # TODO - Fix the design of this generate dropdown function which requires parameter ...
-        rows = anvil.server.call('generate_mapping_list', selected_filetype)
-        new_dropdown = list((r['name'], r['id']) for r in rows)
-        cache.set_cache(new_dropdown)
-    return cache.get_cache()
+    rows = anvil.server.call('generate_mapping_list', selected_filetype)
+    new_dropdown = list((r['name'], r['id']) for r in rows)
+    return new_dropdown
 
 def get_file_mapping_type_dropdown_selected_item(filetype):
     """

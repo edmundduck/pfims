@@ -19,7 +19,7 @@ class CacheKey:
     DD_EXPENSE_TBL_DEF = 'generate_expense_table_definition_dropdown'
     DD_IMPORT_EXTRA_ACTION = 'generate_upload_action_dropdown'
     DD_IMPORT_FILE_TYPE = 'generate_mapping_type_dropdown'
-    DD_IMPORT_MAPPING_GRP = 'generate_mapping_dropdown'
+    # DD_IMPORT_MAPPING_GRP = 'generate_mapping_dropdown'
     DD_LABEL = 'generate_labels_dropdown'
     DD_LABEL_MAPPING_ACTION = 'generate_labels_mapping_action_dropdown'
     DD_SEARCH_INTERVAL = 'search_interval_dropdown'
@@ -54,7 +54,7 @@ class CacheDropdown:
         CacheKey.DD_EXPENSE_TBL_DEF: ['generate_expense_tbl_def_list', lambda d: list((r['col_name'], [r['col_code'], r['col_name']]) for r in d)],
         CacheKey.DD_IMPORT_EXTRA_ACTION: ['generate_upload_action_list', lambda d: list((r['action'], [r['id'], r['action']]) for r in d)],
         CacheKey.DD_IMPORT_FILE_TYPE: ['generate_mapping_type_list', lambda d: list((r['name'], [r['id'], r['name']]) for r in d)],
-        CacheKey.DD_IMPORT_MAPPING_GRP: ['generate_mapping_list', lambda d: list((r['name'], r['id']) for r in d)],
+        # CacheKey.DD_IMPORT_MAPPING_GRP: ['generate_mapping_list', lambda d: list((r['name'], r['id']) for r in d)],
         CacheKey.DD_LABEL: ['generate_labels_list', lambda d: list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in d)],
         CacheKey.DD_LABEL_MAPPING_ACTION: ['generate_labels_mapping_action_list', lambda d: list((r['action'], [r['id'], r['action']]) for r in d)],
         CacheKey.DD_SEARCH_INTERVAL: ['generate_search_interval_list', lambda d: list((r['name'], r['id']) for r in d)], 
