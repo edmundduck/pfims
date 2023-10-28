@@ -12,6 +12,7 @@ class UploadMappingRulesForm(UploadMappingRulesFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
+        UploadMappingRulesController.init_cache()
         self.repeating_panel_1.add_event_handler('x-reload-rp', self.reload_rp_data)
         self.repeating_panel_1.items = UploadMappingRulesController.populate_repeating_panel_items()
 

@@ -7,6 +7,21 @@ from ..Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
+@logger.log_function
+def init_cache():
+    """
+    Call one server function to preload all caches required by the form.
+    """
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache1 = ClientDropdownCache(CacheKey.DD_EXPENSE_TBL_DEF)
+    cache2 = ClientDropdownCache(CacheKey.DD_IMPORT_EXTRA_ACTION)
+    print("1\n", str(cache1))
+    if any((cache1.is_empty(), cache2.is_empty())):
+        data_to_cache = anvil.server.call('init_cache_upload_mapping')
+        cache1.set_cache(data_to_cache[0])
+        cache2.set_cache(data_to_cache[1])
+    print("2\n", str(cache2))
+
 def generate_accounts_dropdown(reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.

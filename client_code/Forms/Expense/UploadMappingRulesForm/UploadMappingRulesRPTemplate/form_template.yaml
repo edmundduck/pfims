@@ -7,7 +7,7 @@ components:
 - type: FlowPanel
   properties: {}
   name: flow_panel_1
-  layout_properties: {grid_position: 'SPPEHH,WZEFNS'}
+  layout_properties: {grid_position: 'ZDRSSJ,HYEEHZ'}
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
