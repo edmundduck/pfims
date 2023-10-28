@@ -14,6 +14,16 @@ class Node:
         self.duration = minutes if minutes else CacheExpiry.MINUTES
         self.expirytime = datetime.now() + timedelta(minutes=self.duration)
 
+    def __str__(self):
+        return "CacheNode {0}: [{1} {2} {3} {4} {5}]".format(
+            self.__class__,
+            self.key,
+            self.data,
+            self.prev,
+            self.next,
+            self.expirytime
+        )
+
     def get_next(self):
         return self.next
 
@@ -24,6 +34,7 @@ class Node:
         return self.key
     
     def get_value(self):
+        self.expirytime = datetime.now() + timedelta(minutes=self.duration)
         return self.data
 
     def is_expired(self):
@@ -51,7 +62,7 @@ class DoubleLinkedList:
         whole_list = []
         current_node = self.head
         while current_node:
-            whole_list.append(current_node.get_key())
+            whole_list.append(f"[{','.join((current_node.get_key(), str(current_node.is_expired())))}] ")
             current_node = current_node.get_next()
         return "Cache {0} structure -\n{1}".format(
             self.__class__,

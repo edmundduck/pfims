@@ -20,7 +20,7 @@ def init_cache():
         data_to_cache = anvil.server.call('init_cache_upload_mapping')
         cache1.set_cache(data_to_cache[0])
         cache2.set_cache(data_to_cache[1])
-    print("2\n", str(cache2))
+    print("2\n", str(cache1))
 
 def generate_accounts_dropdown(reload=False):
     """
