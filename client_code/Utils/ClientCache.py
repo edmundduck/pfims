@@ -77,24 +77,6 @@ class ClientCache:
         logger.debug(f"Cache {self.name} cleared.")
         return ClientCache.cache_list.pop(self.name)
 
-    def get_complete_key(self, partial_key):
-        """
-        Return a complete key based on a partial key which is a part of the key in a list.
-    
-        Returns:
-            string: A complete key, otherwise the original partial key if not found.
-        """
-        print("PARENT")
-        print(partial_key)
-        cache = ClientCache.cache_list.pop(self.name)
-        print(cache)
-        if cache is not None:
-            if partial_key and any(isinstance(i, (list, tuple)) for i in cache):
-                return next((item[1] for item in cache if partial_key in item[1]), partial_key)
-            else:
-                return partial_key
-        return partial_key
-
 class ClientDropdownCache(ClientCache):
     def __init__(self, funcname):
         super().__init__(funcname)
@@ -118,7 +100,16 @@ class ClientDropdownCache(ClientCache):
         Returns:
             string: A complete key, otherwise the original partial key if not found.
         """
-        if self.is_empty():
-            self.get_cache()
-        cache = super(ClientDropdownCache, self).get_complete_key(partial_key)
-        return cache
+        cache = ClientCache.cache_list.pop(self.name)
+        mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
+        if mapping:
+            _, transform = mapping
+            data = transform(cache)
+        else:
+            data = cache
+        if data is not None:
+            if partial_key and any(isinstance(i, (list, tuple)) for i in data):
+                return next((item[1] for item in data if partial_key in item[1]), partial_key)
+            else:
+                return partial_key
+        return partial_key

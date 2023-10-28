@@ -67,7 +67,7 @@ def __get_stock_journal_group__(group_dropdown_selected, reload=False):
     """
     from ..Utils.ClientCache import ClientCache
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
-    cache = ClientCache(CacheKey.OBJ_STOCK_JRN_GRP, None)
+    cache = ClientCache(CacheKey.OBJ_STOCK_JRN_GRP)
     if jrn_grp_id:
         if not reload and not cache.is_empty() and cache.get_cache().get(jrn_grp_id, None):
             jrn_grp = cache.get_cache().get(jrn_grp_id, None)
