@@ -70,12 +70,11 @@ def generate_labels_dropdown(reload=False):
     return LabelMaintController.generate_labels_dropdown(reload)
 
 @logger.log_function
-def generate_labels_dict(data=None, reload=False):
+def generate_labels_dict(reload=False):
     """
     Access labels in dict of list format from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (dict of list): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
@@ -83,19 +82,10 @@ def generate_labels_dict(data=None, reload=False):
     """
     from ..Utils import Helper
     from ..Utils.ClientCache import ClientCache
-    if not data or isinstance(data, dict):
-        cache_data = data
-        cache = ClientCache(CacheKey.DICT_LABEL)
-        cache.set_cache(cache_data)
-    else:
-        raise TypeError('A dictionary is expected in the parameter.')
+    cache = ClientCache(CacheKey.DD_LABEL)
     if reload:
         cache.clear_cache()
-    if cache.is_empty():
-        rows = anvil.server.call('generate_labels_list')
-        new_dict = Helper.to_dict_of_list(rows)
-        cache.set_cache(new_dict)
-    return cache.get_cache()
+    return Helper.to_dict_of_list(cache.get_cache())
 
 def generate_label_objects(id_delimted_string):
     """
