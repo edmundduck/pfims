@@ -40,18 +40,11 @@ def generate_brokers_dropdown(data=None, reload=False):
     Returns:
         cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
     """
-    from ..Utils.ClientCache import ClientCache, ClientDropdownCache
-    # cache_data = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data) if data else None
-    # cache = ClientCache(CacheKey.DD_BROKER, cache_data)
+    from ..Utils.ClientCache import ClientDropdownCache
     cache = ClientDropdownCache(CacheKey.DD_BROKER)
     if reload:
         cache.clear_cache()
-    # if cache.is_empty():
-    #     rows = anvil.server.call('generate_brokers_simplified_list')
-    #     new_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in rows)
-    #     cache.set_cache(new_dropdown)
-    # return cache.get_cache()
-    return cache.get_dropdown()
+    return cache.get_cache()
 
 @logger.log_function
 def generate_search_interval_dropdown(data=None):

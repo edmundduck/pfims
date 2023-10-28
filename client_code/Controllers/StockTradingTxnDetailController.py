@@ -15,8 +15,6 @@ def init_cache():
     """
     from ..Utils.ClientCache import ClientCache, ClientDropdownCache
     data_to_cache = anvil.server.call('init_cache_stock_trading_txn_detail')
-    # ClientCache(CacheKey.DD_BROKER, list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data_to_cache[0]))
-    # ClientCache(CacheKey.DD_STOCK_JRN_GRP, list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data_to_cache[1]))
     cache = ClientDropdownCache(CacheKey.DD_BROKER)
     cache.set_cache(data_to_cache[0])
     cache2 = ClientDropdownCache(CacheKey.DD_STOCK_JRN_GRP)
@@ -49,17 +47,10 @@ def generate_stock_journal_groups_dropdown(data=None, reload=False):
     Returns:
         cache.get_cache (list): Currency dropdown formed by currency DB table data.
     """
-    from ..Utils.ClientCache import ClientCache, ClientDropdownCache
-    # cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
-    # cache = ClientCache(CacheKey.DD_STOCK_JRN_GRP, cache_data)
+    from ..Utils.ClientCache import ClientDropdownCache
     cache = ClientDropdownCache(CacheKey.DD_STOCK_JRN_GRP)
     if reload:
         cache.clear_cache()
-    # if cache.is_empty():
-    #     rows = anvil.server.call('generate_drafting_stock_journal_groups_list')
-    #     new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
-    #     cache.set_cache(new_dropdown)
-    # return cache.get_cache()
     return cache.get_cache()
 
 @logger.log_function
