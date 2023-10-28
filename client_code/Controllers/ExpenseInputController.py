@@ -24,7 +24,7 @@ def init_cache():
     cache_exp_grp_obj = ClientCache(CacheKey.OBJ_EXPENSE_GRP)
     cache_del_iid = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
     cache_exp_grp_obj.clear_cache()
-    cache_del_iid.clear_cache()
+    cache_del_iid.set_cache([])
 
 @logger.log_function
 def generate_expense_tabs_dropdown(reload=False):
