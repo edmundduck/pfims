@@ -37,6 +37,9 @@ class Node:
         self.expirytime = datetime.now() + timedelta(minutes=self.duration)
         return self.data
 
+    def get_expiry(self):
+        return self.expirytime
+
     def is_expired(self):
         return True if datetime.now() > self.expirytime else False
 
@@ -62,7 +65,7 @@ class DoubleLinkedList:
         whole_list = []
         current_node = self.head
         while current_node:
-            whole_list.append(f"[{','.join((current_node.get_key(), str(current_node.is_expired())))}] ")
+            whole_list.append(f"[{','.join((current_node.get_key(), str(current_node.get_expiry()), str(current_node.is_expired())))}] ")
             current_node = current_node.get_next()
         return "Cache {0} structure -\n{1}".format(
             self.__class__,
