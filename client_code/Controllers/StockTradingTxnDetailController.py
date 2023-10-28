@@ -124,10 +124,8 @@ def get_stock_journal_group_dropdown_selected_item(group_id):
     Returns:
         selected_item (list): Complete key of the selected item in stock journal group dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_STOCK_JRN_GRP, None)
-    if cache.is_empty():
-        generate_stock_journal_groups_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_STOCK_JRN_GRP)
     selected_item = cache.get_complete_key(group_id)
     return selected_item
 
@@ -143,13 +141,10 @@ def get_broker_dropdown_selected_item(group_dropdown_selected=None):
     """
     from . import UserSettingController
     from .. import Global
-    from ..Utils.ClientCache import ClientCache, ClientDropdownCache
-    # cache = ClientCache(CacheKey.DD_BROKER, None)
+    from ..Utils.ClientCache import ClientDropdownCache
     cache = ClientDropdownCache(CacheKey.DD_BROKER)
     if group_dropdown_selected:
         jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
-        # if cache.is_empty():
-            # UserSettingController.generate_brokers_dropdown()
         selected_item = cache.get_complete_key(jrn_grp.get_broker())
     else:
         selected_item = cache.get_complete_key(Global.settings.get_broker())

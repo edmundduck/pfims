@@ -42,6 +42,7 @@ class ClientCache:
         Returns:
             boolean: Return True if the cache is empty.
         """
+        print("IS_EMPTY\n", self)
         if self.name is None or ClientCache.cache_list.loc(self.name) < 0:
             return True
         return False
@@ -66,8 +67,11 @@ class ClientCache:
         Parameters:
             data (any Object): Data to load manually.
         """
+        if ClientCache.cache_list.loc(self.name) >= 0:
+            _ = ClientCache.cache_list.pop(self.name)
+            logger.debug(f"Cache {self.name} removed before set_cache.")
         ClientCache.cache_list.add_to_head(self.name, data)
-        logger.debug(f"Cache {self.name} set manually from set_cache.")
+        logger.debug(f"Cache {self.name} configured from set_cache.")
         return data
     
     def clear_cache(self):
@@ -82,6 +86,7 @@ class ClientDropdownCache(ClientCache):
         super().__init__(funcname)
 
     def get_cache(self):
+        print("GET_CACHE\n", self)
         result = None
         mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
         if mapping:
