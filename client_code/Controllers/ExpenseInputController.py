@@ -294,7 +294,9 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
     
     def filter_valid_rows(row):
         cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
-        if row.get('iid', None) and row.get('iid') in cache.get_cache():
+        if cache.get_cache() is None:
+            del_iid_list = []
+        if row.get('iid', None) and row.get('iid') in del_iid_list:
             # Filter out all rows in deleted IID cache
             return False
         if all(v is None for v in row.values()):
