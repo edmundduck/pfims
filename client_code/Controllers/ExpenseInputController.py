@@ -84,9 +84,9 @@ def generate_labels_dict(reload=False):
     """
     from ..Utils import Helper
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_LABEL)
-    if reload:
-        cache.clear_cache()
+    cache = ClientCache(CacheKey.DICT_LABEL_LIST)
+    if reload or cache.is_empty() or cache.is_expired():
+        generate_labels_dropdown(reload)
     return Helper.to_dict_of_list(cache.get_cache())
 
 def generate_label_objects(id_delimted_string):
@@ -296,8 +296,7 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
     
     def filter_valid_rows(row):
         cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
-        if cache.get_cache() is None:
-            del_iid_list = []
+        del_iid_list = [] if cache.get_cache() is None else cache.get_cache()
         if row.get('iid', None) and row.get('iid') in del_iid_list:
             # Filter out all rows in deleted IID cache
             return False

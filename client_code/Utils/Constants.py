@@ -29,6 +29,7 @@ class CacheKey:
     """
     Keys for dicts
     """
+    DICT_LABEL_LIST = DD_LABEL
     DICT_LABEL = 'labels_dict'
     
     """
