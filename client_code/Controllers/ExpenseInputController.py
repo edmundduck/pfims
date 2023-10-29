@@ -16,7 +16,7 @@ def init_cache():
     cache1 = ClientDropdownCache(CacheKey.DD_EXPENSE_TAB)
     cache2 = ClientDropdownCache(CacheKey.DD_ACCOUNT)
     cache3 = ClientDropdownCache(CacheKey.DD_LABEL)
-    if any((cache1.is_empty(), cache2.is_empty(), cache3.is_empty())):
+    if any((cache1.is_empty(), cache1.is_expired(), cache2.is_empty(), cache2.is_expired(), cache3.is_empty(), cache3.is_expired())):
         data_to_cache = anvil.server.call('init_cache_expense_input')
         cache1.set_cache(data_to_cache[0])
         cache2.set_cache(data_to_cache[1])

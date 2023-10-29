@@ -45,9 +45,20 @@ class ClientCache:
             return True
         return False
     
+    def is_expired(self):
+        """
+        Check if the cache is expired.
+    
+        Returns:
+            boolean: Return True if the cache is expired.
+        """
+        if self.name is None or ClientCache.cache_list.peek(self.name).is_expired():
+            return True
+        return False
+    
     def get_cache(self):
         """
-        Generic get cache data.
+        Get cache node and return its stored value.
     
         Returns:
             data (Object): Cache stored by the provided key. None if the provided key does not exist in cache or has been expired.
@@ -100,7 +111,7 @@ class ClientDropdownCache(ClientCache):
         mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
         if mapping:
             func, transform = mapping
-            if self.is_empty():
+            if self.is_empty() or self.is_expired():
                 result = transform(self.set_cache(anvil.server.call(func)))
             else:
                 cache = super(ClientDropdownCache, self).get_cache()

@@ -114,22 +114,6 @@ class DoubleLinkedList:
 
     def pop(self, key):
         node_to_search = self.head
-        # while node_to_search:
-        #     if node_to_search.get_key() == key:
-        #         if not node_to_search.get_prev():
-        #             return self.remove_from_head()
-        #         elif not node_to_search.get_next():
-        #             return self.remove_from_tail()
-        #         else:
-        #             prev_node = node_to_search.get_prev()
-        #             next_node = node_to_search.get_next()
-        #             prev_node.set_next(next_node)
-        #             next_node.set_prev(prev_node)
-        #             node_to_search.set_prev(None)
-        #             node_to_search.set_next(None)
-        #             return node_to_search.get_value()
-        #     else:
-        #         node_to_search = node_to_search.get_next()
         position = self.loc(key)
         if position > -1:
             for i in range(position):
@@ -146,6 +130,16 @@ class DoubleLinkedList:
                 node_to_search.set_prev(None)
                 node_to_search.set_next(None)
                 return node_to_search
+        else:
+            return Node(key, None)
+
+    def peek(self, key):
+        node_to_search = self.head
+        position = self.loc(key)
+        if position > -1:
+            for i in range(position):
+                node_to_search = node_to_search.get_next()
+            return node_to_search
         else:
             return Node(key, None)
 

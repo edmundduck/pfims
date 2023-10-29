@@ -18,15 +18,19 @@ def initialize_data():
         list: A list of all functions return required by the form initialization.
     """
     from ..Utils.ClientCache import ClientDropdownCache
-    brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
     cache1 = ClientDropdownCache(CacheKey.DD_BROKER)
-    cache1.set_cache(brokers)
     cache2 = ClientDropdownCache(CacheKey.DD_SEARCH_INTERVAL)
-    cache2.set_cache(search_interval)
     cache3 = ClientDropdownCache(CacheKey.DD_CURRENCY)
-    cache3.set_cache(ccy)
     cache4 = ClientDropdownCache(CacheKey.DD_SUBMITTED_JRN_GRP)
-    cache4.set_cache(submitted_group_list)
+    if any(
+        cache1.is_empty(), cache1.is_expired(), cache2.is_empty(), cache2.is_expired(),
+        cache3.is_empty(), cache3.is_expired(), cache4.is_empty(), cache4.is_expired()
+    ):
+        brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
+        cache1.set_cache(brokers)
+        cache2.set_cache(search_interval)
+        cache3.set_cache(ccy)
+        cache4.set_cache(submitted_group_list)
 
 def get_user_settings():
     """
@@ -75,8 +79,6 @@ def generate_currency_dropdown():
     """
     from ..Utils.ClientCache import ClientDropdownCache
     cache = ClientDropdownCache(CacheKey.DD_CURRENCY)
-    if cache.is_empty():
-        cache.clear_cache()
     return cache.get_cache()
 
 @logger.log_function
@@ -92,7 +94,7 @@ def generate_submitted_journal_groups_dropdown(reload=False):
     """
     from ..Utils.ClientCache import ClientDropdownCache
     cache = ClientDropdownCache(CacheKey.DD_SUBMITTED_JRN_GRP)
-    if cache.is_empty():
+    if reload:
         cache.clear_cache()
     return cache.get_cache()
 
