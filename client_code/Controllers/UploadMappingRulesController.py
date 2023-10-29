@@ -15,12 +15,10 @@ def init_cache():
     from ..Utils.ClientCache import ClientDropdownCache
     cache1 = ClientDropdownCache(CacheKey.DD_EXPENSE_TBL_DEF)
     cache2 = ClientDropdownCache(CacheKey.DD_IMPORT_EXTRA_ACTION)
-    print("1\n", str(cache1))
     if any((cache1.is_empty(), cache2.is_empty())):
         data_to_cache = anvil.server.call('init_cache_upload_mapping')
         cache1.set_cache(data_to_cache[0])
         cache2.set_cache(data_to_cache[1])
-    print("2\n", str(cache1))
 
 def generate_accounts_dropdown(reload=False):
     """

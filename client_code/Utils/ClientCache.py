@@ -53,6 +53,7 @@ class ClientCache:
         Returns:
             ClientCache.cache_dict.get (list): Cache in list given the provided key.
         """
+        logger.trace(str(self))
         data = ClientCache.cache_list.pop(self.name)
         if data:
             ClientCache.cache_list.add_to_head(self.name, data)
