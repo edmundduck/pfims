@@ -24,7 +24,6 @@ class ClientCache:
 
         Parameters:
             funcname (string): A server function name or a string as cache key (invalid function name).
-            data (any Object): Data to load manually if funcname is an invalid function name.
         """
         self.name = funcname
 
@@ -51,13 +50,17 @@ class ClientCache:
         Generic get cache data.
     
         Returns:
-            ClientCache.cache_dict.get (list): Cache in list given the provided key.
+            data (Object): Cache stored by the provided key. None if the provided key does not exist in cache or has been expired.
         """
         logger.trace(str(self))
-        data = ClientCache.cache_list.pop(self.name)
-        if data:
+        cache_node = ClientCache.cache_list.pop(self.name)
+        if cache_node and not cache_node.is_expired():
+            data = cache_node.get_value()
             ClientCache.cache_list.add_to_head(self.name, data)
             logger.debug(f"Data {self.name} retrieved from cache.")
+        else:
+            data = None
+            logger.debug(f"Data {self.name} from cache is either not exist or expired.")
         return data
     
     def set_cache(self, data):
@@ -65,7 +68,10 @@ class ClientCache:
         Generic set cache data.
     
         Parameters:
-            data (any Object): Data to load manually.
+            data (Object): Data to load manually.
+
+        Returns:
+            data (Object): Data to load manually.
         """
         if ClientCache.cache_list.loc(self.name) >= 0:
             _ = ClientCache.cache_list.pop(self.name)
@@ -77,9 +83,13 @@ class ClientCache:
     def clear_cache(self):
         """
         Generic clear cache to force the cache to retrieve the latest content in later get cache runs.
+
+        Returns:
+            data (any Object): Data of the cleared cache.
         """
+        data = ClientCache.cache_list.pop(self.name).get_value()
         logger.debug(f"Cache {self.name} cleared.")
-        return ClientCache.cache_list.pop(self.name)
+        return data
 
 class ClientDropdownCache(ClientCache):
     def __init__(self, funcname):

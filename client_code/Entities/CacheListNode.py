@@ -101,7 +101,7 @@ class DoubleLinkedList:
             unwanted_node.next = None
         if self.head:
             self.head.prev = None
-        return unwanted_node.get_value()
+        return unwanted_node
 
     def remove_from_tail(self):
         unwanted_node = self.tail
@@ -110,12 +110,12 @@ class DoubleLinkedList:
             unwanted_node.prev = None
         if self.tail:
             self.tail.next = None
-        return unwanted_node.get_value()
+        return unwanted_node
 
-    def pop(self, data):
+    def pop(self, key):
         node_to_search = self.head
         # while node_to_search:
-        #     if node_to_search.get_key() == data:
+        #     if node_to_search.get_key() == key:
         #         if not node_to_search.get_prev():
         #             return self.remove_from_head()
         #         elif not node_to_search.get_next():
@@ -130,7 +130,7 @@ class DoubleLinkedList:
         #             return node_to_search.get_value()
         #     else:
         #         node_to_search = node_to_search.get_next()
-        position = self.loc(data)
+        position = self.loc(key)
         if position > -1:
             for i in range(position):
                 node_to_search = node_to_search.get_next()
@@ -145,16 +145,15 @@ class DoubleLinkedList:
                 next_node.set_prev(prev_node)
                 node_to_search.set_prev(None)
                 node_to_search.set_next(None)
-                return node_to_search.get_value()
-            return node_to_search.get_value()
+                return node_to_search
         else:
-            return None
+            return Node(key, None)
 
-    def loc(self, data):
+    def loc(self, key):
         node_to_search = self.head
         position = 0
         while node_to_search:
-            if node_to_search.get_key() == data:
+            if node_to_search.get_key() == key:
                 return position
             else:
                 node_to_search = node_to_search.get_next()
