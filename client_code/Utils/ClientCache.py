@@ -15,19 +15,22 @@ class ClientCache:
     # Class variable to store cache
     cache_list = DoubleLinkedList()
 
-    def __init__(self, funcname):
+    def __init__(self, key):
         """
-        Initialize the cache by either running as a server function or creating data manually.
-
-        If the function name which is a parameter is not a valid server function name, NoServerFunctionError will throw.
-        Then the cache will use the invalid 'function name' as the key of cache and load data which is an optional parameter into it.
+        Client cache initialization.
 
         Parameters:
-            funcname (string): A server function name or a string as cache key (invalid function name).
+            key (string): A key for client cache object.
         """
-        self.name = funcname
+        self.name = key
 
     def __str__(self):
+        """
+        String presentation of the client cache object.
+
+        Returns:
+            string: The string presentation of the client cache object for logger print out.
+        """
         return "Cache {0} name:{1} includes -\n{2}".format(
             self.__class__,
             self.name,
@@ -104,9 +107,21 @@ class ClientCache:
 
 class ClientDropdownCache(ClientCache):
     def __init__(self, funcname):
+        """
+        Client dropdown cache initialization.
+
+        Parameters:
+            key (string): A key for client dropdown cache object.
+        """
         super().__init__(funcname)
 
     def get_cache(self):
+        """
+        Get cache node, return and format its stored value into a dropdown list format defined in the client constants module per client cache's name.
+    
+        Returns:
+            result (list of list): Drop down list items transformed per lambda function defined in client constants module by client cache's name.
+        """
         result = None
         mapping = CacheDropdown.DROPDOWN_MAPPPING.get(self.name, None)
         if mapping:

@@ -22,10 +22,10 @@ def initialize_data():
     cache2 = ClientDropdownCache(CacheKey.DD_SEARCH_INTERVAL)
     cache3 = ClientDropdownCache(CacheKey.DD_CURRENCY)
     cache4 = ClientDropdownCache(CacheKey.DD_SUBMITTED_JRN_GRP)
-    if any(
+    if any((
         cache1.is_empty(), cache1.is_expired(), cache2.is_empty(), cache2.is_expired(),
         cache3.is_empty(), cache3.is_expired(), cache4.is_empty(), cache4.is_expired()
-    ):
+    )):
         brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
         cache1.set_cache(brokers)
         cache2.set_cache(search_interval)

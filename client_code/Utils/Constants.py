@@ -6,7 +6,7 @@ class CacheExpiry:
     """
     Expiry for cache in minutes
     """
-    MINUTES = 1
+    MINUTES = 15
 
 class CacheKey:
     """

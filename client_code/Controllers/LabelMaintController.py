@@ -55,7 +55,7 @@ def __get_label__(label_dropdown_selected, reload=False):
     from ..Utils.ClientCache import ClientCache
     lbl_id, _ = label_dropdown_selected if label_dropdown_selected else [None, None]
     cache = ClientCache(CacheKey.OBJ_LABEL)
-    if not reload and not cache.is_empty() and cache.get_cache().get(lbl_id, None):
+    if not reload and not cache.is_empty() and not cache.is_expired() and cache.get_cache().get(lbl_id, None):
         lbl = cache.get_cache().get(lbl_id, None)
     else:
         lbl = anvil.server.call('select_label', lbl_id)

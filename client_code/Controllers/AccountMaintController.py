@@ -79,7 +79,7 @@ def __get_account__(account_dropdown_selected, reload=False):
     from ..Utils.ClientCache import ClientCache
     acct_id, _ = account_dropdown_selected if account_dropdown_selected else [None, None]
     cache = ClientCache(CacheKey.OBJ_ACCOUNT)
-    if not reload and not cache.is_empty() and cache.get_cache().get(acct_id, None):
+    if not reload and not cache.is_empty() and not cache.is_expired() and cache.get_cache().get(acct_id, None):
         acct = cache.get_cache().get(acct_id, None)
     else:
         acct = anvil.server.call('select_account', acct_id)
