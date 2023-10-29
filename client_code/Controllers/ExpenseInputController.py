@@ -423,7 +423,7 @@ def delete_item(iid):
     cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
 
     if iid:
-        if cache.is_empty():
+        if cache.is_empty() or cache.is_expired():
             cache.set_cache([iid])
         else:
             cache.get_cache().append(iid)
