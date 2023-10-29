@@ -191,8 +191,8 @@ def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropd
     from datetime import date, datetime
     from .. import Global
     from ..Entities.StockJournalGroup import StockJournalGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     jrn_grp_id_ori, jrn_grp_name_ori = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
@@ -228,8 +228,8 @@ def submit_stock_journal_group(group_dropdown_selected, submitted=True):
     """
     from datetime import date, datetime
     from ..Entities.StockJournalGroup import StockJournalGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     jrn_grp_id, jrn_grp_name = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     currenttime = datetime.now()
@@ -255,8 +255,8 @@ def delete_stock_journal_group(group_dropdown_selected):
         result (int): Successful delete row count, otherwise None.
     """
     from ..Entities.StockJournalGroup import StockJournalGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     jrn_grp_id, jrn_grp_name = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     jrn_grp = StockJournalGroup()
@@ -296,11 +296,11 @@ def delete_item(iid):
     Parameters:
         iid (int): The item ID (IID) of the deleted item.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     if iid:
-        if cache.is_empty():
+        if cache.is_empty() or cache.is_expired():
             cache.set_cache([iid])
         else:
             cache.get_cache().append(iid)

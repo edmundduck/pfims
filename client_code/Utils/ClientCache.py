@@ -9,7 +9,6 @@ from ..Entities.CacheListNode import DoubleLinkedList
 # The logger cannot be placed inside __init__, otherwise performance will be dragged down dramatically.
 logger = ClientLogger()
 
-@anvil.server.portable_class
 class ClientCache:
 
     # Class variable to store cache
@@ -70,7 +69,7 @@ class ClientCache:
         cache_node = ClientCache.cache_list.pop(self.name)
         if cache_node and not cache_node.is_expired():
             data = cache_node.get_value()
-            ClientCache.cache_list.add_to_head(self.name, data)
+            ClientCache.cache_list.add_to_head(key=None, data=cache_node)
             logger.debug(f"Data {self.name} retrieved from cache.")
         else:
             data = None
@@ -88,9 +87,12 @@ class ClientCache:
             data (Object): Data to load manually.
         """
         if ClientCache.cache_list.loc(self.name) >= 0:
-            _ = ClientCache.cache_list.pop(self.name)
+            cache_node = ClientCache.cache_list.pop(self.name)
             logger.debug(f"Cache {self.name} removed before set_cache.")
-        ClientCache.cache_list.add_to_head(self.name, data)
+            cache_node.set_value(data)
+            ClientCache.cache_list.add_to_head(key=None, data=cache_node)
+        else:
+            ClientCache.cache_list.add_to_head(self.name, data)            
         logger.debug(f"Cache {self.name} configured from set_cache.")
         return data
     
@@ -147,3 +149,29 @@ class ClientDropdownCache(ClientCache):
             else:
                 return partial_key
         return partial_key
+
+class ClientPersistentCache(ClientCache):
+    def __init__(self, funcname):
+        """
+        Client persistent cache initialization.
+
+        Parameters:
+            key (string): A key for client persistent cache object.
+        """
+        from ..Entities.CacheListNode import Node
+        super().__init__(funcname)
+        position = ClientCache.cache_list.loc(self.name)
+        if position < 0:
+            ClientCache.cache_list.add_to_head(key=None, data=Node(self.name, [], minutes=0))
+
+    def is_expired(self):
+        """
+        Check if the cache is expired.
+
+        As this class is persistent cache, it means cache node never expires, hence always return False.
+    
+        Returns:
+            boolean: Return False all the time as persistent nature.
+        """
+        return False
+    

@@ -15,14 +15,14 @@ class Node:
         Parameters:
             key (string): The key of the cache node for lookup.
             data (Object): Data to stored in cache.
-            minutes (int): Optional. If present, define the customized minute for the cache to expire, otherwise pre-define the value from Client Constants module.
+            minutes (int): Optional. If present, define the customized minute for the cache to expire, otherwise pre-define the value from Client Constants module. If equal to 0, then become non-expired cache, i.e. expiry = None.
         """
         self.key = key
         self.data = data
         self.prev = None
         self.next = None
-        self.duration = minutes if minutes else CacheExpiry.MINUTES
-        self.expirytime = datetime.now() + timedelta(minutes=self.duration)
+        self.duration = minutes if minutes is not None else CacheExpiry.MINUTES
+        self.expirytime = datetime.now() + timedelta(minutes=self.duration) if self.duration != 0 else None
 
     def __str__(self):
         """
@@ -76,7 +76,8 @@ class Node:
         Returns:
             self.data (Object): The stored value of the cache node.
         """
-        self.expirytime = datetime.now() + timedelta(minutes=self.duration)
+        if self.duration != 0:
+            self.expirytime = datetime.now() + timedelta(minutes=self.duration)
         return self.data
 
     def get_expiry(self):
@@ -95,7 +96,7 @@ class Node:
         Returns:
             boolean: True if cache node is expired, otherwise False.
         """
-        return True if datetime.now() > self.expirytime else False
+        return True if self.duration != 0 and datetime.now() > self.expirytime else False
 
     def set_next(self, node):
         """
@@ -134,7 +135,8 @@ class Node:
             data (string): The value to stored into the cache node.
         """
         self.data = data
-        self.expirytime = datetime.now() + timedelta(minutes=self.duration)
+        if self.duration != 0:
+            self.expirytime = datetime.now() + timedelta(minutes=self.duration)
 
 class DoubleLinkedList:
     def __init__(self):
@@ -173,7 +175,14 @@ class DoubleLinkedList:
             key (string): The key of the cache node for lookup.
             data (Object): Data to stored in cache.
         """
-        new_node = Node(key, data)
+        print("DEBUG\n", data)
+        if isinstance(data, Node):
+            new_node = data
+        else:
+            if key:
+                new_node = Node(key, data)
+            else:
+                raise TypeError('Key cannot be None or blank if data is not a Node.')
         if self.head:
             new_node.set_next(self.head)
             self.head.set_prev(new_node)
@@ -193,7 +202,13 @@ class DoubleLinkedList:
             key (string): The key of the cache node for lookup.
             data (Object): Data to stored in cache.
         """
-        new_node = Node(key, data)
+        if isinstance(data, Node):
+            new_node = data
+        else:
+            if key:
+                new_node = Node(key, data)
+            else:
+                raise TypeError('Key cannot be None or blank if data is not a Node.')
         if self.tail:
             new_node.set_prev(self.tail)
             self.tail.set_next(new_node)

@@ -12,7 +12,7 @@ def init_cache():
     """
     Call one server function to preload all caches required by the form.
     """
-    from ..Utils.ClientCache import ClientCache, ClientDropdownCache
+    from ..Utils.ClientCache import ClientCache, ClientDropdownCache, ClientPersistentCache
     cache1 = ClientDropdownCache(CacheKey.DD_EXPENSE_TAB)
     cache2 = ClientDropdownCache(CacheKey.DD_ACCOUNT)
     cache3 = ClientDropdownCache(CacheKey.DD_LABEL)
@@ -24,7 +24,7 @@ def init_cache():
         cache2.set_cache(data_to_cache[1])
         cache3.set_cache(data_to_cache[2])
     cache_exp_grp_obj = ClientCache(CacheKey.OBJ_EXPENSE_GRP)
-    cache_del_iid = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
+    cache_del_iid = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
     cache_exp_grp_obj.clear_cache()
     cache_del_iid.set_cache([])
 
@@ -204,8 +204,8 @@ def get_transactions(group_dropdown_selected, reload=False):
     Returns:
         exp_grp.get_transactions (list of dict): Selected expense transaction group's transactions in serialized form for frontend.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
     exp_grp = __get_expense_transaction_group__(group_dropdown_selected, reload)
     cache.clear_cache()
     return list(j.get_dict() for j in exp_grp.get_transactions()) if exp_grp.get_transactions() else []
@@ -292,10 +292,10 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         result (list of dict): A list of data padded with blank items for repeating panel.
     """
     from ..Entities.ExpenseTransaction import ExpenseTransaction
-    from ..Utils.ClientCache import ClientCache
+    from ..Utils.ClientCache import ClientPersistentCache
     
     def filter_valid_rows(row):
-        cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
+        cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
         del_iid_list = [] if cache.get_cache() is None else cache.get_cache()
         if row.get('iid', None) and row.get('iid') in del_iid_list:
             # Filter out all rows in deleted IID cache
@@ -332,8 +332,8 @@ def save_expense_transaction_group(group_dropdown_selected, group_name, transact
     from datetime import date, datetime
     from .. import Global
     from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
 
     exp_grp_id_ori, exp_grp_name_ori = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
 
@@ -372,8 +372,8 @@ def submit_expense_transaction_group(group_dropdown_selected, submitted=True):
     """
     from datetime import date, datetime
     from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
 
     exp_grp_id, exp_grp_name = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     currenttime = datetime.now()
@@ -398,8 +398,8 @@ def delete_expense_transaction_group(group_dropdown_selected):
         result (int): Successful delete row count, otherwise None.
     """
     from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
 
     exp_grp_id, exp_grp_name = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     exp_grp = ExpenseTransactionGroup()
@@ -418,8 +418,8 @@ def delete_item(iid):
     Parameters:
         iid (int): The item ID (IID) of the deleted item.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.EXP_INPUT_DEL_IID)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
 
     if iid:
         if cache.is_empty() or cache.is_expired():
