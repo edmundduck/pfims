@@ -52,7 +52,6 @@ def to_dict_of_list(LD):
         DL (dict of list): Dict of list.
     """
     if LD is not None and len(LD) > 0:
-        print("LD\n", LD)
         if isinstance(LD[0], dict):
             DL = {k: [dic[k] for dic in LD] for k in LD[0]}
         else:

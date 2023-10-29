@@ -31,7 +31,7 @@ class Node:
         Returns:
             string: The string presentation of the cache node for logger print out.
         """
-        return "CacheNode {0}: [{1} {2} {3} {4} {5}]".format(
+        return "[{0}: {1} {2} {3} {4} {5}]".format(
             self.__class__,
             self.key,
             self.data,
@@ -160,7 +160,7 @@ class DoubleLinkedList:
         while current_node:
             whole_list.append(f"[{','.join((current_node.get_key(), str(current_node.get_expiry()), str(current_node.is_expired())))}] ")
             current_node = current_node.get_next()
-        return "Cache {0} structure -\n{1}".format(
+        return "Cache {0} structure - {1}".format(
             self.__class__,
             str(whole_list)
         )
@@ -175,7 +175,6 @@ class DoubleLinkedList:
             key (string): The key of the cache node for lookup.
             data (Object): Data to stored in cache.
         """
-        print("DEBUG\n", data)
         if isinstance(data, Node):
             new_node = data
         else:

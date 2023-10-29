@@ -169,7 +169,6 @@ def __get_expense_transaction_group__(group_dropdown_selected, reload=False):
     cache = ClientCache(CacheKey.OBJ_EXPENSE_GRP)
     exp_grp = ExpenseTransactionGroup()
     if exp_grp_id:
-        print("???\n", cache.get_cache())
         if not reload and not cache.is_empty() and cache.get_cache().get(exp_grp_id, None):
             exp_grp = cache.get_cache().get(exp_grp_id, None)
         else:

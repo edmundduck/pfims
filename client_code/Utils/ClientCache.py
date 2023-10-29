@@ -45,6 +45,8 @@ class ClientCache:
         """
         if self.name is None or ClientCache.cache_list.loc(self.name) < 0:
             return True
+        if ClientCache.cache_list.peek(self.name).get_value() is None:
+            return True
         return False
     
     def is_expired(self):
@@ -67,7 +69,6 @@ class ClientCache:
         """
         logger.trace(str(self))
         cache_node = ClientCache.cache_list.pop(self.name)
-        print("XXXXX\n", cache_node)
         if cache_node and not cache_node.is_expired():
             data = cache_node.get_value()
             ClientCache.cache_list.add_to_head(key=None, data=cache_node)
