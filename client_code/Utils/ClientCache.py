@@ -67,6 +67,7 @@ class ClientCache:
         """
         logger.trace(str(self))
         cache_node = ClientCache.cache_list.pop(self.name)
+        print("XXXXX\n", cache_node)
         if cache_node and not cache_node.is_expired():
             data = cache_node.get_value()
             ClientCache.cache_list.add_to_head(key=None, data=cache_node)
