@@ -32,11 +32,9 @@ def select_journals(start_date, end_date, symbols=[]):
         where_clause_list = []
         where_clause2 = ''
         if end_date:
-            print("end=", end_date)
             mogstr_list.append(end_date)
             where_clause_list.append("AND j.sell_date <= %s ")
         if start_date:
-            print("start=", start_date)
             mogstr_list.append(start_date)
             where_clause_list.append("AND j.buy_date >= %s ")
         if len(symbols) > 0:
@@ -92,18 +90,15 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     from ..Entities.ExpenseTransaction import ExpenseTransaction
     userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
-    logger.debug("labels=", labels)
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         mogstr_list = []
         where_clause_list = []
         where_clause2 = ''
         if end_date:
-            print("end=", end_date)
-            mogstr_list.append(end_date)
+            mogstr_list.append(str(end_date))
             where_clause_list.append("AND j.trandate <= %s ")
         if start_date:
-            print("start=", start_date)
-            mogstr_list.append(start_date)
+            mogstr_list.append(str(start_date))
             where_clause_list.append("AND j.trandate >= %s ")
         if len(labels) > 0:
             where_clause2 = "AND j.labels ~ '^{0}' ".format("|".join("(?=.*" + str(i) + ")" for i in labels))
@@ -124,8 +119,7 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
             where_clause1=' '.join(where_clause_list),
             where_clause2=where_clause2
         )
-        print(sql)
-        stmt = cur.mogrify(sql, where_clause_list)
+        stmt = cur.mogrify(sql, mogstr_list)
         cur.execute(stmt)
         logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
         rows = cur.fetchall()
