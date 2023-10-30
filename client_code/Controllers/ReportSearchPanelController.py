@@ -151,9 +151,10 @@ def populate_repeating_panel_stock_transactions(search_interval_dropdown_selecte
     Populate repeating panel items with stock trading transactions.
 
     Parameters:
-        search_interval_dropdown_selected (list): The selected value in list from the account dropdown.
+        search_interval_dropdown_selected (list): The selected value in list from the search interval dropdown.
         from_date (date): Date to search from.
         to_date (date): Date to search to.
+        symbols (list): List of stock symbols.
 
     Returns:
         result (list of dict): A list of stock trading transactions for repeating panel.
@@ -170,9 +171,10 @@ def generate_repeating_panel_stock_transactions_file(search_interval_dropdown_se
     Generate repeating panel items with stock trading transactions in file
 
     Parameters:
-        search_interval_dropdown_selected (list): The selected value in list from the account dropdown.
+        search_interval_dropdown_selected (list): The selected value in list from the search interval dropdown.
         from_date (date): Date to search from.
         to_date (date): Date to search to.
+        symbols (list): List of stock symbols.
 
     Returns:
         csv: Result in CSV file.
@@ -189,9 +191,10 @@ def populate_repeating_panel_stock_profit_n_loss(search_interval_dropdown_select
     Populate repeating panel items with stock profit and loss.
 
     Parameters:
-        search_interval_dropdown_selected (list): The selected value in list from the account dropdown.
+        search_interval_dropdown_selected (list): The selected value in list from the search interval dropdown.
         from_date (date): Date to search from.
         to_date (date): Date to search to.
+        symbols (list): List of stock symbols.
 
     Returns:
         result (list of dict): A list of stock profit and loss calculations for repeating panel.
@@ -208,9 +211,10 @@ def populate_repeating_panel_expense_transactions(search_interval_dropdown_selec
     Populate repeating panel items with expense transactions.
 
     Parameters:
-        search_interval_dropdown_selected (list): The selected value in list from the account dropdown.
+        search_interval_dropdown_selected (list): The selected value in list from the search interval dropdown.
         from_date (date): Date to search from.
         to_date (date): Date to search to.
+        labels (list): List of labels.
 
     Returns:
         result (list of dict): A list of expense transactions for repeating panel.

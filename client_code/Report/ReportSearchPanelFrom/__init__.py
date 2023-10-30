@@ -218,7 +218,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def button_pnl_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
-        self.subform.hidden_time_datefrom.date = startdate
+        self.subform.hidden_time_datefrom.date = self.time_datefrom.date
         self.subform.hidden_symbol.text = symbol_list
         self.subform.rpt_panel.items = ReportSearchPanelController.populate_repeating_panel_stock_profit_n_loss(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, symbol_list)
 
