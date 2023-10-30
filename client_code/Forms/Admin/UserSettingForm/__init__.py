@@ -16,13 +16,13 @@ class UserSettingForm(UserSettingFormTemplate):
         
         # Any code you write here will run when the form opens.
         from .... import Global
-        brokers, search_interval, ccy, submitted_group_list = UserSettingController.initialize_data()
-        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown(data=brokers)
-        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(data=brokers)
+        UserSettingController.initialize_data()
+        self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
+        self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
         self.dropdown_logging_level.items = UserSettingController.generate_logging_level_dropdown()
-        self.dropdown_interval.items = UserSettingController.generate_search_interval_dropdown(data=search_interval)
-        self.dropdown_ccy.items = UserSettingController.generate_currency_dropdown(data=ccy)
-        self.dropdown_sub_templ_list.items = UserSettingController.generate_submitted_journal_groups_dropdown(data=submitted_group_list)
+        self.dropdown_interval.items = UserSettingController.generate_search_interval_dropdown()
+        self.dropdown_ccy.items = UserSettingController.generate_currency_dropdown()
+        self.dropdown_sub_templ_list.items = UserSettingController.generate_submitted_journal_groups_dropdown()
         self.dropdown_default_broker.selected_value = UserSettingController.get_broker_dropdown_selected_item(Global.settings.get_broker())
         self.dropdown_interval.selected_value = Global.settings.get_search_interval()
         self.time_datefrom.date = Global.settings.get_search_datefrom()
@@ -85,7 +85,7 @@ class UserSettingForm(UserSettingFormTemplate):
             default_broker = self.dropdown_default_broker.selected_value
             broker_id = self.dropdown_broker_list.selected_value[0]
             UserSettingController.change_broker(self.dropdown_broker_list.selected_value, self.text_broker_name.text, self.dropdown_ccy.selected_value)
-            self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown()
+            self.dropdown_broker_list.items = UserSettingController.generate_brokers_dropdown(reload=True)
             self.dropdown_default_broker.items = UserSettingController.generate_brokers_dropdown()
             self.dropdown_broker_list.selected_value = (broker_id, self.text_broker_name.text, self.dropdown_ccy.selected_value)
             self.dropdown_default_broker.selected_value = default_broker

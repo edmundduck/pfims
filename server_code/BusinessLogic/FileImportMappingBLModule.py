@@ -10,6 +10,14 @@ from ..Utils import Helper
 
 logger = LoggingModule.ServerLogger()
 
+@anvil.server.callable("init_cache_upload_mapping")
+@logger.log_function
+def init_cache_upload_mapping():
+    from ..DataAccess import FileImportMappingDAModule
+    exp_tbl_def_list = FileImportMappingDAModule.generate_expense_tbl_def_list()
+    upload_action_list = FileImportMappingDAModule.generate_upload_action_list()
+    return exp_tbl_def_list, upload_action_list
+    
 @logger.log_function
 def generate_mapping_matrix(matrix, col_def):
     """

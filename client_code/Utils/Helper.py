@@ -1,4 +1,5 @@
 import anvil.server
+
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
@@ -53,10 +54,10 @@ def to_dict_of_list(LD):
     if LD is not None and len(LD) > 0:
         if isinstance(LD[0], dict):
             DL = {k: [dic[k] for dic in LD] for k in LD[0]}
-        elif isinstance(LD[0], psycopg2.extras.DictRow):
-            DL = {k: [dic[k] for dic in LD] for k in LD[0].keys()}
         else:
-            raise TypeError(f"Only list of dict or list of DictCursor is supported.")
+        # psycopg2 is not available in client side.
+        # elif isinstance(LD[0], psycopg2.extras.DictRow):
+            DL = {k: [dic[k] for dic in LD] for k in LD[0].keys()}
     else:
         DL = {}
     return DL
