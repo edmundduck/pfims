@@ -12,21 +12,6 @@ from ..Utils.Constants import Database, Icons, PNLDrillMode
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
 
-@anvil.server.callable("get_symbol_dropdown_items")
-@logger.log_function
-def get_symbol_dropdown_items(start_date, end_date=date.today()):
-    """
-    Get all symbols which were transacted between start and end date into the dropdown.
-
-    Parameters:
-        start_date (date): Start date of the search.
-        end_date (date): End date of the search.
-
-    Returns:
-        list: A list of all symbols found within the search.
-    """
-    return list(sorted(set(row['symbol'] for row in select_journals(start_date, end_date))))
-
 @anvil.server.callable("select_journals")
 @logger.log_function
 def select_journals(start_date, end_date, symbols=[]):

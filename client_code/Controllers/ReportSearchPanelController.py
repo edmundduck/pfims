@@ -156,12 +156,69 @@ def populate_repeating_panel_stock_transactions(search_interval_dropdown_selecte
         to_date (date): Date to search to.
 
     Returns:
-        result (list of dict): A list of data padded with blank items for repeating panel.
+        result (list of dict): A list of stock trading transactions for repeating panel.
     """
     interval = self.dropdown_interval.selected_value
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()
-    rows = anvil.server.call('select_journals', from_date, to_date)
-    result = list(sorted(set(row['symbol'] for row in rows)))
+    result = anvil.server.call('select_journals', from_date, to_date, symbols)
     return result
+
+def generate_repeating_panel_stock_transactions_file(search_interval_dropdown_selected, from_date, to_date, symbols=[]):
+    """
+    Generate repeating panel items with stock trading transactions in file
+
+    Parameters:
+        search_interval_dropdown_selected (list): The selected value in list from the account dropdown.
+        from_date (date): Date to search from.
+        to_date (date): Date to search to.
+
+    Returns:
+        csv: Result in CSV file.
+    """
+    interval = self.dropdown_interval.selected_value
+    if interval != SearchInterval.INTERVAL_SELF_DEFINED:
+        from_date = _get_start_date(date.today(), interval)
+        to_date = date.today()
+    result = anvil.server.call('generate_csv', from_date, to_date, symbols)
+    return result
+
+def populate_repeating_panel_stock_profit_n_loss(search_interval_dropdown_selected, from_date, to_date, symbols=[]):
+    """
+    Populate repeating panel items with stock profit and loss.
+
+    Parameters:
+        search_interval_dropdown_selected (list): The selected value in list from the account dropdown.
+        from_date (date): Date to search from.
+        to_date (date): Date to search to.
+
+    Returns:
+        result (list of dict): A list of stock profit and loss calculations for repeating panel.
+    """
+    interval = self.dropdown_interval.selected_value
+    if interval != SearchInterval.INTERVAL_SELF_DEFINED:
+        from_date = _get_start_date(date.today(), interval)
+        to_date = date.today()
+    result = anvil.server.call('generate_init_pnl_list', from_date, to_date, symbols)
+    return result
+
+def populate_repeating_panel_expense_transactions(search_interval_dropdown_selected, from_date, to_date, labels=[]):
+    """
+    Populate repeating panel items with expense transactions.
+
+    Parameters:
+        search_interval_dropdown_selected (list): The selected value in list from the account dropdown.
+        from_date (date): Date to search from.
+        to_date (date): Date to search to.
+
+    Returns:
+        result (list of dict): A list of expense transactions for repeating panel.
+    """
+    interval = self.dropdown_interval.selected_value
+    if interval != SearchInterval.INTERVAL_SELF_DEFINED:
+        from_date = _get_start_date(date.today(), interval)
+        to_date = date.today()
+    result = anvil.server.call('proc_search_expense_list', from_date, to_date, labels)
+    return result
+

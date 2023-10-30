@@ -180,12 +180,12 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def time_datefrom_change(self, **event_args):
         """This method is called when the selected date changes"""
         if ("Transaction" or "P&L") in self.subform.report_name.text:
-            self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
+            self.dropdown_symbol.items = ReportSearchPanelController.generate_stock_symbols_dropdown(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date)
 
     def time_dateto_change(self, **event_args):
         """This method is called when the selected date changes"""
         if ("Transaction" or "P&L") in subform.report_name.text:
-            self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
+            self.dropdown_symbol.items = ReportSearchPanelController.generate_stock_symbols_dropdown(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date)
 
     @logger.log_function
     def tranx_rpt_button_plus_click(self, **event_args):
@@ -212,20 +212,13 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def button_tranx_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-        
-        self.subform.rpt_panel.items = anvil.server.call('select_journals', startdate, enddate, symbol_list)
+        self.subform.rpt_panel.items = ReportSearchPanelController.populate_repeating_panel_stock_transactions(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, symbol_list)
 
     @btnmod.one_click_only
     def button_tranx_gen_csv_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-        
-        # Get data from db
-        csv_file = anvil.server.call('generate_csv', startdate, enddate, symbol_list)
+        csv_file = ReportSearchPanelController.generate_repeating_panel_stock_transactions_file(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, symbol_list)
         anvil.media.download(csv_file)
 
     def button_tranx_reset_click(self, **event_args):
@@ -237,12 +230,9 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def button_pnl_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-    
         self.subform.hidden_time_datefrom.date = startdate
         self.subform.hidden_symbol.text = symbol_list
-        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', startdate, enddate, symbol_list)
+        self.subform.rpt_panel.items = ReportSearchPanelController.populate_repeating_panel_stock_profit_n_loss(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, symbol_list)
 
     def button_pnl_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -253,11 +243,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def button_exp_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         label_list = self._getall_selected_labels()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-
-        exp_list = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
-        self.subform.rpt_panel.items = exp_list
+        self.subform.rpt_panel.items = ReportSearchPanelController.populate_repeating_panel_expense_transactions(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -267,13 +253,14 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         """This method is called when the button is clicked"""
         lbl_id, lbl_name = self.dropdown_label.selected_value if self.dropdown_label.selected_value is not None else [None, None]
         if self.tag['added_labels'].get(lbl_id, None) is None:
-            b = Button(text=lbl_name,
-                       tag=lbl_id,
-                       icon=Icons.REMOVE,
-                       foreground=ColorSchemes.BUTTON_FG,
-                       background=ColorSchemes.BUTTON_BG,
-                       font_size=12
-                      )
+            b = Button(
+                text=lbl_name,
+                tag=lbl_id,
+                icon=Icons.REMOVE,
+                foreground=ColorSchemes.BUTTON_FG,
+                background=ColorSchemes.BUTTON_BG,
+                font_size=12
+            )
             self.panel_label.add_component(b, name=lbl_id)
             b.set_event_handler('click', self.exp_rpt_button_minus_click)
             # Register the added label to the dictionary in self.tag to avoid duplication
