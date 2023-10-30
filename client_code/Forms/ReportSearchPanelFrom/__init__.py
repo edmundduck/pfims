@@ -1,24 +1,19 @@
 from ._anvil_designer import ReportSearchPanelFromTemplate
 from anvil import *
-import anvil.users
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 from datetime import date
 from ...Controllers import ReportSearchPanelController
-from ...Utils import Constants as const
 from ...Utils.ButtonModerator import ButtonModerator
+from ...Utils.Constants import ColorSchemes, Icons, SearchInterval
 from ...Utils.Logger import ClientLogger
-from ..TransactionReportForm import TransactionReportForm
-from ..PnLReportForm import PnLReportForm
-from ..ExpenseReportForm import ExpenseReportForm
 
 logger = ClientLogger()
 btnmod = ButtonModerator()
 
 class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     subform = None
+    symbol_key = 'added_symbols'
+    label_key = 'added_labels'
 
     def __init__(self, subform, **properties):
         # Set Form properties and Data Bindings.
@@ -26,6 +21,9 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     
         # Any code you write here will run when the form opens.
         from ... import Global
+        from ..Investment.TransactionReportForm import TransactionReportForm
+        from ..Investment.PnLReportForm import PnLReportForm
+        from ..Expense.ExpenseReportForm import ExpenseReportForm
         self.dropdown_interval.items = ReportSearchPanelController.generate_search_interval_dropdown()
         self.dropdown_interval.selected_value = Global.settings.get_search_interval()
         self.time_datefrom.date = Global.settings.get_search_datefrom()
@@ -40,7 +38,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = False
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
-            self.tag = {'added_symbols': {None: 1}}
+            self.tag = {self.symbol_key: {None: 1}}
             self._update_stock_enablement()
         elif "P&L" in subform.report_name.text:
             self.subform = PnLReportForm()
@@ -51,7 +49,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_pnl_report.visible = True
             self.panel_exp_list.visible = False
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
-            self.tag = {'added_symbols': {None: 1}}
+            self.tag = {self.symbol_key: {None: 1}}
             self._update_stock_enablement()
         elif "Expense" in subform.report_name.text:
             self.subform = ExpenseReportForm()
@@ -62,7 +60,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = True
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
-            self.tag = {'added_labels': {None: 1}}
+            self.tag = {self.label_key: {None: 1}}
             self._update_expense_enablement()
         else:
             # If error, show no buttons
@@ -78,8 +76,8 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         symbol_list = []
         for i in self.panel_symbol.get_components():
             if isinstance(i, Button):
-                if i.icon == const.Icons.REMOVE:
-                    symbol_list += [i.text]
+                if i.icon == Icons.REMOVE:
+                    symbol_list += [i.tag]
         return symbol_list
 
     # Remove all symbols selected as blue buttons from dictionary
@@ -87,9 +85,9 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def _rmvall_selected_symbols(self):
         for i in self.panel_symbol.get_components():
             if isinstance(i, Button):
-                if i.icon == const.Icons.REMOVE:
+                if i.icon == Icons.REMOVE:
                     # Deregister the added symbol from the dictionary in self.tag
-                    self.tag['added_symbols'].pop(i.text)
+                    self.tag[self.symbol_key].pop(i.tag)
                     i.remove_from_parent()
 
     @logger.log_function
@@ -97,7 +95,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         label_list = []
         for i in self.panel_label.get_components():
             if isinstance(i, Button):
-                if i.icon == const.Icons.REMOVE:
+                if i.icon == Icons.REMOVE:
                     label_list += [i.tag]
         return label_list
 
@@ -106,27 +104,26 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def _rmvall_selected_labels(self):
         for i in self.panel_label.get_components():
             if isinstance(i, Button):
-                if i.icon == const.Icons.REMOVE:
+                if i.icon == Icons.REMOVE:
                     # Deregister the added label from the dictionary in self.tag
-                    self.tag['added_labels'].pop(i.tag)
+                    self.tag[self.label_key].pop(i.tag)
                     i.remove_from_parent()
 
     @logger.log_function
     def _update_stock_enablement(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval in (None, ''):
+        if not interval:
             self._reset_search()
         else:
-            if interval != "SDR":
+            self.dropdown_symbol.items = ReportSearchPanelController.generate_stock_symbols_dropdown(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date)
+            if interval != SearchInterval.INTERVAL_SELF_DEFINED:
                 self.time_datefrom.enabled = False
                 self.time_dateto.enabled = False
                 self.label_timetotime.enabled = False
-                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', start_date=anvil.server.call('get_start_date', date.today(), interval))
             else:
                 self.time_datefrom.enabled = True
                 self.time_dateto.enabled = True
                 self.label_timetotime.enabled = True
-                self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
             self.button_tranx_gen_csv.enabled = True
             self.button_tranx_search.enabled = True
             self.button_pnl_search.enabled = True
@@ -134,11 +131,11 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     @logger.log_function
     def _update_expense_enablement(self):
         interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval in (None, ''):
+        if not interval:
             self._reset_search()
         else:
             self.dropdown_label.items = ReportSearchPanelController.generate_labels_dropdown()
-            if interval != "SDR":
+            if interval != SearchInterval.INTERVAL_SELF_DEFINED:
                 self.time_datefrom.enabled = False
                 self.time_dateto.enabled = False
                 self.label_timetotime.enabled = False
@@ -162,22 +159,6 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.button_pnl_search.enabled = False
         self.button_exp_search.enabled = False
     
-    @logger.log_function
-    def _find_enddate(self):
-        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval != "SDR" or self.time_dateto.date is None:
-            return date.today()
-        else:
-            return self.time_dateto.date
-  
-    @logger.log_function
-    def _find_startdate(self):
-        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval != "SDR" or self.time_datefrom.date is None:
-            return anvil.server.call('get_start_date', date.today(), interval)      
-        else:
-            return self.time_datefrom.date 
-  
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
         if ("Transaction" or "P&L") in self.subform.report_name.text:
@@ -187,31 +168,34 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def time_datefrom_change(self, **event_args):
         """This method is called when the selected date changes"""
         if ("Transaction" or "P&L") in self.subform.report_name.text:
-            self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
+            self.dropdown_symbol.items = ReportSearchPanelController.generate_stock_symbols_dropdown(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date)
 
     def time_dateto_change(self, **event_args):
         """This method is called when the selected date changes"""
-        if ("Transaction" or "P&L") in subform.report_name.text:
-            self.dropdown_symbol.items = anvil.server.call('get_symbol_dropdown_items', self.time_datefrom.date, self.time_dateto.date)
+        if ("Transaction" or "P&L") in self.subform.report_name.text:
+            self.dropdown_symbol.items = ReportSearchPanelController.generate_stock_symbols_dropdown(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date)
 
     @logger.log_function
     def tranx_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.tag['added_symbols'].get(self.dropdown_symbol.selected_value, None) is None:
-            b = Button(text=self.dropdown_symbol.selected_value,
-                    icon=const.Icons.REMOVE,
-                    foreground=const.ColorSchemes.BUTTON_FG,
-                    background=const.ColorSchemes.BUTTON_BG)
+        if self.tag[self.symbol_key].get(self.dropdown_symbol.selected_value, None) is None:
+            b = Button(
+                text=self.dropdown_symbol.selected_value,
+                tag=self.dropdown_symbol.selected_value,
+                icon=Icons.REMOVE,
+                foreground=ColorSchemes.BUTTON_FG,
+                background=ColorSchemes.BUTTON_BG
+            )
             self.panel_symbol.add_component(b, name=self.dropdown_symbol.selected_value)
             b.set_event_handler('click', self.tranx_rpt_button_minus_click)
             # Register the added symbol to the dictionary in self.tag to avoid duplication
-            self.tag['added_symbols'].update({self.dropdown_symbol.selected_value: 1})
+            self.tag[self.symbol_key].update({self.dropdown_symbol.selected_value: 1})
 
     @logger.log_function
     def tranx_rpt_button_minus_click(self, **event_args):
         b = event_args['sender']
         # Deregister the added symbol from the dictionary in self.tag
-        self.tag['added_symbols'].pop(b.text)
+        self.tag[self.symbol_key].pop(b.text)
         b.remove_from_parent()
 
     @btnmod.one_click_only
@@ -219,20 +203,13 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def button_tranx_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-        
-        self.subform.rpt_panel.items = anvil.server.call('select_journals', startdate, enddate, symbol_list)
+        self.subform.rpt_panel.items = ReportSearchPanelController.populate_repeating_panel_stock_transactions(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, symbol_list)
 
     @btnmod.one_click_only
     def button_tranx_gen_csv_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-        
-        # Get data from db
-        csv_file = anvil.server.call('generate_csv', startdate, enddate, symbol_list)
+        csv_file = ReportSearchPanelController.generate_repeating_panel_stock_transactions_file(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, symbol_list)
         anvil.media.download(csv_file)
 
     def button_tranx_reset_click(self, **event_args):
@@ -244,12 +221,9 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def button_pnl_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         symbol_list = self._getall_selected_symbols()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-    
-        self.subform.hidden_time_datefrom.date = startdate
+        self.subform.hidden_time_datefrom.date = self.time_datefrom.date
         self.subform.hidden_symbol.text = symbol_list
-        self.subform.rpt_panel.items = anvil.server.call('generate_init_pnl_list', startdate, enddate, symbol_list)
+        self.subform.rpt_panel.items = ReportSearchPanelController.populate_repeating_panel_stock_profit_n_loss(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, symbol_list)
 
     def button_pnl_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -260,11 +234,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def button_exp_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         label_list = self._getall_selected_labels()
-        enddate = self._find_enddate()
-        startdate = self._find_startdate()
-
-        exp_list = anvil.server.call('proc_search_expense_list', startdate, enddate, label_list)
-        self.subform.rpt_panel.items = exp_list
+        self.subform.rpt_panel.items = ReportSearchPanelController.populate_repeating_panel_expense_transactions(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
 
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -273,22 +243,23 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def exp_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_id, lbl_name = self.dropdown_label.selected_value if self.dropdown_label.selected_value is not None else [None, None]
-        if self.tag['added_labels'].get(lbl_id, None) is None:
-            b = Button(text=lbl_name,
-                       tag=lbl_id,
-                       icon=const.Icons.REMOVE,
-                       foreground=const.ColorSchemes.BUTTON_FG,
-                       background=const.ColorSchemes.BUTTON_BG,
-                       font_size=12
-                      )
+        if self.tag[self.label_key].get(lbl_id, None) is None:
+            b = Button(
+                text=lbl_name,
+                tag=lbl_id,
+                icon=Icons.REMOVE,
+                foreground=ColorSchemes.BUTTON_FG,
+                background=ColorSchemes.BUTTON_BG,
+                font_size=12
+            )
             self.panel_label.add_component(b, name=lbl_id)
             b.set_event_handler('click', self.exp_rpt_button_minus_click)
             # Register the added label to the dictionary in self.tag to avoid duplication
-            self.tag['added_labels'].update({lbl_id: 1})
+            self.tag[self.label_key].update({lbl_id: 1})
 
     @logger.log_function
     def exp_rpt_button_minus_click(self, **event_args):
         b = event_args['sender']
         # Deregister the added label from the dictionary in self.tag
-        self.tag['added_labels'].pop(b.tag)
+        self.tag[self.label_key].pop(b.tag)
         b.remove_from_parent()

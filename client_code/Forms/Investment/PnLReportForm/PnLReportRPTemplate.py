@@ -1,12 +1,8 @@
 from ._anvil_designer import PnLReportRPTemplateTemplate
 from anvil import *
-import anvil.users
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ...Utils import Constants as const
-from ...Utils.Logger import ClientLogger
+from ....Utils.Constants import ColorSchemes, Icons, PNLDrillMode
+from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
@@ -19,22 +15,19 @@ class PnLReportRPTemplate(PnLReportRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        if self.item['pnl'] < 0:
-            self.foreground = const.ColorSchemes.AMT_NEG
-        else:
-            self.foreground = const.ColorSchemes.AMT_POS
+        self.foreground = ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else ColorSchemes.AMT_POS
       
-        if self.item['mode'] == const.PNLDrillMode.YEAR:
+        if self.item['mode'] == PNLDrillMode.YEAR:
             self.button_exp.visible = True
-        elif self.item['mode'] == const.PNLDrillMode.MONTH:
+        elif self.item['mode'] == PNLDrillMode.MONTH:
             self.button_exp.visible = True
-        elif self.item['mode'] == const.PNLDrillMode.DAY:
+        elif self.item['mode'] == PNLDrillMode.DAY:
             self.button_exp.visible = False
       
-        if self.item['action'] == const.Icons.DATA_DRILLDOWN:
-            self.button_exp.icon = const.Icons.DATA_DRILLDOWN
-        elif self.item['action'] == const.Icons.DATA_SUMMARIZE:
-            self.button_exp.icon = const.Icons.DATA_SUMMARIZE
+        if self.item['action'] == Icons.DATA_DRILLDOWN:
+            self.button_exp.icon = Icons.DATA_DRILLDOWN
+        elif self.item['action'] == Icons.DATA_SUMMARIZE:
+            self.button_exp.icon = Icons.DATA_SUMMARIZE
 
     @logger.log_function
     def button_exp_click(self, **event_args):

@@ -55,7 +55,7 @@ components:
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Report.ExpenseReportForm.ExpenseReportRPTemplate,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseReportForm.ExpenseReportRPTemplate,
       background: ''}
     layout_properties: {}
     name: rpt_panel

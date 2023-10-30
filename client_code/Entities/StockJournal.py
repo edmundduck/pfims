@@ -17,6 +17,54 @@ class StockJournal(BaseEntity):
     def get_column_definition():
         return ', '.join(c for c in StockJournal.__db_column_def__)
 
+    @staticmethod
+    def field_item_id():
+        return StockJournal.__property_def__[1]
+    
+    @staticmethod
+    def field_group_id():
+        return StockJournal.__property_def__[2]
+
+    @staticmethod
+    def field_sell_date():
+        return StockJournal.__property_def__[3]
+
+    @staticmethod
+    def field_buy_date():
+        return StockJournal.__property_def__[4]
+
+    @staticmethod
+    def field_symbol():
+        return StockJournal.__property_def__[5]
+
+    @staticmethod
+    def field_quantity():
+        return StockJournal.__property_def__[6]
+
+    @staticmethod
+    def field_total_sold():
+        return StockJournal.__property_def__[7]
+
+    @staticmethod
+    def field_total_cost():
+        return StockJournal.__property_def__[8]
+
+    @staticmethod
+    def field_fee():
+        return StockJournal.__property_def__[9]
+
+    @staticmethod
+    def field_sold_price():
+        return StockJournal.__property_def__[10]
+
+    @staticmethod
+    def field_purchased_price():
+        return StockJournal.__property_def__[11]
+
+    @staticmethod
+    def field_pnl():
+        return StockJournal.__property_def__[12]
+
     def get_user_id(self):
         return getattr(self, self.__property_def__[0], None)
         
