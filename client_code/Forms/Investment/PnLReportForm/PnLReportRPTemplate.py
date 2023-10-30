@@ -1,5 +1,6 @@
 from ._anvil_designer import PnLReportRPTemplateTemplate
 from anvil import *
+import anvil.server
 from ....Utils.Constants import ColorSchemes, Icons, PNLDrillMode
 from ....Utils.Logger import ClientLogger
 

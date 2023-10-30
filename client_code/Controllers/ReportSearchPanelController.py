@@ -243,3 +243,4 @@ def drill_pnl_data(start_date, end_date, symbols, pnl_list, date_value, mode, ac
         result (list of dict): The row structure for P&L data.
     """
     result = anvil.server.call('update_pnl_list', start_date, end_date, symbols, pnl_list, date_value, mode, action)
+    return result
