@@ -2,6 +2,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
+from ..Entities.StockJournal import StockJournal
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..Utils import Helper
@@ -71,7 +72,7 @@ def format_pnl_dict(rowitem, dictupdate, key, mode):
         mode (string): Period mode - y/m/d (Year/Month/Day)
     """
     numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictupdate.get(key, [0, 0, 0, 0, 0, 0, ''])
-    if (rowitem['sell_date'] - rowitem['buy_date']).days == 0:
+    if (rowitem[StockJournal.field_sell_date()] - rowitem['buy_date']).days == 0:
         numdaytrade += 1
     numtrade += 1
     sales += rowitem['sales']
@@ -122,10 +123,10 @@ def build_pnl_data(start_date, end_date, symbols):
     dictstruct_gchild = {}
     for i in rows:
         # Key has to be in string instead of datetime obj
-        sell_date_str = i['sell_date'].strftime("%Y-%m-%d")
-        sell_mth_str = i['sell_date'].strftime("%Y-%m")
-        sell_yr_str = i['sell_date'].strftime("%Y")
-        logger.debug(f"sell={i['sell_date']} / buy={i['buy_date']} / diff={(i['sell_date']-i['buy_date']).days}")
+        sell_date_str = i[StockJournal.field_sell_date()].strftime("%Y-%m-%d")
+        sell_mth_str = i[StockJournal.field_sell_date()].strftime("%Y-%m")
+        sell_yr_str = i[StockJournal.field_sell_date()].strftime("%Y")
+        logger.debug(f"sell={i[StockJournal.field_sell_date()]} / buy={i['buy_date']} / diff={(i[StockJournal.field_sell_date()]-i['buy_date']).days}")
         
         # Handling of Day
         format_pnl_dict(i, dictstruct_day, sell_date_str, PNLDrillMode.DAY)
@@ -167,7 +168,7 @@ def generate_init_pnl_list(start_date, end_date, symbols):
     for j in dictstruct_yr.keys():
         numtrade, numdaytrade, sales, cost, fee, pnl, mode = dictstruct_yr.get(j)
         dictitem = {
-            'sell_date': j,
+            StockJournal.field_sell_date(): j,
             'num_trade': numtrade,
             'num_daytrade': numdaytrade,
             'sales': sales,
@@ -179,7 +180,7 @@ def generate_init_pnl_list(start_date, end_date, symbols):
         }
         rowstruct += [dictitem]
     
-    return sorted(rowstruct, key=lambda x: x.get('sell_date'))
+    return sorted(rowstruct, key=lambda x: x.get(StockJournal.field_sell_date()))
 
 @anvil.server.callable("update_pnl_list")
 @logger.log_function
@@ -232,7 +233,7 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
       
         # Update action from plus to minus
         for rowitem in rowstruct:
-            if rowitem['sell_date'] == date_value:
+            if rowitem[StockJournal.field_sell_date()] == date_value:
                 rowstruct.remove(rowitem)
                 rowitem['action'] = Icons.DATA_SUMMARIZE
                 rowstruct = rowstruct + [rowitem]
@@ -240,7 +241,7 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
         for j in dictstruct_child.get(date_value):
             numtrade, numdaytrade, sales, cost, fee, pnl, mod = dictstruct.get(j)
             dictitem = {
-                'sell_date': j,
+                StockJournal.field_sell_date(): j,
                 'num_trade': numtrade,
                 'num_daytrade': numdaytrade,
                 'sales': sales,
@@ -261,12 +262,12 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
     
         for rowitem in pnl_list:
             # Remove child items from shrinked parent
-            if rowitem['sell_date'] in childlist:
+            if rowitem[StockJournal.field_sell_date()] in childlist:
                 rowstruct.remove(rowitem)
-            if rowitem['sell_date'] in gchildlist:
+            if rowitem[StockJournal.field_sell_date()] in gchildlist:
                 rowstruct.remove(rowitem)
             # Update action from minus to plus
-            if rowitem['sell_date'] == date_value:
+            if rowitem[StockJournal.field_sell_date()] == date_value:
                 rowstruct.remove(rowitem)
                 rowitem['action'] = Icons.DATA_DRILLDOWN
                 rowstruct = rowstruct + [rowitem]
@@ -274,7 +275,7 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
         pass
 
     logger.trace("rowstruct=", rowstruct)
-    return sorted(rowstruct, key=lambda x: x.get('sell_date'))
+    return sorted(rowstruct, key=lambda x: x.get(StockJournal.field_sell_date()))
 
 @logger.log_function
 def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
