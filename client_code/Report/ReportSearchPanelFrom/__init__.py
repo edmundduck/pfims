@@ -157,20 +157,6 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         self.button_pnl_search.enabled = False
         self.button_exp_search.enabled = False
     
-    def _find_enddate(self):
-        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval != SearchInterval.INTERVAL_SELF_DEFINED or self.time_dateto.date is None:
-            return date.today()
-        else:
-            return self.time_dateto.date
-  
-    def _find_startdate(self):
-        interval = self.dropdown_interval.selected_value[0] if isinstance(self.dropdown_interval.selected_value, list) else self.dropdown_interval.selected_value
-        if interval != SearchInterval.INTERVAL_SELF_DEFINED or self.time_datefrom.date is None:
-            return anvil.server.call('get_start_date', date.today(), interval)      
-        else:
-            return self.time_datefrom.date 
-  
     def dropdown_interval_change(self, **event_args):
         """This method is called when an item is selected"""
         if ("Transaction" or "P&L") in self.subform.report_name.text:
