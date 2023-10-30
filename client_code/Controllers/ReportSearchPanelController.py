@@ -158,7 +158,7 @@ def populate_repeating_panel_stock_transactions(search_interval_dropdown_selecte
     Returns:
         result (list of dict): A list of stock trading transactions for repeating panel.
     """
-    interval = self.dropdown_interval.selected_value
+    interval = search_interval_dropdown_selected
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()
@@ -177,7 +177,7 @@ def generate_repeating_panel_stock_transactions_file(search_interval_dropdown_se
     Returns:
         csv: Result in CSV file.
     """
-    interval = self.dropdown_interval.selected_value
+    interval = search_interval_dropdown_selected
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()
@@ -196,7 +196,7 @@ def populate_repeating_panel_stock_profit_n_loss(search_interval_dropdown_select
     Returns:
         result (list of dict): A list of stock profit and loss calculations for repeating panel.
     """
-    interval = self.dropdown_interval.selected_value
+    interval = search_interval_dropdown_selected
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()
@@ -215,7 +215,7 @@ def populate_repeating_panel_expense_transactions(search_interval_dropdown_selec
     Returns:
         result (list of dict): A list of expense transactions for repeating panel.
     """
-    interval = self.dropdown_interval.selected_value
+    interval = search_interval_dropdown_selected
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()

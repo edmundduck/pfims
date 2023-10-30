@@ -12,6 +12,8 @@ btnmod = ButtonModerator()
 
 class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     subform = None
+    symbol_key = 'added_symbols'
+    label_key = 'added_labels'
 
     def __init__(self, subform, **properties):
         # Set Form properties and Data Bindings.
@@ -36,7 +38,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = False
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
-            self.tag = {'added_symbols': {None: 1}}
+            self.tag = {self.symbol_key: {None: 1}}
             self._update_stock_enablement()
         elif "P&L" in subform.report_name.text:
             self.subform = PnLReportForm()
@@ -47,7 +49,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_pnl_report.visible = True
             self.panel_exp_list.visible = False
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
-            self.tag = {'added_symbols': {None: 1}}
+            self.tag = {self.symbol_key: {None: 1}}
             self._update_stock_enablement()
         elif "Expense" in subform.report_name.text:
             self.subform = ExpenseReportForm()
@@ -58,7 +60,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_pnl_report.visible = False
             self.panel_exp_list.visible = True
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
-            self.tag = {'added_labels': {None: 1}}
+            self.tag = {self.label_key: {None: 1}}
             self._update_expense_enablement()
         else:
             # If error, show no buttons
@@ -85,7 +87,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             if isinstance(i, Button):
                 if i.icon == Icons.REMOVE:
                     # Deregister the added symbol from the dictionary in self.tag
-                    self.tag['added_symbols'].pop(i.text)
+                    self.tag[self.symbol_key].pop(i.text)
                     i.remove_from_parent()
 
     @logger.log_function
@@ -104,7 +106,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             if isinstance(i, Button):
                 if i.icon == Icons.REMOVE:
                     # Deregister the added label from the dictionary in self.tag
-                    self.tag['added_labels'].pop(i.tag)
+                    self.tag[self.label_key].pop(i.tag)
                     i.remove_from_parent()
 
     @logger.log_function
@@ -176,7 +178,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     @logger.log_function
     def tranx_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
-        if self.tag['added_symbols'].get(self.dropdown_symbol.selected_value, None) is None:
+        if self.tag[self.symbol_key].get(self.dropdown_symbol.selected_value, None) is None:
             b = Button(text=self.dropdown_symbol.selected_value,
                     icon=Icons.REMOVE,
                     foreground=ColorSchemes.BUTTON_FG,
@@ -184,13 +186,13 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_symbol.add_component(b, name=self.dropdown_symbol.selected_value)
             b.set_event_handler('click', self.tranx_rpt_button_minus_click)
             # Register the added symbol to the dictionary in self.tag to avoid duplication
-            self.tag['added_symbols'].update({self.dropdown_symbol.selected_value: 1})
+            self.tag[self.symbol_key].update({self.dropdown_symbol.selected_value: 1})
 
     @logger.log_function
     def tranx_rpt_button_minus_click(self, **event_args):
         b = event_args['sender']
         # Deregister the added symbol from the dictionary in self.tag
-        self.tag['added_symbols'].pop(b.text)
+        self.tag[self.symbol_key].pop(b.text)
         b.remove_from_parent()
 
     @btnmod.one_click_only
@@ -238,7 +240,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     def exp_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         lbl_id, lbl_name = self.dropdown_label.selected_value if self.dropdown_label.selected_value is not None else [None, None]
-        if self.tag['added_labels'].get(lbl_id, None) is None:
+        if self.tag[self.label_key].get(lbl_id, None) is None:
             b = Button(
                 text=lbl_name,
                 tag=lbl_id,
@@ -250,11 +252,11 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             self.panel_label.add_component(b, name=lbl_id)
             b.set_event_handler('click', self.exp_rpt_button_minus_click)
             # Register the added label to the dictionary in self.tag to avoid duplication
-            self.tag['added_labels'].update({lbl_id: 1})
+            self.tag[self.label_key].update({lbl_id: 1})
 
     @logger.log_function
     def exp_rpt_button_minus_click(self, **event_args):
         b = event_args['sender']
         # Deregister the added label from the dictionary in self.tag
-        self.tag['added_labels'].pop(b.tag)
+        self.tag[self.label_key].pop(b.tag)
         b.remove_from_parent()
