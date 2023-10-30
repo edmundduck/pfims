@@ -1,6 +1,5 @@
 from ._anvil_designer import StockTradingTxnDetailRPTemplateTemplate
 from anvil import *
-import anvil.server
 from .....Controllers import StockTradingTxnDetailController
 from .....Utils.ButtonModerator import ButtonModerator
 from .....Utils.Logger import ClientLogger

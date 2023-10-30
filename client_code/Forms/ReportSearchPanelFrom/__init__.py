@@ -21,9 +21,9 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
     
         # Any code you write here will run when the form opens.
         from ... import Global
-        from ..TransactionReportForm import TransactionReportForm
-        from ..PnLReportForm import PnLReportForm
-        from ..ExpenseReportForm import ExpenseReportForm
+        from ..Investment.TransactionReportForm import TransactionReportForm
+        from ..Investment.PnLReportForm import PnLReportForm
+        from ..Expense.ExpenseReportForm import ExpenseReportForm
         self.dropdown_interval.items = ReportSearchPanelController.generate_search_interval_dropdown()
         self.dropdown_interval.selected_value = Global.settings.get_search_interval()
         self.time_datefrom.date = Global.settings.get_search_datefrom()

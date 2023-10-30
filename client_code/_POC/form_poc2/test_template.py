@@ -12,11 +12,8 @@ class test_template(test_templateTemplate):
     # Set Form properties and Data Bindings.
     self.init_components(**properties)
 
-    # Any code you write here will run when the form opens.
-    if self.item['pnl'] < 0:
-      self.foreground = const.ColorSchemes.AMT_NEG
-    else:
-      self.foreground = const.ColorSchemes.AMT_POS
+# Any code you write here will run when the form opens.
+    self.foreground = ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else ColorSchemes.AMT_POS
 
   def button_vis_click(self, **event_args):
     """This method is called when the button is clicked"""
