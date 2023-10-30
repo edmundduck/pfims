@@ -2,8 +2,8 @@ from ._anvil_designer import ExpenseReportRPTemplateTemplate
 from anvil import *
 import anvil.users
 import anvil.server
-from ...Controllers import ExpenseReportController
-from ...Utils import Constants as const
+from ....Controllers import ExpenseReportController
+from ....Utils import Constants as const
 
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
@@ -14,7 +14,7 @@ class ExpenseReportRPTemplate(ExpenseReportRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        from ...Entities.ExpenseTransaction import ExpenseTransaction
+        from ....Entities.ExpenseTransaction import ExpenseTransaction
         
         self.foreground = const.ColorSchemes.AMT_EXPENSE if self.item[ExpenseTransaction.field_amount()] < 0 else const.ColorSchemes.AMT_POS
 

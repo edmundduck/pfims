@@ -1,7 +1,7 @@
 from ._anvil_designer import PnLReportFormTemplate
 from anvil import *
 import anvil.server
-from ...Utils.Logger import ClientLogger
+from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
