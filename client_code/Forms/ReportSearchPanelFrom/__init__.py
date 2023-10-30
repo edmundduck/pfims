@@ -77,7 +77,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
         for i in self.panel_symbol.get_components():
             if isinstance(i, Button):
                 if i.icon == Icons.REMOVE:
-                    symbol_list += [i.text]
+                    symbol_list += [i.tag]
         return symbol_list
 
     # Remove all symbols selected as blue buttons from dictionary
@@ -87,7 +87,7 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
             if isinstance(i, Button):
                 if i.icon == Icons.REMOVE:
                     # Deregister the added symbol from the dictionary in self.tag
-                    self.tag[self.symbol_key].pop(i.text)
+                    self.tag[self.symbol_key].pop(i.tag)
                     i.remove_from_parent()
 
     @logger.log_function
@@ -172,17 +172,20 @@ class ReportSearchPanelFrom(ReportSearchPanelFromTemplate):
 
     def time_dateto_change(self, **event_args):
         """This method is called when the selected date changes"""
-        if ("Transaction" or "P&L") in subform.report_name.text:
+        if ("Transaction" or "P&L") in self.subform.report_name.text:
             self.dropdown_symbol.items = ReportSearchPanelController.generate_stock_symbols_dropdown(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date)
 
     @logger.log_function
     def tranx_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
         if self.tag[self.symbol_key].get(self.dropdown_symbol.selected_value, None) is None:
-            b = Button(text=self.dropdown_symbol.selected_value,
-                    icon=Icons.REMOVE,
-                    foreground=ColorSchemes.BUTTON_FG,
-                    background=ColorSchemes.BUTTON_BG)
+            b = Button(
+                text=self.dropdown_symbol.selected_value,
+                tag=self.dropdown_symbol.selected_value,
+                icon=Icons.REMOVE,
+                foreground=ColorSchemes.BUTTON_FG,
+                background=ColorSchemes.BUTTON_BG
+            )
             self.panel_symbol.add_component(b, name=self.dropdown_symbol.selected_value)
             b.set_event_handler('click', self.tranx_rpt_button_minus_click)
             # Register the added symbol to the dictionary in self.tag to avoid duplication
