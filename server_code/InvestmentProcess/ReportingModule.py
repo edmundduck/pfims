@@ -1,10 +1,3 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import psycopg2
 import psycopg2.extras
@@ -18,84 +11,6 @@ from ..Utils.Constants import Database, Icons, PNLDrillMode
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 logger = LoggingModule.ServerLogger()
-
-@logger.log_function
-def get_L1M_start_date(end_date):
-    """
-    Internal function - Return start date of last 1 month.
-
-    Parameters:
-        end_date (date): End date of the search.
-
-    Returns:
-        date: 1 month ago from end date.
-    """
-    return date(end_date.year-1, end_date.month+12-1, end_date.day) if end_date.month-1 < 1 else date(end_date.year, end_date.month-1, end_date.day)
-
-@logger.log_function
-def get_L3M_start_date(end_date):
-    """
-    Internal function - Return start date of last 3 months.
-
-    Parameters:
-        end_date (date): End date of the search.
-
-    Returns:
-        date: 3 months ago from end date.
-    """
-    return date(end_date.year-1, end_date.month+12-3, end_date.day) if end_date.month-3 < 1 else date(end_date.year, end_date.month-3, end_date.day)
-
-@logger.log_function
-def get_L6M_start_date(end_date):
-    """
-    Internal function - Return start date of last 6 months.
-
-    Parameters:
-        end_date (date): End date of the search.
-
-    Returns:
-        date: 6 months ago from end date.
-    """
-    return date(end_date.year-1, end_date.month+12-6, end_date.day) if end_date.month-6 < 1 else date(end_date.year, end_date.month-6, end_date.day)
-
-@logger.log_function
-def get_L1Y_start_date(end_date):
-    """
-    Internal function - Return start date of last 1 year.
-
-    Parameters:
-        end_date (date): End date of the search.
-
-    Returns:
-        date: 1 year ago from end date.
-    """
-    return date(end_date.year-1, end_date.month, end_date.day)
-
-@logger.log_function
-def get_YTD_start_date(end_date):
-    """
-    Internal function - Return the 1st date of the current year.
-
-    Parameters:
-        end_date (date): End date of the search.
-
-    Returns:
-        date: The first day of the current year.
-    """
-    return date(end_date.year, 1, 1)
-
-@logger.log_function
-def interval_default(end_date):
-    """
-    Internal function - Return None if it's not date.
-
-    Parameters:
-        end_date (date): End date of the search.
-
-    Returns:
-        None
-    """
-    return None
 
 @anvil.server.callable("get_symbol_dropdown_items")
 @logger.log_function
@@ -111,28 +26,6 @@ def get_symbol_dropdown_items(start_date, end_date=date.today()):
         list: A list of all symbols found within the search.
     """
     return list(sorted(set(row['symbol'] for row in select_journals(start_date, end_date))))
-
-@anvil.server.callable("get_start_date")
-@logger.log_function
-def get_start_date(end_date, interval):
-    """
-    Get start date based on end date and time interval dropdown value.
-
-    Parameters:
-        end_date (date): End date of the search.
-        interval (string): Constant of search interval.
-
-    Returns:
-        function: A function which coresponds to the interval.
-    """
-    switcher = {
-        s_const.SearchInterval.INTERVAL_LAST_1_MTH: get_L1M_start_date,
-        s_const.SearchInterval.INTERVAL_LAST_3_MTH: get_L3M_start_date,
-        s_const.SearchInterval.INTERVAL_LAST_6_MTH: get_L6M_start_date,
-        s_const.SearchInterval.INTERVAL_LAST_1_YR: get_L1Y_start_date,
-        s_const.SearchInterval.INTERVAL_YEAR_TO_DATE: get_YTD_start_date,
-    }
-    return switcher.get(interval, interval_default)(end_date)
 
 @anvil.server.callable("select_journals")
 @logger.log_function
