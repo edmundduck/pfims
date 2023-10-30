@@ -17,8 +17,20 @@ def initialize_data():
     Returns:
         list: A list of all functions return required by the form initialization.
     """
-    brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
-    return [brokers, search_interval, ccy, submitted_group_list]
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache1 = ClientDropdownCache(CacheKey.DD_BROKER)
+    cache2 = ClientDropdownCache(CacheKey.DD_SEARCH_INTERVAL)
+    cache3 = ClientDropdownCache(CacheKey.DD_CURRENCY)
+    cache4 = ClientDropdownCache(CacheKey.DD_SUBMITTED_JRN_GRP)
+    if any((
+        cache1.is_empty(), cache1.is_expired(), cache2.is_empty(), cache2.is_expired(),
+        cache3.is_empty(), cache3.is_expired(), cache4.is_empty(), cache4.is_expired()
+    )):
+        brokers, search_interval, ccy, submitted_group_list = anvil.server.call('proc_init_settings')
+        cache1.set_cache(brokers)
+        cache2.set_cache(search_interval)
+        cache3.set_cache(ccy)
+        cache4.set_cache(submitted_group_list)
 
 def get_user_settings():
     """
@@ -29,87 +41,61 @@ def get_user_settings():
     Global.settings = setting
 
 @logger.log_function
-def generate_brokers_dropdown(data=None, reload=False):
+def generate_brokers_dropdown(reload=False):
     """
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_BROKER, cache_data)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_BROKER)
     if reload:
         cache.clear_cache()
-    if cache.is_empty():
-        rows = anvil.server.call('generate_brokers_simplified_list')
-        new_dropdown = list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in rows)
-        cache.set_cache(new_dropdown)
     return cache.get_cache()
 
 @logger.log_function
-def generate_search_interval_dropdown(data=None):
+def generate_search_interval_dropdown():
     """
     Access search interval dropdown from either client cache or generate from DB data returned from server side.
-
-    Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
 
     Returns:
         cache.get_cache (list): Search interval dropdown formed by search interval DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((r['name'], r['id']) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_SEARCH_INTERVAL, cache_data)
-    if cache.is_empty():
-        rows = anvil.server.call('generate_search_interval_list')
-        new_dropdown = list((r['name'], r['id']) for r in rows)
-        cache.set_cache(new_dropdown)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_SEARCH_INTERVAL)
     return cache.get_cache()
 
 @logger.log_function
-def generate_currency_dropdown(data=None):
+def generate_currency_dropdown():
     """
     Access currency dropdown from either client cache or generate from DB data returned from server side.
-
-    Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
 
     Returns:
         cache.get_cache (list): Currency dropdown formed by currency DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_CURRENCY, cache_data)
-    if cache.is_empty():
-        rows = anvil.server.call('generate_currency_list')
-        new_dropdown = list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in rows)
-        cache.set_cache(new_dropdown)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_CURRENCY)
     return cache.get_cache()
 
 @logger.log_function
-def generate_submitted_journal_groups_dropdown(data=None, reload=False):
+def generate_submitted_journal_groups_dropdown(reload=False):
     """
     Access submitted stock journal groups dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Submitted stock journal groups dropdown formed by stock journal groups DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_SUBMITTED_JRN_GRP, cache_data)
-    if cache.is_empty():
-        rows = anvil.server.call('generate_submitted_journal_groups_list')
-        new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
-        cache.set_cache(new_dropdown)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_SUBMITTED_JRN_GRP)
+    if reload:
+        cache.clear_cache()
     return cache.get_cache()
 
 def generate_logging_level_dropdown():
@@ -131,10 +117,8 @@ def get_broker_dropdown_selected_item(broker_id):
     Returns:
         selected_item (list): Complete key of the selected item in broker dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    brokers_dropdown = ClientCache(CacheKey.DD_BROKER, None)
-    if brokers_dropdown.is_empty():
-        generate_brokers_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    brokers_dropdown = ClientDropdownCache(CacheKey.DD_BROKER)
     selected_item = brokers_dropdown.get_complete_key(broker_id)
     return selected_item
 
@@ -267,8 +251,8 @@ def change_broker(broker_dropdown_selected, broker_name, ccy_dropdown_selected):
     Returns:
         result (int): The ID of the newly created or row count of the updated broker, otherwise None.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_BROKER, None)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_BROKER)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     ccy = ccy_dropdown_selected[0] if isinstance(ccy_dropdown_selected, (list, tuple)) else ccy_dropdown_selected
     result = anvil.server.call('update_broker', broker_id, broker_name, ccy) if broker_id else \
@@ -289,8 +273,8 @@ def delete_broker(broker_dropdown_selected):
     Returns:
         result (int): Successful update row count, otherwise None.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_BROKER, None)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_BROKER)
     broker_id, _, _ = broker_dropdown_selected if isinstance(broker_dropdown_selected, (list, tuple)) else [broker_dropdown_selected, None, None]
     result = anvil.server.call('delete_broker', broker_id)
     if not result:
@@ -311,8 +295,8 @@ def submit_journal_group(jrn_grp_dropdown_selected):
         result (int): Successful update row count, otherwise None.
     """
     from ..Entities.StockJournalGroup import StockJournalGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_SUBMITTED_JRN_GRP, None)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_SUBMITTED_JRN_GRP)
     jrn_grp_id, jrn_grp_name = jrn_grp_dropdown_selected if isinstance(jrn_grp_dropdown_selected, (list, tuple)) else [jrn_grp_dropdown_selected, None]
     jrn_grp = StockJournalGroup().set_id(jrn_grp_id).set_name(jrn_grp_name).set_submitted_status(False)
     result = anvil.server.call('submit_stock_journal_group', jrn_grp)

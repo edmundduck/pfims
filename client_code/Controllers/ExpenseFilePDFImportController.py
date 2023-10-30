@@ -8,47 +8,44 @@ from ..Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 @logger.log_function
-def generate_expense_tabs_dropdown(data=None, reload=False):
+def generate_expense_tabs_dropdown(reload=False):
     """
     Access expense tabs dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Expense tabs dropdown formed by expense tabs DB table data.
     """
     from . import ExpenseInputController
-    return ExpenseInputController.generate_expense_tabs_dropdown(data, reload)
+    return ExpenseInputController.generate_expense_tabs_dropdown(reload)
 
-def generate_accounts_dropdown(data=None, reload=False):
+def generate_accounts_dropdown(reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Accounts dropdown formed by accounts DB table data.
     """
     from . import AccountMaintController
-    return AccountMaintController.generate_accounts_dropdown(data, reload)
+    return AccountMaintController.generate_accounts_dropdown(reload)
 
-def generate_labels_dropdown(data=None, reload=False):
+def generate_labels_dropdown(reload=False):
     """
     Access labels dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Labels dropdown formed by labels DB table data.
     """
     from . import LabelMaintController
-    return LabelMaintController.generate_labels_dropdown(data, reload)
+    return LabelMaintController.generate_labels_dropdown(reload)
 
 def generate_expense_table_definition_dropdown():
     """
@@ -83,10 +80,8 @@ def get_expense_table_definition_dropdown_selected_item(id):
     Returns:
         selected_item (list): Complete key of the selected item in expense table definition dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_EXPENSE_TBL_DEF, None)
-    if cache.is_empty():
-        generate_expense_table_definition_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_EXPENSE_TBL_DEF)
     selected_item = cache.get_complete_key(id)
     return selected_item
 

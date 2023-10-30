@@ -450,6 +450,8 @@ def update_pdf_mapping(data, mapping, account, labels):
     Returns:
         df (dataframe): Processed dataframe.
     """
+    from . import FileImportMappingBLModule
+    
     # Logic of merging all amount columns
     def merge_amt_cols(row):
         logger.trace(f"merge_amt_cols row={row}")
@@ -511,7 +513,7 @@ def update_pdf_mapping(data, mapping, account, labels):
     # Generate mapping matrix which has unique columns each
     # Sample - mapping_matrix= [[0, 3, 2], [0, 4, 2]]
     logger.debug(f"nonNanList={nonNanList}, nanList={nanList}")
-    mapping_matrix = FileImportMappingDAModule.generate_mapping_matrix(matrix, nonNanList.copy())
+    mapping_matrix = FileImportMappingBLModule.generate_mapping_matrix(matrix, nonNanList.copy())
 
     new_df = None
     for m in mapping_matrix:

@@ -59,7 +59,7 @@ components:
   layout_properties: {grid_position: 'CSRLBJ,ATIMAJ'}
   components:
   - type: RepeatingPanel
-    properties: {spacing_above: none, spacing_below: none, item_template: Debug.form_poc3.RowTemplate3}
+    properties: {spacing_above: none, spacing_below: none, item_template: _POC.form_poc3.RowTemplate3}
     name: repeating_panel_1
     layout_properties: {}
   data_bindings: []

@@ -7,21 +7,35 @@ from ..Utils.Logger import ClientLogger
 
 logger = ClientLogger()
 
-def generate_accounts_dropdown(data=None, reload=False):
+@logger.log_function
+def init_cache():
+    """
+    Call one server function to preload all caches required by the form.
+    """
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache1 = ClientDropdownCache(CacheKey.DD_EXPENSE_TBL_DEF)
+    cache2 = ClientDropdownCache(CacheKey.DD_IMPORT_EXTRA_ACTION)
+    if any((
+        cache1.is_empty(), cache1.is_expired(), cache2.is_empty(), cache2.is_expired()
+    )):
+        data_to_cache = anvil.server.call('init_cache_upload_mapping')
+        cache1.set_cache(data_to_cache[0])
+        cache2.set_cache(data_to_cache[1])
+
+def generate_accounts_dropdown(reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Accounts dropdown formed by accounts DB table data.
     """
     from . import AccountMaintController
-    return AccountMaintController.generate_accounts_dropdown(data, reload)
+    return AccountMaintController.generate_accounts_dropdown(reload)
 
-def generate_labels_dropdown(data=None, reload=False):
+def generate_labels_dropdown(reload=False):
     """
     Access labels dropdown from either client cache or generate from DB data returned from server side.
 
@@ -33,7 +47,7 @@ def generate_labels_dropdown(data=None, reload=False):
         cache.get_cache (list): Labels dropdown formed by labels DB table data.
     """
     from . import LabelMaintController
-    return LabelMaintController.generate_labels_dropdown(data, reload)
+    return LabelMaintController.generate_labels_dropdown(reload)
 
 def generate_expense_table_definition_dropdown():
     """
@@ -42,12 +56,8 @@ def generate_expense_table_definition_dropdown():
     Returns:
         cache.get_cache (list): Expense table definition dropdown formed by expense table definition DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_EXPENSE_TBL_DEF, None)
-    if cache.is_empty():
-        rows = anvil.server.call('generate_expense_tbl_def_list')
-        new_dropdown = list((r['col_name'], [r['col_code'], r['col_name']]) for r in rows)
-        cache.set_cache(new_dropdown)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_EXPENSE_TBL_DEF)
     return cache.get_cache()
 
 def generate_import_extra_action_dropdown():
@@ -57,12 +67,8 @@ def generate_import_extra_action_dropdown():
     Returns:
         cache.get_cache (list): Import extra action dropdown formed by import extra action DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_IMPORT_EXTRA_ACTION, None)
-    if cache.is_empty():
-        rows = anvil.server.call('generate_upload_action_list')
-        new_dropdown = list((r['action'], [r['id'], r['action']]) for r in rows)
-        cache.set_cache(new_dropdown)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_IMPORT_EXTRA_ACTION)
     return cache.get_cache()
 
 def generate_file_mapping_type_dropdown():
@@ -111,10 +117,8 @@ def get_expense_table_definition_dropdown_selected_item(id):
     Returns:
         selected_item (list): Complete key of the selected item in expense table definition dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_EXPENSE_TBL_DEF, None)
-    if cache.is_empty():
-        generate_expense_table_definition_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_EXPENSE_TBL_DEF)
     selected_item = cache.get_complete_key(id)
     return selected_item
 
@@ -128,10 +132,8 @@ def get_import_extra_action_dropdown_selected_item(id):
     Returns:
         selected_item (list): Complete key of the selected item in import extra action dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_IMPORT_EXTRA_ACTION, None)
-    if cache.is_empty():
-        generate_import_extra_action_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_IMPORT_EXTRA_ACTION)
     selected_item = cache.get_complete_key(id)
     return selected_item
 

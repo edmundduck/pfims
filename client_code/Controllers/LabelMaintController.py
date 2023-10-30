@@ -9,26 +9,20 @@ from ..Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 @logger.log_function
-def generate_labels_dropdown(data=None, reload=False):
+def generate_labels_dropdown(reload=False):
     """
     Access labels dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Labels dropdown formed by labels DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_LABEL, cache_data)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_LABEL)
     if reload:
         cache.clear_cache()
-    if cache.is_empty():
-        rows = anvil.server.call('generate_labels_list')
-        new_dropdown = list((r['name'] + " (" + str(r['id']) + ")", (r['id'], r['name'])) for r in rows)
-        cache.set_cache(new_dropdown)
     return cache.get_cache()
 
 def get_label_dropdown_selected_item(lbl_id):
@@ -41,10 +35,8 @@ def get_label_dropdown_selected_item(lbl_id):
     Returns:
         selected_item (list): Complete key of the selected item in label dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_LABEL, None)
-    if cache.is_empty():
-        generate_labels_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_LABEL)
     selected_item = cache.get_complete_key(lbl_id)
     return selected_item
 
@@ -62,8 +54,8 @@ def __get_label__(label_dropdown_selected, reload=False):
     """
     from ..Utils.ClientCache import ClientCache
     lbl_id, _ = label_dropdown_selected if label_dropdown_selected else [None, None]
-    cache = ClientCache(CacheKey.OBJ_LABEL, None)
-    if not reload and not cache.is_empty() and cache.get_cache().get(lbl_id, None):
+    cache = ClientCache(CacheKey.OBJ_LABEL)
+    if not reload and not cache.is_empty() and not cache.is_expired() and cache.get_cache().get(lbl_id, None):
         lbl = cache.get_cache().get(lbl_id, None)
     else:
         lbl = anvil.server.call('select_label', lbl_id)
@@ -97,6 +89,8 @@ def get_label_status(label_dropdown_selected, reload=False):
         lbl.get_status (date): Selected label's status.
     """
     lbl = __get_label__(label_dropdown_selected, reload)
+    if lbl.get_status() is None:
+        lbl = lbl.set_status(True)
     return lbl.get_status()
 
 def get_label_keywords(label_dropdown_selected, reload=False):
@@ -155,7 +149,7 @@ def create_label(lbl_name, keywords, status):
     from .. import Global
     from ..Entities.Label import Label
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.OBJ_LABEL, None)
+    cache = ClientCache(CacheKey.OBJ_LABEL)
 
     lbl = Label().set_user_id(Global.userid).set_name(lbl_name).set_keywords(keywords).set_status(status)
     id_list = anvil.server.call('create_label', lbl)
@@ -185,7 +179,7 @@ def update_label(label_dropdown_selected, lbl_name, keywords, status):
     from .. import Global
     from ..Entities.Label import Label
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.OBJ_LABEL, None)
+    cache = ClientCache(CacheKey.OBJ_LABEL)
 
     lbl_id, _ = label_dropdown_selected if label_dropdown_selected is not None else [None, None]
     lbl = Label().set_user_id(Global.userid).set_id(lbl_id).set_name(lbl_name).set_keywords(keywords).set_status(status)
@@ -211,7 +205,7 @@ def delete_label(label_dropdown_selected):
     from .. import Global
     from ..Entities.Label import Label
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.OBJ_LABEL, None)
+    cache = ClientCache(CacheKey.OBJ_LABEL)
 
     lbl_id, lbl_name = label_dropdown_selected if label_dropdown_selected is not None else [None, None]
     lbl = Label().set_user_id(Global.userid).set_id(lbl_id).set_name(lbl_name)

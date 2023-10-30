@@ -47,7 +47,7 @@ components:
       name: text_remarks
       layout_properties: {column: QRNHED}
   - type: RepeatingPanel
-    properties: {spacing_above: none, spacing_below: none, item_template: Debug.form_poc1.RowTemplate1}
+    properties: {spacing_above: none, spacing_below: none, item_template: _POC.form_poc1.RowTemplate1}
     name: repeating_panel_1
     layout_properties: {}
 is_package: true

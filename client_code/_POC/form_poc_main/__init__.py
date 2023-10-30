@@ -2,9 +2,6 @@ from ._anvil_designer import form_poc_mainTemplate
 from anvil import *
 import anvil.users
 import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 from ..form_poc1 import form_poc1
 from ..form_poc2 import form_poc2
 from ..form_poc3 import form_poc3
@@ -26,7 +23,7 @@ class form_poc_main(form_poc_mainTemplate):
             ('form_poc2 - Repeating items', 'form_poc2'),
             ('form_poc3 - Parent calls child validation', 'form_poc3'),
             ('form_poc3a - Child validation done in parent', 'form_poc3a'),
-            ('form_poc4 - File import', 'form_poc4'),
+            ('form_poc4 - Cache rework', 'form_poc4'),
             ('form_poc5 - Multiple functions in one server.call', 'form_poc5')
         ]
 

@@ -8,40 +8,31 @@ from ..Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 @logger.log_function
-def generate_accounts_dropdown(data=None, reload=False):
+def generate_accounts_dropdown(reload=False):
     """
     Access accounts dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Accounts dropdown formed by accounts DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name']]) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_ACCOUNT, cache_data)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_ACCOUNT)
     if reload:
         cache.clear_cache()
-    if cache.is_empty():
-        rows = anvil.server.call('generate_accounts_list')
-        new_dropdown = list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name']]) for r in rows)
-        cache.set_cache(new_dropdown)
     return cache.get_cache()
 
-def generate_currency_dropdown(data=None):
+def generate_currency_dropdown():
     """
     Access currency dropdown from either client cache or generate from DB data returned from server side.
-
-    Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
 
     Returns:
         cache.get_cache (list): Currency dropdown formed by currency DB table data.
     """
     from . import UserSettingController
-    return UserSettingController.generate_currency_dropdown(data)
+    return UserSettingController.generate_currency_dropdown()
 
 def get_account_dropdown_selected_item(acct_id):
     """
@@ -53,10 +44,8 @@ def get_account_dropdown_selected_item(acct_id):
     Returns:
         selected_item (list): Complete key of the selected item in account dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_ACCOUNT, None)
-    if cache.is_empty():
-        generate_accounts_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_ACCOUNT)
     selected_item = cache.get_complete_key(acct_id)
     return selected_item
 
@@ -70,10 +59,8 @@ def get_currency_dropdown_selected_item(ccy):
     Returns:
         selected_item (list): Complete key of the selected item in currency dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_CURRENCY, None)
-    if cache.is_empty():
-        generate_currency_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_CURRENCY)
     selected_item = cache.get_complete_key(ccy)
     return selected_item
 
@@ -91,8 +78,8 @@ def __get_account__(account_dropdown_selected, reload=False):
     """
     from ..Utils.ClientCache import ClientCache
     acct_id, _ = account_dropdown_selected if account_dropdown_selected else [None, None]
-    cache = ClientCache(CacheKey.OBJ_ACCOUNT, None)
-    if not reload and not cache.is_empty() and cache.get_cache().get(acct_id, None):
+    cache = ClientCache(CacheKey.OBJ_ACCOUNT)
+    if not reload and not cache.is_empty() and not cache.is_expired() and cache.get_cache().get(acct_id, None):
         acct = cache.get_cache().get(acct_id, None)
     else:
         acct = anvil.server.call('select_account', acct_id)
@@ -168,6 +155,8 @@ def get_account_status(account_dropdown_selected, reload=False):
         acct.get_status (date): Selected account's status.
     """
     acct = __get_account__(account_dropdown_selected, reload)
+    if acct.get_status() is None:
+        acct = acct.set_status(True)
     return acct.get_status()
 
 def enable_account_update_button(account_selection):
@@ -214,7 +203,7 @@ def create_account(acct_name, currency_dropdown_selected, date_validfrom, date_v
     from .. import Global
     from ..Entities.Account import Account
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.OBJ_ACCOUNT, None)
+    cache = ClientCache(CacheKey.OBJ_ACCOUNT)
 
     ccy = currency_dropdown_selected if currency_dropdown_selected is not None else None
     acct = Account().set_user_id(Global.userid).set_name(acct_name).set_base_currency(ccy).set_valid_datefrom(date_validfrom).set_valid_dateto(date_validto).set_status(status)
@@ -246,7 +235,7 @@ def update_account(account_dropdown_selected, acct_name, currency_dropdown_selec
     from .. import Global
     from ..Entities.Account import Account
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.OBJ_ACCOUNT, None)
+    cache = ClientCache(CacheKey.OBJ_ACCOUNT)
 
     acct_id, _ = account_dropdown_selected if account_dropdown_selected is not None else [None, None]
     ccy = currency_dropdown_selected if currency_dropdown_selected is not None else None
@@ -273,7 +262,7 @@ def delete_account(account_dropdown_selected):
     from .. import Global
     from ..Entities.Account import Account
     from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.OBJ_ACCOUNT, None)
+    cache = ClientCache(CacheKey.OBJ_ACCOUNT)
 
     acct_id, acct_name = account_dropdown_selected if account_dropdown_selected is not None else [None, None]
     acct = Account().set_user_id(Global.userid).set_id(acct_id).set_name(acct_name)

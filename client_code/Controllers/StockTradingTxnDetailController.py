@@ -13,47 +13,42 @@ def init_cache():
     """
     Call one server function to preload all caches required by the form.
     """
-    from ..Utils.ClientCache import ClientCache
+    from ..Utils.ClientCache import ClientCache, ClientDropdownCache
     data_to_cache = anvil.server.call('init_cache_stock_trading_txn_detail')
-    ClientCache(CacheKey.DD_BROKER, list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in data_to_cache[0]))
-    ClientCache(CacheKey.DD_STOCK_JRN_GRP, list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data_to_cache[1]))
+    cache = ClientDropdownCache(CacheKey.DD_BROKER)
+    cache.set_cache(data_to_cache[0])
+    cache2 = ClientDropdownCache(CacheKey.DD_STOCK_JRN_GRP)
+    cache2.set_cache(data_to_cache[1])
 
 @logger.log_function
-def generate_brokers_dropdown(data=None, reload=False):
+def generate_brokers_dropdown(reload=False):
     """
     Access brokers dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Brokers dropdown formed by partial brokers DB table data.
     """
     from . import UserSettingController
-    return UserSettingController.generate_brokers_dropdown(data, reload)
+    return UserSettingController.generate_brokers_dropdown(reload)
 
 @logger.log_function
-def generate_stock_journal_groups_dropdown(data=None, reload=False):
+def generate_stock_journal_groups_dropdown(reload=False):
     """
     Access stock journal groups dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
         cache.get_cache (list): Currency dropdown formed by currency DB table data.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache_data = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in data) if data else None
-    cache = ClientCache(CacheKey.DD_STOCK_JRN_GRP, cache_data)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_STOCK_JRN_GRP)
     if reload:
         cache.clear_cache()
-    if cache.is_empty():
-        rows = anvil.server.call('generate_drafting_stock_journal_groups_list')
-        new_dropdown = list((''.join([r['template_name'], ' [', str(r['template_id']), ']']), (r['template_id'], r['template_name'])) for r in rows)
-        cache.set_cache(new_dropdown)
     return cache.get_cache()
 
 @logger.log_function
@@ -70,9 +65,9 @@ def __get_stock_journal_group__(group_dropdown_selected, reload=False):
     """
     from ..Utils.ClientCache import ClientCache
     jrn_grp_id, _ = group_dropdown_selected if group_dropdown_selected else [None, None]
-    cache = ClientCache(CacheKey.OBJ_STOCK_JRN_GRP, None)
+    cache = ClientCache(CacheKey.OBJ_STOCK_JRN_GRP)
     if jrn_grp_id:
-        if not reload and not cache.is_empty() and cache.get_cache().get(jrn_grp_id, None):
+        if not reload and not cache.is_empty() and not cache.is_expired() and cache.get_cache().get(jrn_grp_id, None):
             jrn_grp = cache.get_cache().get(jrn_grp_id, None)
         else:
             jrn_grp = anvil.server.call('select_stock_journal_group', jrn_grp_id)
@@ -127,10 +122,8 @@ def get_stock_journal_group_dropdown_selected_item(group_id):
     Returns:
         selected_item (list): Complete key of the selected item in stock journal group dropdown.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_STOCK_JRN_GRP, None)
-    if cache.is_empty():
-        generate_stock_journal_groups_dropdown()
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_STOCK_JRN_GRP)
     selected_item = cache.get_complete_key(group_id)
     return selected_item
 
@@ -146,12 +139,10 @@ def get_broker_dropdown_selected_item(group_dropdown_selected=None):
     """
     from . import UserSettingController
     from .. import Global
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.DD_BROKER, None)
+    from ..Utils.ClientCache import ClientDropdownCache
+    cache = ClientDropdownCache(CacheKey.DD_BROKER)
     if group_dropdown_selected:
         jrn_grp = __get_stock_journal_group__(group_dropdown_selected)
-        if cache.is_empty():
-            UserSettingController.generate_brokers_dropdown()
         selected_item = cache.get_complete_key(jrn_grp.get_broker())
     else:
         selected_item = cache.get_complete_key(Global.settings.get_broker())
@@ -200,8 +191,8 @@ def save_stock_journal_group(group_dropdown_selected, jrn_grp_name, broker_dropd
     from datetime import date, datetime
     from .. import Global
     from ..Entities.StockJournalGroup import StockJournalGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     jrn_grp_id_ori, jrn_grp_name_ori = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     broker_id, _, _ = broker_dropdown_selected if broker_dropdown_selected is not None else [None, None, None]
@@ -237,8 +228,8 @@ def submit_stock_journal_group(group_dropdown_selected, submitted=True):
     """
     from datetime import date, datetime
     from ..Entities.StockJournalGroup import StockJournalGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     jrn_grp_id, jrn_grp_name = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     currenttime = datetime.now()
@@ -264,8 +255,8 @@ def delete_stock_journal_group(group_dropdown_selected):
         result (int): Successful delete row count, otherwise None.
     """
     from ..Entities.StockJournalGroup import StockJournalGroup
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     jrn_grp_id, jrn_grp_name = group_dropdown_selected if group_dropdown_selected is not None else [None, None]
     jrn_grp = StockJournalGroup()
@@ -305,11 +296,11 @@ def delete_item(iid):
     Parameters:
         iid (int): The item ID (IID) of the deleted item.
     """
-    from ..Utils.ClientCache import ClientCache
-    cache = ClientCache(CacheKey.STOCK_INPUT_DEL_IID, None)
+    from ..Utils.ClientCache import ClientPersistentCache
+    cache = ClientPersistentCache(CacheKey.STOCK_INPUT_DEL_IID)
 
     if iid:
-        if cache.is_empty():
+        if cache.is_empty() or cache.is_expired():
             cache.set_cache([iid])
         else:
             cache.get_cache().append(iid)

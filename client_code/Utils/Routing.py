@@ -79,6 +79,6 @@ def open_exp_list_form(self, **event_args):
     anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(ExpenseReportForm()))
 
 def open_poc_main_form(self, **event_args):
-    from ..Debug.form_poc_main import form_poc_main
+    from .._POC.form_poc_main import form_poc_main
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(form_poc_main())

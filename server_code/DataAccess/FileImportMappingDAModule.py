@@ -24,6 +24,7 @@ def generate_mapping_list(ftype):
     Returns:
         rows (list of RealDictRow): A list of mapping groups based on selected file type.
     """
+    userid = sysmod.get_current_userid()
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC".format(
@@ -155,7 +156,7 @@ def select_mapping_matrix(id):
     from ..Entities.ExpenseTransaction import ExpenseTransaction
     conn = sysmod.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT datecol AS {datecol}, acctcol AS {acctcol}, amtcol AS {amtcol}, remarkscol AS {}, stmtdtlcol AS {stmtdtlcol}, lblcol AS {lblcol} \
+        sql = "SELECT datecol AS {datecol}, acctcol AS {acctcol}, amtcol AS {amtcol}, remarkscol AS {remarkscol}, stmtdtlcol AS {stmtdtlcol}, lblcol AS {lblcol} \
         FROM {schema}.mappingmatrix WHERE gid = %s".format(
             datecol=ExpenseTransaction.field_date(),
             acctcol=ExpenseTransaction.field_account(),

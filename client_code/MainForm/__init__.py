@@ -20,6 +20,7 @@ class MainForm(MainFormTemplate):
                 c.visible = False
         self.app_welcome_msg.text = "Welcome {username}".format(username=Global.email)
         self.label_version.text = MainFormController.visible_test_env_label()
+        self.poc_link.visible = MainFormController.visible_poc_link()
 
     def reset_link_status(self, **event_args):
         self.colpanel_link_dashb.role, \
