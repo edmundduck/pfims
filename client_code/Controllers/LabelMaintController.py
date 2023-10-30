@@ -38,6 +38,7 @@ def get_label_dropdown_selected_item(lbl_id):
     from ..Utils.ClientCache import ClientDropdownCache
     cache = ClientDropdownCache(CacheKey.DD_LABEL)
     selected_item = cache.get_complete_key(lbl_id)
+    print("DEBUG\n",selected_item)
     return selected_item
 
 @logger.log_function

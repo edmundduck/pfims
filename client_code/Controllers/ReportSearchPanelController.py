@@ -226,3 +226,20 @@ def populate_repeating_panel_expense_transactions(search_interval_dropdown_selec
     result = anvil.server.call('proc_search_expense_list', from_date, to_date, labels)
     return result
 
+def drill_pnl_data(start_date, end_date, symbols, pnl_list, date_value, mode, action):
+    """
+    Drill up or drill down profit and loss data into year, month or day detail.
+
+    Parameters:
+        start_date (date): Start date of the search.
+        end_date (date): End date of the search.
+        symbols (list): List of selected symbols.
+        pnl_list (list of dict): List of P&L data.
+        date_value (string): Date value in string of the expanded/shrinked section.
+        mode (string): Period mode - y/m/d (Year/Month/Day)
+        action (string): Expand or shrink in the name of the clicked icon
+
+    Returns:
+        result (list of dict): The row structure for P&L data.
+    """
+    result = anvil.server.call('update_pnl_list', start_date, end_date, symbols, pnl_list, date_value, mode, action)

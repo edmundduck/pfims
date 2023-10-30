@@ -1,6 +1,6 @@
 from ._anvil_designer import PnLReportFormTemplate
 from anvil import *
-import anvil.server
+from ....Controllers import ReportSearchPanelController
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -20,11 +20,4 @@ class PnLReportForm(PnLReportFormTemplate):
 
     @logger.log_function
     def update_pnl_list(self, date, mode, action, **event_args):
-        self.rpt_panel.items = anvil.server.call('update_pnl_list', 
-                                                 start_date=self.hidden_time_datefrom.date, 
-                                                 end_date=self.hidden_time_dateto.date,  
-                                                 symbols=list(self.hidden_symbol.text), 
-                                                 pnl_list=self.rpt_panel.items, 
-                                                 date_value=date, 
-                                                 mode=mode, 
-                                                 action=action)
+        self.rpt_panel.items = ReportSearchPanelController.drill_pnl_data(self.hidden_time_datefrom.date, self.hidden_time_dateto.date, list(self.hidden_symbol.text), self.rpt_panel.items, date, mode, action)

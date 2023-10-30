@@ -2,7 +2,6 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime, timedelta
-from ..SysProcess import Constants as s_const
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..Utils import Helper
