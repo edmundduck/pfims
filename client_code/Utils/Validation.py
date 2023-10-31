@@ -62,7 +62,7 @@ to check the status of the form.
     
     def require_text_field(self, text_box, error_lbl=None, show_errors_immediately=False):
         self.require(text_box, ['change', 'lost_focus'],
-                    lambda tb: tb.text not in ('', None) and not tb.text.isspace(),
+                    lambda tb: tb.text not in ('', None) and not str(tb.text).isspace(),
                     error_lbl, show_errors_immediately)
             
     def require_date_field(self, date_field, error_lbl=None, show_errors_immediately=False):

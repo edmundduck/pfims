@@ -8,22 +8,22 @@ from anvil.tables import app_tables
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 def open_dashboard_form(self, **event_args):
-    from ..Report.DashboardForm import DashboardForm
+    from ..Forms.DashboardForm import DashboardForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(DashboardForm())
 
 def open_setting_form(self, **event_args):
-    from ..Admin.SettingForm import SettingForm
+    from ..Forms.Admin.UserSettingForm import UserSettingForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(SettingForm())
+    anvil.get_open_form().content_panel.add_component(UserSettingForm())
 
-def open_stock_input_form(self, **event_args):
-    from ..Input.StockInputForm import StockInputForm
+def open_stock_txn_input_form(self, **event_args):
+    from ..Forms.Investment.StockTradingTxnDetailForm import StockTradingTxnDetailForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(StockInputForm())
+    anvil.get_open_form().content_panel.add_component(StockTradingTxnDetailForm())
 
 def open_exp_input_form(self, tab_id=None, data=None, **event_args):
-    from ..Input.ExpenseInputForm import ExpenseInputForm
+    from ..Forms.Expense.ExpenseInputForm import ExpenseInputForm
     # The following doesn't work, but open_acct_maint_form one works, no idea why
     # self.clear()
     # self.add_component(ExpenseInputForm())
@@ -31,54 +31,54 @@ def open_exp_input_form(self, tab_id=None, data=None, **event_args):
     anvil.get_open_form().content_panel.add_component(ExpenseInputForm(tab_id=tab_id, data=data))
 
 def open_exp_file_upload_form(self, **event_args):
-    from ..Input.ExpenseFileUploadForm import ExpenseFileUploadForm
+    from ..Forms.Expense.ExpenseFileUploadForm import ExpenseFileUploadForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseFileUploadForm())
 
 def open_exp_file_excel_import_form(self, data, labels, accounts, **event_args):
-    from ..Input.ExpenseFileExcelImportForm import ExpenseFileExcelImportForm
+    from ..Forms.Expense.ExpenseFileExcelImportForm import ExpenseFileExcelImportForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseFileExcelImportForm(data, labels, accounts))
 
 def open_exp_file_pdf_import_form(self, data, **event_args):
-    from ..Input.ExpenseFilePDFImportForm import ExpenseFilePDFImportForm
+    from ..Forms.Expense.ExpenseFilePDFImportForm import ExpenseFilePDFImportForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseFilePDFImportForm(data))
 
 def open_upload_mapping_form(self, **event_args):
-    from ..Input.UploadMappingRulesForm import UploadMappingRulesForm
+    from ..Forms.Expense.UploadMappingRulesForm import UploadMappingRulesForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(UploadMappingRulesForm())
 
 def open_lbl_maint_form(self, **event_args):
-    from ..Input.LabelMaintForm import LabelMaintForm
+    from ..Forms.Expense.LabelMaintForm import LabelMaintForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(LabelMaintForm())
     
 def open_acct_maint_form(self, **event_args):
-    from ..Input.AccountMaintForm import AccountMaintForm
+    from ..Forms.Expense.AccountMaintForm import AccountMaintForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(AccountMaintForm())
 
 def open_tranx_list_form(self, **event_args):
-    from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
-    from ..Report.TransactionReportForm import TransactionReportForm
+    from ..Forms.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Forms.Investment.TransactionReportForm import TransactionReportForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(TransactionReportForm()))
 
 def open_pnl_report_form(self, **event_args):
-    from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
-    from ..Report.PnLReportForm import PnLReportForm
+    from ..Forms.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Forms.Investment.PnLReportForm import PnLReportForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(PnLReportForm()))
 
 def open_exp_list_form(self, **event_args):
-    from ..Report.ReportSearchPanelFrom import ReportSearchPanelFrom
-    from ..Report.ExpenseReportForm import ExpenseReportForm
+    from ..Forms.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Forms.Expense.ExpenseReportForm import ExpenseReportForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(ExpenseReportForm()))
 
 def open_poc_main_form(self, **event_args):
-    from ..Debug.form_poc_main import form_poc_main
+    from .._POC.form_poc_main import form_poc_main
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(form_poc_main())

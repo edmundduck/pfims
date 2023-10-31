@@ -1,0 +1,53 @@
+container:
+  type: ColumnPanel
+  properties: {col_widths: '{}'}
+components:
+- type: ColumnPanel
+  properties: {col_widths: '{}'}
+  name: column_panel_1
+  layout_properties: {grid_position: 'XMELDG,NSVUPO'}
+  components: []
+- type: DataGrid
+  properties:
+    role: null
+    columns:
+    - {id: XORDJK, title: Create Tag, data_key: column_1, $$hashKey: 'object:8719'}
+    - {id: WUWOAB, title: Tags, data_key: column_2, $$hashKey: 'object:8720'}
+    - {id: QRNHED, title: Remarks, data_key: column_3, $$hashKey: 'object:8721'}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 20
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  name: data_grid_1
+  layout_properties: {grid_position: 'VBUQGT,WIIHTC'}
+  components:
+  - type: DataRowPanel
+    properties: {}
+    name: data_row_panel_1
+    layout_properties: {}
+    components:
+    - type: TextBox
+      properties: {}
+      name: text_taglabel
+      layout_properties: {grid_position: 'MINMMX,BMBTZB', column: XORDJK}
+      event_bindings: {pressed_enter: text_taglabel_pressed_enter}
+    - type: FlowPanel
+      properties: {}
+      name: panel_tags
+      layout_properties: {grid_position: 'MINMMX,QLWWMO', column: WUWOAB}
+    - type: TextBox
+      properties: {}
+      name: text_remarks
+      layout_properties: {column: QRNHED}
+  - type: RepeatingPanel
+    properties: {spacing_above: none, spacing_below: none, item_template: _POC.form_poc1.RowTemplate1}
+    name: repeating_panel_1
+    layout_properties: {}
+is_package: true
