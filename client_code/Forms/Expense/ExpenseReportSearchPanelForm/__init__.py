@@ -1,9 +1,7 @@
 from ._anvil_designer import ExpenseReportSearchPanelFormTemplate
 from anvil import *
-import anvil.server
-from datetime import date
-from ....Controllers import ReportSearchPanelController
 from .... import Global
+from ....Controllers import ReportSearchPanelController
 from ....Utils.ButtonModerator import ButtonModerator
 from ....Utils.Constants import ColorSchemes, Icons, SearchInterval
 from ....Utils.Logger import ClientLogger
@@ -25,18 +23,10 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         self.dropdown_interval.selected_value = Global.settings.get_search_interval()
         self.time_datefrom.date = Global.settings.get_search_datefrom()
         self.time_dateto.date = Global.settings.get_search_dateto()
-
-        if "Expense" in subform.report_name.text:
-            self.subform = ExpenseReportForm()
-            self.colpanel_list.add_component(self.subform)
-            self.panel_label.visible = True
-            self.panel_exp_list.visible = True
-            # Prevent from adding default value "[Symbol]" by registering to the dictionary
-            self.tag = {self.label_key: {None: 1}}
-            self._update_expense_enablement()
-        else:
-            # If error, show no buttons
-            self.panel_exp_list.visible = False
+        self.subform = subform
+        self.colpanel_list.add_component(self.subform)
+        self.tag = {self.label_key: {None: 1}}
+        self._update_expense_enablement()
          
     # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
     # Return selected labels which appear in blue buttons 

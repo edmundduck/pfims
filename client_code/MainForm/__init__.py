@@ -79,6 +79,12 @@ class MainForm(MainFormTemplate):
         self.colpanel_lv2link_exp_list.role = MainFormController.switch_role(self.colpanel_lv2link_exp_list.role)
         Routing.open_exp_list_form(self)
 
+    def colpanel_lv2link_exp_analysis_click(self, **event_args):
+        """This method is called when the link is clicked"""
+        self.reset_link_status()
+        self.colpanel_lv2link_exp_analysis.role = MainFormController.switch_role(self.colpanel_lv2link_exp_analysis.role)
+        Routing.open_exp_analysis_form(self)
+
     def colpanel_lv2link_input_stock_click(self, **event_args):
         """This method is called when the link is clicked"""
         self.reset_link_status()
@@ -102,4 +108,3 @@ class MainForm(MainFormTemplate):
         from .. import StartupModule
         anvil.users.logout()
         StartupModule.startup()
-

@@ -25,6 +25,7 @@ unique_ids:
     Forms.Expense.UploadMappingRulesForm: '1682358285769365636787220.0248'
     _POC.form_poc_main: I4UQL5D742KHJ2RDJH22CP7RC7QSJ56P
     Forms.Investment.StockTradingTxnDetailForm: 7MYSTEFMWLERSXWHMZVPLOZHKNV2AAJO
+    Forms.Expense.ExpenseAnalysisForm: '1698785642523108933234227.04637'
     Forms.Investment.StockTradingTxnDetailForm.StockTradingTxnDetailRPTemplate: RATFOYIZP6VUKZC3UPCLVGOSPW6MLNYC
     MainForm: TNMWRJE7DZEPVMK6Y7CTQHGKSVRCWLHW
     Forms.Expense.AccountMaintForm: '1679938376387228133454622.95874'
@@ -34,6 +35,7 @@ unique_ids:
     Forms.Expense.ExpenseInputForm.ExpenseInputRPTemplate: '1679866798759321711192937.876'
     _POC.form_poc1.RowTemplate1: '1680305819662177003996200.11398'
     Forms.Expense.ExpenseFileExcelImportForm: 6526X7JHNTTFLW7JRCNH62VR33IHRIKT
+    Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate: '1698785657699727247564223.9054'
     _POC.form_poc4: '1698273200579534863334196.40906'
     Forms.Expense.UploadMappingRulesForm.UploadMappingRulesRPTemplate: '1682364605704371854548277.978'
     _POC.form_poc2.test_template: I7VGCOHGIK32TFWPVUUSRN2KTIJVLDLX
