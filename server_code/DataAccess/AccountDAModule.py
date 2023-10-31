@@ -1,14 +1,14 @@
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from .. import SystemProcess as sys
 from ..Entities.Account import Account
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 # For callable decorator to be used with other decorator, refer to following,
 # https://anvil.works/forum/t/fixed-multiple-decorators-in-forms/3582/5
@@ -21,8 +21,8 @@ def generate_accounts_list():
     Returns:
         rows (list of RealDictRow): A list of accounts detail.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(
             schema=Database.SCHEMA_FIN,
@@ -46,8 +46,8 @@ def select_account(selected_acct):
     Returns:
         acct (Account): Account object corresponding to the selected account ID.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.accounts WHERE id=%s".format(
             schema=Database.SCHEMA_FIN
@@ -77,8 +77,8 @@ def create_account(account):
     try:
         cur, conn = [None]*2
         if isinstance(account, Account):
-            userid = sysmod.get_current_userid()
-            conn = sysmod.db_connect()
+            userid = sys.get_current_userid()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "INSERT INTO {schema}.accounts (userid, name, ccy, valid_from, valid_to, status) VALUES (%s,%s,%s,%s,%s,%s) RETURNING id".format(
                     schema=Database.SCHEMA_FIN
@@ -111,9 +111,9 @@ def create_multiple_accounts(accounts):
     Returns:
         rows (list of int): A list of successful created accounts IDs, otherwise None.
     """
-    userid = sysmod.get_current_userid()
+    userid = sys.get_current_userid()
     try:
-        conn = sysmod.db_connect()
+        conn = sys.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(accounts) > 0:
                 mogstr = ', '.join(cur.mogrify("(%s, %s, %s, %s, %s, %s)", (userid, account['name'], account['ccy'], account['valid_from'], account['valid_to'], account['status'])).decode('utf-8') for account in accounts)
@@ -149,7 +149,7 @@ def update_account(account):
     try:
         cur, conn = [None]*2
         if isinstance(account, Account):
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "UPDATE {schema}.accounts SET name=%s, ccy=%s, valid_from=%s, valid_to=%s, status=%s WHERE id=%s".format(
                     schema=Database.SCHEMA_FIN
@@ -186,7 +186,7 @@ def delete_account(account):
     try:
         cur, conn = [None]*2
         if isinstance(account, Account):
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "DELETE FROM {schema}.accounts WHERE id=%s".format(
                     schema=Database.SCHEMA_FIN

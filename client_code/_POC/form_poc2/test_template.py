@@ -1,11 +1,6 @@
 from ._anvil_designer import test_templateTemplate
 from anvil import *
-import anvil.users
-import anvil.server
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-from ...Utils import Constants as const
+from ...Utils.Constants import ColorSchemes
 
 class test_template(test_templateTemplate):
   def __init__(self, **properties):

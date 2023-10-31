@@ -1,22 +1,22 @@
 import anvil.server
+from .. import SystemProcess as sys
 from ..DataAccess import ExpenseDAModule
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.Setting import Setting
-from ..SysProcess import LoggingModule
-from ..SysProcess import SystemModule as sysmod
+from ..ServerUtils.LoggingModule import ServerLogger
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("init_cache_expense_input")
 @logger.log_function
 def init_cache_expense_input():
-    from ..CashMgtProcess import AccountModule, LabelModule
+    from ..DataAccess import AccountDAModule, LabelDAModule
     exp_grp_list = ExpenseDAModule.generate_expense_groups_list()
-    acct_list = AccountModule.generate_accounts_list()
-    lbl_list = LabelModule.generate_labels_list()
+    acct_list = AccountDAModule.generate_accounts_list()
+    lbl_list = LabelDAModule.generate_labels_list()
     return exp_grp_list, acct_list, lbl_list
     
 @anvil.server.callable("proc_select_expense_group")
@@ -32,7 +32,7 @@ def proc_select_expense_group(exp_grp):
         exp_grp (ExpenseTransactionGroup): The selected expense transaction group object filled with detail returned from the DB.
     """
     from ..Utils import Helper
-    userid = sysmod.get_current_userid()
+    userid = sys.get_current_userid()
     exp_grp = ExpenseDAModule.select_expense_group(exp_grp)
     tnx_list = ExpenseDAModule.select_transactions(exp_grp)
     # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition

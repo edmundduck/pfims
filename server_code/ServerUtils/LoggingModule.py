@@ -1,10 +1,3 @@
-import anvil.files
-from anvil.files import data_files
-import anvil.secrets
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
 import anvil.server
 import logging as logging
 import logging.config as config
@@ -166,6 +159,7 @@ class ServerLogger:
     
         Parameters:
             err (Exception): Exception.
+            msg (string): Optional. Log message.
         """
         if msg:
             errmsg = f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err} {msg}"

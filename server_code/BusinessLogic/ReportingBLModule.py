@@ -1,15 +1,15 @@
 import anvil.server
+from .. import SystemProcess as sys
 from ..DataAccess import ReportingDAModule
 from ..Entities.StockJournal import StockJournal
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
 from ..Utils.Constants import Icons, PNLDrillMode
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 def format_pnl_dict(rowitem, dictupdate, key, mode):
     """
@@ -62,7 +62,7 @@ def build_pnl_data(start_date, end_date, symbols):
         dictstruct_child (dict of list): The row structure for P&L data as child.
         dictstruct_gchild (dict of list): The row structure for P&L data as grandchild.
     """
-    userid = sysmod.get_current_userid()
+    userid = sys.get_current_userid()
     rows = ReportingDAModule.select_journals(start_date, end_date, symbols)
     
     # Prepare the data in dictionary structure
@@ -110,7 +110,7 @@ def generate_init_pnl_list(start_date, end_date, symbols):
     Returns:
         rowstruct (list of dict): The row structure for P&L data.
     """
-    userid = sysmod.get_current_userid()
+    userid = sys.get_current_userid()
     rowstruct = []
     
     dictstruct_day, dictstruct_mth, dictstruct_yr, dictstruct_child, dictstruct_gchild = build_pnl_data(start_date, end_date, symbols)
@@ -159,7 +159,7 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
     Returns:
         rowstruct (list of dict): The row structure for P&L data.
     """
-    userid = sysmod.get_current_userid()
+    userid = sys.get_current_userid()
     logger.debug(f"param list={start_date} / {end_date} / {symbols} / {pnl_list} / {date_value} / {mode} / {action}")
     
     rowstruct = []

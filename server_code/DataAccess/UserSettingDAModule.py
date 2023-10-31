@@ -1,16 +1,15 @@
-import anvil.users
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from .. import SystemProcess as sys
 from ..Entities.Setting import Setting
-from ..InvestmentProcess import InputModule
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils.Constants import Database, SettingConfig
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-logger = LoggingModule.ServerLogger()
+
+logger = ServerLogger()
 
 @anvil.server.callable('select_settings', require_user=True)
 @logger.log_function
@@ -22,8 +21,8 @@ def select_settings():
         setting (Setting): Setting object contains all user's setting.
     """
     def psqldb_select_settings():
-        userid = sysmod.get_current_userid()
-        conn = sysmod.db_connect()
+        userid = sys.get_current_userid()
+        conn = sys.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT userid, default_broker, default_interval, default_datefrom, default_dateto, logging_level FROM {schema}.settings WHERE userid=%s".format(schema=Database.SCHEMA_FIN)
             stmt = cur.mogrify(sql, (userid, ))
@@ -45,8 +44,8 @@ def generate_brokers_simplified_list():
         rows (list of RealDictRow): A list consists of broker IDs, names and CCY as description.
     """
     def psgldb_generate_brokers_simplified_list():
-        userid = sysmod.get_current_userid()
-        conn = sysmod.db_connect()
+        userid = sys.get_current_userid()
+        conn = sys.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "SELECT broker_id, name, ccy FROM {schema}.brokers WHERE userid = {userid} ORDER BY broker_id ASC".format(schema=Database.SCHEMA_FIN, userid=userid)
             cur.execute(sql)
@@ -78,10 +77,10 @@ def upsert_settings(setting):
         conn, cur = [None]*2
         try:
             if isinstance(setting, Setting):
-                setting.userid = sysmod.get_current_userid()
+                setting.userid = sys.get_current_userid()
                 mogstr = setting.get_list() + setting.get_list()[1:]
                 logging_level = mogstr[-1]
-                conn = sysmod.db_connect()
+                conn = sys.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                     sql = f"INSERT INTO {Database.SCHEMA_FIN}.settings (userid, default_broker, default_interval, default_datefrom, \
                     default_dateto, logging_level) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (userid) DO UPDATE SET default_broker=%s, \
@@ -122,10 +121,10 @@ def create_broker(broker_name, ccy):
         broker_id (int): The ID of the newly created broker, otherwise None
     """
     def psgldb_create_broker():
-        userid = sysmod.get_current_userid()
+        userid = sys.get_current_userid()
         prefix = SettingConfig.BROKER_ID_PREFIX
         try:
-            conn = sysmod.db_connect()  
+            conn = sys.db_connect()  
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 cur.execute(f"INSERT INTO {Database.SCHEMA_FIN}.brokers (userid, prefix, name, ccy) VALUES ({userid},'{prefix}','{broker_name}','{ccy}') RETURNING id")
                 # broker_id (update by rule) is not updated right after INSERT INTO above, hence cannot obtain using RETURNING phrase
@@ -160,10 +159,10 @@ def update_broker(broker_id, broker_name, ccy):
         cur.rowcount (int): Successful update row count, otherwise None
     """
     def psgldb_update_broker():
-        userid = sysmod.get_current_userid()
+        userid = sys.get_current_userid()
         prefix = SettingConfig.BROKER_ID_PREFIX
         try:
-            conn = sysmod.db_connect()  
+            conn = sys.db_connect()  
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 cur.execute(f"UPDATE {Database.SCHEMA_FIN}.brokers SET prefix='{prefix}', name='{broker_name}', ccy='{ccy}' WHERE broker_id='{broker_id}'")
                 conn.commit()
@@ -195,7 +194,7 @@ def delete_broker(broker_id):
     """
     def psgldb_delete_broker():
         try:
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 cur.execute(f"DELETE FROM {Database.SCHEMA_FIN}.brokers WHERE broker_id = '{broker_id}'")
                 conn.commit()
@@ -222,7 +221,7 @@ def generate_currency_list():
     Returns:
         rows (list of RealDictRow): A list consists of CCY names, abbreviations and symbols.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.ccy ORDER BY common_seq ASC, abbv ASC")
         rows = cur.fetchall()
@@ -240,8 +239,8 @@ def generate_submitted_journal_groups_list():
         rows (list of RealDictRow): A list consists of submitted journal groups IDs and names.
     """
     def psgldb_generate_submitted_journal_groups_list():
-        userid = sysmod.get_current_userid()
-        conn = sysmod.db_connect()
+        userid = sys.get_current_userid()
+        conn = sys.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"SELECT template_id, template_name FROM {Database.SCHEMA_FIN}.templates WHERE userid = {userid} AND submitted=true")
             rows = cur.fetchall()
@@ -260,7 +259,7 @@ def generate_search_interval_list():
         rows (list of RealDictRow): A list consists of search interval ID and name.
     """
     def psgldb_generate_search_interval_list():
-        conn = sysmod.db_connect()
+        conn = sys.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(f"SELECT id, name FROM {Database.SCHEMA_REFDATA}.search_interval ORDER BY seq ASC")
             rows = cur.fetchall()
@@ -268,18 +267,3 @@ def generate_search_interval_list():
             cur.close()
         return rows
     return psgldb_generate_search_interval_list()
-
-@anvil.server.callable("proc_init_settings")
-@logger.log_function
-def proc_init_settings():
-    """
-    Consolidated process for setting form initialization.
-
-    Returns:
-        list: A list of all functions return required by the form initialization.
-    """
-    brokers = generate_brokers_simplified_list()
-    search_interval = generate_search_interval_list()
-    ccy = generate_currency_list()
-    submitted_group_list = generate_submitted_journal_groups_list()
-    return [brokers, search_interval, ccy, submitted_group_list]
