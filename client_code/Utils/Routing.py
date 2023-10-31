@@ -61,22 +61,22 @@ def open_acct_maint_form(self, **event_args):
     anvil.get_open_form().content_panel.add_component(AccountMaintForm())
 
 def open_tranx_list_form(self, **event_args):
-    from ..Forms.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Forms.Investment.InvestmentReportSearchPanelForm import InvestmentReportSearchPanelForm
     from ..Forms.Investment.TransactionReportForm import TransactionReportForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(TransactionReportForm()))
+    anvil.get_open_form().content_panel.add_component(InvestmentReportSearchPanelForm(TransactionReportForm()))
 
 def open_pnl_report_form(self, **event_args):
-    from ..Forms.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Forms.Investment.InvestmentReportSearchPanelForm import InvestmentReportSearchPanelForm
     from ..Forms.Investment.PnLReportForm import PnLReportForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(PnLReportForm()))
+    anvil.get_open_form().content_panel.add_component(InvestmentReportSearchPanelForm(PnLReportForm()))
 
 def open_exp_list_form(self, **event_args):
-    from ..Forms.ReportSearchPanelFrom import ReportSearchPanelFrom
+    from ..Forms.Expense.ExpenseReportSearchPanelForm import ExpenseReportSearchPanelForm
     from ..Forms.Expense.ExpenseReportForm import ExpenseReportForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(ReportSearchPanelFrom(ExpenseReportForm()))
+    anvil.get_open_form().content_panel.add_component(ExpenseReportSearchPanelForm(ExpenseReportForm()))
 
 def open_poc_main_form(self, **event_args):
     from .._POC.form_poc_main import form_poc_main
