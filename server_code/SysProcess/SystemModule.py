@@ -15,7 +15,7 @@ def get_user_data():
         email (string): User email address.
         role (string): User role.
     """
-    from ..AdminProcess import UserSettingModule
+    from ..DataAccess import UserSettingDAModule
     
     user = anvil.users.get_user()
     if not user:
@@ -28,7 +28,7 @@ def get_user_data():
         raise Exception(f'Error in getting user ID, system terminating...')
     email = user['email']
     role = user['role']
-    settings = UserSettingModule.select_settings()
+    settings = UserSettingDAModule.select_settings()
     anvil.server.session['loglevel'] = settings.get_logging_level()
     return userid, email, role, settings
 

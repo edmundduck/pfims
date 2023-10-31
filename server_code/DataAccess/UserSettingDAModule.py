@@ -1,15 +1,14 @@
-import anvil.users
 import anvil.server
 import psycopg2
 import psycopg2.extras
 from ..Entities.Setting import Setting
-from ..InvestmentProcess import InputModule
 from ..SysProcess import SystemModule as sysmod
 from ..SysProcess import LoggingModule
 from ..Utils.Constants import Database, SettingConfig
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
+
 logger = LoggingModule.ServerLogger()
 
 @anvil.server.callable('select_settings', require_user=True)
@@ -268,18 +267,3 @@ def generate_search_interval_list():
             cur.close()
         return rows
     return psgldb_generate_search_interval_list()
-
-@anvil.server.callable("proc_init_settings")
-@logger.log_function
-def proc_init_settings():
-    """
-    Consolidated process for setting form initialization.
-
-    Returns:
-        list: A list of all functions return required by the form initialization.
-    """
-    brokers = generate_brokers_simplified_list()
-    search_interval = generate_search_interval_list()
-    ccy = generate_currency_list()
-    submitted_group_list = generate_submitted_journal_groups_list()
-    return [brokers, search_interval, ccy, submitted_group_list]

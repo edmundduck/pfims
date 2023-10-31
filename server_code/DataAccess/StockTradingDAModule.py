@@ -333,37 +333,3 @@ def delete_stock_journal_group(jrn_grp):
         if cur is not None: cur.close()
         if conn is not None: conn.close()
     return None
-
-@anvil.server.callable("proc_save_group_and_journals")
-@logger.log_function
-def proc_save_group_and_journals(jrn_grp, del_iid_list=None):
-    """
-    Consolidated process for saving stock journal group and journals.
-
-    Parameters:
-        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
-        del_iid_list (list): A list of IID (item ID) to be deleted, every journal has an IID.
-
-    Returns:
-        jrn_grp (StockJournalGroup): The StockJournalGroup object of the selected stock journal group.
-        result_u (int): Successful update row count, otherwise None.
-        result_d (int): Successful delete row count, otherwise None.
-    """
-    result_d = delete_journals(jrn_grp, del_iid_list)
-    if jrn_grp.get_id():
-        group_id = save_existing_stock_journal_group(jrn_grp)
-    else:
-        group_id = save_new_stock_journal_group(jrn_grp)
-        if group_id is None or group_id <= 0:
-            raise RuntimeError(f'ERROR: Fail to create new stock journal group {group_name}, aborting further update on journals.')
-        jrn_grp = jrn_grp.set_id(group_id)
-    result_u = upsert_journals(jrn_grp)
-    return [jrn_grp, result_u, result_d]
-
-@anvil.server.callable("init_cache_stock_trading_txn_detail")
-@logger.log_function
-def init_cache_stock_trading_txn_detail():
-    from ..AdminProcess import UserSettingModule
-    broker_list = UserSettingModule.generate_brokers_simplified_list()
-    jrn_list = generate_drafting_stock_journal_groups_list()
-    return [broker_list, jrn_list]
