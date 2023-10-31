@@ -6,8 +6,7 @@ import pdfplumber
 import re
 from fuzzywuzzy import fuzz
 from io import BytesIO
-from ..CashMgtProcess import AccountModule, LabelModule
-from ..DataAccess import FileImportMappingDAModule
+from ..DataAccess import AccountDAModule, FileImportMappingDAModule, LabelDAModule
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..SysProcess import LoggingModule
 from ..Utils import Helper
@@ -192,7 +191,7 @@ def update_labels_mapping(data, mapping):
     }
     # labels param is transposed from DL to LD (List of Dicts)
     lbl_list = [dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())]
-    lbl_id = LabelModule.create_label(lbl_list)
+    lbl_id = LabelDAModule.create_label(lbl_list)
     logger.debug("Label created with ID lbl_id=", lbl_id)
     if lbl_id is None: raise Exception("Fail to create label.")
 
@@ -249,7 +248,7 @@ def update_accounts_mapping(data, mapping):
     }
     # labels param is transposed from DL to LD (List of Dicts)
     acct_list = [dict(zip(acct_mogstr, col)) for col in zip(*acct_mogstr.values())]
-    acct_id = AccountModule.create_multiple_accounts(acct_list)
+    acct_id = AccountDAModule.create_multiple_accounts(acct_list)
     logger.debug("Account created with ID acct_id=", acct_id)
     if acct_id is None: raise Exception("Fail to create account.")
 

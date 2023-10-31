@@ -13,10 +13,10 @@ logger = LoggingModule.ServerLogger()
 @anvil.server.callable("init_cache_expense_input")
 @logger.log_function
 def init_cache_expense_input():
-    from ..CashMgtProcess import AccountModule, LabelModule
+    from ..DataAccess import AccountDAModule, LabelDAModule
     exp_grp_list = ExpenseDAModule.generate_expense_groups_list()
-    acct_list = AccountModule.generate_accounts_list()
-    lbl_list = LabelModule.generate_labels_list()
+    acct_list = AccountDAModule.generate_accounts_list()
+    lbl_list = LabelDAModule.generate_labels_list()
     return exp_grp_list, acct_list, lbl_list
     
 @anvil.server.callable("proc_select_expense_group")
