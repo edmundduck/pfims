@@ -2,15 +2,15 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
+from .. import SystemProcess as sys
 from ..Entities.StockJournalGroup import StockJournalGroup
 from ..Entities.StockJournal import StockJournal
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("generate_drafting_stock_journal_groups_list")
 @logger.log_function
@@ -21,8 +21,8 @@ def generate_drafting_stock_journal_groups_list():
     Returns:
         rows (list of RealDictRow): A list of unsubmitted template item formed by template IDs and names.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = 'SELECT * FROM {schema}.templates WHERE userid = {userid} AND submitted=false ORDER BY template_id ASC'.format(
             schema=Database.SCHEMA_FIN,
@@ -46,7 +46,7 @@ def select_stock_journal_group(group_id):
     Returns:
         jrn_grp (StockJournalGroup): A stock journal group object.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = 'SELECT {col_def} FROM {schema}.templates WHERE template_id=%s'.format(
             col_def=StockJournalGroup.get_column_definition(),
@@ -71,8 +71,8 @@ def select_stock_journals(group_id):
     Returns:
         jrns (list of StockJournal): All journals detail corresponding to the selected stock journal group, return empty list otherwise
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = 'SELECT * FROM {schema}.templ_journals WHERE template_id = %s ORDER BY sell_date DESC, buy_date DESC, symbol ASC'.format(
             schema=Database.SCHEMA_FIN
@@ -103,7 +103,7 @@ def upsert_journals(jrn_grp):
     try:
         cur, conn = [None]*2
         if isinstance(jrn_grp, StockJournalGroup):
-            conn = sysmod.db_connect() 
+            conn = sys.db_connect() 
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
                 # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
@@ -150,7 +150,7 @@ def delete_journals(jrn_grp, iid_list):
         cur, conn = [None]*2
         if isinstance(jrn_grp, StockJournalGroup):
             if iid_list and len(iid_list) > 0:
-                conn = sysmod.db_connect()
+                conn = sys.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                     sql = "DELETE FROM {schema}.templ_journals WHERE template_id = %s AND iid IN %s".format(
                         schema=Database.SCHEMA_FIN,
@@ -186,8 +186,8 @@ def save_new_stock_journal_group(jrn_grp):
     try:
         cur, conn = [None]*2
         if isinstance(jrn_grp, StockJournalGroup):
-            userid = sysmod.get_current_userid()
-            conn = sysmod.db_connect()
+            userid = sys.get_current_userid()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "INSERT INTO {schema}.templates (userid, template_name, broker_id, submitted, template_create, template_lastsave) \
                 VALUES (%s,%s,%s,%s,%s,%s) RETURNING template_id".format(
@@ -228,9 +228,9 @@ def save_existing_stock_journal_group(jrn_grp):
     try:
         cur, conn = [None]*2
         if isinstance(jrn_grp, StockJournalGroup):
-            userid = sysmod.get_current_userid()
+            userid = sys.get_current_userid()
             currenttime = datetime.now()
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "UPDATE {schema}.templates SET template_name = %s, broker_id = %s, submitted = %s, template_lastsave = %s WHERE template_id = %s RETURNING template_id".format(
                     schema=Database.SCHEMA_FIN
@@ -270,7 +270,7 @@ def submit_stock_journal_group(jrn_grp):
         cur, conn = [None]*2
         if isinstance(jrn_grp, StockJournalGroup):
             currenttime = datetime.now()
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 submitted = jrn_grp.get_submitted_status()
                 if submitted:
@@ -316,7 +316,7 @@ def delete_stock_journal_group(jrn_grp):
     try:
         cur, conn = [None]*2
         if isinstance(jrn_grp, StockJournalGroup):
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = 'DELETE FROM {schema}.templates WHERE template_id = %s'.format(schema=Database.SCHEMA_FIN)
                 stmt = cur.mogrify(sql, (jrn_grp.get_id(), ))

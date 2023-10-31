@@ -2,15 +2,15 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
+from .. import SystemProcess as sys
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("generate_expense_groups_list")
 @logger.log_function
@@ -21,8 +21,8 @@ def generate_expense_groups_list():
     Returns:
         rows (list of RealDictRow): A list of unsubmitted expense transaction group items.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.expensetab WHERE userid = {userid} AND submitted=FALSE ORDER BY tab_id ASC, tab_name ASC".format(
             schema=Database.SCHEMA_FIN,
@@ -44,7 +44,7 @@ def select_expense_group(exp_grp):
     Returns:
         exp_grp (ExpenseTransactionGroup): The selected expense transaction group object filled with detail returned from the DB.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT {col_def} FROM {schema}.expensetab WHERE tab_id = %s".format(
             col_def=ExpenseTransactionGroup.get_column_definition(),
@@ -69,7 +69,7 @@ def select_transactions(exp_grp):
     Returns:
         rows (list of RealDictRow): A list of transactions belonging to the group.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT iid, tab_id, trandate AS {tdate}, account_id AS {account}, amount AS {amount}, \
         labels AS {labels}, remarks AS {remarks}, stmt_dtl AS {stmt_dtl} \
@@ -106,7 +106,7 @@ def upsert_transactions(exp_grp):
     try:
         cur, conn, iid = [None]*3
         if isinstance(exp_grp, ExpenseTransactionGroup):
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 # Reference for solving the SQL mogrify with multiple groups and update on conflict problems
                 # 1. https://www.geeksforgeeks.org/format-sql-in-python-with-psycopgs-mogrify/
@@ -157,7 +157,7 @@ def delete_transactions(exp_grp, iid_list):
         if isinstance(exp_grp, ExpenseTransactionGroup):
             logger.debug("delete iid_list=", iid_list)
             if iid_list is not None and len(iid_list) > 0:
-                conn = sysmod.db_connect()
+                conn = sys.db_connect()
                 with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                     sql = "DELETE FROM {schema}.exp_transactions WHERE tab_id = %s AND iid IN %s".format(
                         schema=Database.SCHEMA_FIN
@@ -195,9 +195,9 @@ def create_expense_group(exp_grp):
     try:
         cur, conn = [None]*2
         if isinstance(exp_grp, ExpenseTransactionGroup):
-            userid = sysmod.get_current_userid()
+            userid = sys.get_current_userid()
             currenttime = datetime.now()
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "INSERT INTO {schema}.expensetab (userid, tab_name, submitted, tab_create, tab_lastsave) \
                 VALUES (%s,%s,%s,%s,%s) RETURNING tab_id".format(
@@ -236,9 +236,9 @@ def update_expense_group(exp_grp):
     try:
         cur, conn = [None]*2
         if isinstance(exp_grp, ExpenseTransactionGroup):
-            userid = sysmod.get_current_userid()
+            userid = sys.get_current_userid()
             currenttime = datetime.now()
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "UPDATE {schema}.expensetab SET tab_name=%s, submitted=%s, tab_lastsave=%s WHERE userid=%s AND tab_id=%s RETURNING tab_id".format(
                     schema=Database.SCHEMA_FIN
@@ -276,7 +276,7 @@ def submit_expense_group(exp_grp):
         cur, conn = [None]*2
         if isinstance(exp_grp, ExpenseTransactionGroup):
             currenttime = datetime.now()
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 submitted = exp_grp.get_submitted_status()
                 if submitted:
@@ -322,7 +322,7 @@ def delete_expense_group(exp_grp):
     try:
         cur, conn = [None]*2
         if isinstance(exp_grp, ExpenseTransactionGroup):
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "DELETE FROM {schema}.expensetab WHERE tab_id = %s".format(
                     schema=Database.SCHEMA_FIN

@@ -1,11 +1,11 @@
 import anvil.server
 from ...DataAccess import UserSettingDAModule
-from ...SysProcess import LoggingModule
+from ...ServerUtils.LoggingModule import ServerLogger
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("proc_init_settings")
 @logger.log_function

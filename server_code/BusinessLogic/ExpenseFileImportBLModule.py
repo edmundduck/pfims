@@ -8,13 +8,13 @@ from fuzzywuzzy import fuzz
 from io import BytesIO
 from ..DataAccess import AccountDAModule, FileImportMappingDAModule, LabelDAModule
 from ..Entities.ExpenseTransaction import ExpenseTransaction
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 col_name = ExpenseTransaction.get_data_transform_definition()
 regex_ymd = '(\d{4}|\d{2})[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(0[1-9]|[12][0-9]|3[01])'        # yyyy-mm-dd / yyyy-mmm-dd
 regex_dmy = '(0[1-9]|[12][0-9]|3[01])[\.\-/ ]{0,1}(0[1-9]|1[0-2]|[A-Za-z]{3})[\.\-/ ]{0,1}(\d{4}|\d{2})'        # dd-mm-yyyy / dd-mmm-yyyy

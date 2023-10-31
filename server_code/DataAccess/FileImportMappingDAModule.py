@@ -2,15 +2,15 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from datetime import date, datetime
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from .. import SystemProcess as sys
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("generate_mapping_list")
 @logger.log_function
@@ -24,8 +24,8 @@ def generate_mapping_list(ftype):
     Returns:
         rows (list of RealDictRow): A list of mapping groups based on selected file type.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.mappinggroup WHERE userid = %s AND filetype = %s ORDER BY id ASC".format(
             schema=Database.SCHEMA_FIN
@@ -46,7 +46,7 @@ def generate_mapping_type_list():
     Returns:
         rows (list of RealDictRow): A list of import file types.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.import_filetype ORDER BY seq ASC".format(
             schema=Database.SCHEMA_REFDATA
@@ -66,7 +66,7 @@ def generate_expense_tbl_def_list():
     Returns:
         rows (list of RealDictRow): A list of column types.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.expense_tbl_def ORDER BY seq ASC".format(
             schema=Database.SCHEMA_REFDATA
@@ -85,7 +85,7 @@ def generate_upload_action_list():
     Returns:
         rows (list of RealDictRow): A list of upload actions.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.upload_action ORDER BY seq ASC".format(
             schema=Database.SCHEMA_REFDATA
@@ -107,8 +107,8 @@ def select_mapping_rules(gid=None):
     Returns:
         result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
@@ -154,7 +154,7 @@ def select_mapping_matrix(id):
         rows (list of dict): All the mapping matrix which belongs to the logged on user.
     """
     from ..Entities.ExpenseTransaction import ExpenseTransaction
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT datecol AS {datecol}, acctcol AS {acctcol}, amtcol AS {amtcol}, remarkscol AS {remarkscol}, stmtdtlcol AS {stmtdtlcol}, lblcol AS {lblcol} \
         FROM {schema}.mappingmatrix WHERE gid = %s".format(
@@ -188,8 +188,8 @@ def save_mapping_group(id, mogstr_group):
     Returns:
         id (int): The mapping group ID.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             # First insert/update mapping group
@@ -231,8 +231,8 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
         mogstr_matrix (string): Mogrified string for mapping matrix SQL.
         del_iid (string): The string of IID concatenated by comma to be deleted
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             # Second insert/update mapping rules
@@ -302,7 +302,7 @@ def select_mapping_extra_actions(id):
     Returns:
         rows (list): The list of column, column code, extra action and extra action target.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
         sql = "SELECT col, col_code, eaction, etarget FROM fin.mappingrules WHERE gid = %s AND eaction is not NULL"
@@ -325,7 +325,7 @@ def delete_mapping(id):
         cur.rowcount (int): Successful delete row count, otherwise None.
     """
     try:
-        conn = sysmod.db_connect()
+        conn = sys.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             sql = "DELETE FROM {schema}.mappinggroup WHERE id = %s".format(
                 schema=Database.SCHEMA_FIN

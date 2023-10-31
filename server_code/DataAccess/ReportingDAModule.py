@@ -1,15 +1,15 @@
 import anvil.server
 import psycopg2
 import psycopg2.extras
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from .. import SystemProcess as sys
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("select_journals")
 @logger.log_function
@@ -25,8 +25,8 @@ def select_journals(start_date, end_date, symbols=[]):
     Returns:
         rows (list): Stock journals in list.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         mogstr_list = []
         where_clause_list = []
@@ -88,8 +88,8 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         rows (list): Transactions in list.
     """
     from ..Entities.ExpenseTransaction import ExpenseTransaction
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         mogstr_list = []
         where_clause_list = []

@@ -1,12 +1,12 @@
 import anvil.server
 from ..DataAccess import StockTradingDAModule
 from ..Entities.StockJournalGroup import StockJournalGroup
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("proc_save_group_and_journals")
 @logger.log_function

@@ -1,14 +1,14 @@
 import anvil.server
 from datetime import date, datetime
+from .. import SystemProcess as sys
 from ..DataAccess import FileImportMappingDAModule
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("init_cache_upload_mapping")
 @logger.log_function
@@ -79,7 +79,7 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
         result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
     """
 
-    userid = sysmod.get_current_userid()
+    userid = sys.get_current_userid()
     currenttime = datetime.now()
 
     # Prepare data for mappinggroup

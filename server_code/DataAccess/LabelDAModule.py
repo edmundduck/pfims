@@ -1,15 +1,15 @@
 import anvil.server
 import psycopg2
 import psycopg2.extras
+from .. import SystemProcess as sys
 from ..Entities.Label import Label
-from ..SysProcess import SystemModule as sysmod
-from ..SysProcess import LoggingModule
+from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
 from ..Utils.Constants import Database
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
-logger = LoggingModule.ServerLogger()
+logger = ServerLogger()
 
 @anvil.server.callable("generate_labels_list")
 @logger.log_function
@@ -20,8 +20,8 @@ def generate_labels_list():
     Returns:
         rows (list of RealDictRow): A list of labels detail.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {Database.SCHEMA_FIN}.labels WHERE userid = {userid} ORDER BY name ASC")
         rows = cur.fetchall()
@@ -37,7 +37,7 @@ def generate_labels_mapping_action_list():
     Returns:
         rows (list of RealDictRow): A list of label mapping actions.
     """
-    conn = sysmod.db_connect()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         cur.execute(f"SELECT * FROM {Database.SCHEMA_REFDATA}.label_mapping_action ORDER BY seq ASC")
         rows = cur.fetchall()
@@ -56,8 +56,8 @@ def select_label(selected_lbl):
     Returns:
         lbl (Label): Label object corresponding to the selected label ID.
     """
-    userid = sysmod.get_current_userid()
-    conn = sysmod.db_connect()
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT * FROM {schema}.labels WHERE userid = {userid} AND id=%s".format(
             schema=Database.SCHEMA_FIN,
@@ -91,8 +91,8 @@ def create_label(labels):
             list_lbl = labels
         else:
             raise TypeError(f'The parameter is neither Label object or a list of Label objects.')
-        userid = sysmod.get_current_userid()
-        conn = sysmod.db_connect()
+        userid = sys.get_current_userid()
+        conn = sys.db_connect()
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if len(list_lbl) > 0:
                 mogstr = ', '.join(cur.mogrify("(%s, %s, %s, %s)", (userid, label.get_name(), label.get_keywords(), label.get_status())).decode('utf-8') for label in list_lbl)
@@ -128,7 +128,7 @@ def update_label(label):
     try:
         cur, conn = [None]*2
         if isinstance(label, Label):
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "UPDATE {schema}.labels SET name=%s, keywords=%s, status=%s WHERE id=%s".format(
                     schema=Database.SCHEMA_FIN
@@ -163,7 +163,7 @@ def delete_label(label):
     try:
         cur, conn = [None]*2
         if isinstance(label, Label):
-            conn = sysmod.db_connect()
+            conn = sys.db_connect()
             with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
                 sql = "DELETE FROM {schema}.labels WHERE id=%s".format(
                     schema=Database.SCHEMA_FIN
