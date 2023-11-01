@@ -109,3 +109,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         # Deregister the added label from the dictionary in self.tag
         self.tag[self.label_key].pop(b.tag)
         b.remove_from_parent()
+
+    def button_exp_analysis_search_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
