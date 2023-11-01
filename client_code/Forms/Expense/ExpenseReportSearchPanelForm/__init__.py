@@ -118,4 +118,5 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
 
     def button_exp_analysis_search_click(self, **event_args):
         """This method is called when the button is clicked"""
-        pass
+        label_list = self._getall_selected_labels()
+        self.subform.rpt_panel.items, _, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)

@@ -2,6 +2,7 @@ import anvil.server
 import psycopg2
 import psycopg2.extras
 from .. import SystemProcess as sys
+from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
 from ..Utils.Constants import Database
@@ -87,7 +88,6 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
     Returns:
         rows (list): Transactions in list.
     """
-    from ..Entities.ExpenseTransaction import ExpenseTransaction
     userid = sys.get_current_userid()
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
@@ -124,6 +124,52 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
         rows = cur.fetchall()
         rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
-        logger.trace("rows=", rows)
+        cur.close()
+    return list(rows)
+
+@logger.log_function
+def select_summed_total_per_labels(start_date, end_date, labels=[]):
+    """
+    Return summed total of each label based on transaction date criteria.
+
+    Parameters:
+        start_date (date): Start date of the search.
+        end_date (date): End date of the search.
+        labels (list): List of selected labels.
+
+    Returns:
+        rows (list): Summed total in list.
+    """
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        mogstr_list = []
+        where_clause_list = []
+        where_clause2 = ''
+        if end_date:
+            mogstr_list.append(str(end_date))
+            where_clause_list.append("AND j.trandate <= %s ")
+        if start_date:
+            mogstr_list.append(str(start_date))
+            where_clause_list.append("AND j.trandate >= %s ")
+        if len(labels) > 0:
+            where_clause2 = "AND j.labels ~ '^{0}' ".format("|".join("(?=.*" + str(i) + ")" for i in labels))
+        logger.trace("mogstr_list=", mogstr_list)
+        logger.trace("where_clause_list=", where_clause_list)
+        logger.trace("where_clause2=", where_clause2)
+        sql = "SELECT UNNEST(j.labels_array) AS {labels}, SUM(j.amount) AS {amount} FROM {schema}.exp_transactions j, {schema}.expensetab t WHERE t.userid = {userid} \
+        AND t.tab_id = j.tab_id {where_clause1} {where_clause2} GROUP BY UNNEST(j.labels_array) ORDER BY UNNEST(j.labels_array) ASC".format(
+            schema=Database.SCHEMA_FIN,
+            userid=userid,
+            labels=ExpenseTransaction.field_labels(),
+            amount=ExpenseTransaction.field_amount(),
+            where_clause1=' '.join(where_clause_list),
+            where_clause2=where_clause2
+        )
+        stmt = cur.mogrify(sql, mogstr_list)
+        cur.execute(stmt)
+        logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+        rows = cur.fetchall()
+        rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
     return list(rows)

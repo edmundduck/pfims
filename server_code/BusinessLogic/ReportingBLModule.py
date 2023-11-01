@@ -230,5 +230,37 @@ def update_pnl_list(start_date, end_date, symbols, pnl_list, date_value, mode, a
 @anvil.server.callable("proc_search_expense_list")
 @logger.log_function
 def proc_search_expense_list(start_date, end_date, labels=[]):
+    """
+    Consolidated process for selecting expense transactions.
+
+    Parameters:
+        from_date (date): Date to search from.
+        to_date (date): Date to search to.
+        labels (list): List of labels.
+
+    Returns:
+        rows (list of dict): Expense transactions within the selected criteria.
+    """
     rows = ReportingDAModule.select_transactions_filter_by_labels(start_date, end_date, labels)
     return rows
+
+@anvil.server.callable("proc_search_expense_analysis")
+@logger.log_function
+def proc_search_expense_analysis(start_date, end_date, labels=[]):
+    """
+    Consolidated process for generating data for expense analysis.
+
+    Parameters:
+        from_date (date): Date to search from.
+        to_date (date): Date to search to.
+        labels (list): List of labels.
+
+    Returns:
+        summed_total (list of dict): Summed total of expense transactions per label.
+        chart1 (?): ?
+        chart2 (?): ?
+    """
+    summed_total = ReportingDAModule.select_summed_total_per_labels(start_date, end_date, labels)
+    chart1 = None
+    chart2 = None
+    return summed_total, chart1, chart2

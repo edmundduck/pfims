@@ -22,23 +22,13 @@ components:
       underline: false, icon: ''}
     layout_properties: {}
     name: report_name
-- type: Plot
-  properties: {}
-  name: plot_bar_chart
-  layout_properties: {grid_position: 'ZLVMXC,KBTDFN'}
-- type: Plot
-  properties: {}
-  name: plot_heatmap
-  layout_properties: {grid_position: 'ZLVMXC,PXXYBG'}
 - type: DataGrid
   properties:
     role: null
     columns:
-    - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:4903'}
-    - {id: DMKCOL, title: Account, data_key: ACC, width: '150', $$hashKey: 'object:4906'}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: '80', $$hashKey: 'object:4907'}
-    - {id: RMITXR, title: Labels, data_key: LBL, width: '100', $$hashKey: 'object:4905',
-      expand: true}
+    - {id: RMITXR, title: Labels, data_key: LBL, width: '200', $$hashKey: 'object:4905',
+      expand: false}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: '200', $$hashKey: 'object:4907'}
     auto_header: true
     tooltip: ''
     border: ''
@@ -50,9 +40,7 @@ components:
     spacing_above: small
     spacing_below: small
     background: ''
-  layout_properties:
-    col_widths: {}
-    grid_position: LSXOXK,LBIRNU
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA'}
   name: data_grid
   components:
   - type: RepeatingPanel
@@ -61,6 +49,7 @@ components:
       background: ''}
     layout_properties: {}
     name: rpt_panel
+    data_bindings: []
   - type: FlowPanel
     properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
       foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
@@ -97,3 +86,11 @@ components:
       layout_properties: {}
       event_bindings: {change: dropdown_displayrow_change}
       name: dropdown_displayrow
+- type: Plot
+  properties: {}
+  name: plot_heatmap
+  layout_properties: {grid_position: 'ZLVMXC,PXXYBG AFYGER,PNFUDM'}
+- type: Plot
+  properties: {}
+  name: plot_bar_chart
+  layout_properties: {grid_position: 'ZLVMXC,PXXYBG JNDNUY,NPCMJD'}
