@@ -12,7 +12,7 @@ class ExpenseReportForm(ExpenseReportFormTemplate):
     
         # Any code you write here will run when the form opens.
         self.data_grid.rows_per_page = self.dropdown_displayrow.selected_value
-        self.tag[ReportFormTag.REPORT_TAG] = ReportFormTag.EXP_LIST_RPT
+        self.tag = {ReportFormTag.REPORT_TAG: ReportFormTag.EXP_LIST_RPT}
 
     def dropdown_displayrow_change(self, **event_args):
         """This method is called when an item is selected"""

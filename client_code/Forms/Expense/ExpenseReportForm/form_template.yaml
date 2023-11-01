@@ -95,3 +95,5 @@ components:
       layout_properties: {}
       event_bindings: {change: dropdown_displayrow_change}
       name: dropdown_displayrow
+data_bindings:
+- {property: tag, code: '', writeback: false}

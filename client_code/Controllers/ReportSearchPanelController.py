@@ -244,3 +244,16 @@ def drill_pnl_data(start_date, end_date, symbols, pnl_list, date_value, mode, ac
     """
     result = anvil.server.call('update_pnl_list', start_date, end_date, symbols, pnl_list, date_value, mode, action)
     return result
+
+def populate_expense_analysis_data():
+    """
+    Populate expense analysis data as repeating panel items and charts.
+
+    Parameters:
+
+    Returns:
+        result_rp (?): ?
+        result_chart1 (?): ?
+        result_chart2 (?): ?
+    """
+    return result_rp, result_chart1, result_chart2
