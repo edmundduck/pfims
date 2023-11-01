@@ -76,7 +76,7 @@ class ExpenseConfig:
     """
     Config for Input Expense page.
     """
-    DEFAULT_ROW_NUM = 10
+    DEFAULT_ROW_NUM = 5
     BUTTON_SUBMIT_TEXT = 'SUBMIT TAB'
     BUTTON_DRAFT_TEXT = 'SAVE DRAFT'
 
@@ -184,3 +184,13 @@ class LinkRole:
     """
     SELECTED = 'selected'
     UNSELECTED = None
+
+class ReportFormTag:
+    """
+    Identification tag for report forms.
+    """
+    REPORT_TAG = 'rpttag'
+    EXP_LIST_RPT = 'exprpt01'
+    EXP_ANALYSIS_RPT = 'exprpt02'
+    STOCK_TXN_RPT = 'stockrpt01'
+    STOCK_PNL_RPT = 'stockrpt02'

@@ -3,7 +3,7 @@ from anvil import *
 from .... import Global
 from ....Controllers import ReportSearchPanelController
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.Constants import ColorSchemes, Icons, SearchInterval
+from ....Utils.Constants import ColorSchemes, Icons, ReportFormTag, SearchInterval
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -25,6 +25,12 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         self.time_dateto.date = Global.settings.get_search_dateto()
         self.subform = subform
         self.colpanel_list.add_component(self.subform)
+        if self.subform.tag[ReportFormTag.REPORT_TAG] == ReportFormTag.EXP_LIST_RPT:
+            self.button_exp_search.visible = True
+            self.button_exp_analysis_search.visible = False
+        elif self.subform.tag[ReportFormTag.REPORT_TAG] == ReportFormTag.EXP_ANALYSIS_RPT:
+            self.button_exp_search.visible = False
+            self.button_exp_analysis_search.visible = True
         self.tag = {self.label_key: {None: 1}}
         self._update_expense_enablement()
          
