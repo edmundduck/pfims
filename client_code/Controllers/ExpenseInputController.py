@@ -253,7 +253,7 @@ def add_label_id_to_string(full_str, id, tag):
     result = result + str(id) + ','
     return result, tag
 
-def remove_label_id_from_string(full_str, id):
+def remove_label_id(full_str, id):
     """
     Remove a given label ID from a string of labels concatenated by commas.
 

@@ -48,7 +48,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
-        self.hidden_lbls_id.text = ExpenseInputController.remove_label_id_from_string(self.hidden_lbls_id.text, b.tag)
+        self.hidden_lbls_id.text = ExpenseInputController.remove_label_id(self.hidden_lbls_id.text, b.tag)
         # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
         self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
         b.remove_from_parent()
