@@ -223,7 +223,7 @@ def get_blank_row_button_text(button_text):
     result = button_text.replace('%n', str(ExpenseConfig.DEFAULT_ROW_NUM))
     return result
 
-def add_label_id_to_string(full_str, id):
+def add_label_id_to_string(full_str, id, tag):
     """
     Add a given label ID into a string of labels concatenated by commas.
 
@@ -237,11 +237,18 @@ def add_label_id_to_string(full_str, id):
         result (string): The string with all required labels added with the new label ID.
     """
     # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
+    if not tag:
+        tag = {'data': [id]}
+        print("debug1 ", tag['data'])
+    else:
+        iid_list = tag['data']
+        tag['data'].update(iid_list.append(id))
+        print("debug2 ", tag['data'])
     result = full_str
     if full_str not in (None, '') and full_str[-1] != ',':
         result = result + ','
     result = result + str(id) + ','
-    return result
+    return result, tag
 
 def remove_label_id_from_string(full_str, id):
     """
