@@ -93,8 +93,6 @@ def generate_label_objects(id_list):
     """
     Generate a list of label objects based on the given label ID list.
 
-    Relevant to function concat_label_id_string.
-    
     Parameters:
         id_list (list of int): A list of label IDs.
 
@@ -104,7 +102,6 @@ def generate_label_objects(id_list):
     from ..Entities.Label import Label
 
     result = []
-    print("id_list=", id_list, " ", type(id_list))
     if id_list is None:
         return result
     if not isinstance(id_list, list):
@@ -223,57 +220,47 @@ def get_blank_row_button_text(button_text):
     result = button_text.replace('%n', str(ExpenseConfig.DEFAULT_ROW_NUM))
     return result
 
-def add_label_id_to_string(full_str, id, tag):
+def add_label_id(lbl_id_list, id):
     """
-    Add a given label ID into a string of labels concatenated by commas.
+    Add a given label ID into a list of labels for sending to server processing.
 
     Relevant to function generate_label_objects.
 
     Parameters:
-        full_str (string): The string containing all required labels concatenated by commas.
-        id (int): The label ID to add into the string.
+        lbl_id_list (list of int): The list containing all required label IDs.
+        id (int): The label ID to add into the list.
         
     Returns:
-        result (string): The string with all required labels added with the new label ID.
+        result (list of int): The list with the specified label ID added.
     """
-    # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
-    print("debug0 ", tag)
-    if tag:
-        lbl_list = tag.get('data', [])
-        if not lbl_list:
-            tag = {'data': [id]}
-            print("debug1 ", tag['data'])
-        else:
-            lbl_list.append(id)
-            tag['data'].update(lbl_list)
-            print("debug2 ", tag['data'])
-    result = full_str
-    if full_str not in (None, '') and full_str[-1] != ',':
-        result = result + ','
-    result = result + str(id) + ','
-    return result, tag
+    result = None
+    if lbl_id_list is None:
+        return result
+    else:
+        result = lbl_id_list.copy()
+        result.append(id)
+        return result
 
-def remove_label_id(full_str, id):
+def remove_label_id(lbl_id_list, id):
     """
-    Remove a given label ID from a string of labels concatenated by commas.
+    Remove a given label ID from a list of labels for sending to server processing.
 
-    Relevant to function add_label_id_to_string.
+    Relevant to function add_label_id.
 
     Parameters:
-        full_str (string): The string containing all required labels concatenated by commas.
-        id (int): The label ID to remove from the string.
+        lbl_id_list (list of int): The list containing all required label IDs.
+        id (int): The label ID to remove from the list.
         
     Returns:
-        result (string): The string with all required labels without the removed label ID.
+        result (list of int): The list with the specified label ID removed.
     """
-    loc = full_str.find(str(id))
-    if loc+len(str(id))+1 >= len(full_str):
-        # When the to-be-removed ID is at the end of string
-        result = full_str[:loc]
+    result = None
+    if lbl_id_list is None:
+        return result
     else:
-        # When the to-be-removed ID is in front of other IDs.
-        result = full_str[:loc] + full_str[(loc+len(str(id))+1):]
-    return result
+        result = lbl_id_list.copy()
+        result.remove(id)
+        return result
 
 def enable_expense_group_delete_button(group_selection):
     """

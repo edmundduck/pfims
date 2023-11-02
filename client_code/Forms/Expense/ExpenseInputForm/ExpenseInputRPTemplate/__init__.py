@@ -1,6 +1,5 @@
 from ._anvil_designer import ExpenseInputRPTemplateTemplate
 from anvil import *
-import anvil.server
 from .....Controllers import ExpenseInputController
 from .....Entities.ExpenseTransaction import ExpenseTransaction
 from .....Utils.ButtonModerator import ButtonModerator
@@ -48,9 +47,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
-        self.hidden_lbls_id.text = ExpenseInputController.remove_label_id(self.hidden_lbls_id.text, b.tag)
         # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
-        self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
+        self.item[ExpenseTransaction.field_labels()] = ExpenseInputController.remove_label_id(self.tag.get(ExpenseTransaction.field_labels(), []), b.tag)
+        self.tag.update({ExpenseTransaction.field_labels(): self.item[ExpenseTransaction.field_labels()]})
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
@@ -68,9 +67,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 spacing_below="small",
                 tag=selected_lid
             )
-            self.hidden_lbls_id.text, self.tag = ExpenseInputController.add_label_id_to_string(self.hidden_lbls_id.text, selected_lid, self.tag)
             # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
-            self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
+            self.item[ExpenseTransaction.field_labels()] = ExpenseInputController.add_label_id(self.tag.get(ExpenseTransaction.field_labels(), []), selected_lid)
+            self.tag.update({ExpenseTransaction.field_labels(): self.item[ExpenseTransaction.field_labels()]})
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             self.row_panel_labels.add_component(b, False, name=selected_lid)
             b.set_event_handler('click', self.label_button_minus_click)
