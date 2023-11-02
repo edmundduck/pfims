@@ -237,6 +237,7 @@ def add_label_id_to_string(full_str, id, tag):
         result (string): The string with all required labels added with the new label ID.
     """
     # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
+    print("debug0 ", tag)
     if tag:
         lbl_list = tag.get('data', [])
         if not lbl_list:

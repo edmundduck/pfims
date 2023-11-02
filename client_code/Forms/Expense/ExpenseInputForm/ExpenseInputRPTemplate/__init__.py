@@ -15,6 +15,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        self.tag = {}
         self.row_acct.items = ExpenseInputController.generate_accounts_dropdown()
         self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)
         
@@ -67,7 +68,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 spacing_below="small",
                 tag=selected_lid
             )
-            self.hidden_lbls_id.text, self.hidden_lbls_id.tag = ExpenseInputController.add_label_id_to_string(self.hidden_lbls_id.text, selected_lid, self.tag)
+            self.hidden_lbls_id.text, self.tag = ExpenseInputController.add_label_id_to_string(self.hidden_lbls_id.text, selected_lid, self.tag)
             # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
             self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
