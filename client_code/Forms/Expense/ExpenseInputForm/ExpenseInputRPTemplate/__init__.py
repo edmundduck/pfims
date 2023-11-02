@@ -14,6 +14,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
+        print(f"DEBUG? {self.item[ExpenseTransaction.field_labels()]}")
         self.tag = {ExpenseTransaction.field_labels(): self.item[ExpenseTransaction.field_labels()]}
         self.row_acct.items = ExpenseInputController.generate_accounts_dropdown()
         self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)

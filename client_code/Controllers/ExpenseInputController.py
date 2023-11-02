@@ -104,7 +104,9 @@ def generate_label_objects(id_list):
     result = []
     if id_list is None:
         return result
-    if not isinstance(id_list, list):
+    if isinstance(id_list, int):
+        id_list = [id_list]
+    elif not isinstance(id_list, list):
         raise TypeError('A list is expected in the parameter.')
 
     labels_dict = generate_labels_dict()
