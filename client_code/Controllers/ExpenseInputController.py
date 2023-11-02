@@ -102,11 +102,7 @@ def generate_label_objects(id_list):
     from ..Entities.Label import Label
 
     result = []
-    if id_list is None:
-        return result
-    if isinstance(id_list, int):
-        id_list = [id_list]
-    elif not isinstance(id_list, list):
+    if not isinstance(id_list, list):
         raise TypeError('A list is expected in the parameter.')
 
     labels_dict = generate_labels_dict()
@@ -122,6 +118,25 @@ def generate_label_objects(id_list):
             result.append(lbl)
     return result
     
+def generate_label_id_list(id_obj):
+    """
+    Generate label IDs in list format based on the given label ID list.
+
+    Parameters:
+        id_obj (Object): ID object to be converted to a list.
+
+    Returns:
+        result (list of int): List of label IDs.
+    """
+
+    result = []
+    if id_obj is not None:
+        if isinstance(id_obj, int):
+            result = [id_obj]
+        elif isinstance(id_obj, list):
+            result = id_obj
+    return result
+
 def get_account_dropdown_selected_item(acct_id):
     """
     Return a complete key based on a partial account ID which is a part of the key in a dropdown list.
@@ -257,6 +272,7 @@ def remove_label_id(lbl_id_list, id):
         result (list of int): The list with the specified label ID removed.
     """
     result = None
+    print(f"DEBUG ", lbl_id_list)
     if lbl_id_list is None:
         return result
     else:

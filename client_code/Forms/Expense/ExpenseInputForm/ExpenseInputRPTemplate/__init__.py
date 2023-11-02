@@ -14,12 +14,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        print(f"DEBUG? {self.item[ExpenseTransaction.field_labels()]}")
-        self.tag = {ExpenseTransaction.field_labels(): self.item[ExpenseTransaction.field_labels()]}
         self.row_acct.items = ExpenseInputController.generate_accounts_dropdown()
         self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)
-        
-        self._generateall_selected_labels(self.item[ExpenseTransaction.field_labels()])
+
+        lbl_list = ExpenseInputController.generate_label_id_list(self.item[ExpenseTransaction.field_labels()])
+        self._generateall_selected_labels(lbl_list)
+        self.tag = {ExpenseTransaction.field_labels(): lbl_list}
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
         self.add_event_handler('x-set-stmt-dtl-visible', self._set_stmt_dtl_visible)
@@ -45,6 +45,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             # self.row_panel_labels.add_component(b, False, name=lbl.get_name(), expand=True)
             self.row_panel_labels.add_component(b, False, name=lbl.get_name())
             b.set_event_handler('click', self.label_button_minus_click)
+        return label_id_list
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
