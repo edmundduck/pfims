@@ -15,12 +15,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run when the form opens.
-        self.tag = {'LBL_ARR': self.item['LBL_ARR']}
-        print("self.tag=", self.tag)
+        self.tag = {ExpenseTransaction.field_labels(): self.item[ExpenseTransaction.field_labels()]}
         self.row_acct.items = ExpenseInputController.generate_accounts_dropdown()
         self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)
         
-        self._generateall_selected_labels(self.hidden_lbls_id.text)
+        self._generateall_selected_labels(self.item[ExpenseTransaction.field_labels()])
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
         self.add_event_handler('x-set-stmt-dtl-visible', self._set_stmt_dtl_visible)

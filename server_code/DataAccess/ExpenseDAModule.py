@@ -72,7 +72,7 @@ def select_transactions(exp_grp):
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT iid, tab_id, trandate AS {tdate}, account_id AS {account}, amount AS {amount}, \
-        labels AS {labels}, remarks AS {remarks}, stmt_dtl AS {stmt_dtl}, labels_array AS LBL_ARR \
+        labels AS {labels}, remarks AS {remarks}, stmt_dtl AS {stmt_dtl} \
         FROM {schema}.exp_transactions WHERE tab_id = %s ORDER BY trandate DESC, iid DESC".format(
             tdate=ExpenseTransaction.field_date(),
             account=ExpenseTransaction.field_account(),

@@ -89,14 +89,14 @@ def generate_labels_dict(reload=False):
         generate_labels_dropdown(reload)
     return Helper.to_dict_of_list(cache.get_cache())
 
-def generate_label_objects(id_delimted_string):
+def generate_label_objects(id_list):
     """
     Generate a list of label objects based on the given label ID list.
 
     Relevant to function concat_label_id_string.
     
     Parameters:
-        id_delimted_string (string): A string of many label ID concatenated by commas.
+        id_list (list of int): A list of label IDs.
 
     Returns:
         result (list of Label): List of label objects with ID and names.
@@ -104,23 +104,23 @@ def generate_label_objects(id_delimted_string):
     from ..Entities.Label import Label
 
     result = []
-    if id_delimted_string is not None and not isinstance(id_delimted_string, str):
-        raise TypeError('A string is expected in the parameter.')
+    print("id_list=", id_list, " ", type(id_list))
+    if id_list is None:
+        return result
+    if not isinstance(id_list, list):
+        raise TypeError('A list is expected in the parameter.')
 
-    if isinstance(id_delimted_string, str):
-        labels_dict = generate_labels_dict()
-        trimmed_list = list(filter(len, id_delimted_string.split(",")))
-        logger.trace(f"trimmed_list={trimmed_list}")
-        logger.trace(f"labels_dict={labels_dict}")
-        # Don't generate label if following conditions are met -
-        # 1. label ID is 0 (which is possible from file upload)
-        # 2. label ID is not integer
-        # 3. label ID is NaN
-        for i in trimmed_list:
-            if i.isdigit() and int(i) > 0:
-                index = labels_dict.get('id').index(int(i))
-                lbl = Label().set_id(int(i)).set_name(labels_dict.get('name')[index])
-                result.append(lbl)
+    labels_dict = generate_labels_dict()
+    logger.trace(f"labels_dict={labels_dict}")
+    # Don't generate label if following conditions are met -
+    # 1. label ID is 0 (which is possible from file upload)
+    # 2. label ID is not integer
+    # 3. label ID is NaN
+    for i in id_list:
+        if isinstance(i, int) and i > 0:
+            index = labels_dict.get('id').index(int(i))
+            lbl = Label().set_id(int(i)).set_name(labels_dict.get('name')[index])
+            result.append(lbl)
     return result
     
 def get_account_dropdown_selected_item(acct_id):
