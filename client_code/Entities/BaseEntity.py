@@ -34,8 +34,6 @@ class BaseEntity:
         return [ getattr(self, self.__property_def__[i], None) for i in range(len(self.__property_def__)) ]
 
     def get_db_col_list(self):
-        result = [ getattr(self, self.__db_column_def__[i], None) for i in range(len(self.__db_column_def__)) ]
-        print(f"DEBUG!= {result}")
         return [ getattr(self, self.__db_column_def__[i], None) for i in range(len(self.__db_column_def__)) ]
 
     def set(self, data):

@@ -20,6 +20,7 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         lbl_list = ExpenseInputController.generate_label_id_list(self.item[ExpenseTransaction.field_labels()])
         self._generateall_selected_labels(lbl_list)
         self.tag = {ExpenseTransaction.field_labels(): lbl_list}
+        self.item[ExpenseTransaction.field_labels()] = lbl_list
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
         self.add_event_handler('x-set-stmt-dtl-visible', self._set_stmt_dtl_visible)

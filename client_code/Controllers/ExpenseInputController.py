@@ -133,8 +133,12 @@ def generate_label_id_list(id_obj):
     if id_obj is not None:
         if isinstance(id_obj, int):
             result = [id_obj]
+        elif isinstance(id_obj, tuple):
+            result = list(id_obj)
         elif isinstance(id_obj, list):
             result = id_obj
+        else:
+            raise TypeError('The parameter is not either integer or list/tuple.')
     return result
 
 def get_account_dropdown_selected_item(acct_id):
@@ -277,7 +281,6 @@ def remove_label_id(lbl_id_list, id):
     else:
         result = lbl_id_list.copy()
         result.remove(id)
-        print(f"DEBUG ", result)
         return result
 
 def enable_expense_group_delete_button(group_selection):

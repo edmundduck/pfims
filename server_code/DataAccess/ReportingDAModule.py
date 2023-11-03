@@ -101,7 +101,9 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
             mogstr_list.append(str(start_date))
             where_clause_list.append("AND j.trandate >= %s ")
         if len(labels) > 0:
-            where_clause2 = "AND j.labels ~ '^{0}' ".format("|".join("(?=.*" + str(i) + ")" for i in labels))
+            # where_clause2 = "AND j.labels ~ '^{0}' ".format("|".join("(?=.*" + str(i) + ")" for i in labels))
+            # ==============================
+            where_clause2 = "AND j.labels IN ({0}) ".format(','.join(str(i) for i in labels))
         logger.trace("mogstr_list=", mogstr_list)
         logger.trace("where_clause_list=", where_clause_list)
         logger.trace("where_clause2=", where_clause2)
