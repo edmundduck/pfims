@@ -120,10 +120,21 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
     def button_exp_analysis_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         label_list = self._getall_selected_labels()
-        self.subform.rpt_panel.items, pie_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
-        self.build_pie_chart(pie_chart_data)
+        self.subform.rpt_panel.items, bar_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
+        self.build_bar_chart(bar_chart_data)
 
-    def build_pie_chart(self, data, **event_args):
+    def build_bar_chart(self, data, **event_args):
         label_list, amount_list = data if data and isinstance(data, (list, tuple)) else [None, None]
-        self.subform.plot_pie_chart.data = [go.Pie(labels=label_list, values=amount_list)]
-        
+        self.subform.plot_bar_chart.data = [go.Bar(x=label_list, y=amount_list)]
+        self.subform.plot_bar_chart.layout.xaxis.title = "Label"
+        self.subform.plot_bar_chart.layout.yaxis.title = "Amount"
+        self.style_plot(self.subform.plot_bar_chart)
+
+    def style_plot(self, plot):
+        # expand the graphs
+        plot.layout = go.Layout(
+            margin=dict(l=50, r=50, b=50, t=50),
+            font=dict(family='Arial', size=12),
+            xaxis=dict(zeroline=False, tickfont=dict(family='Arial', size=11, color='#808080')),
+            yaxis=dict(zeroline=False, tickfont=dict(family='Arial', size=11, color='#808080'))
+        )
