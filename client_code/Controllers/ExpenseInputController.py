@@ -272,12 +272,12 @@ def remove_label_id(lbl_id_list, id):
         result (list of int): The list with the specified label ID removed.
     """
     result = None
-    print(f"DEBUG ", lbl_id_list)
     if lbl_id_list is None:
         return result
     else:
         result = lbl_id_list.copy()
         result.remove(id)
+        print(f"DEBUG ", result)
         return result
 
 def enable_expense_group_delete_button(group_selection):
