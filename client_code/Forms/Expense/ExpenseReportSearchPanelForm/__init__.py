@@ -125,6 +125,5 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
 
     def build_pie_chart(self, data, **event_args):
         label_list, amount_list = data if data and isinstance(data, (list, tuple)) else [None, None]
-        self.subform.plot_pie_chart = go.Figure(data=[go.Pie(labels=label_list, values=amount_list)])
-        self.subform.plot_pie_chart.show()
+        self.subform.plot_pie_chart.data = [go.Pie(labels=label_list, values=amount_list)]
         
