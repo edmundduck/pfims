@@ -87,7 +87,7 @@ def select_transactions(exp_grp):
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
-    return rows
+        return rows
 
 @logger.log_function
 def upsert_transactions(exp_grp):

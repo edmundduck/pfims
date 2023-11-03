@@ -1,5 +1,6 @@
 from ._anvil_designer import ExpenseReportSearchPanelFormTemplate
 from anvil import *
+import plotly.graph_objects as go
 from .... import Global
 from ....Controllers import ReportSearchPanelController
 from ....Utils.ButtonModerator import ButtonModerator
@@ -119,4 +120,11 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
     def button_exp_analysis_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         label_list = self._getall_selected_labels()
-        self.subform.rpt_panel.items, _, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
+        self.subform.rpt_panel.items, pie_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
+        self.build_pie_chart(pie_chart_data)
+
+    def build_pie_chart(self, data, **event_args):
+        label_list, amount_list = data if data and isinstance(data, (list, tuple)) else [None, None]
+        self.subform.plot_pie_chart = go.Figure(data=[go.Pie(labels=label_list, values=amount_list)])
+        self.subform.plot_pie_chart.show()
+        

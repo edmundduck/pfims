@@ -29,7 +29,8 @@ def generate_file_mapping_group_dropdown(selected_filetype):
     Returns:
         new_dropdown (list): File mapping group dropdown formed by mapping group DB table data.
     """
-    rows = anvil.server.call('generate_mapping_list', selected_filetype)
+    filetype = selected_filetype[0] if selected_filetype and isinstance(selected_filetype, (list, tuple)) else selected_filetype
+    rows = anvil.server.call('generate_mapping_list', filetype)
     new_dropdown = list((r['name'], r['id']) for r in rows)
     return new_dropdown
 

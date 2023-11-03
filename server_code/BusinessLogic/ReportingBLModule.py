@@ -1,6 +1,7 @@
 import anvil.server
 from .. import SystemProcess as sys
 from ..DataAccess import ReportingDAModule
+from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.StockJournal import StockJournal
 from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
@@ -261,6 +262,7 @@ def proc_search_expense_analysis(start_date, end_date, labels=[]):
         chart2 (?): ?
     """
     summed_total = ReportingDAModule.select_summed_total_per_labels(start_date, end_date, labels)
-    chart1 = None
+    DL_total = Helper.to_dict_of_list(summed_total)
+    chart1 = [DL_total.get(ExpenseTransaction.field_labels()), DL_total.get(ExpenseTransaction.field_amount())]
     chart2 = None
     return summed_total, chart1, chart2
