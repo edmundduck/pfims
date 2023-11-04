@@ -16,8 +16,4 @@ class ExpenseAnalysisRPTemplate(ExpenseAnalysisRPTemplateTemplate):
         self.foreground = ColorSchemes.AMT_EXPENSE if self.item[ExpenseTransaction.field_amount()] < 0 else ColorSchemes.AMT_POS
 
         # Logic to generate label buttons
-        j = self.item[ExpenseTransaction.field_labels()]
-        if j:
-            lbl = ExpenseReportController.get_label_dropdown_selected_item(int(j))
-            lbl_id, lbl_name = lbl if isinstance(lbl, (list, tuple)) else [lbl, lbl]
-            self.row_label.text = f"{lbl_name} ({lbl_id})"
+        self.row_label.text = f"{self.item['name']} ({self.item[ExpenseTransaction.field_labels()]})"

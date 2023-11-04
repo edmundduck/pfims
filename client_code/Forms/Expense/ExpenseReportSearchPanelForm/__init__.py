@@ -126,14 +126,14 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
     def build_bar_chart(self, data, **event_args):
         label_list, amount_list = data if data and isinstance(data, (list, tuple)) else [None, None]
         self.subform.plot_bar_chart.data = [go.Bar(x=label_list, y=amount_list)]
+        self.style_plot(self.subform.plot_bar_chart)
         self.subform.plot_bar_chart.layout.xaxis.title = "Label"
         self.subform.plot_bar_chart.layout.yaxis.title = "Amount"
-        self.style_plot(self.subform.plot_bar_chart)
 
     def style_plot(self, plot):
         # expand the graphs
         plot.layout = go.Layout(
-            margin=dict(l=50, r=50, b=50, t=50),
+            margin=dict(l=50, r=50, b=120, t=50),
             font=dict(family='Arial', size=12),
             xaxis=dict(zeroline=False, tickfont=dict(family='Arial', size=11, color='#808080')),
             yaxis=dict(zeroline=False, tickfont=dict(family='Arial', size=11, color='#808080'))

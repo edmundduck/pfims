@@ -163,8 +163,9 @@ def select_summed_total_per_labels(start_date, end_date, labels=[]):
         logger.trace("mogstr_list=", mogstr_list)
         logger.trace("where_clause_list=", where_clause_list)
         logger.trace("where_clause2=", where_clause2)
-        sql = "SELECT {labels}, {amount} FROM (SELECT UNNEST(j.labels) AS {labels}, SUM(j.amount) AS {amount} FROM {schema}.exp_transactions j, {schema}.expensetab t \
-        WHERE t.userid = {userid} AND t.tab_id = j.tab_id {where_clause1} GROUP BY UNNEST(j.labels)) x {where_clause2} ORDER BY {labels} ASC".format(
+        sql = "SELECT {labels}, y.name, {amount} FROM (SELECT UNNEST(j.labels) AS {labels}, SUM(j.amount) AS {amount} FROM {schema}.exp_transactions j, {schema}.expensetab t \
+        WHERE t.userid = {userid} AND t.tab_id = j.tab_id {where_clause1} GROUP BY UNNEST(j.labels)) x, (SELECT id, name FROM {schema}.labels) y WHERE x.{labels} = y.id \
+        {where_clause2} ORDER BY {labels} ASC".format(
             schema=Database.SCHEMA_FIN,
             userid=userid,
             labels=ExpenseTransaction.field_labels(),

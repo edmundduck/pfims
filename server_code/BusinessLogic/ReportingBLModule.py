@@ -262,8 +262,7 @@ def proc_search_expense_analysis(start_date, end_date, labels=[]):
         chart2 (?): ?
     """
     summed_total = ReportingDAModule.select_summed_total_per_labels(start_date, end_date, labels)
-    select_label_names = ReportingDAModule.select_label_names(labels)
     DL_total = Helper.to_dict_of_list(summed_total)
-    chart1 = [DL_total.get(ExpenseTransaction.field_labels()), DL_total.get(ExpenseTransaction.field_amount())]
+    chart1 = [DL_total.get('name'), DL_total.get(ExpenseTransaction.field_amount())]
     chart2 = None
     return summed_total, chart1, chart2
