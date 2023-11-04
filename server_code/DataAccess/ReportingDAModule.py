@@ -127,7 +127,7 @@ def select_transactions_filter_by_labels(start_date, end_date, labels=[]):
         rows = cur.fetchall()
         rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
-    return list(rows)
+        return list(rows)
 
 @logger.log_function
 def select_summed_total_per_labels(start_date, end_date, labels=[]):
@@ -140,7 +140,7 @@ def select_summed_total_per_labels(start_date, end_date, labels=[]):
         labels (list): List of selected labels.
 
     Returns:
-        rows (list): Summed total in list.
+        rows (list of RealDictRow): Summed total in list.
     """
     userid = sys.get_current_userid()
     conn = sys.db_connect()
@@ -178,4 +178,28 @@ def select_summed_total_per_labels(start_date, end_date, labels=[]):
         rows = cur.fetchall()
         rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
-    return list(rows)
+        return list(rows)
+
+def select_label_names(label_id_list):
+    """
+    Return summed total of each label based on transaction date criteria.
+
+    Parameters:
+        label_id_list (list of int): List of selected label IDs.
+
+    Returns:
+        rows (list of RealDictRow): List of label IDs and names.
+    """
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        sql = "SELECT id, name FROM {schema}.labels WHERE id in (%s) ORDER BY id ASC".format(
+            schema=Database.SCHEMA_FIN,
+        )
+        # mogstr_list = ','.join(i for i in label_id_list)
+        # stmt = cur.mogrify(sql, mogstr_list)
+        cur.execute(sql, label_id_list)
+        logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+        rows = cur.fetchall()
+        cur.close()
+        return list(rows)

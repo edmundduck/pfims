@@ -40,7 +40,7 @@ def generate_labels_dropdown(reload=False):
     Access labels dropdown from either client cache or generate from DB data returned from server side.
 
     Parameters:
-        data (list of RealRowDict): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
+        data (list of RealDictRow): Optional. The data list returned from the DB table to replace the client cache, should the client cache not already contain the data.
         reload (Boolean): Optional. True if clear cache is required. False by default.
 
     Returns:
