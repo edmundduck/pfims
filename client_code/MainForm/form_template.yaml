@@ -5,7 +5,7 @@ container:
     role: null, html: '@theme:new-homepage.html'}
 components:
 - type: ColumnPanel
-  properties: {}
+  properties: {visible: true}
   name: content_panel
   layout_properties: {slot: default}
 - type: FlowPanel

@@ -8,7 +8,7 @@ components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
-  layout_properties: {grid_position: 'EGWQSM,IAUJDY'}
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
   name: flow_panel_1
   components:
   - type: Label
