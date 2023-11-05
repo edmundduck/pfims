@@ -188,7 +188,7 @@ a:hover, a:active {
 
 @media(min-width:991px) {
   .content > * > .anvil-container {
-    padding: 16px 24px;
+    padding: 16px 8px;
   }
 }
 
@@ -237,7 +237,7 @@ a:hover, a:active {
     max-width: 360px;
     z-index: 3;
     border-right: none;
-  /* 16dp */ box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  /* 16dp */ box-shadow: 0 16px 8px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
 
     display: none;
     transition: right 0.5s;
