@@ -11,4 +11,5 @@ class Form1(Form1Template):
         # Any code you write here will run when the form opens.
         from ..Forms.Expense.ExpenseReportSearchPanelForm import ExpenseReportSearchPanelForm
         from ..Forms.Expense.ExpenseAnalysisForm import ExpenseAnalysisForm
-        self.open_form(ExpenseReportSearchPanelForm(ExpenseAnalysisForm()))
+        # self.add_component(self.current_form)
+        self.add_component(ExpenseReportSearchPanelForm(ExpenseAnalysisForm()), slot="default")
