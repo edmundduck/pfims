@@ -11,8 +11,7 @@ def startup():
         anvil.open_form('LoginForm')
     else:
         Global.userid, Global.email, Global.role, Global.settings = user_data
-        # anvil.open_form('MainForm')
-        anvil.open_form('Form1')
+        anvil.open_form('MainForm')
 
 if __name__ == "__main__":
     startup()
