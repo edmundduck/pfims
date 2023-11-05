@@ -113,9 +113,15 @@ def generate_label_objects(id_list):
     # 3. label ID is NaN
     for i in id_list:
         if isinstance(i, int) and i > 0:
-            index = labels_dict.get('id').index(int(i))
-            lbl = Label().set_id(int(i)).set_name(labels_dict.get('name')[index])
-            result.append(lbl)
+            try:
+                index = labels_dict.get('id').index(int(i))
+                lbl = Label().set_id(int(i)).set_name(labels_dict.get('name')[index])
+                result.append(lbl)
+            except ValueError as err:
+                # ValueError - label ID not found scenario
+                logger.warning(f"Label ID {i} does not exist.")
+                lbl = Label().set_id(int(i)).set_name(str(i))
+                result.append(lbl)
     return result
     
 def generate_label_id_list(id_obj):
