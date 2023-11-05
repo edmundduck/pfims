@@ -5,9 +5,10 @@ container:
     role: null, html: '@theme:new-homepage.html'}
 components:
 - type: ColumnPanel
-  properties: {visible: true}
+  properties: {visible: true, col_widths: '{}'}
   name: content_panel
   layout_properties: {slot: default}
+  components: []
 - type: FlowPanel
   properties: {}
   name: navbar_links
