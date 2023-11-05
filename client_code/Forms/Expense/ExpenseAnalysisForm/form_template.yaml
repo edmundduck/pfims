@@ -8,7 +8,7 @@ components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
-  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: true}
   name: flow_panel_1
   components:
   - type: Label
@@ -26,9 +26,10 @@ components:
   properties:
     role: null
     columns:
-    - {id: RMITXR, title: Labels, data_key: LBL, width: '200', $$hashKey: 'object:4905',
+    - {id: RMITXR, title: Labels, data_key: LBL, width: 251, $$hashKey: 'object:4905',
       expand: false}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: '200', $$hashKey: 'object:4907'}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: 241, $$hashKey: 'object:4907',
+      expand: false}
     auto_header: true
     tooltip: ''
     border: ''
@@ -40,7 +41,7 @@ components:
     spacing_above: small
     spacing_below: small
     background: ''
-  layout_properties: {grid_position: 'ZLVMXC,PHMUMA JMLSRG,ZVJIVL'}
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA JMLSRG,ZVJIVL', full_width_row: true}
   name: data_grid
   components:
   - type: RepeatingPanel
@@ -89,8 +90,8 @@ components:
 - type: Plot
   properties: {}
   name: plot_heatmap
-  layout_properties: {grid_position: 'ZLVMXC,PHMUMA QAXQTL,HDSHEV'}
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA QAXQTL,HDSHEV', full_width_row: true}
 - type: Plot
   properties: {height: 704}
   name: plot_bar_chart
-  layout_properties: {grid_position: 'ZLVMXC,PXXYBG'}
+  layout_properties: {grid_position: 'ZLVMXC,PXXYBG', full_width_row: true}

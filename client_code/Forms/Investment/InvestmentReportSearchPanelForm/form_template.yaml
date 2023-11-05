@@ -10,11 +10,12 @@ components:
   layout_properties:
     col_widths: {}
     grid_position: IWWXTN,ELVDQC
+    full_width_row: true
   components:
   - type: FlowPanel
     properties: {}
     name: flow_panel_2
-    layout_properties: {grid_position: 'ALKAHM,GEDAFW'}
+    layout_properties: {grid_position: 'ALKAHM,GEDAFW', full_width_row: true}
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -79,7 +80,7 @@ components:
   - type: FlowPanel
     properties: {}
     name: panel_symbol
-    layout_properties: {grid_position: 'RTTCZV,LEHJTD'}
+    layout_properties: {grid_position: 'RTTCZV,LEHJTD', full_width_row: true}
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -129,7 +130,7 @@ components:
     properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
       foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
     name: panel_tranx_list
-    layout_properties: {grid_position: 'TQHMZN,XVLQJZ'}
+    layout_properties: {grid_position: 'TQHMZN,XVLQJZ', full_width_row: true}
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -175,7 +176,7 @@ components:
     properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
       foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
     name: panel_pnl_report
-    layout_properties: {grid_position: 'UOWBRV,CQWAHK'}
+    layout_properties: {grid_position: 'UOWBRV,CQWAHK', full_width_row: true}
     components:
     - type: Label
       properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -210,5 +211,5 @@ components:
 - type: ColumnPanel
   properties: {}
   name: colpanel_list
-  layout_properties: {grid_position: 'LFVFQU,AOOFNC'}
+  layout_properties: {grid_position: 'LFVFQU,AOOFNC', full_width_row: true}
 is_package: true

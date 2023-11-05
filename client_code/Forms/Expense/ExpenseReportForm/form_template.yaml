@@ -8,7 +8,7 @@ components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
-  layout_properties: {grid_position: 'EGWQSM,IAUJDY'}
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: true}
   name: flow_panel_1
   components:
   - type: Label
@@ -28,11 +28,13 @@ components:
     columns:
     - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:4903'}
     - {id: DNGCRO, title: Date, data_key: DTE, width: '80', $$hashKey: 'object:4904'}
-    - {id: DMKCOL, title: Account, data_key: ACC, width: '150', $$hashKey: 'object:4906'}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: '80', $$hashKey: 'object:4907'}
-    - {id: NMAPTI, title: Remarks, data_key: RMK, expand: true, width: '150', $$hashKey: 'object:4910'}
+    - {id: DMKCOL, title: Account, data_key: ACC, width: 221, $$hashKey: 'object:4906',
+      expand: false}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: 109, $$hashKey: 'object:4907',
+      expand: false}
+    - {id: NMAPTI, title: Remarks, data_key: RMK, expand: false, width: 211, $$hashKey: 'object:4910'}
     - {id: UNZWYW, title: Statement Detail, data_key: STD, $$hashKey: 'object:4958',
-      width: '150', expand: true}
+      width: 209, expand: false}
     - {id: RMITXR, title: Labels, data_key: LBL, width: '100', $$hashKey: 'object:4905',
       expand: true}
     - {id: WXPMEY, title: Debt, data_key: debt, width: '70', $$hashKey: 'object:4908'}
@@ -51,6 +53,7 @@ components:
   layout_properties:
     col_widths: {}
     grid_position: ZLVMXC,LTILAR
+    full_width_row: true
   name: data_grid
   components:
   - type: RepeatingPanel

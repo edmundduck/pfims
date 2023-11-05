@@ -25,7 +25,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         self.time_datefrom.date = Global.settings.get_search_datefrom()
         self.time_dateto.date = Global.settings.get_search_dateto()
         self.subform = subform
-        self.colpanel_list.add_component(self.subform)
+        self.colpanel_list.add_component(self.subform, full_width_row=True)
         if self.subform.tag[ReportFormTag.REPORT_TAG] == ReportFormTag.EXP_LIST_RPT:
             self.button_exp_search.visible = True
             self.button_exp_analysis_search.visible = False

@@ -10,11 +10,12 @@ components:
   layout_properties:
     col_widths: {}
     grid_position: IWWXTN,ELVDQC
+    full_width_row: true
   components:
   - type: FlowPanel
     properties: {}
     name: flow_panel_2
-    layout_properties: {grid_position: 'ALKAHM,GEDAFW'}
+    layout_properties: {grid_position: 'ALKAHM,GEDAFW', full_width_row: true}
     components:
     - name: spacer_1
       properties: {height: 32}
@@ -79,6 +80,7 @@ components:
     layout_properties:
       col_widths: {}
       grid_position: OWAAQH,RBHXAN
+      full_width_row: true
     components:
     - name: spacer_2
       properties: {height: 32}
@@ -128,6 +130,7 @@ components:
     layout_properties:
       col_widths: {}
       grid_position: ANPCKM,UDPPDL
+      full_width_row: true
     components:
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
@@ -158,5 +161,5 @@ components:
 - type: ColumnPanel
   properties: {}
   name: colpanel_list
-  layout_properties: {grid_position: 'LFVFQU,AOOFNC'}
+  layout_properties: {grid_position: 'LFVFQU,AOOFNC', full_width_row: true}
 is_package: true

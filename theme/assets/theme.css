@@ -799,3 +799,7 @@ textarea.anvil-component[disabled] {
 https://stackoverflow.com/questions/30533055/calculating-shadow-values-for-all-material-design-elevations
 */
 
+* > .anvil-panel-section > .anvil-panel-section-container.full-width-row {
+  margin-left: 10px;
+  margin-right: 10px;
+}

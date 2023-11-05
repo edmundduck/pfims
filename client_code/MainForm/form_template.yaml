@@ -5,7 +5,7 @@ container:
     role: null, html: '@theme:new-homepage.html'}
 components:
 - type: ColumnPanel
-  properties: {visible: true, col_widths: '{}'}
+  properties: {visible: true, col_widths: '{}', col_spacing: medium}
   name: content_panel
   layout_properties: {slot: default}
   components: []
