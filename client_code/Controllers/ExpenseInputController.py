@@ -89,14 +89,12 @@ def generate_labels_dict(reload=False):
         generate_labels_dropdown(reload)
     return Helper.to_dict_of_list(cache.get_cache())
 
-def generate_label_objects(id_delimted_string):
+def generate_label_objects(id_list):
     """
     Generate a list of label objects based on the given label ID list.
 
-    Relevant to function concat_label_id_string.
-    
     Parameters:
-        id_delimted_string (string): A string of many label ID concatenated by commas.
+        id_list (list of int): A list of label IDs.
 
     Returns:
         result (list of Label): List of label objects with ID and names.
@@ -104,25 +102,51 @@ def generate_label_objects(id_delimted_string):
     from ..Entities.Label import Label
 
     result = []
-    if id_delimted_string is not None and not isinstance(id_delimted_string, str):
-        raise TypeError('A string is expected in the parameter.')
+    if not isinstance(id_list, list):
+        raise TypeError('A list is expected in the parameter.')
 
-    if isinstance(id_delimted_string, str):
-        labels_dict = generate_labels_dict()
-        trimmed_list = list(filter(len, id_delimted_string.split(",")))
-        logger.trace(f"trimmed_list={trimmed_list}")
-        logger.trace(f"labels_dict={labels_dict}")
-        # Don't generate label if following conditions are met -
-        # 1. label ID is 0 (which is possible from file upload)
-        # 2. label ID is not integer
-        # 3. label ID is NaN
-        for i in trimmed_list:
-            if i.isdigit() and int(i) > 0:
+    labels_dict = generate_labels_dict()
+    logger.trace(f"labels_dict={labels_dict}")
+    # Don't generate label if following conditions are met -
+    # 1. label ID is 0 (which is possible from file upload)
+    # 2. label ID is not integer
+    # 3. label ID is NaN
+    for i in id_list:
+        if isinstance(i, int) and i > 0:
+            try:
                 index = labels_dict.get('id').index(int(i))
                 lbl = Label().set_id(int(i)).set_name(labels_dict.get('name')[index])
                 result.append(lbl)
+            except ValueError as err:
+                # ValueError - label ID not found scenario
+                logger.warning(f"Label ID {i} does not exist.")
+                lbl = Label().set_id(int(i)).set_name(str(i))
+                result.append(lbl)
     return result
     
+def generate_label_id_list(id_obj):
+    """
+    Generate label IDs in list format based on the given label ID list.
+
+    Parameters:
+        id_obj (Object): ID object to be converted to a list.
+
+    Returns:
+        result (list of int): List of label IDs.
+    """
+
+    result = []
+    if id_obj is not None:
+        if isinstance(id_obj, int):
+            result = [id_obj]
+        elif isinstance(id_obj, tuple):
+            result = list(id_obj)
+        elif isinstance(id_obj, list):
+            result = id_obj
+        else:
+            raise TypeError('The parameter is not either integer or list/tuple.')
+    return result
+
 def get_account_dropdown_selected_item(acct_id):
     """
     Return a complete key based on a partial account ID which is a part of the key in a dropdown list.
@@ -223,47 +247,47 @@ def get_blank_row_button_text(button_text):
     result = button_text.replace('%n', str(ExpenseConfig.DEFAULT_ROW_NUM))
     return result
 
-def add_label_id_to_string(full_str, id):
+def add_label_id(lbl_id_list, id):
     """
-    Add a given label ID into a string of labels concatenated by commas.
+    Add a given label ID into a list of labels for sending to server processing.
 
     Relevant to function generate_label_objects.
 
     Parameters:
-        full_str (string): The string containing all required labels concatenated by commas.
-        id (int): The label ID to add into the string.
+        lbl_id_list (list of int): The list containing all required label IDs.
+        id (int): The label ID to add into the list.
         
     Returns:
-        result (string): The string with all required labels added with the new label ID.
+        result (list of int): The list with the specified label ID added.
     """
-    # Label ID from file upload can be withouth comma, hence needs to add back otherwise labels display will be messed up
-    result = full_str
-    if full_str not in (None, '') and full_str[-1] != ',':
-        result = result + ','
-    result = result + str(id) + ','
-    return result
+    result = None
+    if lbl_id_list is None:
+        return result
+    else:
+        result = lbl_id_list.copy()
+        result.append(id)
+        return result
 
-def remove_label_id_from_string(full_str, id):
+def remove_label_id(lbl_id_list, id):
     """
-    Remove a given label ID from a string of labels concatenated by commas.
+    Remove a given label ID from a list of labels for sending to server processing.
 
-    Relevant to function add_label_id_to_string.
+    Relevant to function add_label_id.
 
     Parameters:
-        full_str (string): The string containing all required labels concatenated by commas.
-        id (int): The label ID to remove from the string.
+        lbl_id_list (list of int): The list containing all required label IDs.
+        id (int): The label ID to remove from the list.
         
     Returns:
-        result (string): The string with all required labels without the removed label ID.
+        result (list of int): The list with the specified label ID removed.
     """
-    loc = full_str.find(str(id))
-    if loc+len(str(id))+1 >= len(full_str):
-        # When the to-be-removed ID is at the end of string
-        result = full_str[:loc]
+    result = None
+    if lbl_id_list is None:
+        return result
     else:
-        # When the to-be-removed ID is in front of other IDs.
-        result = full_str[:loc] + full_str[(loc+len(str(id))+1):]
-    return result
+        result = lbl_id_list.copy()
+        result.remove(id)
+        return result
 
 def enable_expense_group_delete_button(group_selection):
     """

@@ -87,7 +87,7 @@ def select_transactions(exp_grp):
         rows = cur.fetchall()
         logger.trace("rows=", rows)
         cur.close()
-    return rows
+        return rows
 
 @logger.log_function
 def upsert_transactions(exp_grp):
@@ -132,6 +132,7 @@ def upsert_transactions(exp_grp):
     except psycopg2.OperationalError as err:
         logger.error(err)
         conn.rollback()
+        raise psycopg2.OperationalError(err)
     finally:
         if cur is not None: cur.close()
         if conn is not None: conn.close()        

@@ -5,10 +5,11 @@ unique_ids:
     _POC.form_poc3a: '168185152747674193529156.51456'
     Forms.Expense.ExpenseFilePDFImportForm.PDFColumnsMappingRPTemplate: 7IC2AIEXPVB2V7CGTMQRJCYQCXMP2COB
     Forms.Expense.ExpenseFilePDFImportForm: PKCF4UKRYHN2PMZOKPXYO774VIHFU3MJ
+    Forms.Expense.ExpenseReportSearchPanelForm: N5B5BWMYWFAPKOSC5WVBY77HNLJZKI2K
+    Forms.Investment.InvestmentReportSearchPanelForm: '1698782855712625389705729.7488'
     Forms.Investment.PnLReportForm: RXSUKLOJQBDAVUQEX2WJTJ7ASDCEMEHA
     Forms.Expense.ExpenseFileExcelImportForm.ExcelAccountsMappingRPTemplate: '1696609933404821172586110.9895'
     _POC.form_poc3: '1681770078220804355523189.5985'
-    Forms.ReportSearchPanelFrom: N5B5BWMYWFAPKOSC5WVBY77HNLJZKI2K
     Forms.Expense.ExpenseInputForm: '1679866786840686636553602.4291'
     _POC.form_poc1.RowTemplate1.RowTemplate2: '168030606999789858443753.06984'
     LoginForm: '1697447417286999036333256.3268'
@@ -24,6 +25,7 @@ unique_ids:
     Forms.Expense.UploadMappingRulesForm: '1682358285769365636787220.0248'
     _POC.form_poc_main: I4UQL5D742KHJ2RDJH22CP7RC7QSJ56P
     Forms.Investment.StockTradingTxnDetailForm: 7MYSTEFMWLERSXWHMZVPLOZHKNV2AAJO
+    Forms.Expense.ExpenseAnalysisForm: '1698785642523108933234227.04637'
     Forms.Investment.StockTradingTxnDetailForm.StockTradingTxnDetailRPTemplate: RATFOYIZP6VUKZC3UPCLVGOSPW6MLNYC
     MainForm: TNMWRJE7DZEPVMK6Y7CTQHGKSVRCWLHW
     Forms.Expense.AccountMaintForm: '1679938376387228133454622.95874'
@@ -33,6 +35,7 @@ unique_ids:
     Forms.Expense.ExpenseInputForm.ExpenseInputRPTemplate: '1679866798759321711192937.876'
     _POC.form_poc1.RowTemplate1: '1680305819662177003996200.11398'
     Forms.Expense.ExpenseFileExcelImportForm: 6526X7JHNTTFLW7JRCNH62VR33IHRIKT
+    Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate: '1698785657699727247564223.9054'
     _POC.form_poc4: '1698273200579534863334196.40906'
     Forms.Expense.UploadMappingRulesForm.UploadMappingRulesRPTemplate: '1682364605704371854548277.978'
     _POC.form_poc2.test_template: I7VGCOHGIK32TFWPVUUSRN2KTIJVLDLX

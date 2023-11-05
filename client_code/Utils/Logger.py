@@ -128,9 +128,11 @@ class ClientLogger:
             msg (string): Optional. Log message.
         """
         if msg:
-            errmsg = f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err} {msg}"
+            # errmsg = f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err} {msg}"
+            errmsg = f"{err} {msg}"
         else:
-            errmsg = f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err}"
+            # errmsg = f"{err.__traceback__.tb_frame.f_code.co_filename}(Line {err.__traceback__.tb_lineno}): {__name__}.{type(err).__name__}: {err}"
+            errmsg = f"{err}"
         self._log(ClientLoggerConfig.ERROR, errmsg, *args, **kwargs)
 
     def critical(self, msg=None, *args, **kwargs):

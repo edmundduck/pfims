@@ -1,6 +1,5 @@
 from ._anvil_designer import ExpenseInputRPTemplateTemplate
 from anvil import *
-import anvil.server
 from .....Controllers import ExpenseInputController
 from .....Entities.ExpenseTransaction import ExpenseTransaction
 from .....Utils.ButtonModerator import ButtonModerator
@@ -17,8 +16,11 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         # Any code you write here will run when the form opens.
         self.row_acct.items = ExpenseInputController.generate_accounts_dropdown()
         self.row_acct.selected_value = ExpenseInputController.get_account_dropdown_selected_item(self.row_acct.selected_value)
-        
-        self._generateall_selected_labels(self.hidden_lbls_id.text)
+
+        lbl_list = ExpenseInputController.generate_label_id_list(self.item[ExpenseTransaction.field_labels()])
+        self._generateall_selected_labels(lbl_list)
+        self.tag = {ExpenseTransaction.field_labels(): lbl_list}
+        self.item[ExpenseTransaction.field_labels()] = lbl_list
         self.add_event_handler('x-create-lbl-button', self._create_lbl_button)
         self.add_event_handler('x-set-remarks-visible', self._set_remarks_visible)
         self.add_event_handler('x-set-stmt-dtl-visible', self._set_stmt_dtl_visible)
@@ -44,12 +46,13 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
             # self.row_panel_labels.add_component(b, False, name=lbl.get_name(), expand=True)
             self.row_panel_labels.add_component(b, False, name=lbl.get_name())
             b.set_event_handler('click', self.label_button_minus_click)
+        return label_id_list
 
     def label_button_minus_click(self, **event_args):
         b = event_args['sender']
-        self.hidden_lbls_id.text = ExpenseInputController.remove_label_id_from_string(self.hidden_lbls_id.text, b.tag)
         # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
-        self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
+        self.item[ExpenseTransaction.field_labels()] = ExpenseInputController.remove_label_id(self.tag.get(ExpenseTransaction.field_labels(), []), b.tag)
+        self.tag.update({ExpenseTransaction.field_labels(): self.item[ExpenseTransaction.field_labels()]})
         b.remove_from_parent()
         self.parent.raise_event('x-switch-to-save-button')
 
@@ -67,9 +70,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
                 spacing_below="small",
                 tag=selected_lid
             )
-            self.hidden_lbls_id.text = ExpenseInputController.add_label_id_to_string(self.hidden_lbls_id.text, selected_lid)
             # Without self.item[ExpenseTransaction.field_labels()] assignment the data binding won't work
-            self.item[ExpenseTransaction.field_labels()] = self.hidden_lbls_id.text
+            self.item[ExpenseTransaction.field_labels()] = ExpenseInputController.add_label_id(self.tag.get(ExpenseTransaction.field_labels(), []), selected_lid)
+            self.tag.update({ExpenseTransaction.field_labels(): self.item[ExpenseTransaction.field_labels()]})
             # self.row_panel_labels.add_component(b, False, name=selected_lid, expand=True)
             self.row_panel_labels.add_component(b, False, name=selected_lid)
             b.set_event_handler('click', self.label_button_minus_click)

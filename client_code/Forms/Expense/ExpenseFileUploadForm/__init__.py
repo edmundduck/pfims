@@ -69,7 +69,7 @@ class ExpenseFileUploadForm(ExpenseFileUploadFormTemplate):
                     )
                     self.sheet_tabs_panel.add_component(cb)
                     cb.set_event_handler('change', self.enable_excel_next_button)
-                self.dropdown_mapping_rule.items = ExpenseFileUploadController.generate_file_mapping_group_dropdown(self.dropdown_filetype.selected_value[0] if self.dropdown_filetype.selected_value else None)
+                self.dropdown_mapping_rule.items = ExpenseFileUploadController.generate_file_mapping_group_dropdown(self.dropdown_filetype.selected_value)
                 self.flow_panel_mappingrule.visible = True
             else:
                 self.flow_panel_mappingrule.visible = False

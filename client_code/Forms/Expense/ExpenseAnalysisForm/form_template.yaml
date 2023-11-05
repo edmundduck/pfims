@@ -8,7 +8,7 @@ components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
-  layout_properties: {grid_position: 'EGWQSM,IAUJDY'}
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
   name: flow_panel_1
   components:
   - type: Label
@@ -17,7 +17,7 @@ components:
     name: spacer4
   - type: Label
     properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Expense List Report, font_size: null, font: '', spacing_above: small,
+      visible: true, text: Expense Analysis Report, font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: ''}
     layout_properties: {}
@@ -26,17 +26,9 @@ components:
   properties:
     role: null
     columns:
-    - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:4903'}
-    - {id: DNGCRO, title: Date, data_key: DTE, width: '80', $$hashKey: 'object:4904'}
-    - {id: DMKCOL, title: Account, data_key: ACC, width: '150', $$hashKey: 'object:4906'}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: '80', $$hashKey: 'object:4907'}
-    - {id: NMAPTI, title: Remarks, data_key: RMK, expand: true, width: '150', $$hashKey: 'object:4910'}
-    - {id: UNZWYW, title: Statement Detail, data_key: STD, $$hashKey: 'object:4958',
-      width: '150', expand: true}
-    - {id: RMITXR, title: Labels, data_key: LBL, width: '100', $$hashKey: 'object:4905',
-      expand: true}
-    - {id: WXPMEY, title: Debt, data_key: debt, width: '70', $$hashKey: 'object:4908'}
-    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70', $$hashKey: 'object:4909'}
+    - {id: RMITXR, title: Labels, data_key: LBL, width: '200', $$hashKey: 'object:4905',
+      expand: false}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: '200', $$hashKey: 'object:4907'}
     auto_header: true
     tooltip: ''
     border: ''
@@ -48,17 +40,16 @@ components:
     spacing_above: small
     spacing_below: small
     background: ''
-  layout_properties:
-    col_widths: {}
-    grid_position: ZLVMXC,LTILAR
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA JMLSRG,ZVJIVL'}
   name: data_grid
   components:
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseReportForm.ExpenseReportRPTemplate,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate,
       background: ''}
     layout_properties: {}
     name: rpt_panel
+    data_bindings: []
   - type: FlowPanel
     properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
       foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
@@ -95,5 +86,11 @@ components:
       layout_properties: {}
       event_bindings: {change: dropdown_displayrow_change}
       name: dropdown_displayrow
-data_bindings:
-- {property: tag, code: '', writeback: false}
+- type: Plot
+  properties: {}
+  name: plot_heatmap
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA QAXQTL,HDSHEV'}
+- type: Plot
+  properties: {height: 704}
+  name: plot_bar_chart
+  layout_properties: {grid_position: 'ZLVMXC,PXXYBG'}
