@@ -147,7 +147,7 @@ components:
       event_bindings: {click: colpanel_lv2link_exp_analysis_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: '',
-      visible: true, text: SETTINGS, font_size: 11, wrap_on: mobile, font: '', col_spacing: medium,
+      visible: true, text: SETTINGS, font_size: 10, wrap_on: mobile, font: '', col_spacing: medium,
       spacing_above: small, icon_align: top, col_widths: '{}', spacing_below: small,
       italic: false, background: '', bold: false, underline: false, icon: 'fa:wrench'}
     name: colpanel_link_settings
@@ -156,7 +156,7 @@ components:
     components: []
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: darkgrey,
-      visible: true, text: PoC, font_size: 11, wrap_on: mobile, font: '', col_spacing: medium,
+      visible: true, text: PoC, font_size: 10, wrap_on: mobile, font: '', col_spacing: medium,
       spacing_above: small, icon_align: top, col_widths: '', spacing_below: small,
       italic: false, background: '', bold: false, underline: false, icon: 'fa:yahoo'}
     name: poc_link
