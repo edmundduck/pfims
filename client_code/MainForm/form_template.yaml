@@ -133,3 +133,7 @@ components:
     italic: false, background: '', bold: false, underline: false, icon: ''}
   name: app_title
   layout_properties: {slot: title}
+- name: image_1
+  properties: {height: 68}
+  type: Image
+  layout_properties: {slot: top-left-btn}
