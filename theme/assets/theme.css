@@ -215,8 +215,8 @@ a:hover, a:active {
 .nav-holder .left-nav {
   position: relative;
   flex-shrink: 0;
-  min-width: 160px;
-  max-width: 400px;
+  min-width: 60px;
+  max-width: 200px;
 }
 
 .nav-shield {
