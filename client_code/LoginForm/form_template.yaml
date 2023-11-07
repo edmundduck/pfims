@@ -70,10 +70,17 @@ components:
   name: navbar_links
   layout_properties: {slot: nav-right}
   components: []
-- type: Label
-  properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
-    visible: true, text: PFIMS (Personal Finance and Inventory Management System),
-    font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-    italic: false, background: '', bold: false, underline: false, icon: ''}
-  name: app_title
+- name: flow_panel_1_copy_1
+  properties: {spacing_below: medium, vertical_align: top}
+  type: FlowPanel
   layout_properties: {slot: title}
+  components:
+  - name: spacer_1_copy_1
+    properties: {height: '60', visible: true}
+    type: Spacer
+    layout_properties: {width: 72}
+  - name: image_1_copy_1
+    properties: {height: '72', source: _/theme/logo-no-background.png, horizontal_align: left,
+      spacing_below: small}
+    type: Image
+    layout_properties: {width: 488, expand: false}
