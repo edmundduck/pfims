@@ -1,12 +1,361 @@
-/**
- This CSS implements the Material Design look and feel for Anvil apps.
- **/
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  background-color: %color:Background%;
+  color: %color:On Background%;
+}
 
-/* Stop panel-cols cutting off drop shadows */
+.plot-container.plotly .main-svg .parcoords .y-axis .axis .tick > text {
+  text-shadow: none !important;
+}
+
+.plot-container.plotly .main-svg .parcoords .y-axis .axis > path.domain {
+  stroke: #C8C8CB;
+}
+
+/* Text and links */
+
+.anvil-role-display {
+  font-size: 57px;
+  line-height: 64px;
+  font-weight: 300;
+}
+
+.anvil-role-headline {
+  font-family: Eczar, serif;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 400;
+}
+
+.anvil-role-title {
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 400;
+}
+
+.anvil-role-body {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 300;
+}
+
+.anvil-role-input-prompt {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.anvil-role-body > .label-text, .anvil-role-body .link-text {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+a {
+  color: %color:Primary%;
+}
+
+a:hover:not(disabled) {
+  color: %color:Primary Container%;
+}
+
+a:active:not(disabled), a:focus:not(disabled){
+  opacity: %color:Primary Container%;
+}
+
+
+
+/* Text boxes and areas */
+
+.anvil-text-box, .anvil-text-area, .form-control {
+  color: %color:On Surface Variant%;
+  background-color: %color:Surface Variant%;
+  border: none;
+  border-radius: 0;
+  box-shadow: inset 0 -1px 0 %color:Secondary%;
+}
+
+.anvil-text-box:focus, .anvil-text-area:focus, .form-control:focus {
+  box-shadow: inset 0 -1.5px 0 %color:On Surface Variant%;
+  border-radius: 0;
+}
+
+.anvil-text-box[disabled], .anvil-text-area[disabled], .form-control[disabled] {
+  background: %color:Disabled Container%;
+}
+
+/* Buttons */
+
+.btn, .btn-default, .file-loader, .file-loader > label { 
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 2px;
+  
+  border: 0;
+  background-color: transparent;
+  background-image: none;
+  color: %color:On Background%;
+  text-shadow: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  
+  position: relative;
+}
+
+.btn:hover, .btn-default:hover {
+  color: %color:On Background%;
+  background-color: %color:Light Overlay 1%;
+  outline: none;
+  background-image: none;
+}
+
+.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
+  color: %color:On Background%;
+  background-color: %color:Light Overlay 2%;
+  outline: none;
+  outline-offset: 0px;
+}
+
+.btn[disabled], .btn[disabled]:hover, .btn[disabled]:focus, .file-loader.anvil-disabled > label, .file-loader.anvil-disabled > label:hover { 
+  color: %color:On Disabled%;
+  background-color: transparent; !important
+}
+
+/* Inputs */
+
+input[type="file"]:focus, input[type="radio"]:focus, input[type="checkbox"]:focus {
+  outline: 0;
+}
+
+.file-loader:hover {
+  color: %color:On Background%;
+}
+
+.file-loader > label:hover {
+  background: %color:Light Overlay 1%;
+}
+
+.checkbox input, .radio input {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 1px;
+  background: %color:Surface Variant%;
+}
+
+.radio input {
+  border-radius : 50%;
+}
+
+.checkbox input:hover, .radio input:hover {
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface Variant%; 
+}
+
+.checkbox input[disabled], radio input[disabled] {
+  background: %color:On Disabled%;
+}
+
+.checkbox input[disabled]:hover, .radio input[disabled]:hover {
+  background: %color:On Disabled%;
+}
+
+input[disabled] ~ span {
+  color: %color:On Disabled%;
+  cursor: not-allowed;
+}
+
+.checkbox input:checked, .radio input:checked {
+  background-color: %color:Primary Container%;
+}
+
+.checkbox input:checked:before {
+  font-family: "FontAwesome";
+  content: "\f00c";
+  font-size: 10px;
+  display: flex;
+  margin: 2.6px;
+}
+
+.radio input:checked:before {
+  font-family: "FontAwesome";
+  content: "\f111";
+  font-size: 8px;
+  display: flex;
+  margin-top: 3.6px;
+  margin-left: 4.1px
+}
+
+/* Column Panel */
+
 .anvil-panel-col {
   padding-bottom: 10px;
   margin-bottom: -10px;
 }
+
+/* Date Picker */
+
+.daterangepicker {
+  color: %color:On Background%;
+  background-color: %color:Surface Variant%;
+}
+
+.daterangepicker::before, .daterangepicker::after {
+  border-bottom: 0;
+}
+
+.daterangepicker .calendar-table {
+  background-color: transparent;
+}
+
+.daterangepicker .calendar-table td.off {
+  background-color: transparent; 
+  color: %color:Disabled% !important;
+}
+
+.daterangepicker .calendar-table td.available:hover {
+  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:Surface%;
+  border-radius: 50%;
+}
+
+.daterangepicker td.active, .daterangepicker td.start-date.end-date.available {
+  color: %color:Surface Variant%;
+  background-color: %color:Primary%;
+  border-radius: 50%;
+}
+
+.daterangepicker td.active:hover, .daterangepicker td.start-date.end-date:hover {
+  background: linear-gradient(0deg, %color:Dark Overlay 2%, %color:Dark Overlay 2%), %color:Primary%;
+}
+
+.daterangepicker select {
+  color: %color:On Background%;
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface%;;
+  border: 0;
+}
+
+.daterangepicker select:focus {
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface%;
+  border-bottom: 1.5px solid %color:On Surface Variant%;
+}
+
+/* Data grids */
+
+.anvil-data-grid {
+  background: %color:Surface Variant%;
+}
+
+.anvil-data-grid>.data-grid-child-panel>div.auto-grid-header {
+  border-bottom: 2px solid %color:Outline%;
+}
+
+.anvil-data-row-panel>.data-row-col {
+  padding-left: 20px;
+  border-bottom: 1px solid %color:Outline%;
+}
+
+.anvil-data-row-panel>.data-row-col:not(:last-child) {
+  border-right: 1px solid %color:Primary Overlay 2%;
+}
+
+/* Modals */
+
+.modal-content {
+  background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Surface%;
+  border-radius: 2px;
+}
+
+.modal-footer {
+  border: 0;
+}
+
+.modal-header {
+  padding: 24px 24px 0px;
+  font-size: 24px;
+  line-height: 32px;
+  border: 0;
+  color: %color:On Surface%;
+}
+
+.modal-body {
+  padding: 10px 30px;
+}
+
+.alert-info {
+  background: linear-gradient(0deg, %color:Primary Overlay 2%, %color:Primary Overlay 2%), %color:Surface%;
+  color: %color:On Surface%;
+  border: none;
+  /* 16dp */ box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.alert-info button.close, .modal-header button.close {
+  color: %color:On Surface%;
+  text-shadow: none;
+}
+
+/* Roles */
+
+.anvil-role-card {
+  background: %color:Surface Variant%;
+  padding: 8px 12px;
+}
+
+.anvil-role-heading {
+  font-size: 40px;
+  font-family: "Eczar", serif;
+}
+
+.anvil-role-filled .btn, .anvil-role-filled > label {
+  background-color: %color:Primary%;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: %color:On Primary%;
+}
+
+.anvil-role-filled .btn:hover, .anvil-role-filled > label:hover {
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Primary%;
+}
+
+.anvil-role-filled .btn:active, .anvil-role-filled .btn:active:focus, .anvil-role-filled > label:active, .anvil-role-filled > label:active:focus{
+  color: %color:On Primary%;
+  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:Primary%;
+}
+
+.anvil-role-filled .btn[disabled], .anvil-role-filled .btn[disabled]:hover, .anvil-role-filled.anvil-disabled > label {
+  color: %color:On Disabled%;
+  background: %color:Disabled Container%;
+}
+
+.anvil-role-outlined .btn, .anvil-role-outlined > label {
+  outline: 2px solid %color:Primary%;
+  border-radius: 10px;
+}
+
+.anvil-role-outlined .btn:active, .anvil-role-outlined .btn:active:focus, .anvil-role-outlined > label:active, .anvil-role-outlined > label:active:focus {
+  outline: 2px solid %color:Primary%;
+  border-radius: 10px;
+  outline-offset: 0px;
+}
+
+.anvil-role-outlined .btn[disabled], .anvil-role-outlined .btn[disabled]:hover, .anvil-role-outlined.anvil-disabled > label {
+  outline: 2px solid %color:On Disabled%;
+}
+
+.anvil-role-input-error, .anvil-role-input-error:focus, .anvil-datepicker.anvil-role-input-error input {
+  color: %color:Error%;
+  box-shadow: inset 0 -1.5px 0 %color:Error%;
+  border-radius: 0;
+}
+
+.anvil-role-tag {
+  color: %color:B%;
+  border-radius: 5px;
+  padding: 0px 5px;
+  margin-right: 5px;
+}
+
+/* Other classes */
 
 .content > .placeholder {
   margin: 16px;
@@ -17,37 +366,65 @@
   text-align: center;
 }
 
-/* Put things on a 4px grid (none of this 7px nonsense) */
-.has-text .anvil-component-icon.left-icon { margin-right: 8px; }
-.has-text .anvil-component-icon.right-icon { margin-left: 8px; }
+.logo-placeholder {
+  padding: 5px;
+  margin: 8px 0px;
+  width: 55px;
+  text-align: center;
+  color: #888;
+  outline: 1px dotted #888;
+}
 
-a>.anvil-component-icon.left_edge-icon,
-a>.anvil-component-icon.right_edge-icon,
-.anvil-label>.anvil-component-icon.left_edge-icon,
-.anvil-label>.anvil-component-icon.right_edge-icon {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-.anvil-label>.label-text, a>.link-text {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-.file-loader>label {
-    padding: 8px;
-}
-.checkbox label, .radio label {
-    padding-top: 8px; padding-right: 8px; padding-bottom: 8px;
-}
-.anvil-spacing-above-none { margin-top: 0px; }
-.anvil-spacing-above-small { margin-top: 4px; }
-.anvil-spacing-above-medium { margin-top: 8px; }
-.anvil-spacing-above-large { margin-top: 16px; }
-.anvil-spacing-below-none { margin-bottom: 0px; }
-.anvil-spacing-below-small { margin-bottom: 4px; }
-.anvil-spacing-below-medium { margin-bottom: 8px; }
-.anvil-spacing-below-large { margin-bottom: 16px; }
+/* Scrollbars */
 
+.content::-webkit-scrollbar {
+  width: 10px;
+}
 
+.content::-webkit-scrollbar-thumb {
+  width: 6px;
+  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:Surface%;
+  border-radius: 6px;
+  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,.2);
+}
+
+.content::-webkit-scrollbar-track {
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface%;
+}
+
+.left-nav::-webkit-scrollbar {
+  width: 10px;
+}
+
+.left-nav::-webkit-scrollbar-thumb {
+  width: 6px;
+  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:Surface%;
+  border-radius: 6px;
+  -webkit-box-shadow: inset 0 0 2px rgba(0,0,0,.2);
+}
+
+.left-nav::-webkit-scrollbar-track {
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface%;
+}
+
+/* Spinner */
+
+#loadingSpinner {
+    position: fixed;
+    top: calc(33% - 70px/2);
+    left: calc(50% - 70px/2);
+    width: 70px;
+    height: 70px;
+    background-color: %color:Light Overlay 2%;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 35px;
+    box-shadow: 0px 0px 100px 100px %color:Light Overlay 2%;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* Put things on a 4px grid */
 .col-padding.col-padding-tiny { padding: 0 2px; }
 .column-panel.col-padding-tiny > .anvil-panel-section > .anvil-panel-section-container > .anvil-panel-section-gutter { margin: 0 -2px; }
 
@@ -93,80 +470,18 @@ a>.anvil-component-icon.right_edge-icon,
   margin-right: 20px;
 }
 
-
-/* Typography */
-body {
-  font-family: Roboto, Noto, Arial, sans-serif;
-  font-size: 14px;
-  line-height: 1.4286;
-  background-color: #fafafa;
-}
-
-@media print {
-  body {
-    background-color: white;
-  }
-}
-
-a, a:focus {
-  text-decoration: none;
-  color: %color:Primary 700%;
-}
-
-a:hover, a:active {
-  color: %color:Primary 500%;
-}
-
-.anvil-label {
-/*  font-size: 16px;*/
-}
-
-.anvil-role-subheading {
-  font-size: 16px;
-  line-height: 24dp;
-}
-
-.anvil-role-headline {
-  font-size: 24px;
-  line-height: 32px;
-}
-
-.anvil-role-input-prompt {
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-.anvil-role-display-4 {
-  font-size: 112px;
-  font-weight: light;
-}
-
-.anvil-role-text {
-  font-size: 14px;
-}
-.anvil-role-text > .label-text, .anvil-role-text .link-text {
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-/* Page structure: App bar with optional left nav */
+/* Page structure */
 .structure {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   min-height: 100vh;
   min-height: calc(100vh - %anvil-banner-height%);
   height: 0; /* To make flex-grow work in IE */
 }
 
-/* However, this breaks the designer's height measurement. IE isn't supported for the designer, so set it back. */
+/* This breaks the designer's height measurement. IE isn't supported for the designer, so set it back. */
 .designer .structure {
   height: initial;
-}
-
-.app-bar {
-  flex: 0 0;
-  flex-basis: auto;
-  flex-basis: content;
 }
 
 .nav-holder {
@@ -180,7 +495,6 @@ a:hover, a:active {
   }
 }
 
-
 /* Mobile and desktop margins for content */
 .content > * > .anvil-container {
   padding: 8px;
@@ -188,7 +502,7 @@ a:hover, a:active {
 
 @media(min-width:991px) {
   .content > * > .anvil-container {
-    padding: 16px 8px;
+    padding: 16px 24px;
   }
 }
 
@@ -204,28 +518,56 @@ a:hover, a:active {
   overflow-y: visible;
 }
 
-
-/* Desktop: Nav bar pinned */
-
 .nav-holder {
   display: flex;
+  align-items: stretch;
   flex-direction: row;
 }
 
 .nav-holder .left-nav {
   position: relative;
+  padding: 10px;
   flex-shrink: 0;
-  min-width: 150px;
-  max-width: 240px;
+  min-width: 160px;
+  max-width: 400px;
+}
+
+.logo {
+  margin-bottom: 20px;
+  min-width: 40px;
 }
 
 .nav-shield {
   display: none;
 }
 
-/* Mobile: Nav bar is a modal overlay */
+.sidebar-toggle {
+  display: none;
+}
+
+.left-nav-container {
+  margin: 10px;
+}
+/* Mobile */
 
 @media(max-width:998px) {
+  
+  html:not(.designer) .sidebar-toggle {
+    display: block;
+    padding: 8px 0px 10px 0px;
+    text-align: center;
+    margin: 10px;
+    width: 35px;
+    height: 35px;
+    color: %color:On Background%;
+    background: %color:Primary%;
+    border-radius: 50%;
+  }
+  
+    html:not(.designer) .sidebar-toggle:focus {
+    background: linear-gradient(0deg, %color:Dark Overlay 1%, %color:Dark Overlay 1%), %color:Primary%;
+  }
+  
   html:not(.designer) .nav-holder {
     display: block;
   }
@@ -237,7 +579,7 @@ a:hover, a:active {
     max-width: 360px;
     z-index: 3;
     border-right: none;
-  /* 16dp */ box-shadow: 0 16px 8px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  /* 16dp */ box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
 
     display: none;
     transition: right 0.5s;
@@ -246,6 +588,7 @@ a:hover, a:active {
   html:not(.designer) .nav-holder .left-nav.shown {
     display: block;
   }
+  
   .nav-shield.shown {
     display: block;
     position: fixed;
@@ -261,11 +604,10 @@ a:hover, a:active {
 .nav-holder .left-nav, .left-nav-placeholder {
   display: flex;
   flex-direction: column;
-  background: white;
-  border-right: 1px solid #e0e0e0;
+  background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%;
   font-size: 14px;
   font-weight: 500;
-  color: rgba(0,0,0,0.87);
+  color: %color:On Surface Variant%;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -275,16 +617,18 @@ a:hover, a:active {
   padding: 8px;
   line-height: 1;
   width: 58px;
+  flex-grow: 1;
 }
 .left-nav-placeholder .prompt {
   display: inline-block;
   white-space: nowrap;
   transform: translate(-50%,0) rotate(-90deg) translate(-50%,0) translate(15px,16px);
-  padding: 16px 16px;
+  padding: 21px 16px;
   color: #888;
   outline: 1px dotted #888;
   visibility: hidden;
 }
+
 .anvil-highlight .left-nav-placeholder .prompt {
   visibility: visible;
 }
@@ -305,30 +649,29 @@ a:hover, a:active {
   overflow-x: visible;
 }
 
-/* Make all the sidebar icons look nice */
+/* Make icons look nice */
 
-.left-nav .anvil-component-icon {
-  font-size: 160%;
-}
-
-.left-nav .anvil-component-icon.left-icon {
+.anvil-component-icon.left-icon {
   width: 0;
-  margin-right: 56px;
+  margin-right: 20px !important; 
   position: relative;
-  top: 0.15em;  
 }
 
-.left-nav .anvil-component-icon.left_edge-icon, .left-nav .anvil-component-icon.right_edge-icon {
+.anvil-component-icon.left_edge-icon, .left-nav .anvil-component-icon.right_edge-icon {
   left: 16px;
   padding-top: 2px;
   width: 0;
 }
 
-.left-nav .anvil-component-icon.right_edge-icon {
+.anvil-component-icon.right_edge-icon {
   left: initial;
   right: 16px;
   top: 0;
   padding-top: 2px;
+}
+
+.has-text > .anvil-component-icon.left-icon {
+    margin-right: 1.3em !important; 
 }
 
 /* Sidebar links (and labels with edge icons) go +16px wider
@@ -346,7 +689,7 @@ a:hover, a:active {
 }
 
 .left-nav a:hover, .left-nav .anvil-role-selected {
-  color: %color:Primary 700%;
+  color: %color:Primary%;
   background-color: rgba(0,0,0,.08);
 }
 
@@ -368,439 +711,4 @@ a:hover, a:active {
   overflow-x: hidden;
 }
 
-/* Components: App Bar */
-.app-bar {
-  flex: auto;
-  min-height: 56px;
-  line-height: 40px;
-  padding: 0 16px 0 16px;
-
-  font-size: 16px;
-  font-weight: 500;
-  color: white;
-  background-color: %color:Primary 500%;
-  
-  z-index: 1;
-  /* 4dp */ box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.2);  
-}
-
-.app-bar .anvil-component {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.nav-holder > .sidebar-toggle { display:block; float:left;  margin-left: -61px; }
-.nav-holder > .top-left-btn { float: left; margin-left: -60px; margin-right: -40px; }
-.app-bar > .title { float: left; }
-.app-bar > .title > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0; display:none; }
-.app-bar > .app-bar-nav { float: right; font-weight: normal; }
-.app-bar > .app-bar-nav .placeholder { margin-top: 8px; padding: 0 8px; }
-.anvil-highlight .app-bar > .app-bar-nav .placeholder { outline: 1px dotted #ccc; }
-.anvil-highlight .app-bar > .title > .placeholder { display:block; }
-
-.app-bar a, .app-bar .anvil-component {
-  display: block;
-  color: white;
-  line-height: 30px;
-  min-width: 30px;
-  min-height: 30px;
-  margin: 5px 4px 0;
-}
-
-.app-bar .title .anvil-component {
-  margin-left: 0;
-}
-
-.app-bar input.anvil-component, .app-bar .anvil-component input {
-  line-height: 30px;
-  color: white;
-}
-
-.app-bar select.form-control {
-  height: 43px; /* 30px line height + 12px padding + 1px border */
-}
-
-.app-bar .anvil-component-icon-present .anvil-component-icon, .app-bar .sidebar-toggle .fa {
-  width: 30px;
-  text-align: center;
-}
-
-/* Don't put spacing on the top-level container (eg FlowPanel) */
-.app-bar-nav > .anvil-container {
-  margin: 0;
-  margin-right: 100px;
-  padding: 0;
-  min-height: 56px;
-}
-
-.anvil-highlight .app-bar-nav > .anvil-container:not(.has-components):not(a) {
-  outline: 1px dotted #fff;
-  margin-top: 8px;
-  min-height: 40px;
-  padding: 5px 8px;
-}
-
-.anvil-highlight .app-bar-nav > .anvil-container:not(.has-components):not(a)::after {  
-  content: "Drop Links here"
-}
-
-/* Rejig margin vs padding to give links the halo */
-.app-bar a, .app-bar a.anvil-component {
-  padding: 5px;
-  margin: 8px 0 0;
-  border-radius: 20px;
-}
-
-.app-bar a .link-text {
-  padding: 0 4px;
-}
-.app-bar a.has-text .anvil-component-icon.left {
-  margin-right: 4px;
-}
-.app-bar a.has-text .anvil-component-icon.right {
-  margin-left: 4px;
-}
-
-.app-bar a:hover, .app-bar a:active {
-  color: #eee; text-decoration: none;
-  background-color: %color:Primary 700%;
-}
-
-
-/* Component: Dialog (alert), Notification */
-.modal-content, body>div[data-notify="container"] {
-  border-radius: 2px;
-  /* 24dp */ box-shadow: 0 9px 46px 8px rgba(0, 0, 0, 0.14), 0 11px 15px -7px rgba(0, 0, 0, 0.12), 0 24px 38px 3px rgba(0, 0, 0, 0.2)
-    !important;
-}
-
-.modal-header {
-  padding: 24px 24px 0px;
-  font-size: 24px;
-  line-height: 32px;
-  border: 0;
-}
-
-.modal-body {
-  padding: 20px 24px 24px;
-  font-size: 16px;
-  color: #747474;
-}
-
-.modal-footer {
-  padding: 8px 8px 8px 24px;
-  border: 0;
-}
-
-.modal-footer .btn {
-  background-color: transparent;
-  color: %color:Primary 500%;
-}
-.modal-footer .btn, .modal-footer .btn:focus, .modal-footer .btn:active {
-  box-shadow: none;
-  top: 0;
-}
-
-/* Notifications */
-body>div[data-notify="container"] {
-  background: white;
-  border: none;
-  padding: 24px;
-}
-
-body>div[data-notify="container"]>span[data-notify="title"] {
-  display: block;
-  font-size: 18px;
-  font-weight: 500;
-  color: #333333;
-}
-
-body>div[data-notify="container"]>span[data-notify="message"] {
-  display: block;
-  padding: 20px 0 0;
-  font-size: 16px;
-  color: #747474;  
-}
-
-body>div[data-notify="container"].alert-success{
-  background-color: #d4edda;
-}
-
-body>div[data-notify="container"].alert-success>span[data-notify="title"]{
-  color: #155724;
-}
-
-body>div[data-notify="container"].alert-danger{
-  background-color: #f8d7da;
-}
-
-body>div[data-notify="container"].alert-danger>span[data-notify="title"]{
-  color: #721c24;
-}
-
-body>div[data-notify="container"].alert-warning{
-  background-color: #fff3cd;
-}
-
-body>div[data-notify="container"].alert-warning>span[data-notify="title"]{
-  color: #856404;
-}
-
-
-/* Component: Button */
-
-.btn, .btn-default, .file-loader>label {
-  border-radius: 2px;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 8px 16px;
-  min-height: calc(16px + 1.42857143em);
-  text-transform: uppercase;
-
-  border: 0;
-  background-image: none;
-  background-color: transparent;
-  color: %color:Primary 500%;
-  text-shadow: none;
-  box-shadow: none;
-  -webkit-box-shadow: none;
-  
-  position: relative;
-}
-
-.btn:hover, .btn:focus, .file-loader>label:hover {
-  background-color: rgba(153,153,153,0.2);
-  background-image: none;
-  outline: none;
-  color: %color:Primary 500%;
-}
-
-.btn:active, .btn:active:focus {
-  background-color: rgba(153,153,153,0.4);
-  background-image: none;
-  outline: none;
-  box-shadow: none;
-  color: %color:Primary 500%;
-}
-
-.btn[disabled] { color: rgba(0, 0, 0, .25); }
-.anvil-role-raised > .btn[disabled], .anvil-role-primary-color > .btn[disabled], .anvil-role-secondary-color > .btn[disabled] {
-  background-color: rgba(0,0,0,0.12) !important;
-  color: rgba(0,0,0,0.25) !important;
-  box-shadow: none !important;
-}
-
-.anvil-role-raised > .btn, .anvil-role-primary-color > .btn, .anvil-role-secondary-color > .btn, .anvil-role-raised.file-loader>label, .anvil-role-primary-color.file-loader>label, .anvil-role-secondary-color.file-loader>label,
-.btn-primary, .btn-success, .btn-info, .btn-warning, .btn-danger
-{
-  /* 2dp */  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-}
-
-.anvil-role-raised > .btn:active, .anvil-role-primary-color > .btn:active, .anvil-role-secondary-color > .btn:active, .btn-primary:active,
-.btn-primary:active, .btn-success:active, .btn-info:active, .btn-warning:active, .btn-danger:active {
-  /* 8dp */ box-shadow: 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);  
-  top: -1px;
-}
-
-.anvil-role-primary-color > .btn, .btn-primary, .anvil-role-primary-color.file-loader>label {
-  color: white;
-  background-color: %color:Primary 500%;
-}
-
-.anvil-role-secondary-color > .btn, .anvil-role-secondary-color.file-loader>label {
-  color: white;
-  background-color: %color:Secondary 500%;
-}
-
-.btn-success, .btn-info, .btn-warning, .btn-danger {
-  color: white;
-}
-
-.anvil-role-primary-color > .btn:hover, .anvil-role-primary-color > .btn:active, .anvil-role-primary-color > .btn:focus,
-.btn-primary:hover, .btn-primary:active, .btn-primary:focus {
-  color: white;
-  background-color: %color:Primary 700%;
-}
-
-.anvil-role-secondary-color > .btn:hover, .anvil-role-secondary-color > .btn:active, .anvil-role-secondary-color > .btn:focus {
-  color: white;
-  background-color: %color:Secondary 700%;
-}
-
-/* Component: Card */
-
-.anvil-role-card {
-  overflow: hidden;
-  border-radius: 2px;
-  background-color: white;
-  padding: 8px 12px;
-  /* 2dp */  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-}
-
-/* full_width_row sections go full bleed */
-.column-panel.anvil-role-card > .anvil-panel-section > .anvil-panel-section-container.full-width-row {
-  margin-left: -12px;
-  margin-right: -12px;
-  width: initial;
-  max-width: initial;
-}
-
-/* If the first row of a card is a full_width_row, it goes to the top */
-.column-panel.anvil-role-card > .anvil-panel-section:first-child > .anvil-panel-section-container.full-width-row {
-  margin-top: -8px;
-}
-.column-panel.anvil-role-card > .anvil-panel-section:last-child > .anvil-panel-section-container.full-width-row {
-  margin-bottom: -8px;
-}
-
-
-
-/* Component: TextBox + TextArea */
-
-input.anvil-component, textarea.anvil-component, .anvil-component select, .anvil-datepicker input {
-  font-size: 16px;
-  line-height: 1.5;
-  border-radius: 0;
-  background-color: transparent;
-  color: rgba(0,0,0,0.87);
-  
-  box-shadow: none;
-}
-
-.anvil-dropdown {
-  font-size: 16px;
-}
-.anvil-component select {
-  font-size: inherit;
-}
-
-input.anvil-component, .anvil-component select, .anvil-datepicker input {
-  padding: 8px 0 4px;
-  border: 0;
-  border-bottom: 1px solid rgba(0,0,0,0.42);
-
-  transition: border-bottom 0.2s, padding-bottom 0.2s;
-  -moz-transition: none; /* Firefox is jumpy, so disable transitions */
-}
-
-textarea.anvil-component {
-  padding: 4px 8px;
-  border: 1px solid rgba(0,0,0,0.42);
-  border-radius: 2px;
-  transition: border 0.2s, padding 0.2s;
-  -moz-transition: none; /* Firefox is jumpy, so disable transitions */
-}
-
-.anvil-dropdown select.form-control {
-  
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding: 8px 2em 4px 0;
-  
-  /* ew ew ew - select elements are weird and don't obey line-height, so we just
-     set the height explicitly. Ugh. */
-  height: calc(1.5em + 13px); /* 8px + 4px padding + 1px border = 13px */
-}
-
-.anvil-dropdown {
-  position: relative;
-}
-/* Select arrow styling */
-.anvil-dropdown form:before {
-    content: "\25BC";
-    position: absolute;
-    right: 0;
-    font-size: 80%;
-    line-height: calc(1.8em + 8px);
-    color: #555;
-    pointer-events:none;
-    padding: 4px 4px;
-}
-
-.anvil-component select, .anvil-datepicker input { margin-bottom: 4px; }
-input.anvil-component.anvil-spacing-below-none { margin-bottom: 4px; }
-input.anvil-component.anvil-spacing-below-small { margin-bottom: 8px; }
-input.anvil-component.anvil-spacing-below-medium { margin-bottom: 12px; }
-input.anvil-component.anvil-spacing-below-large { margin-bottom: 20px; }
-
-input.anvil-component::-webkit-input-placeholder, textarea.anvil-component::-webkit-input-placeholder {
-  color: rgba(0,0,0,0.54);
-}
-input.anvil-component::-moz-placeholder, textarea.anvil-component::-moz-placeholder {
-  color: rgba(0,0,0,0.54);
-}
-input.anvil-component::placeholder, textarea.anvil-component::placeholder  {
-  color: rgba(0,0,0,0.54);
-}
-
-.app-bar input.anvil-component::-webkit-input-placeholder, .app-bar textarea.anvil-component::-webkit-input-placeholder {
-  color: rgba(255,255,255,0.8);
-}
-.app-bar input.anvil-component::-moz-placeholder, .app-bar textarea.anvil-component::-moz-placeholder {
-  color: rgba(255,255,255,0.8);
-}
-.app-bar input.anvil-component::placeholder, .app-bar textarea.anvil-component::placeholder  {
-  color: rgba(255,255,255,0.8);
-}
-
-input.anvil-component:hover, .anvil-component select:hover, .anvil-datepicker input:hover {
-  border-bottom: 2px solid rgba(0,0,0,.87);
-  padding-bottom: 3px;
-}
-
-input.anvil-component:focus, .anvil-component select:focus, .anvil-datepicker input:focus {
-  border-bottom: 2px solid %color:Primary 700%;
-  padding-bottom: 3px;
-  box-shadow: none;
-}
-
-input.anvil-component[disabled], .anvil-component select[disabled], .anvil-datepicker input[disabled] {
-  border-bottom: 1px dashed #888;
-  padding-bottom: 4px;
-  background-color: transparent;
-}
-
-textarea.anvil-component:hover {
-  border: 2px solid rgba(0,0,0,0.87);
-  padding: 3px 7px;
-}
-
-textarea.anvil-component:focus {
-  border: 2px solid %color:Primary 700%;
-  padding: 3px 7px;
-  box-shadow: none;
-}
-
-textarea.anvil-component[disabled] {
-  border: 1px dashed #888;
-  padding: 4px 8px;
-  background-color: transparent;
-}
-
-.daterangepicker td.active {
-  background-color: %color:Primary 500%;
-}
-
-.daterangepicker td.active:hover {
-  background-color: %color:Primary 700%;
-}
-
-.daterangepicker .btn-success {
-  color: %color:Primary 500%;
-}
-
-/* Component: CheckBox, RadioButton */
-/* Ugh. These are definitely TODO right now. */
-
-.checkbox, .radio {
-  font-size: 16px;
-}
-
-/* Shadow values taken from 
-https://stackoverflow.com/questions/30533055/calculating-shadow-values-for-all-material-design-elevations
-*/
-
-* > .anvil-panel-section > .anvil-panel-section-container.full-width-row {
-  margin-left: 10px;
-  margin-right: 10px;
-}
+.nav-holder > .logo > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0;}

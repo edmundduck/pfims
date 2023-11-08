@@ -152,7 +152,7 @@ a:hover, a:active {
 /* Page structure: App bar with optional left nav */
 .structure {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   min-height: 100vh;
   min-height: calc(100vh - %anvil-banner-height%);
   height: 0; /* To make flex-grow work in IE */
@@ -188,7 +188,7 @@ a:hover, a:active {
 
 @media(min-width:991px) {
   .content > * > .anvil-container {
-    padding: 16px 8px;
+    padding: 16px 24px;
   }
 }
 
@@ -215,8 +215,8 @@ a:hover, a:active {
 .nav-holder .left-nav {
   position: relative;
   flex-shrink: 0;
-  min-width: 150px;
-  max-width: 240px;
+  min-width: 160px;
+  max-width: 400px;
 }
 
 .nav-shield {
@@ -237,7 +237,7 @@ a:hover, a:active {
     max-width: 360px;
     z-index: 3;
     border-right: none;
-  /* 16dp */ box-shadow: 0 16px 8px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  /* 16dp */ box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
 
     display: none;
     transition: right 0.5s;
@@ -370,12 +370,11 @@ a:hover, a:active {
 
 /* Components: App Bar */
 .app-bar {
-  flex: auto;
   min-height: 56px;
   line-height: 40px;
-  padding: 0 16px 0 16px;
+  padding: 0 16px 0 72px;
 
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
   color: white;
   background-color: %color:Primary 500%;
@@ -389,8 +388,8 @@ a:hover, a:active {
   margin-bottom: 0;
 }
 
-.nav-holder > .sidebar-toggle { display:block; float:left;  margin-left: -61px; }
-.nav-holder > .top-left-btn { float: left; margin-left: -60px; margin-right: -40px; }
+.app-bar > .sidebar-toggle { display:block; float:left;  margin-left: -61px; }
+.app-bar > .top-left-btn { float: left; margin-left: -60px; margin-right: -40px; }
 .app-bar > .title { float: left; }
 .app-bar > .title > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0; display:none; }
 .app-bar > .app-bar-nav { float: right; font-weight: normal; }
@@ -800,7 +799,3 @@ textarea.anvil-component[disabled] {
 https://stackoverflow.com/questions/30533055/calculating-shadow-values-for-all-material-design-elevations
 */
 
-* > .anvil-panel-section > .anvil-panel-section-container.full-width-row {
-  margin-left: 10px;
-  margin-right: 10px;
-}
