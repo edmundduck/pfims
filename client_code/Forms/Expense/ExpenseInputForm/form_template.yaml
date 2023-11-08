@@ -8,7 +8,7 @@ container:
 components:
 - type: ColumnPanel
   properties: {col_widths: '{}'}
-  layout_properties: {grid_position: 'GUIRQH,UZEKUY'}
+  layout_properties: {grid_position: 'GUIRQH,UZEKUY', full_width_row: true}
   name: column_panel_5
   components:
   - type: Label
@@ -52,7 +52,7 @@ components:
     name: button_acct_maint
 - type: ColumnPanel
   properties: {col_widths: '{}'}
-  layout_properties: {grid_position: 'KGRZCX,IEWBUN'}
+  layout_properties: {grid_position: 'KGRZCX,IEWBUN', full_width_row: true}
   name: column_panel_1
   components:
   - type: TextBox
@@ -132,7 +132,7 @@ components:
     name: dropdown_tabs
 - type: ColumnPanel
   properties: {col_widths: '{}'}
-  layout_properties: {grid_position: 'VUYRUG,CDQYHH'}
+  layout_properties: {grid_position: 'VUYRUG,CDQYHH', full_width_row: true}
   name: column_panel_3
   components:
   - type: Label
@@ -190,7 +190,7 @@ components:
     spacing_above: small
     spacing_below: small
     background: ''
-  layout_properties: {grid_position: 'NWFNJJ,FGWDLC', full_width_row: false}
+  layout_properties: {grid_position: 'NWFNJJ,FGWDLC', full_width_row: true}
   event_bindings: {}
   name: data_grid_1
   components:
