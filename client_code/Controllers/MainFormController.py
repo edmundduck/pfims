@@ -1,4 +1,5 @@
 import anvil.server
+from ..Utils.Constants import LinkRole
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -21,6 +22,18 @@ def visible_poc_link():
     """
     return True if anvil.app.environment.name in 'Dev' else False
 
+def visible_group_links(role):
+    """
+    Make the group links visible or invisible.
+
+    Returns:
+        vis (boolean): True for visible, False otherwise.
+    """
+    if role == LinkRole.UNSELECTED:
+        return False
+    else:
+        return True
+
 def switch_role(role):
     """
     Return a different role to indicate a link status (clicked or unclicked) after clicking the link.
@@ -31,7 +44,6 @@ def switch_role(role):
     Returns:
         role (string): Role of the link after clicking.
     """
-    from ..Utils.Constants import LinkRole
     if role == LinkRole.UNSELECTED:
         role = LinkRole.SELECTED
     else:
