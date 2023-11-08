@@ -152,7 +152,7 @@ a:hover, a:active {
 /* Page structure: App bar with optional left nav */
 .structure {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   min-height: 100vh;
   min-height: calc(100vh - %anvil-banner-height%);
   height: 0; /* To make flex-grow work in IE */
@@ -370,11 +370,12 @@ a:hover, a:active {
 
 /* Components: App Bar */
 .app-bar {
+  flex: 1;
   min-height: 56px;
   line-height: 40px;
-  padding: 0 16px 0 72px;
+  padding: 0 16px 0 16px;
 
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 500;
   color: white;
   background-color: %color:Primary 500%;
