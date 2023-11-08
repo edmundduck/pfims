@@ -198,3 +198,12 @@ color_scheme:
   - {name: Surface Variant, color: '#404943'}
   - {name: On Surface Variant, color: '#C0C9C1'}
   - {name: Outline, color: '#8A938C'}
+  - {name: Dark Overlay 1, color: 'rgba(208, 232, 216, 0.2)'}
+  - {name: Dark Overlay 2, color: 'rgba(208, 232, 216, 0.5)'}
+  - {name: Light Overlay 1, color: 'rgba(208, 232, 216, 0.2)'}
+  - {name: Light Overlay 2, color: 'rgba(208, 232, 216, 0.5)'}
+  - {name: Disabled Container, color: 'rgba(133, 133, 139, 0.12)'}
+  - {name: On Disabled, color: '#85858B'}
+  - {name: Primary Overlay 1, color: 'rgba(30, 185, 128, 0.05)'}
+  - {name: Primary Overlay 2, color: 'rgba(30, 185, 128, 0.08)'}
+  - {name: Primary Overlay 3, color: 'rgba(30, 185, 128, 0.11)'}
