@@ -604,7 +604,8 @@ input[disabled] ~ span {
 .nav-holder .left-nav, .left-nav-placeholder {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%;
+/*   background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%; */
+  background: %color:Background%;
   font-size: 14px;
   font-weight: 500;
   color: %color:On Surface Variant%;
