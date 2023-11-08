@@ -84,12 +84,14 @@ class MainForm(MainFormTemplate):
         """This method is called when the link is clicked"""
         self.reset_link_status()
         self.colpanel_link_investment.role = MainFormController.switch_role(self.colpanel_link_investment.role)
+        self.colpanel_link_expense.role = MainFormController.switch_role(self.colpanel_link_expense.role)
         self.colpanel_link_input_stock.visible, self.colpanel_link_tranx_list.visible, self.colpanel_link_pnl_report.visible = [MainFormController.visible_group_links(self.colpanel_link_investment.role)] *3
         self.colpanel_link_input_exp.visible, self.colpanel_link_exp_list.visible, self.colpanel_link_exp_analysis.visible = [False] *3
 
     def colpanel_link_expense_click(self, **event_args):
         """This method is called when the link is clicked"""
         self.reset_link_status()
+        self.colpanel_link_investment.role = MainFormController.switch_role(self.colpanel_link_investment.role)
         self.colpanel_link_expense.role = MainFormController.switch_role(self.colpanel_link_expense.role)
         self.colpanel_link_input_stock.visible, self.colpanel_link_tranx_list.visible, self.colpanel_link_pnl_report.visible = [False] *3
         self.colpanel_link_input_exp.visible, self.colpanel_link_exp_list.visible, self.colpanel_link_exp_analysis.visible = [MainFormController.visible_group_links(self.colpanel_link_expense.role)] *3
