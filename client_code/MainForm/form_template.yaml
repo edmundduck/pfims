@@ -25,10 +25,10 @@ components:
         icon: ''}
       name: label_version
       layout_properties: {grid_position: 'LDRGGP,KHQQOQ'}
-    - name: flow_panel_3
+    - name: flow_panel_2
       properties: {align: right}
       type: FlowPanel
-      layout_properties: {grid_position: 'LDRGGP,KCCVSC'}
+      layout_properties: {grid_position: 'LDRGGP,TCHGHV', full_width_row: false}
       components:
       - type: Label
         properties: {role: text, align: right, tooltip: '', border: '', foreground: 'theme:Secondary
@@ -36,11 +36,6 @@ components:
           icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
           underline: false, icon: ''}
         name: app_welcome_msg
-    - name: flow_panel_2
-      properties: {align: right}
-      type: FlowPanel
-      layout_properties: {grid_position: 'LDRGGP,TCHGHV', full_width_row: false}
-      components:
       - type: Link
         properties: {role: null, url: '', align: center, tooltip: '', border: '',
           foreground: 'theme:Secondary 500', visible: true, text: '', font_size: 20,
@@ -70,6 +65,7 @@ components:
         name: app_logout
         layout_properties: {}
         event_bindings: {click: app_logout_click}
+    layout_properties: {expand: false, width: 515.125}
 - type: ColumnPanel
   properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
     wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
