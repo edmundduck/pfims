@@ -177,4 +177,24 @@ color_scheme:
   - {name: Gray 800, color: '#424242'}
   - {name: Gray 900, color: '#212121'}
   - {name: Black, color: '#000000'}
-  - {name: Tertiary, color: '#F25042'}
+  - {name: Tertiary, color: '#A4CDDD'}
+  - {name: Primary, color: '#1EB980'}
+  - {name: Primary Container, color: '#005235'}
+  - {name: On Primary, color: '#003824'}
+  - {name: On Primary Container, color: '#73FBBC'}
+  - {name: Secondary, color: '#B4CCBC'}
+  - {name: Secondary Container, color: '#364B3F'}
+  - {name: On Secondary, color: '#20352A'}
+  - {name: On Secondary Container, color: '#D0E8D8'}
+  - {name: Tertiary, color: '#000000'}
+  - {name: Tertiary Container, color: '#234C5A'}
+  - {name: On Tertiary, color: '#063542'}
+  - {name: On Tertiary Container, color: '#C0E9FA'}
+  - {name: Error, color: '#D64D47'}
+  - {name: Background, color: '#191C1A'}
+  - {name: Surface, color: '#191C1A'}
+  - {name: On Background, color: '#E1E3DF'}
+  - {name: On Surface, color: '#E1E3DF'}
+  - {name: Surface Variant, color: '#404943'}
+  - {name: On Surface Variant, color: '#C0C9C1'}
+  - {name: Outline, color: '#8A938C'}
