@@ -370,7 +370,7 @@ a:hover, a:active {
 
 /* Components: App Bar */
 .app-bar {
-  flex: 1;
+  flex: auto;
   min-height: 56px;
   line-height: 40px;
   padding: 0 16px 0 16px;
@@ -389,8 +389,8 @@ a:hover, a:active {
   margin-bottom: 0;
 }
 
-.app-bar > .sidebar-toggle { display:block; float:left;  margin-left: -61px; }
-.app-bar > .top-left-btn { float: left; margin-left: -60px; margin-right: -40px; }
+.nav-holder > .sidebar-toggle { display:block; float:left;  margin-left: -61px; }
+.nav-holder > .top-left-btn { float: left; margin-left: -60px; margin-right: -40px; }
 .app-bar > .title { float: left; }
 .app-bar > .title > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0; display:none; }
 .app-bar > .app-bar-nav { float: right; font-weight: normal; }
