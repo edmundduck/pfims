@@ -83,33 +83,34 @@ components:
       spacing_above: small, icon_align: top, col_widths: '{}', spacing_below: small,
       italic: false, background: '', bold: true, underline: false, icon: 'fa:signal'}
     type: Link
-    layout_properties: {grid_position: 'GUJMBK,KKYMBC'}
+    layout_properties: {grid_position: 'GUJMBK,PKPJYG'}
     event_bindings: {click: colpanel_link_investment_click}
+    components: []
   - type: Link
-    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: rosybrown,
-      visible: true, text: Stock Record, font_size: 12, wrap_on: mobile, font: '',
+    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+        500', visible: true, text: Stock Record, font_size: 12, wrap_on: mobile, font: '',
       col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      spacing_below: small, italic: false, background: papayawhip, bold: false, underline: false,
       icon: 'fa:pencil-square'}
     name: colpanel_link_input_stock
     layout_properties: {grid_position: 'OXLNDQ,PCAEMZ'}
     event_bindings: {click: colpanel_link_input_stock_click}
     components: []
   - type: Link
-    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: rosybrown,
-      visible: true, text: Transaction List, font_size: 12, wrap_on: mobile, font: '',
-      col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+        500', visible: true, text: Transaction List, font_size: 12, wrap_on: mobile,
+      font: '', col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
+      spacing_below: small, italic: false, background: papayawhip, bold: false, underline: false,
       icon: 'fa:file-excel-o'}
     name: colpanel_link_tranx_list
     layout_properties: {grid_position: 'THCZFL,CVMZUZ'}
     components: []
     event_bindings: {click: colpanel_link_tranx_list_click}
   - type: Link
-    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: rosybrown,
-      visible: true, text: P&L Breakdown, font_size: 12, wrap_on: mobile, font: '',
-      col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '',
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+        500', visible: true, text: P&L Breakdown, font_size: 12, wrap_on: mobile,
+      font: '', col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '',
+      spacing_below: small, italic: false, background: papayawhip, bold: false, underline: false,
       icon: 'fa:sellsy'}
     name: colpanel_link_pnl_report
     layout_properties: {grid_position: 'QLEZJR,TTIUIH'}
@@ -120,32 +121,33 @@ components:
       spacing_above: small, icon_align: top, col_widths: '{}', spacing_below: small,
       italic: false, background: '', bold: true, underline: false, icon: 'fa:money'}
     type: Link
-    layout_properties: {grid_position: 'HHXUKD,QNEZTF'}
+    layout_properties: {grid_position: 'HHXUKD,FHBUWA'}
     event_bindings: {click: colpanel_link_expense_click}
   - type: Link
-    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: rosybrown,
-      visible: true, text: Expense, font_size: 12, wrap_on: mobile, font: '', col_spacing: medium,
-      spacing_above: small, icon_align: top, col_widths: '{}', spacing_below: small,
-      italic: false, background: '', bold: false, underline: false, icon: 'fa:pencil'}
+    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+        500', visible: true, text: Expense, font_size: 12, wrap_on: mobile, font: '',
+      col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
+      spacing_below: small, italic: false, background: papayawhip, bold: false, underline: false,
+      icon: 'fa:pencil'}
     name: colpanel_link_input_exp
     layout_properties: {grid_position: 'LSOWWG,WPFTWA'}
     event_bindings: {click: colpanel_link_input_exp_click}
     components: []
   - type: Link
-    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: rosybrown,
-      visible: true, text: Expense List, font_size: 12, wrap_on: mobile, font: '',
+    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+        500', visible: true, text: Expense List, font_size: 12, wrap_on: mobile, font: '',
       col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+      spacing_below: small, italic: false, background: papayawhip, bold: false, underline: false,
       icon: 'fa:shopping-bag'}
     name: colpanel_link_exp_list
     layout_properties: {grid_position: 'IFTOFR,QPHDCN'}
     components: []
     event_bindings: {click: colpanel_link_exp_list_click}
   - type: Link
-    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: rosybrown,
-      visible: true, text: Expense Analysis, font_size: 12, wrap_on: mobile, font: '',
-      col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
+    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+        500', visible: true, text: Expense Analysis, font_size: 12, wrap_on: mobile,
+      font: '', col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
+      spacing_below: small, italic: false, background: papayawhip, bold: false, underline: false,
       icon: 'fa:pie-chart'}
     name: colpanel_link_exp_analysis
     layout_properties: {grid_position: 'UWNVQD,CWSZKA'}
