@@ -56,7 +56,9 @@ a {
 }
 
 a:hover:not(disabled) {
-  color: %color:Primary Container%;
+  color: %color:Primary%;
+  background-color: %color:Primary Container%;
+  border-radius: 10px;
 }
 
 a:active:not(disabled), a:focus:not(disabled){
@@ -604,8 +606,8 @@ input[disabled] ~ span {
 .nav-holder .left-nav, .left-nav-placeholder {
   display: flex;
   flex-direction: column;
-/*   background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%; */
-  background: %color:Background%;
+  background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%;
+/*   background: %color:Background%; */
   font-size: 14px;
   font-weight: 500;
   color: %color:On Surface Variant%;
@@ -691,7 +693,7 @@ input[disabled] ~ span {
 
 .left-nav a:hover, .left-nav .anvil-role-selected {
   color: %color:Primary%;
-  background-color: rgba(0,0,0,.08);
+  background-color: %color:Dark Overlay 2%;
 }
 
 .designer .nav-holder .left-nav {

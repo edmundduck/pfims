@@ -74,7 +74,7 @@ components:
     type: Label
     layout_properties: {grid_position: 'DGEWTY,QLOAOZ', full_width_row: true}
   - type: Link
-    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: '',
+    properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Primary',
       visible: true, text: Stock Record, font_size: 12, wrap_on: mobile, font: '',
       col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
       spacing_below: small, italic: false, background: '', bold: true, underline: false,
@@ -140,6 +140,10 @@ components:
     layout_properties: {grid_position: 'UWNVQD,CWSZKA'}
     components: []
     event_bindings: {click: colpanel_link_exp_analysis_click}
+  - name: spacer_1
+    properties: {height: '12'}
+    type: Spacer
+    layout_properties: {grid_position: 'SDFYQU,EDDSQG'}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: darkgrey,
       visible: true, text: PoC, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,
