@@ -9,10 +9,12 @@ components:
   name: content_panel
   layout_properties: {slot: default}
   components: []
-- type: FlowPanel
-  properties: {}
-  name: navbar_links
-  layout_properties: {slot: nav-right}
+- type: ColumnPanel
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+    spacing_below: small, background: ''}
+  name: column_panel
+  layout_properties: {slot: left-nav}
   components:
   - name: column_panel_1
     properties: {}
@@ -25,54 +27,48 @@ components:
         icon: ''}
       name: label_version
       layout_properties: {grid_position: 'LDRGGP,KHQQOQ'}
-    - name: flow_panel_2
-      properties: {align: right}
-      type: FlowPanel
-      layout_properties: {grid_position: 'LDRGGP,TCHGHV', full_width_row: false}
-      components:
-      - type: Label
-        properties: {role: text, align: right, tooltip: '', border: '', foreground: 'theme:Secondary
-            500', visible: true, text: '', font_size: null, font: '12', spacing_above: small,
-          icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-          underline: false, icon: ''}
-        name: app_welcome_msg
-      - type: Link
-        properties: {role: null, url: '', align: center, tooltip: '', border: '',
-          foreground: 'theme:Secondary 500', visible: true, text: '', font_size: 20,
-          wrap_on: mobile, font: '', col_spacing: medium, spacing_above: small, icon_align: top,
-          col_widths: '{}', spacing_below: small, italic: false, background: '', bold: false,
-          underline: false, icon: 'fa:home'}
-        name: colpanel_link_dashb
-        layout_properties: {}
-        event_bindings: {click: colpanel_link_dashb_click}
-        components: []
-      - type: Link
-        properties: {role: null, url: '', align: center, tooltip: '', border: '',
-          foreground: 'theme:Secondary 500', visible: true, text: '', font_size: 20,
-          wrap_on: mobile, font: '', col_spacing: medium, spacing_above: small, icon_align: top,
-          col_widths: '{}', spacing_below: small, italic: false, background: '', bold: false,
-          underline: false, icon: 'fa:user-circle'}
-        name: colpanel_link_settings
-        layout_properties: {}
-        event_bindings: {click: colpanel_link_settings_click}
-        components: []
-      - type: Link
-        properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: 'theme:Secondary
-            700', visible: true, text: '', font_size: null, wrap_on: mobile, font: '20',
-          col_spacing: medium, spacing_above: small, icon_align: left, col_widths: '',
-          spacing_below: small, italic: false, background: '', bold: false, underline: false,
-          icon: 'fa:sign-out'}
-        name: app_logout
-        layout_properties: {}
-        event_bindings: {click: app_logout_click}
-    layout_properties: {expand: false, width: 515.125}
-- type: ColumnPanel
-  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
-    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
-    spacing_below: small, background: ''}
-  name: column_panel
-  layout_properties: {slot: left-nav}
-  components:
+    - type: Label
+      properties: {role: text, align: right, tooltip: '', border: '', foreground: 'theme:Secondary
+          500', visible: true, text: '', font_size: null, font: '12', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: ''}
+      name: app_welcome_msg
+      layout_properties: {grid_position: 'IYEOOJ,GRLKEA'}
+    layout_properties: {grid_position: 'QFVZWT,CTHSKL'}
+  - name: flow_panel_2
+    properties: {align: right}
+    type: FlowPanel
+    layout_properties: {grid_position: 'RRYUMD,TMURSY'}
+    components:
+    - type: Link
+      properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+          500', visible: true, text: '', font_size: 20, wrap_on: mobile, font: '',
+        col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: 'fa:home'}
+      name: colpanel_link_dashb
+      layout_properties: {}
+      event_bindings: {click: colpanel_link_dashb_click}
+      components: []
+    - type: Link
+      properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Secondary
+          500', visible: true, text: '', font_size: 20, wrap_on: mobile, font: '',
+        col_spacing: medium, spacing_above: small, icon_align: top, col_widths: '{}',
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: 'fa:user-circle'}
+      name: colpanel_link_settings
+      layout_properties: {}
+      event_bindings: {click: colpanel_link_settings_click}
+      components: []
+    - type: Link
+      properties: {role: null, url: '', align: left, tooltip: '', border: '', foreground: 'theme:Secondary
+          700', visible: true, text: '', font_size: null, wrap_on: mobile, font: '20',
+        col_spacing: medium, spacing_above: small, icon_align: left, col_widths: '',
+        spacing_below: small, italic: false, background: '', bold: false, underline: false,
+        icon: 'fa:sign-out'}
+      name: app_logout
+      layout_properties: {}
+      event_bindings: {click: app_logout_click}
   - name: label_1
     properties: {bold: true, font: '', text: Investment, font_size: 12, foreground: 'theme:Primary'}
     type: Label
@@ -152,15 +148,6 @@ components:
     name: poc_link
     layout_properties: {grid_position: 'EAYFFM,IXJNNL'}
     event_bindings: {click: poc_link_click}
-- name: flow_panel_1
-  properties: {spacing_below: medium, vertical_align: top}
-  type: FlowPanel
-  layout_properties: {slot: title}
-  components:
-  - name: spacer_1
-    properties: {height: '60', visible: true}
-    type: Spacer
-    layout_properties: {width: 43}
 - name: image_1
   properties: {height: 57, source: _/theme/logo-no-background.png, horizontal_align: left,
     spacing_below: small, background: ''}
