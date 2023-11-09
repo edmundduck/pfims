@@ -13,7 +13,7 @@ class MainForm(MainFormTemplate):
         from .. import Global
         self.app_welcome_msg.text = "{username}".format(username=Global.email)
         self.label_version.text = MainFormController.visible_test_env_label()
-        self.poc_link.visible = MainFormController.visible_poc_link()
+        self.button_poc.visible = MainFormController.visible_poc_link()
 
     def reset_link_status(self, **event_args):
         self.button_inv_input.role, \

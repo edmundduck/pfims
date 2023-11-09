@@ -90,7 +90,7 @@ a:active:not(disabled), a:focus:not(disabled){
 
 .btn, .btn-default, .file-loader, .file-loader > label { 
   font-family: "FontAwesome";
-  font-size: 14px;
+  font-size: 12px;
   text-transform: uppercase;
   font-weight: bold;
   letter-spacing: 2px;
@@ -716,3 +716,9 @@ input[disabled] ~ span {
 }
 
 .nav-holder > .logo > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0;}
+
+.left-nav .anvil-role-subheading > .label-text {
+  color: %color:Tertiary%;
+  font-weight: bold;
+  font-size: 12;
+}

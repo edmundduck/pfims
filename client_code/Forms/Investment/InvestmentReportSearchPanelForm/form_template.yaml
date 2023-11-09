@@ -17,13 +17,10 @@ components:
     name: flow_panel_2
     layout_properties: {grid_position: 'ALKAHM,GEDAFW', full_width_row: true}
     components:
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
-        spacing_below: small, italic: false, background: '', bold: false, underline: false,
-        icon: ''}
-      name: spacer1
-      layout_properties: {}
+    - name: spacer_1
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 30, expand: false}
     - type: Label
       properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
         visible: true, text: 'Interval ', font_size: 12, font: '', spacing_above: small,
@@ -31,6 +28,10 @@ components:
         underline: false, icon: ''}
       name: label_2
       layout_properties: {grid_position: 'SVNURG,LMOPUE'}
+    - name: spacer_6
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 6}
     - type: DropDown
       properties:
         role: null
@@ -82,13 +83,10 @@ components:
     name: panel_symbol
     layout_properties: {grid_position: 'RTTCZV,LEHJTD', full_width_row: true}
     components:
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
-        spacing_below: small, italic: false, background: '', bold: false, underline: false,
-        icon: ''}
-      name: spacer2
-      layout_properties: {}
+    - name: spacer_2
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 30}
     - type: Label
       properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
         visible: true, text: Symbol, font_size: 12, font: '', spacing_above: small,
@@ -96,6 +94,10 @@ components:
         underline: false, icon: ''}
       name: label_3
       layout_properties: {grid_position: 'FLAWCB,BQECIK'}
+    - name: spacer_5
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 10}
     - type: DropDown
       properties:
         role: null
@@ -140,7 +142,7 @@ components:
       name: label_1
       layout_properties: {}
     - type: Button
-      properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
+      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Generate CSV (ALL), font_size: 12, font: '',
         spacing_above: small, icon_align: left, spacing_below: small, italic: false,
         background: '', bold: false, underline: false, icon: ''}
@@ -150,7 +152,7 @@ components:
         grid_position: RRJTEU,FTYYVN
       event_bindings: {click: button_tranx_gen_csv_click}
     - type: Button
-      properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
+      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
@@ -158,20 +160,17 @@ components:
       layout_properties: {}
       event_bindings: {click: button_tranx_search_click}
     - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Reset, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_tranx_reset
       layout_properties: {}
       event_bindings: {click: button_tranx_reset_click}
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
-        spacing_below: small, italic: false, background: '', bold: false, underline: false,
-        icon: ''}
-      name: spacer3
-      layout_properties: {}
+    - name: spacer_3
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 30}
   - type: FlowPanel
     properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
       foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
@@ -186,7 +185,7 @@ components:
       name: label_4
       layout_properties: {}
     - type: Button
-      properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
+      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
@@ -194,20 +193,17 @@ components:
       layout_properties: {}
       event_bindings: {click: button_pnl_search_click}
     - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Reset, font_size: 12, font: '', spacing_above: small,
         icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
         underline: false, icon: ''}
       name: button_pnl_reset
       layout_properties: {}
       event_bindings: {click: button_pnl_reset_click}
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
-        spacing_below: small, italic: false, background: '', bold: false, underline: false,
-        icon: ''}
-      name: spacer4
-      layout_properties: {}
+    - name: spacer_4
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 30}
 - type: ColumnPanel
   properties: {}
   name: colpanel_list
