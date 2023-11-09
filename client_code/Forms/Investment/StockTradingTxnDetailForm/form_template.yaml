@@ -6,7 +6,7 @@ components:
 - type: ColumnPanel
   properties: {col_widths: '{"HRMOYO":25,"IJDLKK":35}'}
   name: column_panel_4
-  layout_properties: {grid_position: 'KGRZCX,ZJJBBJ', full_width_row: true}
+  layout_properties: {grid_position: 'KGRZCX,ZJJBBJ', full_width_row: false}
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -28,7 +28,7 @@ components:
 - type: ColumnPanel
   properties: {col_widths: '{"ANNNFE":15,"QKDMOJ":45}'}
   name: column_panel_1
-  layout_properties: {grid_position: 'KGRZCX,IEWBUN', full_width_row: true}
+  layout_properties: {grid_position: 'KGRZCX,IEWBUN', full_width_row: false}
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -63,7 +63,7 @@ components:
 - type: ColumnPanel
   properties: {col_widths: '{"SIIRIQ":20,"FPTCAC":40}'}
   name: column_panel_2
-  layout_properties: {grid_position: 'KGRZCX,MYOLIN', full_width_row: true}
+  layout_properties: {grid_position: 'KGRZCX,MYOLIN', full_width_row: false}
   components:
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
@@ -98,7 +98,7 @@ components:
 - type: ColumnPanel
   properties: {col_widths: '{}'}
   name: column_panel_3
-  layout_properties: {grid_position: 'VUYRUG,CDQYHH', full_width_row: true}
+  layout_properties: {grid_position: 'VUYRUG,CDQYHH', full_width_row: false}
   components:
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
@@ -118,7 +118,7 @@ components:
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
       visible: false, text: '- Field "Buy Date" cannot be empty', font_size: 12, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: true, underline: false, icon: ''}
+      background: '', bold: false, underline: false, icon: ''}
     name: valerror_2
     layout_properties: {grid_position: 'XGCNXC,QFEXYI'}
   - type: Label
@@ -185,7 +185,7 @@ components:
     spacing_below: small
     background: ''
   name: data_grid_1
-  layout_properties: {grid_position: 'NWFNJJ,IZRJKI', full_width_row: true}
+  layout_properties: {grid_position: 'NWFNJJ,IZRJKI', full_width_row: false}
   components:
   - type: DataRowPanel
     properties: {}
