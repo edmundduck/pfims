@@ -246,12 +246,12 @@ input[disabled] ~ span {
 /* Data grids */
 
 .anvil-data-grid {
-  background: %color:Surface Variant%;
+  background: %color:Secondary Container%;
 }
 
 .anvil-data-grid>.data-grid-child-panel>div.auto-grid-header {
-/*   border-bottom: 2px solid %color:Outline%; */
-  border-bottom: 0px solid %color:Outline%;
+  border-bottom: 2px solid %color:Outline%;
+/*   border-bottom: 0px solid %color:Outline%; */
 }
 
 .anvil-data-row-panel>.data-row-col {
