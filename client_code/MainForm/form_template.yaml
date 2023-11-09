@@ -73,11 +73,12 @@ components:
     properties: {bold: true, font: '', text: Investment, font_size: 12, foreground: 'theme:Secondary'}
     type: Label
     layout_properties: {grid_position: 'DGEWTY,QLOAOZ', full_width_row: true}
-  - name: button_1
-    properties: {text: Stock Record, font_size: 12, icon: 'fa:pencil-square', icon_align: top,
-      role: outlined}
+  - name: button_inv_input
+    properties: {text: Record Input, font_size: 10, icon: 'fa:pencil-square', icon_align: top,
+      role: null, bold: false}
     type: Button
     layout_properties: {grid_position: 'DPWJHH,ZRHGQY'}
+    event_bindings: {click: button_inv_input_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Primary',
       visible: true, text: Stock Record, font_size: 12, wrap_on: mobile, font: '',
@@ -88,6 +89,12 @@ components:
     layout_properties: {grid_position: 'OXLNDQ,PCAEMZ'}
     event_bindings: {click: colpanel_link_input_stock_click}
     components: []
+  - name: button_inv_list
+    properties: {text: Transaction, font_size: 10, icon: 'fa:file-excel-o', icon_align: top,
+      role: null, bold: false}
+    type: Button
+    layout_properties: {grid_position: 'ICXYHH,GMSQVW'}
+    event_bindings: {click: button_inv_list_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Primary',
       visible: true, text: Transaction Detail, font_size: 12, wrap_on: mobile, font: '',
@@ -98,6 +105,12 @@ components:
     layout_properties: {grid_position: 'THCZFL,CVMZUZ'}
     components: []
     event_bindings: {click: colpanel_link_tranx_list_click}
+  - name: button_inv_pnl
+    properties: {text: P&L Breakdown, font_size: 10, icon: 'fa:sellsy', icon_align: top,
+      role: null, bold: false}
+    type: Button
+    layout_properties: {grid_position: 'OJMSYX,AYHLYH'}
+    event_bindings: {click: button_inv_pnl_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Primary',
       visible: true, text: P&L Breakdown, font_size: 12, wrap_on: mobile, font: '',
@@ -115,6 +128,12 @@ components:
     properties: {text: Expense, foreground: 'theme:Secondary', bold: true, font_size: 12}
     type: Label
     layout_properties: {grid_position: 'KTUKYP,SRDLST', full_width_row: true}
+  - name: button_exp_input
+    properties: {text: Expense Input, font_size: 10, icon: 'fa:pencil', icon_align: top,
+      role: null, bold: false}
+    type: Button
+    layout_properties: {grid_position: 'KCELYU,UVWJKZ'}
+    event_bindings: {click: button_exp_input_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Primary',
       visible: true, text: Expense Input, font_size: 12, wrap_on: mobile, font: '',
@@ -125,6 +144,12 @@ components:
     layout_properties: {grid_position: 'LSOWWG,WPFTWA'}
     event_bindings: {click: colpanel_link_input_exp_click}
     components: []
+  - name: button_exp_list
+    properties: {text: Expense List, font_size: 10, icon: 'fa:shopping-bag', icon_align: top,
+      role: null, bold: false}
+    type: Button
+    layout_properties: {grid_position: 'TJFTWZ,DRCYYM'}
+    event_bindings: {click: button_exp_list_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Primary',
       visible: true, text: Expense Detail, font_size: 12, wrap_on: mobile, font: '',
@@ -135,6 +160,12 @@ components:
     layout_properties: {grid_position: 'IFTOFR,QPHDCN'}
     components: []
     event_bindings: {click: colpanel_link_exp_list_click}
+  - name: button_exp_analysis
+    properties: {text: Analysis, font_size: 10, icon: 'fa:pie-chart', icon_align: top,
+      role: null, bold: false}
+    type: Button
+    layout_properties: {grid_position: 'QEQAQZ,VHKDGK'}
+    event_bindings: {click: button_exp_analysis_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: 'theme:Primary',
       visible: true, text: Expense Analysis, font_size: 12, wrap_on: mobile, font: '',
@@ -149,6 +180,12 @@ components:
     properties: {height: '12'}
     type: Spacer
     layout_properties: {grid_position: 'SDFYQU,EDDSQG'}
+  - name: button_poc
+    properties: {text: POC, font_size: 10, icon: 'fa:yelp', icon_align: top, role: null,
+      bold: false}
+    type: Button
+    layout_properties: {grid_position: 'JAZNUY,NLITHK'}
+    event_bindings: {click: button_poc_click}
   - type: Link
     properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: darkgrey,
       visible: true, text: PoC, font_size: 14, wrap_on: mobile, font: '', col_spacing: medium,

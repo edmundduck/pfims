@@ -89,6 +89,7 @@ a:active:not(disabled), a:focus:not(disabled){
 /* Buttons */
 
 .btn, .btn-default, .file-loader, .file-loader > label { 
+  font-family: "FontAwesome";
   font-size: 14px;
   text-transform: uppercase;
   font-weight: bold;
@@ -97,7 +98,7 @@ a:active:not(disabled), a:focus:not(disabled){
   border: 0;
   background-color: transparent;
   background-image: none;
-  color: %color:On Background%;
+  color: %color:Primary%;
   text-shadow: none;
   box-shadow: none;
   -webkit-box-shadow: none;
@@ -694,8 +695,6 @@ input[disabled] ~ span {
 .left-nav a:hover, .left-nav .anvil-role-selected {
   color: %color:Primary%;
   background-color: transparent;
-  border-radius: 10%;
-  outline: 2px solid %color:Primary Container%;
 }
 
 .designer .nav-holder .left-nav {
