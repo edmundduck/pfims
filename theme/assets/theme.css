@@ -72,8 +72,8 @@ a:active:not(disabled), a:focus:not(disabled){
 .anvil-text-box, .anvil-text-area, .form-control {
   color: %color:On Surface Variant%;
   background-color: %color:Surface Variant%;
-  border: none;
-  border-radius: 0;
+  border: 1px;
+  border-radius: 5px;
   box-shadow: inset 0 -1px 0 %color:Secondary%;
 }
 
