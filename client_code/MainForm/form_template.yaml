@@ -75,20 +75,20 @@ components:
     type: Label
     layout_properties: {grid_position: 'DGEWTY,QLOAOZ', full_width_row: true}
   - name: button_inv_input
-    properties: {text: Record Input, font_size: null, icon: 'fa:pencil-square', icon_align: top,
-      role: null, bold: false}
+    properties: {text: Record Input, font_size: null, icon: 'fa:pencil-square', icon_align: left,
+      role: null, bold: false, align: left}
     type: Button
     layout_properties: {grid_position: 'DPWJHH,ZRHGQY'}
     event_bindings: {click: button_inv_input_click}
   - name: button_inv_list
-    properties: {text: Transaction, font_size: null, icon: 'fa:file-excel-o', icon_align: top,
-      role: null, bold: false}
+    properties: {text: Transaction, font_size: null, icon: 'fa:file-excel-o', icon_align: left,
+      role: null, bold: false, align: left}
     type: Button
     layout_properties: {grid_position: 'ICXYHH,GMSQVW'}
     event_bindings: {click: button_inv_list_click}
   - name: button_inv_pnl
-    properties: {text: P&L Breakdown, font_size: null, icon: 'fa:sellsy', icon_align: top,
-      role: null, bold: false}
+    properties: {text: P&L Breakdown, font_size: null, icon: 'fa:sellsy', icon_align: left,
+      role: null, bold: false, align: left}
     type: Button
     layout_properties: {grid_position: 'OJMSYX,AYHLYH'}
     event_bindings: {click: button_inv_pnl_click}
@@ -102,20 +102,20 @@ components:
     type: Label
     layout_properties: {grid_position: 'KTUKYP,SRDLST', full_width_row: true}
   - name: button_exp_input
-    properties: {text: Expense Input, font_size: null, icon: 'fa:pencil', icon_align: top,
-      role: null, bold: false}
+    properties: {text: Expense Input, font_size: null, icon: 'fa:pencil', icon_align: left,
+      role: null, bold: false, align: left}
     type: Button
     layout_properties: {grid_position: 'KCELYU,UVWJKZ'}
     event_bindings: {click: button_exp_input_click}
   - name: button_exp_list
-    properties: {text: Expense List, font_size: null, icon: 'fa:shopping-bag', icon_align: top,
-      role: null, bold: false}
+    properties: {text: Expense List, font_size: null, icon: 'fa:shopping-bag', icon_align: left,
+      role: null, bold: false, align: left}
     type: Button
     layout_properties: {grid_position: 'TJFTWZ,DRCYYM'}
     event_bindings: {click: button_exp_list_click}
   - name: button_exp_analysis
-    properties: {text: Analysis, font_size: null, icon: 'fa:pie-chart', icon_align: top,
-      role: null, bold: false}
+    properties: {text: Analysis, font_size: null, icon: 'fa:pie-chart', icon_align: left,
+      role: null, bold: false, align: left}
     type: Button
     layout_properties: {grid_position: 'QEQAQZ,VHKDGK'}
     event_bindings: {click: button_exp_analysis_click}
@@ -124,10 +124,10 @@ components:
     type: Spacer
     layout_properties: {grid_position: 'SDFYQU,EDDSQG'}
   - name: button_poc
-    properties: {text: POC, font_size: null, icon: 'fa:yelp', icon_align: top, role: null,
-      bold: false}
+    properties: {text: POC, font_size: null, icon: 'fa:yelp', icon_align: left, role: null,
+      bold: false, align: left}
     type: Button
-    layout_properties: {grid_position: 'JAZNUY,NLITHK'}
+    layout_properties: {grid_position: 'JAZNUY,NLITHK', full_width_row: false}
     event_bindings: {click: button_poc_click}
 - name: image_1
   properties: {height: 57, source: _/theme/logo-no-background.png, horizontal_align: left,
