@@ -29,6 +29,10 @@ roles:
   components: [TextBox]
 - name: selected
   components: [Link]
+- name: filled
+  components: [Button, FileLoader]
+- name: outlined
+  components: [Button, FileLoader]
 color_scheme:
   preset_groups:
   - name: Primary Colour

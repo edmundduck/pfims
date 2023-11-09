@@ -692,10 +692,10 @@ input[disabled] ~ span {
 }
 
 .left-nav a:hover, .left-nav .anvil-role-selected {
-  color: %color:Secondary%;
+  color: %color:Primary%;
   background-color: transparent;
   border-radius: 10%;
-  outline: 2px solid %color:Primary%;
+  outline: 2px solid %color:Primary Container%;
 }
 
 .designer .nav-holder .left-nav {
