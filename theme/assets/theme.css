@@ -57,12 +57,12 @@ a {
 
 a:hover:not(disabled) {
   color: %color:Primary%;
-  background-color: %color:Primary Container%;
+  background-color: %color:Primary%;
   border-radius: 10px;
 }
 
 a:active:not(disabled), a:focus:not(disabled){
-  opacity: %color:Primary Container%;
+  opacity: %color:Primary%;
 }
 
 
@@ -170,7 +170,7 @@ input[disabled] ~ span {
 }
 
 .checkbox input:checked, .radio input:checked {
-  background-color: %color:Primary Container%;
+  background-color: %color:Primary%;
 }
 
 .checkbox input:checked:before {
@@ -352,6 +352,10 @@ input[disabled] ~ span {
   color: %color:Error%;
   box-shadow: inset 0 -1.5px 0 %color:Error%;
   border-radius: 0;
+}
+
+.anvil-role-label-error {
+  color: %color:Error%;
 }
 
 .anvil-role-tag {
