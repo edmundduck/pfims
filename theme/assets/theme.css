@@ -65,8 +65,6 @@ a:active:not(disabled), a:focus:not(disabled){
   opacity: %color:Primary%;
 }
 
-
-
 /* Text boxes and areas */
 
 .anvil-text-box, .anvil-text-area, .form-control {
@@ -368,6 +366,13 @@ input[disabled] ~ span {
     /* Enlarge the data grid to fill in most of the content div */
     max-width: 1250px;
   }
+}
+
+.anvil-role-positive-amount > label {
+  background-color: %color:Primary%;
+  padding: 8px 16px;
+  border-radius: 10px;
+  color: %color:On Primary%;
 }
 
 /* Other classes */
