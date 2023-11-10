@@ -368,10 +368,11 @@ input[disabled] ~ span {
   }
 }
 
-.anvil-role-positive-amount > label {
-  background-color: %color:Primary%;
-  padding: 8px 16px;
-  border-radius: 10px;
+.anvil-role-positive-amount-label > label {
+  color: %color:On Primary%;
+}
+
+.anvil-role-negative-amount-label > label {
   color: %color:On Primary%;
 }
 
