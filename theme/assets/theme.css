@@ -250,8 +250,8 @@ input[disabled] ~ span {
 }
 
 .anvil-data-grid>.data-grid-child-panel>div.auto-grid-header {
+  /* Grid header lines cannot be added if it's not an auto header (generated) */
   border-bottom: 2px solid %color:Outline%;
-/*   border-bottom: 0px solid %color:Outline%; */
 }
 
 .anvil-data-row-panel>.data-row-col {
@@ -363,10 +363,6 @@ input[disabled] ~ span {
   border-radius: 5px;
   padding: 0px 5px;
   margin-right: 5px;
-}
-
-.anvil-role-amount-table > * > label-text {
-  text-align: right;
 }
 
 /* Other classes */
