@@ -57,8 +57,8 @@ a {
 
 a:hover:not(disabled) {
   color: %color:Primary%;
-  background-color: %color:Primary%;
-  border-radius: 10px;
+  background-color: %color:Secondary%;
+/*   border-radius: 10px; */
 }
 
 a:active:not(disabled), a:focus:not(disabled){
