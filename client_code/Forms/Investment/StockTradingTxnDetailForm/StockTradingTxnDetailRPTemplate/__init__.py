@@ -15,7 +15,8 @@ class StockTradingTxnDetailRPTemplate(StockTradingTxnDetailRPTemplateTemplate):
     
         # Any code you write here will run when the form opens.
         from .....Utils.Constants import ColorSchemes
-        self.foreground = ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else ColorSchemes.AMT_POS
+        # self.foreground = ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else ColorSchemes.AMT_POS
+        self.role = 'negative-amount-label' if self.item['pnl'] < 0 else 'positive-amount-label'
         self.input_data_panel_readonly.visible = True
         self.input_data_panel_editable.visible = False            
 

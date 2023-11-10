@@ -192,3 +192,5 @@ color_scheme:
   - {name: Primary Overlay 1, color: 'rgba(238, 210, 168, 0.05)'}
   - {name: Primary Overlay 2, color: 'rgba(238, 210, 168, 0.08)'}
   - {name: Primary Overlay 3, color: 'rgba(238, 210, 168, 0.11)'}
+  - {name: Pure Red, color: Red}
+  - {name: Pure Green, color: Green}

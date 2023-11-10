@@ -101,6 +101,7 @@ components:
       underline: false, icon: ''}
     name: valerror_title
     layout_properties: {grid_position: 'ITTCFU,GJAXRV'}
+    data_bindings: []
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
       visible: false, text: '- Field "Sell Date" cannot be empty', font_size: 12,

@@ -369,11 +369,11 @@ input[disabled] ~ span {
 }
 
 .anvil-role-positive-amount-label > label {
-  color: %color:On Primary%;
+  color: %color:Pure Green%;
 }
 
 .anvil-role-negative-amount-label > label {
-  color: %color:On Primary%;
+  color: %color:Pure Red%;
 }
 
 /* Other classes */
