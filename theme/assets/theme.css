@@ -365,6 +365,10 @@ input[disabled] ~ span {
   margin-right: 5px;
 }
 
+.anvil-role-amount-table > * > label-text {
+  text-align: right;
+}
+
 /* Other classes */
 
 .content > .placeholder {
@@ -514,6 +518,12 @@ input[disabled] ~ span {
   .content > * > .anvil-container {
     padding: 16px 24px;
   }
+
+  .content .anvil-panel-section-container {
+    /* Enlarge the data grid to fill in most of the content div */
+    width: initial;
+    max-width: calc(100% - 100px);
+  }
 }
 
 .content .anvil-measure-this {
@@ -574,7 +584,7 @@ input[disabled] ~ span {
     border-radius: 50%;
   }
   
-    html:not(.designer) .sidebar-toggle:focus {
+  html:not(.designer) .sidebar-toggle:focus {
     background: linear-gradient(0deg, %color:Dark Overlay 1%, %color:Dark Overlay 1%), %color:Primary%;
   }
   
@@ -609,7 +619,7 @@ input[disabled] ~ span {
     z-index: 2;
     background-color: rgba(0,0,0,0.2);
   }
- }
+}
 
 .nav-holder .left-nav, .left-nav-placeholder {
   display: flex;
@@ -724,8 +734,9 @@ input[disabled] ~ span {
 
 .nav-holder > .logo > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0;}
 
+/* Standardize the label settings in the left navigation menu */
 .left-nav .anvil-role-subheading > .label-text {
   color: %color:Tertiary%;
   font-weight: bold;
-  font-size: 12;
+  font-size: 12px;
 }
