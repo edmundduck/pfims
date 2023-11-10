@@ -254,12 +254,11 @@ input[disabled] ~ span {
   border-bottom: 2px solid %color:Outline%;
 }
 
-.anvil-data-row-panel>.data-row-col {
+/* .anvil-data-row-panel>.data-row-col {
   padding-left: 20px;
   border-bottom: 1px solid %color:Outline%;
-/*   border-bottom: 0px solid %color:Outline%; */
 }
-
+ */
 .anvil-data-row-panel>.data-row-col:not(:last-child) {
   border-right: 1px solid %color:Primary Overlay 2%;
 /*   border-right: 0px solid %color:Primary Overlay 2%; */
@@ -517,8 +516,10 @@ input[disabled] ~ span {
 
   .content .anvil-panel-section-container {
     /* Enlarge the data grid to fill in most of the content div */
-    width: initial;
-    max-width: calc(100% - 100px);
+/*     max-width: 100%;
+     width: fit-content; */
+    min-width: fit-content;
+    max-width: 100% - 120px;
   }
 }
 
