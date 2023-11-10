@@ -249,13 +249,13 @@ input[disabled] ~ span {
   background: %color:Secondary Container%;
 }
 
-.anvil-data-grid>.data-grid-child-panel>div.auto-grid-header {
+.anvil-data-grid>.data-grid-child-panel>div.auto-grid-header, .anvil-data-grid>.data-grid-child-panel>.anvil-role-table-manual-header {
   /* Grid header lines cannot be added if it's not an auto header (generated) */
   border-bottom: 2px solid %color:Outline%;
 }
 
 .anvil-data-row-panel>.data-row-col {
-  border-bottom: 1px solid %color:Outline%;
+/*   border-bottom: 1px solid %color:Outline%; */
 }
 
 .anvil-data-row-panel>.data-row-col:not(:last-child) {
@@ -264,7 +264,9 @@ input[disabled] ~ span {
 }
 
 .anvil-data-row-panel>.data-row-col:last-child {
-  white-space: nowrap;
+  flex-wrap: wrap;
+  width: 100%;
+  flex: auto;
 }
 
 /* Modals */
@@ -519,8 +521,6 @@ input[disabled] ~ span {
 
   .content .anvil-panel-section-container {
     /* Enlarge the data grid to fill in most of the content div */
-/*     max-width: 100%;
-     width: fit-content; */
     min-width: fit-content;
     max-width: 90%;
   }

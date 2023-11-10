@@ -182,7 +182,7 @@ components:
   layout_properties: {grid_position: 'NWFNJJ,IZRJKI', full_width_row: false}
   components:
   - name: data_row_panel_headers
-    properties: {auto_display_data: false}
+    properties: {auto_display_data: false, role: table-manual-header}
     type: DataRowPanel
     layout_properties: {}
     components:

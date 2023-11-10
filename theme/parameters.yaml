@@ -34,6 +34,8 @@ roles:
   display_in_toolbox: false
 - name: label-error
   components: [Label]
+- name: table-manual-header
+  components: [DataRowPanel]
 color_scheme:
   preset_groups:
   - name: Primary Colour
