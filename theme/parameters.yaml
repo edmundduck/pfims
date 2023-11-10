@@ -34,6 +34,8 @@ roles:
   components: [Label]
 - name: negative-amount-label
   components: [Label]
+- name: app-label-button
+  components: [Button]
 color_scheme:
   preset_groups:
   - name: Primary Colour
@@ -170,9 +172,9 @@ color_scheme:
       - {name: Secondary 700, color: '#616161'}
   colors:
   - {name: Primary, color: '#FF8906'}
-  - {name: On Primary, color: '#716040'}
-  - {name: Secondary, color: 'rgba(140, 120, 100, 1)'}
-  - {name: On Secondary, color: '#F25F4C'}
+  - {name: Primary Container, color: '#716040'}
+  - {name: Secondary, color: '#FFFFFE'}
+  - {name: Secondary Container, color: '#F25F4C'}
   - {name: Tertiary, color: '#EADDCF'}
   - {name: Tertiary Container, color: '#E53170'}
   - {name: Error, color: '#FD0600'}

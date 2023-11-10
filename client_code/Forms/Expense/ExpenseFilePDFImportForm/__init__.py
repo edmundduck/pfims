@@ -42,7 +42,6 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
     def button_next_click(self, **event_args):
         """This method is called when the button is clicked"""
         from ....Utils import Routing
-        from ....Utils.Constants import ColorSchemes
         
         """Validation"""
         v = Validator()
@@ -50,8 +49,8 @@ class ExpenseFilePDFImportForm(ExpenseFilePDFImportFormTemplate):
         v.display_when_invalid(self.valerror_title)
         v.require_selected_dependent_on_checkbox(self.dropdown_account, self.cb_account, self.valerror_3, True)
         v.require_selected_dependent_on_checkbox(self.dropdown_labels, self.cb_labels, self.valerror_4, True)
-        v.highlight_when_invalid(self.dropdown_account, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
-        v.highlight_when_invalid(self.dropdown_labels, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.dropdown_account)
+        v.highlight_when_invalid(self.dropdown_labels)
 
         result = all(c._validate() for c in self.cols_mapping_panel.get_components())
         if result is not True:

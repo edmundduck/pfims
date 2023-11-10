@@ -29,15 +29,13 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.row_panel_labels.full_width_row = False
         
     def _generateall_selected_labels(self, label_id_list):
-        from .....Utils.Constants import ColorSchemes, Icons
+        from .....Utils.Constants import Icons, Roles
         lbls_list = ExpenseInputController.generate_label_objects(label_id_list)
         for lbl in lbls_list:
             b = Button(
                 text=lbl.get_name(),
                 # icon=Icons.REMOVE,
-                foreground=ColorSchemes.BUTTON_FG,
-                background=ColorSchemes.BUTTON_BG,
-                font_size=12,
+                role=Roles.LABEL,
                 align="left",
                 spacing_above="small",
                 spacing_below="small",
@@ -57,14 +55,12 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         self.parent.raise_event('x-switch-to-save-button')
 
     def _create_lbl_button(self, selected_lid, selected_lname, **event_args):
-        from .....Utils.Constants import ColorSchemes, Icons
+        from .....Utils.Constants import Icons, Roles
         if self.row_cb_datarow.checked is True:
             b = Button(
                 text=selected_lname,
                 # icon=Icons.REMOVE,
-                foreground=ColorSchemes.BUTTON_FG,
-                background=ColorSchemes.BUTTON_BG,
-                font_size=12,
+                role=Roles.LABEL,
                 align="left",
                 spacing_above="small",
                 spacing_below="small",
@@ -80,7 +76,6 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
-        from .....Utils.Constants import ColorSchemes
         from .....Utils.Validation import Validator
         
         v = Validator()
@@ -92,9 +87,9 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         v.require_date_field(self.row_date, self.parent.parent.parent.valerror_1, True)
         v.require_selected(self.row_acct, self.parent.parent.parent.valerror_2, True)
         v.require_text_field(self.row_amt, self.parent.parent.parent.valerror_3, True)
-        v.highlight_when_invalid(self.row_date, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
-        v.highlight_when_invalid(self.row_acct, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
-        v.highlight_when_invalid(self.row_amt, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.row_date)
+        v.highlight_when_invalid(self.row_acct)
+        v.highlight_when_invalid(self.row_amt)
 
         return v.is_valid()
 

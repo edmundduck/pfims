@@ -14,9 +14,9 @@ class StockTradingTxnDetailRPTemplate(StockTradingTxnDetailRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        from .....Utils.Constants import ColorSchemes
-        # self.foreground = ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else ColorSchemes.AMT_POS
-        self.role = 'negative-amount-label' if self.item['pnl'] < 0 else 'positive-amount-label'
+        from .....Utils.Constants import Roles
+        self.row_pnl.role = Roles.AMT_NEGATIVE if self.item['pnl'] < 0 else Roles.AMT_POSITIVE
+        self.row_label_pnl.role = self.row_pnl.role
         self.input_data_panel_readonly.visible = True
         self.input_data_panel_editable.visible = False            
 
@@ -58,6 +58,13 @@ class StockTradingTxnDetailRPTemplate(StockTradingTxnDetailRPTemplateTemplate):
         v.require_text_field(self.row_sales, self.parent.parent.parent.valerror_5, True)
         v.require_text_field(self.row_cost, self.parent.parent.parent.valerror_6, True)
         v.require_text_field(self.row_fee, self.parent.parent.parent.valerror_7, True)
+        v.highlight_when_invalid(self.row_selldate)
+        v.highlight_when_invalid(self.row_buydate)
+        v.highlight_when_invalid(self.row_symbol)
+        v.highlight_when_invalid(self.row_qty)
+        v.highlight_when_invalid(self.row_sales)
+        v.highlight_when_invalid(self.row_cost)
+        v.highlight_when_invalid(self.row_fee)
     
         if v.is_valid():
             self.row_sell_price.text, self.row_buy_price.text, self.row_pnl.text = StockTradingTxnDetailController.calculate_amount(self.row_sales.text, self.row_cost.text, self.row_fee.text, self.row_qty.text)

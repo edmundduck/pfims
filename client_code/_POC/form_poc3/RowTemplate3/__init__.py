@@ -1,7 +1,6 @@
 from ._anvil_designer import RowTemplate3Template
 from anvil import *
 from ....Utils.Validation import Validator
-from ....Utils.Constants import ColorSchemes
 
 class RowTemplate3(RowTemplate3Template):
     def __init__(self, **properties):
@@ -15,5 +14,5 @@ class RowTemplate3(RowTemplate3Template):
         v = Validator()
         v.display_when_invalid(self.parent.parent.parent.valerror)
         v.require_text_field(self.text_box_1, self.parent.parent.parent.valerror1, False)
-        v.highlight_when_invalid(self.text_box_1, 'rgb(245,135,200)', ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.text_box_1)
         

@@ -244,7 +244,7 @@ input[disabled] ~ span {
 /* Data grids */
 
 .anvil-data-grid {
-  background: %color:Secondary Container%;
+  background: %color:Background%;
 }
 
 .anvil-data-grid>.data-grid-child-panel>div.auto-grid-header, .anvil-data-grid>.data-grid-child-panel>.anvil-role-table-manual-header {
@@ -309,19 +309,19 @@ input[disabled] ~ span {
 }
 
 .anvil-role-filled .btn, .anvil-role-filled > label {
-  background-color: %color:Primary%;
+  background-color: %color:Primary Container%;
   padding: 8px 16px;
   border-radius: 10px;
-  color: %color:On Primary%;
+  color: %color:Primary%;
 }
 
 .anvil-role-filled .btn:hover, .anvil-role-filled > label:hover {
-  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Primary%;
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Primary Container%;
 }
 
 .anvil-role-filled .btn:active, .anvil-role-filled .btn:active:focus, .anvil-role-filled > label:active, .anvil-role-filled > label:active:focus{
-  color: %color:On Primary%;
-  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:Primary%;
+  color: %color:Primary%;
+  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:Primary Container%;
 }
 
 .anvil-role-filled .btn[disabled], .anvil-role-filled .btn[disabled]:hover, .anvil-role-filled.anvil-disabled > label {
@@ -344,10 +344,9 @@ input[disabled] ~ span {
   outline: 2px solid %color:On Disabled%;
 }
 
-.anvil-role-input-error, .anvil-role-input-error:focus, .anvil-datepicker.anvil-role-input-error input {
+.anvil-role-input-error, .anvil-role-input-error:focus, .anvil-datepicker .anvil-role-input-error input {
   color: %color:Error%;
   box-shadow: inset 0 -1.5px 0 %color:Error%;
-  border-radius: 0;
 }
 
 .anvil-role-label-error {
@@ -368,12 +367,24 @@ input[disabled] ~ span {
   }
 }
 
-.anvil-role-positive-amount-label > label {
+.anvil-role-positive-amount-label > .label-text {
   color: %color:Pure Green%;
 }
 
-.anvil-role-negative-amount-label > label {
+.anvil-role-negative-amount-label > .label-text {
   color: %color:Pure Red%;
+}
+
+.anvil-role-app-label-button .btn {
+  background-color: %color:Secondary Container%;
+  padding: 4px 8px;
+  border-radius: 10px;
+  color: %color:Secondary%;
+  font-size: 12px;
+}
+
+.anvil-role-app-label-button .btn:hover {
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Secondary Container%;
 }
 
 /* Other classes */

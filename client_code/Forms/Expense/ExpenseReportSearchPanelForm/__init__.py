@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from .... import Global
 from ....Controllers import ReportSearchPanelController
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.Constants import ColorSchemes, Icons, ReportFormTag, SearchInterval
+from ....Utils.Constants import Icons, ReportFormTag, Roles, SearchInterval
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -101,9 +101,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
                 text=lbl_name,
                 tag=lbl_id,
                 icon=Icons.REMOVE,
-                foreground=ColorSchemes.BUTTON_FG,
-                background=ColorSchemes.BUTTON_BG,
-                font_size=12
+                role=Roles.LABEL
             )
             self.panel_label.add_component(b, name=lbl_id)
             b.set_event_handler('click', self.exp_rpt_button_minus_click)

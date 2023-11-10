@@ -33,9 +33,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         Change the save button to submit.
         """
-        from ....Utils.Constants import ColorSchemes, ExpenseConfig
+        from ....Utils.Constants import ExpenseConfig
         self.button_save_exptab.text = ExpenseConfig.BUTTON_SUBMIT_TEXT
-        self.button_save_exptab.background = ColorSchemes.THEME_PRIM
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_submit_click)
 
@@ -43,9 +42,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         """
         Change the submit button to save.
         """
-        from ....Utils.Constants import ColorSchemes, ExpenseConfig
+        from ....Utils.Constants import ExpenseConfig
         self.button_save_exptab.text = ExpenseConfig.BUTTON_DRAFT_TEXT
-        self.button_save_exptab.background = ColorSchemes.THEME_SEC
         self.button_save_exptab.remove_event_handler('click')
         self.button_save_exptab.add_event_handler('click', self.button_save_click)
         
