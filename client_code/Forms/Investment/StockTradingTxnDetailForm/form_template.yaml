@@ -152,7 +152,7 @@ components:
     layout_properties: {grid_position: 'CYUHLI,QRXXFT'}
 - type: DataGrid
   properties:
-    role: null
+    role: left-two-buttons-table
     columns:
     - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '20'}
     - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '20'}
