@@ -254,14 +254,17 @@ input[disabled] ~ span {
   border-bottom: 2px solid %color:Outline%;
 }
 
-/* .anvil-data-row-panel>.data-row-col {
-  padding-left: 20px;
+.anvil-data-row-panel>.data-row-col {
   border-bottom: 1px solid %color:Outline%;
 }
- */
+
 .anvil-data-row-panel>.data-row-col:not(:last-child) {
   border-right: 1px solid %color:Primary Overlay 2%;
 /*   border-right: 0px solid %color:Primary Overlay 2%; */
+}
+
+.anvil-data-row-panel>.data-row-col:last-child {
+  white-space: nowrap;
 }
 
 /* Modals */
@@ -521,6 +524,7 @@ input[disabled] ~ span {
     min-width: fit-content;
     max-width: 90%;
   }
+
 }
 
 .content .anvil-measure-this {
