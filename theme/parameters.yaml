@@ -15,14 +15,6 @@ roles:
   displayInToolbox: true
   title: Card
   display_in_toolbox: true
-- name: raised
-  components: [Button, FileLoader]
-- name: primary-color
-  components: [Button, FileLoader]
-  title: Highlighted Button
-  display_in_toolbox: true
-- name: secondary-color
-  components: [Button, FileLoader]
 - name: selected
   components: [Link]
 - name: filled
