@@ -519,7 +519,7 @@ input[disabled] ~ span {
 /*     max-width: 100%;
      width: fit-content; */
     min-width: fit-content;
-    max-width: 100% - 120px;
+    max-width: 90%;
   }
 }
 
