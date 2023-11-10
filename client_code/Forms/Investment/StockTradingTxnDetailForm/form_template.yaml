@@ -152,11 +152,8 @@ components:
     layout_properties: {grid_position: 'CYUHLI,QRXXFT'}
 - type: DataGrid
   properties:
-    role: left-two-buttons-table
+    role: investment-input-table
     columns:
-    - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '20'}
-    - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '20'}
-    - {id: JNEVXO, title: '', data_key: iid, width: '30'}
     - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '140', expand: false}
     - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '140', expand: false}
     - {id: RMITXR, title: Symbol, data_key: symbol, width: '100', expand: false}
@@ -167,6 +164,7 @@ components:
     - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: false, width: '90'}
     - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: false, width: '90'}
     - {id: NMAPTI, title: P&L, data_key: pnl, expand: false, width: '100'}
+    - {id: JNEVXO, title: '', data_key: iid, width: '30', expand: true}
     auto_header: false
     tooltip: ''
     border: ''
@@ -230,26 +228,6 @@ components:
     properties: {auto_display_data: false}
     type: DataRowPanel
     components:
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: 'fa:plus'}
-      name: button_plus
-      layout_properties: {column: YAYOIZ}
-      event_bindings: {click: button_plus_click}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: 'fa:eraser'}
-      name: button_erase
-      layout_properties: {column: TOZXSD}
-      event_bindings: {click: button_erase_click}
-    - name: input_iid
-      properties: {visible: false, align: right, font_size: 12}
-      type: Label
-      layout_properties: {column: JNEVXO}
     - type: DatePicker
       properties: {role: null, align: right, max_date: '', pick_time: false, tooltip: '',
         placeholder: '', border: '', enabled: true, foreground: '', visible: true,
@@ -322,6 +300,28 @@ components:
         icon: ''}
       name: input_pnl
       layout_properties: {column: NMAPTI}
+    - name: flow_panel_3
+      properties: {}
+      type: FlowPanel
+      layout_properties: {column: JNEVXO}
+      components:
+      - type: Button
+        properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+          foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
+          icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+          underline: false, icon: 'fa:plus'}
+        name: button_plus
+        event_bindings: {click: button_plus_click}
+      - type: Button
+        properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+          foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
+          icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+          underline: false, icon: 'fa:eraser'}
+        name: button_erase
+        event_bindings: {click: button_erase_click}
+      - name: input_iid
+        properties: {visible: false, align: right, font_size: 12}
+        type: Label
     layout_properties: {}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,

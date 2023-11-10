@@ -36,7 +36,7 @@ roles:
   components: [Label]
 - name: table-manual-header
   components: [DataRowPanel]
-- name: left-two-buttons-table
+- name: investment-input-table
   components: [DataGrid]
 color_scheme:
   preset_groups:

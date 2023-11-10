@@ -24,7 +24,7 @@ def open_exp_input_form(self, tab_id=None, data=None, **event_args):
     # self.clear()
     # self.add_component(ExpenseInputForm())
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(ExpenseInputForm(tab_id=tab_id, data=data), full_width_row=True)
+    anvil.get_open_form().content_panel.add_component(ExpenseInputForm(tab_id=tab_id, data=data))
 
 def open_exp_file_upload_form(self, **event_args):
     from ..Forms.Expense.ExpenseFileUploadForm import ExpenseFileUploadForm

@@ -247,7 +247,6 @@ input[disabled] ~ span {
 
 .anvil-data-grid {
   background: %color:Secondary Container%;
-  padding-left: 50px;
 }
 
 .anvil-data-grid>.data-grid-child-panel>div.auto-grid-header, .anvil-data-grid>.data-grid-child-panel>.anvil-role-table-manual-header {
@@ -364,8 +363,11 @@ input[disabled] ~ span {
   margin-right: 5px;
 }
 
-.anvil-role-left-two-buttons-table .anvil-data-row-panel>.data-row-col:not(:nth-child(-n + 3)) {
-  border-right: 1px solid %color:Primary Overlay 2%;
+@media(min-width:991px) {
+  .content .anvil-panel-section-container > * > .anvil-role-investment-input-table {
+    /* Enlarge the data grid to fill in most of the content div */
+    max-width: 1250px;
+  }
 }
 
 /* Other classes */
