@@ -6,7 +6,7 @@ container:
   data_bindings: []
 components:
 - name: input_data_panel_readonly
-  properties: {auto_display_data: true, align: right}
+  properties: {auto_display_data: false, align: right}
   type: DataRowPanel
   layout_properties: {column: 'null'}
   components:
@@ -118,11 +118,11 @@ components:
     data_bindings:
     - {property: text, code: '"${0:.2f}".format(self.item[''pnl''])'}
   - name: row_label_iid
-    properties: {font_size: 14, visible: false, align: right}
+    properties: {font_size: 12, visible: false, align: right}
     type: Label
     layout_properties: {column: JNEVXO}
 - name: input_data_panel_editable
-  properties: {auto_display_data: false}
+  properties: {auto_display_data: false, visible: false}
   type: DataRowPanel
   layout_properties: {}
   components:
@@ -138,6 +138,7 @@ components:
     properties: {text: '', icon: 'fa:close'}
     type: Button
     layout_properties: {column: TOZXSD}
+    event_bindings: {click: button_cancel_click}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,

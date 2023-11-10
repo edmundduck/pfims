@@ -256,13 +256,13 @@ input[disabled] ~ span {
 
 .anvil-data-row-panel>.data-row-col {
   padding-left: 20px;
-/*   border-bottom: 1px solid %color:Outline%; */
-  border-bottom: 0px solid %color:Outline%;
+  border-bottom: 1px solid %color:Outline%;
+/*   border-bottom: 0px solid %color:Outline%; */
 }
 
 .anvil-data-row-panel>.data-row-col:not(:last-child) {
-/*   border-right: 1px solid %color:Primary Overlay 2%; */
-  border-right: 0px solid %color:Primary Overlay 2%;
+  border-right: 1px solid %color:Primary Overlay 2%;
+/*   border-right: 0px solid %color:Primary Overlay 2%; */
 }
 
 /* Modals */

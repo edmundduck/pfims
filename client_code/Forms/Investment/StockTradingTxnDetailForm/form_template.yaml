@@ -226,11 +226,44 @@ components:
       properties: {align: right, text: P&L, bold: true}
       type: Label
       layout_properties: {column: NMAPTI}
-  - type: DataRowPanel
-    properties: {align: right, auto_display_data: false}
-    name: data_row_panel_input
-    layout_properties: {}
+  - name: data_row_panel_input
+    properties: {auto_display_data: false}
+    type: DataRowPanel
     components:
+    - type: Button
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: 'fa:plus'}
+      name: button_plus
+      layout_properties: {column: YAYOIZ}
+      event_bindings: {click: button_plus_click}
+    - type: Button
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: 'fa:eraser'}
+      name: button_erase
+      layout_properties: {column: TOZXSD}
+      event_bindings: {click: button_erase_click}
+    - name: input_iid
+      properties: {visible: false, align: right, font_size: 12}
+      type: Label
+      layout_properties: {column: JNEVXO}
+    - type: DatePicker
+      properties: {role: null, align: right, max_date: '', pick_time: false, tooltip: '',
+        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
+        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
+      name: input_selldate
+      layout_properties: {column: DNGCRO}
+    - type: DatePicker
+      properties: {role: null, align: right, max_date: '', pick_time: false, tooltip: '',
+        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
+        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
+      name: input_buydate
+      layout_properties: {column: MOWHRG}
     - type: TextBox
       properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
         border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
@@ -260,20 +293,13 @@ components:
         background: '', bold: false, underline: false}
       name: input_cost
       layout_properties: {column: WXPMEY}
-    - type: DatePicker
-      properties: {role: null, align: right, max_date: '', pick_time: false, tooltip: '',
-        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
-        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: input_selldate
-      layout_properties: {column: DNGCRO}
-    - type: DatePicker
-      properties: {role: null, align: right, max_date: '', pick_time: false, tooltip: '',
-        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
-        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: input_buydate
-      layout_properties: {column: MOWHRG}
+    - type: TextBox
+      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
+        border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: 12,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_fee
+      layout_properties: {column: LMHMKP}
     - type: Label
       properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
         visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
@@ -289,29 +315,6 @@ components:
         icon: ''}
       name: input_buy_price
       layout_properties: {column: IFVNQY}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: 'fa:plus'}
-      name: button_plus
-      layout_properties: {column: YAYOIZ}
-      event_bindings: {click: button_plus_click}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: 'fa:eraser'}
-      name: button_erase
-      layout_properties: {column: TOZXSD}
-      event_bindings: {click: button_erase_click}
-    - type: TextBox
-      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: 12,
-        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
-        background: '', bold: false, underline: false}
-      name: input_fee
-      layout_properties: {column: LMHMKP}
     - type: Label
       properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
         visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
@@ -319,6 +322,7 @@ components:
         icon: ''}
       name: input_pnl
       layout_properties: {column: NMAPTI}
+    layout_properties: {}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Investment.StockTradingTxnDetailForm.StockTradingTxnDetailRPTemplate,
