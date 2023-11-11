@@ -180,11 +180,11 @@ color_scheme:
   - {name: Error, color: '#FD0600'}
   - {name: Background, color: '#0F0E17'}
   - {name: On Background, color: '#E1E3DF'}
-  - {name: Surface, color: '#E1E3DF'}
+  - {name: Surface, color: '#A7A9BE'}
   - {name: On Surface, color: '#0F0E17'}
   - {name: Surface Variant, color: 'rgba(140, 120, 100, 1)'}
   - {name: On Surface Variant, color: '#C0C9C1'}
-  - {name: Outline, color: '#8A938C'}
+  - {name: Outline, color: '#A7A9BE'}
   - {name: Dark Overlay 1, color: 'rgba(238, 210, 168, 0.2)'}
   - {name: Dark Overlay 2, color: 'rgba(238, 210, 168, 0.5)'}
   - {name: Light Overlay 1, color: 'rgba(238, 210, 168, 0.2)'}

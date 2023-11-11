@@ -1,5 +1,5 @@
 body {
-  font-family: 'Roboto Condensed', sans-serif;
+  font-family: 'Trebuchet MS', sans-serif;
   font-size: 14px;
   font-weight: 300;
   background-color: %color:Background%;
@@ -23,7 +23,7 @@ body {
 }
 
 .anvil-role-headline {
-  font-family: Eczar, serif;
+  font-family: 'Palatino', serif;
   font-size: 32px;
   line-height: 40px;
   font-weight: 400;
@@ -305,7 +305,7 @@ input[disabled] ~ span {
 
 .anvil-role-heading {
   font-size: 40px;
-  font-family: "Eczar", serif;
+  font-family: 'Palatino', serif;
 }
 
 .anvil-role-filled .btn, .anvil-role-filled > label {

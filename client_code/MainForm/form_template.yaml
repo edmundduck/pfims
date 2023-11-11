@@ -68,7 +68,7 @@ components:
       layout_properties: {}
       event_bindings: {click: app_logout_click}
   - name: label_1
-    properties: {bold: true, font: '', text: Investment, font_size: null, foreground: 'theme:Secondary',
+    properties: {bold: true, font: '', text: Investment, font_size: null, foreground: '',
       role: subheading}
     type: Label
     layout_properties: {grid_position: 'DGEWTY,QLOAOZ', full_width_row: true}
@@ -95,8 +95,7 @@ components:
     type: Spacer
     layout_properties: {grid_position: 'IPHPEM,WAYJXM', full_width_row: true}
   - name: label_2
-    properties: {text: Expense, foreground: 'theme:Secondary', bold: true, font_size: null,
-      role: subheading}
+    properties: {text: Expense, foreground: '', bold: true, font_size: null, role: subheading}
     type: Label
     layout_properties: {grid_position: 'KTUKYP,SRDLST', full_width_row: true}
   - name: button_exp_input

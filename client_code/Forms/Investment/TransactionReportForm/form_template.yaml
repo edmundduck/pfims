@@ -1,7 +1,7 @@
 components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
-    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
+    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
   name: flow_panel_1
   layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: true}
   components:
@@ -13,7 +13,7 @@ components:
     name: spacer4
     layout_properties: {}
   - type: Label
-    properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
+    properties: {role: headline, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: Transaction List Report, font_size: 14, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: ''}
