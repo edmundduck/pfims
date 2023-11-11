@@ -23,7 +23,6 @@ body {
 }
 
 .anvil-role-headline {
-  font-family: 'Palatino', serif;
   font-size: 32px;
   line-height: 40px;
   font-weight: 400;
@@ -300,12 +299,13 @@ input[disabled] ~ span {
 
 .anvil-role-card {
   background: %color:Surface Variant%;
-  padding: 8px 12px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px %color:Light Overlay 2%;
+  padding: 8px 8px;
 }
 
 .anvil-role-heading {
   font-size: 40px;
-  font-family: 'Palatino', serif;
 }
 
 .anvil-role-filled .btn, .anvil-role-filled > label {
@@ -385,6 +385,23 @@ input[disabled] ~ span {
 
 .anvil-role-app-label-button .btn:hover {
   background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Secondary Container%;
+}
+
+.content .anvil-role-subheading > .label-text {
+  color: %color:Tertiary%;
+  background-color: %color:Tertiary Container%;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 4px 12px;
+  text-transform: uppercase;
+}
+
+.content .anvil-role-subheading > .label-text::after {
+  content: "          ";
+/*   width: 100%; */
+  background-color: 'Black';
+/*   border-bottom-width: 1px;
+  border-bottom: calc(%width% * 2) solid %color:Tertiary Container%; */
 }
 
 /* Other classes */
@@ -757,5 +774,5 @@ input[disabled] ~ span {
 .left-nav .anvil-role-subheading > .label-text {
   color: %color:Tertiary%;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 20px;
 }

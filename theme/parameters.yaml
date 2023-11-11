@@ -176,7 +176,7 @@ color_scheme:
   - {name: Secondary, color: '#FFFFFE'}
   - {name: Secondary Container, color: '#F25F4C'}
   - {name: Tertiary, color: '#EADDCF'}
-  - {name: Tertiary Container, color: '#E53170'}
+  - {name: Tertiary Container, color: '#F25F4C'}
   - {name: Error, color: '#FD0600'}
   - {name: Background, color: '#0F0E17'}
   - {name: On Background, color: '#E1E3DF'}
