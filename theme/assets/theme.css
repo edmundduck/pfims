@@ -214,7 +214,7 @@ input[disabled] ~ span {
 }
 
 .daterangepicker .calendar-table td.available:hover {
-  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:Surface%;
+  background: linear-gradient(0deg, %color:Light Overlay 2%, %color:Light Overlay 2%), %color:On Surface%;
   border-radius: 50%;
 }
 
@@ -228,14 +228,16 @@ input[disabled] ~ span {
   background: linear-gradient(0deg, %color:Dark Overlay 2%, %color:Dark Overlay 2%), %color:Primary%;
 }
 
+/* The month and year dropdown of the calendar */
 .daterangepicker select {
   color: %color:On Background%;
-  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface%;;
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface Variant%;
   border: 0;
 }
 
+/* When mouse hovers on the date in the opened calendar */
 .daterangepicker select:focus {
-  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface%;
+  background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Surface Variant%;
   border-bottom: 1.5px solid %color:On Surface Variant%;
 }
 
