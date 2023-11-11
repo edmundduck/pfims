@@ -398,10 +398,9 @@ input[disabled] ~ span {
 
 .content .anvil-role-subheading > .label-text::after {
   content: "          ";
-/*   width: 100%; */
   background-color: 'Black';
-/*   border-bottom-width: 1px;
-  border-bottom: calc(%width% * 2) solid %color:Tertiary Container%; */
+  border-bottom-width: 1px;
+  border-bottom: 50px solid %color:Tertiary Container%;
 }
 
 /* Other classes */
