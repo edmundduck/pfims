@@ -3,14 +3,14 @@ container:
   properties: {col_widths: '{}'}
 components:
 - type: ColumnPanel
-  properties: {role: null, tooltip: '', border: groove, foreground: '', visible: true,
+  properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
     wrap_on: mobile, col_spacing: medium, spacing_above: medium, col_widths: '{}',
     spacing_below: medium, background: ''}
   name: colpanel_search
   layout_properties:
     col_widths: {}
     grid_position: IWWXTN,ELVDQC
-    full_width_row: true
+    full_width_row: false
   components:
   - type: FlowPanel
     properties: {}

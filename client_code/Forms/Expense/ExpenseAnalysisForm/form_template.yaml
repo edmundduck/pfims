@@ -7,18 +7,14 @@ container:
 components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
-    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
-  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: true}
+    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
   name: flow_panel_1
   components:
   - type: Label
-    properties: {}
-    layout_properties: {}
-    name: spacer4
-  - type: Label
-    properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
+    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: Expense Analysis Report, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     layout_properties: {}
     name: report_name
@@ -41,7 +37,7 @@ components:
     spacing_above: small
     spacing_below: small
     background: ''
-  layout_properties: {grid_position: 'ZLVMXC,PHMUMA JMLSRG,ZVJIVL', full_width_row: true}
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA JMLSRG,ZVJIVL', full_width_row: false}
   name: data_grid
   components:
   - type: RepeatingPanel
@@ -94,4 +90,4 @@ components:
 - type: Plot
   properties: {height: 704}
   name: plot_bar_chart
-  layout_properties: {grid_position: 'ZLVMXC,PXXYBG', full_width_row: true}
+  layout_properties: {grid_position: 'ZLVMXC,PXXYBG', full_width_row: false}

@@ -83,4 +83,4 @@ def open_exp_analysis_form(self, **event_args):
 def open_poc_main_form(self, **event_args):
     from .._POC.form_poc_main import form_poc_main
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(form_poc_main(), full_width_row=True)
+    anvil.get_open_form().content_panel.add_component(form_poc_main())

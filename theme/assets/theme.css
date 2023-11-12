@@ -360,13 +360,6 @@ input[disabled] ~ span {
   margin-right: 5px;
 }
 
-@media(min-width:991px) {
-  .content .anvil-panel-section-container > * > .anvil-role-investment-input-table {
-    /* Enlarge the data grid to fill in most of the content div */
-    max-width: 1250px;
-  }
-}
-
 .anvil-role-positive-amount-label > .label-text {
   color: %color:Pure Green%;
 }
@@ -387,15 +380,17 @@ input[disabled] ~ span {
   background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Secondary Container%;
 }
 
+/* Report title subheading styling */
 .content .anvil-role-subheading {
     border-bottom: 5px solid %color:Tertiary Container%;
-    width: 500px;
-    height: 20px;
-/*     position: absolute; */
+    width: 1000px;
+    height: 30px;
+    position: relative;
     /* transform: translate(-50%, -50%); */
     overflow: hidden;
 }
 
+/* Report title subheading styling */
 .content .anvil-role-subheading > .label-text {
     color: %color:Tertiary%;
     background-color: %color:Tertiary Container%;
@@ -406,10 +401,12 @@ input[disabled] ~ span {
     text-transform: uppercase;
 }
 
-.content .anvil-role-subheading > .label-text::before {
+/* Report title subheading styling */
+.content .anvil-role-subheading > .label-text::after {
     position: absolute;
+    top: 25px;
     content: "";
-    width: 40%;
+    width: 10%;
     height: 100%;
     background: %color:Tertiary Container%;
     z-index: -1;
@@ -566,12 +563,14 @@ input[disabled] ~ span {
     padding: 16px 24px;
   }
 
+  /* Enlarge the data grid to fill in most of the content div */
   .content .anvil-panel-section-container {
-    /* Enlarge the data grid to fill in most of the content div */
-    min-width: fit-content;
-    max-width: 90%;
+    /* Cannot use fit-content or the last column will expand unlimited way. */
+    /* min-width: fit-content; */
+    /* Following is a temp solution. */
+    min-width: 70%;
+    max-width: max(85%, 1300px);
   }
-
 }
 
 .content .anvil-measure-this {
@@ -786,5 +785,9 @@ input[disabled] ~ span {
 .left-nav .anvil-role-subheading > .label-text {
   color: %color:Tertiary%;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 18px;
+}
+
+.visible-false {
+  width: 1px;
 }
