@@ -387,20 +387,33 @@ input[disabled] ~ span {
   background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Secondary Container%;
 }
 
-.content .anvil-role-subheading > .label-text {
-  color: %color:Tertiary%;
-  background-color: %color:Tertiary Container%;
-  font-weight: bold;
-  font-size: 16px;
-  padding: 4px 12px;
-  text-transform: uppercase;
+.content .anvil-role-subheading {
+    border-bottom: 5px solid %color:Tertiary Container%;
+    width: 500px;
+    height: 20px;
+/*     position: absolute; */
+    /* transform: translate(-50%, -50%); */
+    overflow: hidden;
 }
 
-.content .anvil-role-subheading > .label-text::after {
-  content: "";
-  background: 'Black';
-  border-bottom-width: 1px;
-  border-bottom: 50px solid %color:Tertiary Container%;
+.content .anvil-role-subheading > .label-text {
+    color: %color:Tertiary%;
+    background-color: %color:Tertiary Container%;
+    font-weight: bold;
+    font-size: 16px;
+    display: inline-block;
+    padding: 4px 20px;
+    text-transform: uppercase;
+}
+
+.content .anvil-role-subheading > .label-text::before {
+    position: absolute;
+    content: "";
+    width: 40%;
+    height: 100%;
+    background: %color:Tertiary Container%;
+    z-index: -1;
+    transform:rotate(45deg);
 }
 
 /* Other classes */
