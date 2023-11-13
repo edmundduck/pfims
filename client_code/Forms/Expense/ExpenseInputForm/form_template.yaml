@@ -137,28 +137,28 @@ components:
   components:
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: 'Error(s):', font_size: 14, font: '', spacing_above: small,
+      visible: false, text: 'Error(s):', font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     layout_properties: {grid_position: 'ITTCFU,GJAXRV'}
     name: valerror_title
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Date" cannot be empty', font_size: 12, font: '',
+      visible: false, text: '- Field "Date" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     layout_properties: {grid_position: 'NLIMSF,HJEEMW'}
     name: valerror_1
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Dropdown "Account" cannot be empty', font_size: 12,
+      visible: false, text: '- Dropdown "Account" cannot be empty', font_size: null,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     layout_properties: {grid_position: 'XGCNXC,QFEXYI'}
     name: valerror_2
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Amount" cannot be empty', font_size: 12, font: '',
+      visible: false, text: '- Field "Amount" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     layout_properties: {grid_position: 'AGMSMU,RXYAGU'}

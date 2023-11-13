@@ -104,49 +104,49 @@ components:
     data_bindings: []
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Sell Date" cannot be empty', font_size: 12,
+      visible: false, text: '- Field "Sell Date" cannot be empty', font_size: null,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_1
     layout_properties: {grid_position: 'NLIMSF,HJEEMW'}
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Buy Date" cannot be empty', font_size: 12, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      visible: false, text: '- Field "Buy Date" cannot be empty', font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_2
     layout_properties: {grid_position: 'XGCNXC,QFEXYI'}
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Symbol" cannot be empty', font_size: 12, font: '',
+      visible: false, text: '- Field "Symbol" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_3
     layout_properties: {grid_position: 'AGMSMU,RXYAGU'}
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Qty" cannot be empty', font_size: 12, font: '',
+      visible: false, text: '- Field "Qty" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_4
     layout_properties: {grid_position: 'GWFMWW,TKLQAU'}
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Sales Amt" cannot be empty', font_size: 12,
+      visible: false, text: '- Field "Sales Amt" cannot be empty', font_size: null,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_5
     layout_properties: {grid_position: 'FDPUKS,WRTHMB'}
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Cost Amt" cannot be empty', font_size: 12, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      visible: false, text: '- Field "Cost Amt" cannot be empty', font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_6
     layout_properties: {grid_position: 'ERAEDG,TNAXCO'}
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '- Field "Fee" cannot be empty', font_size: 12, font: '',
+      visible: false, text: '- Field "Fee" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_7
