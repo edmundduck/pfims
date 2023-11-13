@@ -153,16 +153,18 @@ class ColorSchemes:
     """
     Color definition used in the UI.
     """
-    VALID_ERROR = 'rgb(245,135,200)'
-    VALID_NORMAL = 'rgb(250,250,250)'
     BUTTON_FG = 'White'
     BUTTON_BG = 'Blue'
-    AMT_NEG = 'Red'
-    AMT_POS = 'Green'
-    AMT_EXPENSE = 'Black'
-    THEME_PRIM = 'theme:Primary 500'
-    THEME_SEC = 'theme:Secondary 500'
-    THEME_WHITE = 'theme:White'
+
+class Roles:
+    """
+    Roles used in the UI together with CSS.
+    """
+    AMT_NEGATIVE = 'negative-amount-label'
+    AMT_POSITIVE = 'positive-amount-label'
+    VALID_ERROR = 'input-error'
+    VALID_NORMAL = None
+    LABEL = 'app-label-button'
 
 class Alerts:
     """

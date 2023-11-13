@@ -5,7 +5,7 @@ from datetime import date
 from ....Controllers import ReportSearchPanelController
 from .... import Global
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.Constants import ColorSchemes, Icons, SearchInterval
+from ....Utils.Constants import Icons, Roles, SearchInterval
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -30,7 +30,7 @@ class InvestmentReportSearchPanelForm(InvestmentReportSearchPanelFormTemplate):
 
         if "Transaction" in subform.report_name.text:
             self.subform = TransactionReportForm()
-            self.colpanel_list.add_component(self.subform)
+            self.colpanel_list.add_component(self.subform, full_width_row=True)
             self.panel_symbol.visible = True
             self.panel_tranx_list.visible = True
             self.panel_pnl_report.visible = False
@@ -39,7 +39,7 @@ class InvestmentReportSearchPanelForm(InvestmentReportSearchPanelFormTemplate):
             self._update_stock_enablement()
         elif "P&L" in subform.report_name.text:
             self.subform = PnLReportForm()
-            self.colpanel_list.add_component(self.subform)
+            self.colpanel_list.add_component(self.subform, full_width_row=True)
             self.panel_symbol.visible = True
             self.panel_tranx_list.visible = False
             self.panel_pnl_report.visible = True
@@ -124,8 +124,7 @@ class InvestmentReportSearchPanelForm(InvestmentReportSearchPanelFormTemplate):
                 text=self.dropdown_symbol.selected_value,
                 tag=self.dropdown_symbol.selected_value,
                 icon=Icons.REMOVE,
-                foreground=ColorSchemes.BUTTON_FG,
-                background=ColorSchemes.BUTTON_BG
+                role=Roles.LABEL
             )
             self.panel_symbol.add_component(b, name=self.dropdown_symbol.selected_value)
             b.set_event_handler('click', self.tranx_rpt_button_minus_click)

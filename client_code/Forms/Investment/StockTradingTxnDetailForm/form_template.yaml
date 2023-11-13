@@ -3,18 +3,17 @@ container:
   properties: {col_widths: '{}'}
   event_bindings: {}
 components:
-- type: ColumnPanel
-  properties: {col_widths: '{"HRMOYO":25,"IJDLKK":35}'}
-  name: column_panel_4
-  layout_properties: {grid_position: 'KGRZCX,ZJJBBJ'}
+- name: flow_panel_1
+  properties: {}
+  type: FlowPanel
+  layout_properties: {grid_position: 'SMFTEP,VZVOSP'}
   components:
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
       visible: true, text: Template Name, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_1
-    layout_properties: {grid_position: 'LEHWLY,HRMOYO'}
     data_bindings: []
   - type: TextBox
     properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New Template,
@@ -22,21 +21,18 @@ components:
       font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
       background: '', bold: false, underline: false}
     name: templ_name
-    layout_properties: {grid_position: 'LEHWLY,IJDLKK'}
+    layout_properties: {width: 216}
     event_bindings: {change: templ_name_change}
-  data_bindings: []
-- type: ColumnPanel
-  properties: {col_widths: '{"ANNNFE":15,"QKDMOJ":45}'}
-  name: column_panel_1
-  layout_properties: {grid_position: 'KGRZCX,IEWBUN'}
-  components:
+  - name: spacer_1
+    properties: {height: 32}
+    type: Spacer
+    layout_properties: {expand: false, width: 30}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
       visible: true, text: Broker, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_3
-    layout_properties: {grid_position: 'QZCZKX,ANNNFE'}
   - type: DropDown
     properties:
       role: null
@@ -58,20 +54,18 @@ components:
       underline: false
       include_placeholder: true
     name: dropdown_broker
-    layout_properties: {grid_position: 'QZCZKX,QKDMOJ'}
+    layout_properties: {width: 197}
     event_bindings: {change: dropdown_broker_change}
-- type: ColumnPanel
-  properties: {col_widths: '{"SIIRIQ":20,"FPTCAC":40}'}
-  name: column_panel_2
-  layout_properties: {grid_position: 'KGRZCX,MYOLIN'}
-  components:
+  - name: spacer_2
+    properties: {height: 32}
+    type: Spacer
+    layout_properties: {width: 50}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+    properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
       visible: true, text: Template, font_size: 12, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_2
-    layout_properties: {grid_position: 'IUMTEJ,SIIRIQ'}
   - type: DropDown
     properties:
       role: null
@@ -93,87 +87,86 @@ components:
       underline: false
       include_placeholder: true
     name: dropdown_templ
-    layout_properties: {grid_position: 'IUMTEJ,FPTCAC'}
+    layout_properties: {width: 214}
     event_bindings: {change: dropdown_templ_change}
 - type: ColumnPanel
-  properties: {col_widths: '{}'}
-  name: column_panel_3
-  layout_properties: {grid_position: 'VUYRUG,CDQYHH'}
+  properties: {col_widths: '{}', role: null}
+  name: column_panel_errors
+  layout_properties: {grid_position: 'VUYRUG,CDQYHH', full_width_row: false}
   components:
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
       visible: false, text: 'Error(s):', font_size: 14, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: ''}
     name: valerror_title
     layout_properties: {grid_position: 'ITTCFU,GJAXRV'}
+    data_bindings: []
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
-      visible: false, text: '- Field "Sell Date" cannot be empty', font_size: 12,
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Field "Sell Date" cannot be empty', font_size: null,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_1
-    layout_properties: {grid_position: 'NLIMSF,HJEEMW'}
+    layout_properties: {grid_position: 'NLIMSF,HJEEMW', full_width_row: false}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
-      visible: false, text: '- Field "Buy Date" cannot be empty', font_size: 12, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Field "Buy Date" cannot be empty', font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_2
     layout_properties: {grid_position: 'XGCNXC,QFEXYI'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
-      visible: false, text: '- Field "Symbol" cannot be empty', font_size: 12, font: '',
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Field "Symbol" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_3
     layout_properties: {grid_position: 'AGMSMU,RXYAGU'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
-      visible: false, text: '- Field "Qty" cannot be empty', font_size: 12, font: '',
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Field "Qty" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_4
     layout_properties: {grid_position: 'GWFMWW,TKLQAU'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
-      visible: false, text: '- Field "Sales Amt" cannot be empty', font_size: 12,
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Field "Sales Amt" cannot be empty', font_size: null,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_5
     layout_properties: {grid_position: 'FDPUKS,WRTHMB'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
-      visible: false, text: '- Field "Cost Amt" cannot be empty', font_size: 12, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Field "Cost Amt" cannot be empty', font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_6
     layout_properties: {grid_position: 'ERAEDG,TNAXCO'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
-      visible: false, text: '- Field "Fee" cannot be empty', font_size: 12, font: '',
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Field "Fee" cannot be empty', font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_7
     layout_properties: {grid_position: 'CYUHLI,QRXXFT'}
 - type: DataGrid
   properties:
-    role: null
+    role: investment-input-table
     columns:
-    - {id: JNEVXO, title: '', data_key: iid, width: '20'}
-    - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '120'}
-    - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '120'}
-    - {id: RMITXR, title: Symbol, data_key: symbol, width: '70'}
-    - {id: DMKCOL, title: Qty, data_key: qty, width: '70'}
-    - {id: JRLRWP, title: Sales Amt, data_key: sales, width: '100'}
-    - {id: WXPMEY, title: Cost Amt, data_key: cost, width: '100'}
-    - {id: LMHMKP, title: Fee, data_key: fee, width: '70'}
-    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: false, width: '70'}
-    - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: false, width: '70'}
+    - {id: DNGCRO, title: Sell Date, data_key: sell_date, width: '140', expand: false}
+    - {id: MOWHRG, title: Buy Date, data_key: buy_date, width: '140', expand: false}
+    - {id: RMITXR, title: Symbol, data_key: symbol, width: '100', expand: false}
+    - {id: DMKCOL, title: Qty, data_key: qty, width: '90', expand: false}
+    - {id: JRLRWP, title: Sales Amt, data_key: sales, width: '120', expand: false}
+    - {id: WXPMEY, title: Cost Amt, data_key: cost, width: 120, expand: false}
+    - {id: LMHMKP, title: Fee, data_key: fee, width: '90', expand: false}
+    - {id: DGKRSZ, title: Sell Price, data_key: sell_price, expand: false, width: '90'}
+    - {id: IFVNQY, title: Buy Price, data_key: buy_price, expand: false, width: '90'}
     - {id: NMAPTI, title: P&L, data_key: pnl, expand: false, width: '100'}
-    - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '30'}
-    - {id: TOZXSD, title: '', data_key: obsolete_key_2, width: '30'}
-    auto_header: true
+    - {id: JNEVXO, title: '', data_key: iid, width: '30', expand: true}
+    auto_header: false
     tooltip: ''
     border: ''
     foreground: ''
@@ -185,15 +178,73 @@ components:
     spacing_below: small
     background: ''
   name: data_grid_1
-  layout_properties: {grid_position: 'NWFNJJ,IZRJKI'}
+  layout_properties: {grid_position: 'NWFNJJ,IZRJKI', full_width_row: false}
   components:
-  - type: DataRowPanel
-    properties: {}
-    name: data_row_panel_1
+  - name: data_row_panel_headers
+    properties: {auto_display_data: false, role: table-manual-header}
+    type: DataRowPanel
     layout_properties: {}
     components:
+    - name: label_4
+      properties: {align: right, text: Sell Date, bold: true}
+      type: Label
+      layout_properties: {column: DNGCRO}
+    - name: label_5
+      properties: {align: right, text: Buy Date, bold: true}
+      type: Label
+      layout_properties: {column: MOWHRG}
+    - name: label_6
+      properties: {align: right, text: Symbol, bold: true}
+      type: Label
+      layout_properties: {column: RMITXR}
+    - name: label_7
+      properties: {align: right, text: Qty, bold: true}
+      type: Label
+      layout_properties: {column: DMKCOL}
+    - name: label_8
+      properties: {align: right, text: Sales Amt, bold: true}
+      type: Label
+      layout_properties: {column: JRLRWP}
+    - name: label_9
+      properties: {align: right, text: Cost Amt, bold: true}
+      type: Label
+      layout_properties: {column: WXPMEY}
+    - name: label_10
+      properties: {align: right, text: Fee, bold: true}
+      type: Label
+      layout_properties: {column: LMHMKP}
+    - name: label_11
+      properties: {align: right, text: Sell Price, bold: true}
+      type: Label
+      layout_properties: {column: DGKRSZ}
+    - name: label_12
+      properties: {align: right, text: Buy Price, bold: true}
+      type: Label
+      layout_properties: {column: IFVNQY}
+    - name: label_13
+      properties: {align: right, text: P&L, bold: true}
+      type: Label
+      layout_properties: {column: NMAPTI}
+  - name: data_row_panel_input
+    properties: {auto_display_data: false}
+    type: DataRowPanel
+    components:
+    - type: DatePicker
+      properties: {role: null, align: right, max_date: '', pick_time: false, tooltip: '',
+        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
+        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
+      name: input_selldate
+      layout_properties: {column: DNGCRO}
+    - type: DatePicker
+      properties: {role: null, align: right, max_date: '', pick_time: false, tooltip: '',
+        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
+        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
+        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
+      name: input_buydate
+      layout_properties: {column: MOWHRG}
     - type: TextBox
-      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
         border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
         font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
         background: '', bold: false, underline: false}
@@ -221,20 +272,13 @@ components:
         background: '', bold: false, underline: false}
       name: input_cost
       layout_properties: {column: WXPMEY}
-    - type: DatePicker
-      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
-        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
-        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: input_selldate
-      layout_properties: {column: DNGCRO}
-    - type: DatePicker
-      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '',
-        placeholder: '', border: '', enabled: true, foreground: '', visible: true,
-        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
-        date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: input_buydate
-      layout_properties: {column: MOWHRG}
+    - type: TextBox
+      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
+        border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: 12,
+        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
+        background: '', bold: false, underline: false}
+      name: input_fee
+      layout_properties: {column: LMHMKP}
     - type: Label
       properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
         visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
@@ -250,36 +294,36 @@ components:
         icon: ''}
       name: input_buy_price
       layout_properties: {column: IFVNQY}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: 'fa:plus'}
-      name: button_plus
-      layout_properties: {column: YAYOIZ}
-      event_bindings: {click: button_plus_click}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-        foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: 'fa:eraser'}
-      name: button_erase
-      layout_properties: {column: TOZXSD}
-      event_bindings: {click: button_erase_click}
-    - type: TextBox
-      properties: {role: null, align: right, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: true, foreground: '', visible: true, text: '0', font_size: 12,
-        font: '', spacing_above: small, type: number, spacing_below: small, italic: false,
-        background: '', bold: false, underline: false}
-      name: input_fee
-      layout_properties: {column: LMHMKP}
     - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+      properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
         visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
         spacing_below: small, italic: false, background: '', bold: false, underline: false,
         icon: ''}
       name: input_pnl
       layout_properties: {column: NMAPTI}
+    - name: flow_panel_3
+      properties: {}
+      type: FlowPanel
+      layout_properties: {column: JNEVXO}
+      components:
+      - type: Button
+        properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+          foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
+          icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+          underline: false, icon: 'fa:plus'}
+        name: button_plus
+        event_bindings: {click: button_plus_click}
+      - type: Button
+        properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+          foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small,
+          icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+          underline: false, icon: 'fa:eraser'}
+        name: button_erase
+        event_bindings: {click: button_erase_click}
+      - name: input_iid
+        properties: {visible: false, align: right, font_size: 12}
+        type: Label
+    layout_properties: {}
   - type: RepeatingPanel
     properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
       visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Investment.StockTradingTxnDetailForm.StockTradingTxnDetailRPTemplate,
@@ -288,6 +332,7 @@ components:
     layout_properties: {}
     data_bindings: []
   event_bindings: {}
+  data_bindings: []
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
     foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
@@ -297,7 +342,7 @@ components:
   - type: Button
     properties: {role: null, align: center, tooltip: 'Once all transactions in a template
         are submitted to the system, this template will be removed from input view.',
-      border: '', enabled: true, foreground: 'theme:Black', visible: true, text: Submit,
+      border: '', enabled: true, foreground: 'theme:Black', visible: true, text: Archive,
       font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
       italic: false, background: 'theme:Primary 500', bold: false, underline: false,
       icon: ''}
@@ -306,16 +351,16 @@ components:
     event_bindings: {click: button_submit_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:Black', visible: true, text: Save Template, font_size: 12,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      foreground: 'theme:Black', visible: true, text: Save, font_size: 12, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
     name: button_save_templ
     layout_properties: {}
     event_bindings: {click: button_save_templ_click}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Delete Template, font_size: 12,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      foreground: 'theme:White', visible: true, text: Delete, font_size: 12, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: 'theme:Gray 800', bold: false, underline: false, icon: ''}
     name: button_delete_templ
     layout_properties: {}

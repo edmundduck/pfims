@@ -7,18 +7,14 @@ container:
 components:
 - type: FlowPanel
   properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
-    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: lightgreen}
-  layout_properties: {grid_position: 'EGWQSM,IAUJDY'}
+    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
   name: flow_panel_1
   components:
   - type: Label
-    properties: {}
-    layout_properties: {}
-    name: spacer4
-  - type: Label
-    properties: {role: text, align: left, tooltip: '', border: '', foreground: '',
+    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: Expense List Report, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     layout_properties: {}
     name: report_name
@@ -28,11 +24,13 @@ components:
     columns:
     - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:4903'}
     - {id: DNGCRO, title: Date, data_key: DTE, width: '80', $$hashKey: 'object:4904'}
-    - {id: DMKCOL, title: Account, data_key: ACC, width: '150', $$hashKey: 'object:4906'}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: '80', $$hashKey: 'object:4907'}
-    - {id: NMAPTI, title: Remarks, data_key: RMK, expand: true, width: '150', $$hashKey: 'object:4910'}
+    - {id: DMKCOL, title: Account, data_key: ACC, width: 221, $$hashKey: 'object:4906',
+      expand: false}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: 109, $$hashKey: 'object:4907',
+      expand: false}
+    - {id: NMAPTI, title: Remarks, data_key: RMK, expand: false, width: 211, $$hashKey: 'object:4910'}
     - {id: UNZWYW, title: Statement Detail, data_key: STD, $$hashKey: 'object:4958',
-      width: '150', expand: true}
+      width: 209, expand: false}
     - {id: RMITXR, title: Labels, data_key: LBL, width: '100', $$hashKey: 'object:4905',
       expand: true}
     - {id: WXPMEY, title: Debt, data_key: debt, width: '70', $$hashKey: 'object:4908'}
@@ -51,6 +49,7 @@ components:
   layout_properties:
     col_widths: {}
     grid_position: ZLVMXC,LTILAR
+    full_width_row: false
   name: data_grid
   components:
   - type: RepeatingPanel

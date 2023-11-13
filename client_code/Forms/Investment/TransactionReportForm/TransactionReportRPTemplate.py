@@ -1,7 +1,6 @@
 from ._anvil_designer import TransactionReportRPTemplateTemplate
 from anvil import *
-import anvil.server
-from ....Utils.Constants import ColorSchemes
+from ....Utils.Constants import Roles
 
 # About amount formatting in design page's data binding field
 # Refer to https://anvil.works/forum/t/formatting-float-fields-in-a-datagrid/6796
@@ -12,7 +11,7 @@ class TransactionReportRPTemplate(TransactionReportRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.foreground = ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else ColorSchemes.AMT_POS
+        self.row_label_pnl.role = Roles.AMT_NEGATIVE if self.item['pnl'] < 0 else Roles.AMT_POSITIVE
 
     def row_link_symbol_click(self, **event_args):
         """This method is called when the link is clicked"""
