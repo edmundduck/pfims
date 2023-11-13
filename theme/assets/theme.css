@@ -298,7 +298,7 @@ input[disabled] ~ span {
 /* Roles */
 
 .anvil-role-card {
-  background: %color:Surface Variant%;
+  background: %color:Primary Container%;
   border-radius: 5px;
   box-shadow: 0px 0px 10px %color:Light Overlay 2%;
   padding: 8px 8px;
