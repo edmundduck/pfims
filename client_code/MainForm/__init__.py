@@ -12,7 +12,7 @@ class MainForm(MainFormTemplate):
         # Any code you write here will run when the form opens.
         from .. import Global
         self.app_welcome_msg.text = "{username}".format(username=Global.email)
-        self.label_version.text = MainFormController.visible_test_env_label()
+        self.label_version.visible = MainFormController.visible_test_env_label()
         self.button_poc.visible = MainFormController.visible_poc_link()
 
     def reset_link_status(self, **event_args):
