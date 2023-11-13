@@ -90,7 +90,7 @@ components:
     layout_properties: {width: 214}
     event_bindings: {change: dropdown_templ_change}
 - type: ColumnPanel
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{}', role: null}
   name: column_panel_errors
   layout_properties: {grid_position: 'VUYRUG,CDQYHH', full_width_row: false}
   components:
@@ -108,7 +108,7 @@ components:
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: false, underline: false, icon: ''}
     name: valerror_1
-    layout_properties: {grid_position: 'NLIMSF,HJEEMW'}
+    layout_properties: {grid_position: 'NLIMSF,HJEEMW', full_width_row: false}
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
       visible: false, text: '- Field "Buy Date" cannot be empty', font_size: null,

@@ -351,6 +351,7 @@ input[disabled] ~ span {
 
 .anvil-role-label-error {
   color: %color:Error%;
+  width: 100%;
 }
 
 .anvil-role-tag {
