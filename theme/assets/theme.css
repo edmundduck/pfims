@@ -467,18 +467,17 @@ input[disabled] ~ span {
 }
 
 /* Spinner */
-
 #loadingSpinner {
     position: fixed;
     top: calc(33% - 70px/2);
     left: calc(50% - 70px/2);
-    width: 70px;
-    height: 70px;
-    background-color: %color:Light Overlay 2%;
+    width: 100px;
+    height: 100px;
+    background-color: %color:Light Overlay 2 1%;
     background-repeat: no-repeat;
     background-position: center;
-    border-radius: 35px;
-    box-shadow: 0px 0px 100px 100px %color:Light Overlay 2%;
+    border-radius: 50px;
+    box-shadow: 0px 0px 100px 100px %colorLight Overlay 2 1%;
     pointer-events: none;
     z-index: 9999;
 }
