@@ -704,9 +704,13 @@ input[disabled] ~ span {
 @media(max-width:698px) {
 
   .left-nav > .logo {
-      img: None;
+    display: None;
   }
-  
+
+  .left-nav .anvil-component.left_edge-icon, .left-nav .anvil-component.right_edge-icon, .left-nav .anvil-component.left-icon, .left-nav .anvil-component.right-icon {
+    size: 20px;
+  }
+
   html:not(.designer) .sidebar-toggle {
     display: block;
     padding: 8px 0px 10px 0px;
