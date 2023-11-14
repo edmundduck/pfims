@@ -483,19 +483,19 @@ input[disabled] ~ span {
 } */
 
 #loadingSpinner {
-    background-image: none;
+    display: none;
 }
 
 div.spinner-customized {
-    background-image: url("_/theme/logo-black-transparent.png") !important;
-    background-size: 400px;
+/*     background-image: url("_/theme/logo-black-transparent.png") !important; */
+    background-size: 300px;
     top: calc(33% - 70px/2);
     left: calc(40% - 70px/2);
-    width: 400px;
-    height: 400px;
+    width: 300px;
+    height: 300px;
     position: absolute;
     /* transform: translate(-50%, -50%); */
-    overflow: hidden;
+/*     overflow: hidden; */
 }
 
 div.spinner-customized:hover:before {
@@ -508,7 +508,7 @@ div.spinner-customized:before {
     left: -200px;
     width: 20%;
     height: 100%;
-    background: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.4);
     z-index: 1;
     transform: skewX(-45deg);
     transition: 1s ease-in-out;
