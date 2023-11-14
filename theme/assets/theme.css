@@ -648,10 +648,9 @@ input[disabled] ~ span {
 .left-nav-container {
   margin: 10px;
 }
-/* Mobile */
 
+/* Mobile */
 @media(max-width:998px) {
-  
   html:not(.designer) .sidebar-toggle {
     display: block;
     padding: 8px 0px 10px 0px;
@@ -702,13 +701,29 @@ input[disabled] ~ span {
 }
 
 @media(max-width:698px) {
-
   .left-nav > .logo {
     display: None;
   }
 
-  .left-nav .anvil-component.left_edge-icon, .left-nav .anvil-component.right_edge-icon, .left-nav .anvil-component.left-icon, .left-nav .anvil-component.right-icon {
-    size: 20px;
+  .left-nav .anvil-component .anvil-component-icon {
+    font-size: 30px;
+  }
+
+  .left-nav .anvil-component .label-text, .left-nav .anvil-component .button-text {
+    display: None;
+  }
+
+  .left-nav .flow-panel-item {
+    width: 100%;
+  }
+
+  .left-nav .btn, .left-nav .label {
+    padding-left: 0;
+  }
+
+  .left-nav .anvil-panel-col {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
   html:not(.designer) .sidebar-toggle {
@@ -730,16 +745,15 @@ input[disabled] ~ span {
   html:not(.designer) .nav-holder {
     display: block;
   }
+
   html:not(.designer) .nav-holder .left-nav {
     position: fixed;
     top: 0;
     bottom: 0;
-    width: calc(100% - 56px);
-    max-width: 240px;
+    max-width: fit-content;
     z-index: 3;
     border-right: none;
   /* 16dp */ box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
-
     display: none;
     transition: right 0.5s;
   }
@@ -757,6 +771,22 @@ input[disabled] ~ span {
     right: 0;
     z-index: 2;
     background-color: rgba(0,0,0,0.2);
+  }
+
+  #loadingSpinner {
+    position: absolute;
+    top: calc(33% - 70px/2);
+    left: calc(50% - 200px/2);
+    width: 200px;
+    height: 200px;
+    background-image: url("_/theme/logo-black-transparent.png") !important; 
+/*     background-color: %color:Light Overlay 2 1%; */
+    background-repeat: no-repeat;
+    background-position: center;
+/*     box-shadow: 0px 0px 10px 10px %colorLight Overlay 2 1%; */
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 9999;
   }
 }
 
@@ -881,6 +911,6 @@ input[disabled] ~ span {
   font-size: 18px;
 }
 
-.visible-false {
+html:not(.designer) .visible-false {
   width: 1px;
 }
