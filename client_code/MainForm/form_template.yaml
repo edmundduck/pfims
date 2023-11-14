@@ -25,7 +25,7 @@ components:
     layout_properties: {grid_position: 'UNVBHV,QPRDRT'}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: 'theme:Error',
-      visible: true, text: '', font_size: 20, font: '', spacing_above: small, icon_align: left,
+      visible: true, text: DEV, font_size: 20, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: true, underline: false,
       icon: 'fa:wrench'}
     name: label_version
