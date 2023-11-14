@@ -33,6 +33,7 @@ components:
       icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
       underline: false, icon: ''}
     name: label_3
+    layout_properties: {}
   - type: DropDown
     properties:
       role: null
@@ -96,7 +97,7 @@ components:
   components:
   - type: Label
     properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: 'Error(s):', font_size: 14, font: '', spacing_above: small,
+      visible: false, text: 'Error(s):', font_size: null, font: '', spacing_above: small,
       icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
       underline: false, icon: ''}
     name: valerror_title

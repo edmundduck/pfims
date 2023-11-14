@@ -467,20 +467,52 @@ input[disabled] ~ span {
 }
 
 /* Spinner */
+@keyframes slide {
+	0% {
+        transform:translateX(-100%) rotateY(0deg);
+    }
+	100% {
+        transform:translateX(100%) rotateY(20deg);
+    }
+}
 
 #loadingSpinner {
-    position: fixed;
+    position: absolute;
     top: calc(33% - 70px/2);
-    left: calc(50% - 70px/2);
-    width: 70px;
-    height: 70px;
-    background-color: %color:Light Overlay 2%;
+    left: calc(40% - 70px/2);
+    width: 300px;
+    height: 300px;
+    background-image: url("_/theme/logo-black-transparent.png") !important; 
+/*     background-color: %color:Light Overlay 2 1%; */
     background-repeat: no-repeat;
     background-position: center;
-    border-radius: 35px;
-    box-shadow: 0px 0px 100px 100px %color:Light Overlay 2%;
+/*     box-shadow: 0px 0px 10px 10px %colorLight Overlay 2 1%; */
+    overflow: hidden;
     pointer-events: none;
     z-index: 9999;
+}
+
+/* Shine */
+.spinner_customized:after {
+	content: '';
+    top: 0;
+	transform: translateX(100%);
+	width: 100%;
+	height: 300px;
+	position: absolute;
+	z-index: 1;
+	animation: slide 1.5s infinite;
+	 
+    /* 
+    CSS Gradient - complete browser support from http://www.colorzilla.com/gradient-editor/ 
+    */
+    background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(128,186,232,0) 99%, rgba(125,185,232,0) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(50%,rgba(255,255,255,0.8)), color-stop(99%,rgba(128,186,232,0)), color-stop(100%,rgba(125,185,232,0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,0.8) 50%,rgba(128,186,232,0) 99%,rgba(125,185,232,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,0.8) 50%,rgba(128,186,232,0) 99%,rgba(125,185,232,0) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,0.8) 50%,rgba(128,186,232,0) 99%,rgba(125,185,232,0) 100%); /* IE10+ */
+	background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,0.8) 50%,rgba(128,186,232,0) 99%,rgba(125,185,232,0) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#007db9e8',GradientType=1 ); /* IE6-9 */
 }
 
 /* Put things on a 4px grid */
@@ -616,10 +648,9 @@ input[disabled] ~ span {
 .left-nav-container {
   margin: 10px;
 }
-/* Mobile */
 
+/* Mobile */
 @media(max-width:998px) {
-  
   html:not(.designer) .sidebar-toggle {
     display: block;
     padding: 8px 0px 10px 0px;
@@ -644,7 +675,7 @@ input[disabled] ~ span {
     top: 0;
     bottom: 0;
     width: calc(100% - 56px);
-    max-width: 360px;
+    max-width: 240px;
     z-index: 3;
     border-right: none;
   /* 16dp */ box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
@@ -669,6 +700,96 @@ input[disabled] ~ span {
   }
 }
 
+@media(max-width:698px) {
+  .left-nav > .logo {
+    display: None;
+  }
+
+  .left-nav .anvil-component .anvil-component-icon {
+    font-size: 30px;
+  }
+
+  .left-nav .anvil-component .label-text, .left-nav .anvil-component .button-text {
+    display: None;
+  }
+
+  .left-nav .flow-panel-item {
+    width: 100%;
+  }
+
+  .left-nav .btn, .left-nav .label {
+    padding-left: 0;
+  }
+
+  .left-nav .anvil-panel-col {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  html:not(.designer) .sidebar-toggle {
+    display: block;
+    padding: 8px 0px 10px 0px;
+    text-align: center;
+    margin: 10px;
+    width: 35px;
+    height: 35px;
+    color: %color:On Background%;
+    background: %color:Primary%;
+    border-radius: 50%;
+  }
+  
+  html:not(.designer) .sidebar-toggle:focus {
+    background: linear-gradient(0deg, %color:Dark Overlay 1%, %color:Dark Overlay 1%), %color:Primary%;
+  }
+  
+  html:not(.designer) .nav-holder {
+    display: block;
+  }
+
+  html:not(.designer) .nav-holder .left-nav {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    max-width: fit-content;
+    z-index: 3;
+    border-right: none;
+  /* 16dp */ box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+    display: none;
+    transition: right 0.5s;
+  }
+  
+  html:not(.designer) .nav-holder .left-nav.shown {
+    display: block;
+  }
+  
+  .nav-shield.shown {
+    display: block;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background-color: rgba(0,0,0,0.2);
+  }
+
+  #loadingSpinner {
+    position: absolute;
+    top: calc(33% - 70px/2);
+    left: calc(50% - 200px/2);
+    width: 200px;
+    height: 200px;
+    background-image: url("_/theme/logo-black-transparent.png") !important; 
+/*     background-color: %color:Light Overlay 2 1%; */
+    background-repeat: no-repeat;
+    background-position: center;
+/*     box-shadow: 0px 0px 10px 10px %colorLight Overlay 2 1%; */
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 9999;
+  }
+}
+
 .nav-holder .left-nav, .left-nav-placeholder {
   display: flex;
   flex-direction: column;
@@ -688,6 +809,7 @@ input[disabled] ~ span {
   width: 58px;
   flex-grow: 1;
 }
+
 .left-nav-placeholder .prompt {
   display: inline-block;
   white-space: nowrap;
@@ -706,7 +828,7 @@ input[disabled] ~ span {
   padding: 24px 0;
 }
 .left-nav > .column-panel > .anvil-panel-section > .anvil-panel-section-container:not(.full-width-row) {
-  margin: 0 16px;
+  margin: 0 10px;
   width: initial;
   max-width: initial;
   overflow-x: visible;
@@ -789,6 +911,6 @@ input[disabled] ~ span {
   font-size: 18px;
 }
 
-.visible-false {
+html:not(.designer) .visible-false {
   width: 1px;
 }
