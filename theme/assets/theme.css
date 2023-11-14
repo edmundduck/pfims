@@ -481,14 +481,16 @@ input[disabled] ~ span {
     pointer-events: none;
     z-index: 9999;
 } */
-/* @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } } */
+
 #loadingSpinner {
+    background-image: none;
+}
+
+div.spinner-customized {
     background-image: url("_/theme/logo-black-transparent.png") !important;
     background-size: 400px;
     top: calc(33% - 70px/2);
-    left: calc(50% - 70px/2);
+    left: calc(40% - 70px/2);
     width: 400px;
     height: 400px;
     position: absolute;
@@ -496,11 +498,11 @@ input[disabled] ~ span {
     overflow: hidden;
 }
 
-#loadingSpinner:hover:before {
+div.spinner-customized:hover:before {
     left: 500px;
 }
 
-#loadingSpinner:before {
+div.spinner-customized:before {
     position: absolute;
     content: "";
     left: -200px;
@@ -510,7 +512,6 @@ input[disabled] ~ span {
     z-index: 1;
     transform: skewX(-45deg);
     transition: 1s ease-in-out;
-    /* animation: 2s linear infinite reverse both running slidein; */
 }
 
 /* Put things on a 4px grid */
