@@ -132,6 +132,22 @@ components:
       grid_position: ANPCKM,UDPPDL
       full_width_row: true
     components:
+    - name: spacer_5
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 32}
+    - name: label_1
+      properties: {text: Report Type, font_size: 12}
+      type: Label
+      layout_properties: {}
+    - name: drop_down_1
+      properties: {include_placeholder: true}
+      type: DropDown
+      layout_properties: {width: 193.6}
+    - name: spacer_4
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 77}
     - type: Button
       properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true,
         foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small,
@@ -158,9 +174,6 @@ components:
       properties: {height: 32}
       type: Spacer
       layout_properties: {width: 10}
-    - name: spacer_2_copy_1
-      properties: {height: 32}
-      type: Spacer
 - type: ColumnPanel
   properties: {}
   name: colpanel_list
