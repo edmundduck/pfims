@@ -1,7 +1,7 @@
 from ._anvil_designer import PnLReportRPTemplateTemplate
 from anvil import *
 import anvil.server
-from ....Utils.Constants import ColorSchemes, Icons, PNLDrillMode
+from ....Utils.Constants import Icons, PNLDrillMode, Roles
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -15,7 +15,7 @@ class PnLReportRPTemplate(PnLReportRPTemplateTemplate):
         self.init_components(**properties)
     
         # Any code you write here will run when the form opens.
-        self.foreground = ColorSchemes.AMT_NEG if self.item['pnl'] < 0 else ColorSchemes.AMT_POS
+        self.row_label_pnl.role = Roles.AMT_NEGATIVE if self.item['pnl'] < 0 else Roles.AMT_POSITIVE
       
         if self.item['mode'] == PNLDrillMode.YEAR:
             self.button_exp.visible = True

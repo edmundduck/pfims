@@ -11,95 +11,71 @@ class MainForm(MainFormTemplate):
         
         # Any code you write here will run when the form opens.
         from .. import Global
-        for c in self.colpanel_link_input.get_components():
-            if isinstance(c, (Link, Spacer)):
-                c.visible = False
-        for c in self.colpanel_link_reports.get_components():
-            if isinstance(c, (Link, Spacer)):
-                c.visible = False
-        self.app_welcome_msg.text = "Welcome {username}".format(username=Global.email)
-        self.label_version.text = MainFormController.visible_test_env_label()
-        self.poc_link.visible = MainFormController.visible_poc_link()
+        self.app_welcome_msg.text = "{username}".format(username=Global.email)
+        self.label_version.visible = MainFormController.visible_test_env_label()
+        self.button_poc.visible = MainFormController.visible_poc_link()
 
     def reset_link_status(self, **event_args):
-        self.colpanel_link_dashb.role, \
-        self.colpanel_link_input.role, \
-        self.colpanel_link_reports.role, \
-        self.colpanel_link_settings.role, \
-        self.colpanel_lv2link_input_stock.role, \
-        self.colpanel_lv2link_input_exp.role, \
-        self.colpanel_lv2link_tranx_list.role, \
-        self.colpanel_lv2link_pnl_report.role, \
-        self.colpanel_lv2link_exp_list.role, \
-        self.poc_link.role \
-        = [None]*10
+        self.button_inv_input.role, \
+        self.button_inv_list.role, \
+        self.button_inv_pnl.role, \
+        self.button_exp_input.role, \
+        self.button_exp_list.role, \
+        self.button_poc.role \
+        = [None]*6
 
     def colpanel_link_dashb_click(self, **event_args):
         """This method is called when the link is clicked"""
         self.reset_link_status()
-        self.colpanel_link_dashb.role = MainFormController.switch_role(self.colpanel_link_dashb.role)
+        # self.colpanel_link_dashb.role = MainFormController.switch_role(self.colpanel_link_dashb.role)
         Routing.open_dashboard_form(self)
-
-    def colpanel_link_input_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        for c in self.colpanel_link_input.get_components():
-            if isinstance(c, (Link, Spacer)):
-                c.visible = not c.visible
-        self.colpanel_link_input.icon = MainFormController.change_parent_section_icon(self.colpanel_link_input.icon)
-
-    def colpanel_link_reports_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        for c in self.colpanel_link_reports.get_components():
-            if isinstance(c, (Link, Spacer)):
-                c.visible = not c.visible
-        self.colpanel_link_reports.icon = MainFormController.change_parent_section_icon(self.colpanel_link_reports.icon)
 
     def colpanel_link_settings_click(self, **event_args):
         """This method is called when the link is clicked"""
         self.reset_link_status()
-        self.colpanel_link_settings.role = MainFormController.switch_role(self.colpanel_link_settings.role)
+        # self.colpanel_link_settings.role = MainFormController.switch_role(self.colpanel_link_settings.role)
         Routing.open_setting_form(self)
 
-    def colpanel_lv2link_tranx_list_click(self, **event_args):
-        """This method is called when the link is clicked"""
+    def button_inv_input_click(self, **event_args):
+        """This method is called when the button is clicked"""
         self.reset_link_status()
-        self.colpanel_lv2link_tranx_list.role = MainFormController.switch_role(self.colpanel_lv2link_tranx_list.role)
-        Routing.open_tranx_list_form(self)
-
-    def colpanel_lv2link_pnl_report_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        self.reset_link_status()
-        self.colpanel_lv2link_pnl_report.role = MainFormController.switch_role(self.colpanel_lv2link_pnl_report.role)
-        Routing.open_pnl_report_form(self)
-
-    def colpanel_lv2link_exp_list_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        self.reset_link_status()
-        self.colpanel_lv2link_exp_list.role = MainFormController.switch_role(self.colpanel_lv2link_exp_list.role)
-        Routing.open_exp_list_form(self)
-
-    def colpanel_lv2link_exp_analysis_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        self.reset_link_status()
-        self.colpanel_lv2link_exp_analysis.role = MainFormController.switch_role(self.colpanel_lv2link_exp_analysis.role)
-        Routing.open_exp_analysis_form(self)
-
-    def colpanel_lv2link_input_stock_click(self, **event_args):
-        """This method is called when the link is clicked"""
-        self.reset_link_status()
-        self.colpanel_lv2link_input_stock.role = MainFormController.switch_role(self.colpanel_lv2link_input_stock.role)
+        # self.button_inv_input.role = MainFormController.switch_role(self.button_inv_input.role)
         Routing.open_stock_txn_input_form(self)
 
-    def colpanel_lv2link_input_exp_click(self, **event_args):
-        """This method is called when the link is clicked"""
+    def button_inv_list_click(self, **event_args):
+        """This method is called when the button is clicked"""
         self.reset_link_status()
-        self.colpanel_lv2link_input_exp.role = MainFormController.switch_role(self.colpanel_lv2link_input_exp.role)
+        # self.button_inv_list.role = MainFormController.switch_role(self.button_inv_list.role)
+        Routing.open_tranx_list_form(self)
+
+    def button_inv_pnl_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.reset_link_status()
+        # self.button_inv_pnl.role = MainFormController.switch_role(self.button_inv_pnl.role)
+        Routing.open_pnl_report_form(self)
+
+    def button_exp_input_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.reset_link_status()
+        # self.button_exp_input.role = MainFormController.switch_role(self.button_exp_input.role)
         Routing.open_exp_input_form(self)
-    
-    def poc_link_click(self, **event_args):
-        """This method is called when the link is clicked"""
+
+    def button_exp_list_click(self, **event_args):
+        """This method is called when the button is clicked"""
         self.reset_link_status()
-        self.poc_link.role = MainFormController.switch_role(self.poc_link.role)
+        # self.button_exp_list.role = MainFormController.switch_role(self.button_exp_list.role)
+        Routing.open_exp_list_form(self)
+
+    def button_exp_analysis_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.reset_link_status()
+        # self.button_exp_analysis.role = MainFormController.switch_role(self.button_exp_analysis.role)
+        Routing.open_exp_analysis_form(self)
+
+    def button_poc_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.reset_link_status()
+        # self.button_poc.role = MainFormController.switch_role(self.button_poc.role)
         Routing.open_poc_main_form(self)
 
     def app_logout_click(self, **event_args):

@@ -1,11 +1,11 @@
 container:
   type: ColumnPanel
-  properties: {role: null, tooltip: '', border: solid, foreground: deepblue, visible: true,
+  properties: {role: null, tooltip: '', border: groove, foreground: '', visible: true,
     wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
-    spacing_below: small, background: lightblue}
+    spacing_below: small, background: ''}
 components:
 - type: FlowPanel
-  properties: {}
+  properties: {background: 'theme:Surface Variant'}
   name: flow_panel_1
   layout_properties: {grid_position: 'ZDRSSJ,HYEEHZ'}
   components:
@@ -90,23 +90,23 @@ components:
         grid_position: KOQSLE,THZTKD
       data_bindings: []
   - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Save, font_size: null, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
+    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: Save, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
     name: row_button_save
     layout_properties: {}
     event_bindings: {click: row_button_save_click}
   - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Delete, font_size: null, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Gray 800', bold: false, underline: false, icon: ''}
+    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true,
+      foreground: 'theme:Tertiary Container', visible: true, text: Delete, font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false, icon: ''}
     name: row_button_delete
     layout_properties: {}
     event_bindings: {click: row_button_delete_click}
 - type: FlowPanel
-  properties: {}
+  properties: {background: 'theme:Surface Variant'}
   name: flow_panel_2
   layout_properties: {grid_position: 'TDATED,WTSLHX'}
   components:

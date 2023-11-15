@@ -38,7 +38,6 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
     def _validate(self, **event_args):
         """This method is called when the button is clicked"""
         from .....Entities.ExpenseTransaction import ExpenseTransaction
-        from .....Utils.Constants import ColorSchemes
         from .....Utils.Validation import Validator
         v = Validator()
 
@@ -46,7 +45,7 @@ class PDFColumnsMappingRPTemplate(PDFColumnsMappingRPTemplateTemplate):
         v.display_when_invalid(self.parent.parent.parent.parent.valerror_title)
         v.require_selected_dependent_on_checkbox(self.dropdown_col_map_to, self.cb_required, self.parent.parent.parent.parent.valerror_1, True)
         v.require_selected_dependent_on_dropdown(self.dropdown_sign, self.dropdown_col_map_to, ExpenseFilePDFImportController.get_expense_table_definition_dropdown_selected_item(ExpenseTransaction.field_amount()), self.parent.parent.parent.parent.valerror_2, True)
-        v.highlight_when_invalid(self.dropdown_col_map_to, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
-        v.highlight_when_invalid(self.dropdown_sign, ColorSchemes.VALID_ERROR, ColorSchemes.VALID_NORMAL)
+        v.highlight_when_invalid(self.dropdown_col_map_to)
+        v.highlight_when_invalid(self.dropdown_sign)
 
         return v.is_valid()

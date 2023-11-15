@@ -2,43 +2,29 @@ container:
   type: ColumnPanel
   properties: {col_widths: '{}'}
 components:
-- type: ColumnPanel
-  properties: {col_widths: '{}'}
-  name: column_panel_1
-  layout_properties: {grid_position: 'PJXYGE,OSWBRM'}
+- name: flow_panel_1
+  properties: {align: right}
+  type: FlowPanel
+  layout_properties: {grid_position: 'HQQIRP,CGSBHC'}
   components:
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
-      icon: ''}
-    name: spacer1
-    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '', font_size: null, font: '', spacing_above: small, icon_align: left,
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
-      icon: ''}
-    name: spacer2
-    layout_properties: {grid_position: 'UNEXRN,NFQIYG'}
   - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Manage Upload Mappings, font_size: 12,
+    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: Manage Upload Mappings, font_size: 12,
       font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Primary 500', bold: false, underline: false, icon: ''}
+      background: '', bold: false, underline: false, icon: ''}
     name: button_nav_upload_mapping
-    layout_properties: {grid_position: 'UNEXRN,TYXYJD'}
+    layout_properties: {}
     event_bindings: {click: button_nav_upload_mapping_click}
   - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Back to Input Expense, font_size: 12,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Primary 500', bold: false, underline: false, icon: 'fa:chevron-circle-left'}
+    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true,
+      foreground: '', visible: true, text: Back to Input Expense, font_size: 12, font: '',
+      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false, icon: 'fa:chevron-circle-left'}
     name: button_nav_input_exp
-    layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
+    layout_properties: {}
     event_bindings: {click: button_nav_input_exp_click}
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
     visible: false, text: 'Error(s):', font_size: 14, font: '', spacing_above: small,
     icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
     underline: false, icon: ''}
@@ -47,7 +33,7 @@ components:
     grid_position: BJXHGI,ABWTJJ
   name: valerror_title
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
     visible: false, text: '- Dropdown "Mapping Target" must be chosen when the column
       header is required in mapping', font_size: 12, font: '', spacing_above: small,
     icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
@@ -57,7 +43,7 @@ components:
     grid_position: ENONMA,FNDZWD
   name: valerror_1
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
     visible: false, text: '- Dropdown "Sign" must be chosen when column mapping is
       "Amount"', font_size: 12, font: '', spacing_above: small, icon_align: left,
     spacing_below: small, italic: false, background: '', bold: false, underline: false,
@@ -67,7 +53,7 @@ components:
     grid_position: AMNQWC,BECJUY
   name: valerror_2
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
     visible: false, text: '- Dropdown "Account" must be chosen when the account is
       required in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left,
     spacing_below: small, italic: false, background: '', bold: false, underline: false,
@@ -77,7 +63,7 @@ components:
     grid_position: JIMKZD,QNUBJR
   name: valerror_3
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: red,
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
     visible: false, text: '- Dropdown "Label" must be chosen when the account is required
       in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left,
     spacing_below: small, italic: false, background: '', bold: false, underline: false,
@@ -286,9 +272,9 @@ components:
     layout_properties: {grid_position: 'EAKVAM,UJELHX'}
   - type: Button
     properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: 'theme:White', visible: true, text: Proceed, font_size: 12, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Primary 500', bold: false, underline: false, icon: ''}
+      foreground: '', visible: true, text: Proceed, font_size: 12, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
     name: button_next
     layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
     event_bindings: {click: button_next_click}
