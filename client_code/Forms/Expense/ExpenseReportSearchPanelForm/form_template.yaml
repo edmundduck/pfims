@@ -158,6 +158,9 @@ components:
       properties: {height: 32}
       type: Spacer
       layout_properties: {width: 10}
+    - name: spacer_2_copy_1
+      properties: {height: 32}
+      type: Spacer
 - type: ColumnPanel
   properties: {}
   name: colpanel_list
