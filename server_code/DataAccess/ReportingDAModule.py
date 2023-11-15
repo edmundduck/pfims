@@ -156,7 +156,7 @@ def select_summed_total_per_labels(start_date, end_date, labels=[]):
             where_clause_list.append("AND j.trandate >= %s ")
         if len(labels) > 0:
             # where_clause2 = "AND j.labels ~ '^{0}' ".format("|".join("(?=.*" + str(i) + ")" for i in labels))
-            where_clause2 = "WHERE {labels} IN ({lbl_id}) ".format(
+            where_clause2 = "AND {labels} IN ({lbl_id}) ".format(
                 labels=ExpenseTransaction.field_labels(),
                 lbl_id=','.join(str(i) for i in labels)
             )
