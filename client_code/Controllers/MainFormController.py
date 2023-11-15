@@ -9,9 +9,9 @@ def visible_test_env_label():
     Make the testing environment label visible or invisible.
 
     Returns:
-        anvil.app.environment.name (string): Anvil testing environment name, None for production.
+        vis (boolean): True for testing environment, False otherwise.
     """
-    return anvil.app.environment.name if anvil.app.environment.name in 'Dev' else None
+    return True if anvil.app.environment.name in 'Dev' else False
 
 def visible_poc_link():
     """
