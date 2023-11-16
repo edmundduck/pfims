@@ -1,6 +1,6 @@
 import anvil.server
 from datetime import date
-from ..Utils.Constants import CacheKey, SearchInterval
+from ..Utils.Constants import CacheKey, ExpenseReportType, SearchInterval
 from ..Utils.Logger import ClientLogger
 
 # This is a module.
@@ -263,8 +263,13 @@ def populate_expense_analysis_data(report_type_dropdown_selected, search_interva
         result_chart2 (?): ?
     """
     interval = search_interval_dropdown_selected
+    result_rp, result_chart1, result_chart2 = [None]*3
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()
-    result_rp, result_balanace, result_chart1, result_chart2 = anvil.server.call('proc_search_expense_analysis', from_date, to_date, labels)
+    if report_type_dropdown_selected:
+        if report_type_dropdown_selected == ExpenseReportType.EXP_PER_LABEL:
+            result_rp, result_chart1, result_chart2 = anvil.server.call('proc_search_expense_analysis', from_date, to_date, labels)
+        elif report_type_dropdown_selected == ExpenseReportType.BAL_ACCT:
+            result_rp, result_chart1, result_chart2 = anvil.server.call('XXX', from_date, to_date, labels)
     return result_rp, result_balanace, result_chart1, result_chart2

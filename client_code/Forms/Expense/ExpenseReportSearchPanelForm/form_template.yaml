@@ -135,8 +135,10 @@ components:
     - name: label_1
       properties: {text: Report Type, font_size: 12}
       type: Label
-    - name: drop_down_1
-      properties: {include_placeholder: true}
+    - name: dropdown_rpt_type
+      properties:
+        include_placeholder: true
+        items: [Choose one below]
       type: DropDown
       layout_properties: {width: 202.6}
   - type: FlowPanel

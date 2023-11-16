@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from .... import Global
 from ....Controllers import ReportSearchPanelController
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.Constants import Icons, ReportFormTag, Roles, SearchInterval
+from ....Utils.Constants import ExpenseReportType, Icons, ReportFormTag, Roles, SearchInterval
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -22,6 +22,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         from ..ExpenseReportForm import ExpenseReportForm
         self.dropdown_interval.items = ReportSearchPanelController.generate_search_interval_dropdown()
         self.dropdown_interval.selected_value = Global.settings.get_search_interval()
+        self.dropdown_rpt_type.items = ExpenseReportType.droppdown
         self.time_datefrom.date = Global.settings.get_search_datefrom()
         self.time_dateto.date = Global.settings.get_search_dateto()
         self.subform = subform
@@ -118,7 +119,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
     def button_exp_analysis_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         label_list = self._getall_selected_labels()
-        self.subform.rpt_panel.items, bar_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
+        self.subform.rpt_panel.items, bar_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_rpt_type.selected_value, self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
         self.build_bar_chart(bar_chart_data)
 
     def build_bar_chart(self, data, **event_args):
