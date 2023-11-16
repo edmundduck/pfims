@@ -245,11 +245,12 @@ def drill_pnl_data(start_date, end_date, symbols, pnl_list, date_value, mode, ac
     result = anvil.server.call('update_pnl_list', start_date, end_date, symbols, pnl_list, date_value, mode, action)
     return result
 
-def populate_expense_analysis_data(search_interval_dropdown_selected, from_date, to_date, labels=[]):
+def populate_expense_analysis_data(report_type_dropdown_selected, search_interval_dropdown_selected, from_date, to_date, labels=[]):
     """
     Populate expense analysis data as repeating panel items and charts.
 
     Parameters:
+        report_type_dropdown_selected (list): The selected value in list from the report type dropdown.
         search_interval_dropdown_selected (list): The selected value in list from the search interval dropdown.
         from_date (date): Date to search from.
         to_date (date): Date to search to.
@@ -257,6 +258,7 @@ def populate_expense_analysis_data(search_interval_dropdown_selected, from_date,
 
     Returns:
         result_rp (?): ?
+        result_balance (?): ?
         result_chart1 (?): ?
         result_chart2 (?): ?
     """
@@ -264,5 +266,5 @@ def populate_expense_analysis_data(search_interval_dropdown_selected, from_date,
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()
-    result_rp, result_chart1, result_chart2 = anvil.server.call('proc_search_expense_analysis', from_date, to_date, labels)
-    return result_rp, result_chart1, result_chart2
+    result_rp, result_balanace, result_chart1, result_chart2 = anvil.server.call('proc_search_expense_analysis', from_date, to_date, labels)
+    return result_rp, result_balanace, result_chart1, result_chart2

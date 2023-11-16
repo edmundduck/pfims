@@ -204,3 +204,54 @@ def select_label_names(label_id_list):
         rows = cur.fetchall()
         cur.close()
         return list(rows)
+
+@logger.log_function
+def select_balance_per_account(start_date, end_date, accounts=[]):
+    """
+    Return current balance of each account based on transaction date criteria.
+
+    Parameters:
+        start_date (date): Start date of the search.
+        end_date (date): End date of the search.
+        accounts (list): List of selected accounts.
+
+    Returns:
+        rows (list of RealDictRow): Account balances in list.
+    """
+    userid = sys.get_current_userid()
+    conn = sys.db_connect()
+    with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        mogstr_list = []
+        where_clause_list = []
+        where_clause2 = ''
+        if end_date:
+            mogstr_list.append(str(end_date))
+            where_clause_list.append("AND j.trandate <= %s ")
+        if start_date:
+            mogstr_list.append(str(start_date))
+            where_clause_list.append("AND j.trandate >= %s ")
+        if len(accounts) > 0:
+            where_clause2 = "AND {accounts} IN ({acct_id}) ".format(
+                accounts=ExpenseTransaction.field_account(),
+                acct_id=','.join(str(i) for i in accounts)
+            )
+        logger.trace("mogstr_list=", mogstr_list)
+        logger.trace("where_clause_list=", where_clause_list)
+        logger.trace("where_clause2=", where_clause2)
+        sql = "SELECT {accounts}, y.name, {amount} FROM (SELECT j.account_id AS {accounts}, SUM(j.amount) AS {amount} FROM {schema}.exp_transactions j, {schema}.expensetab t \
+        WHERE t.userid = {userid} AND t.tab_id = j.tab_id {where_clause1} GROUP BY j.account_id) x, (SELECT id, name FROM {schema}.accounts) y WHERE x.{accounts} = y.id \
+        {where_clause2} ORDER BY {accounts} ASC".format(
+            schema=Database.SCHEMA_FIN,
+            userid=userid,
+            accounts=ExpenseTransaction.field_account(),
+            amount=ExpenseTransaction.field_amount(),
+            where_clause1=' '.join(where_clause_list),
+            where_clause2=where_clause2
+        )
+        stmt = cur.mogrify(sql, mogstr_list)
+        cur.execute(stmt)
+        logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
+        rows = cur.fetchall()
+        rows = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
+        cur.close()
+        return list(rows)
