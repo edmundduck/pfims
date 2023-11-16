@@ -7,6 +7,21 @@ components:
   type: ColumnPanel
   layout_properties: {grid_position: 'RQXFDX,GZDYNM'}
   name: colpanel_error
+  components:
+  - name: valerror_title_copy_1
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: 'Error(s):', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    type: Label
+    layout_properties: {grid_position: 'MNAYFE,QHGXOO'}
+  - name: valerror_1_copy_1
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Select a report type from the dropdown.', font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false, icon: ''}
+    type: Label
+    layout_properties: {grid_position: 'ZZBWCB,LDXNQV'}
 - type: ColumnPanel
   properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
     wrap_on: mobile, col_spacing: medium, spacing_above: medium, col_widths: '{}',
