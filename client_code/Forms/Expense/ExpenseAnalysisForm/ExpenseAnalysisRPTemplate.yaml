@@ -20,3 +20,9 @@ components:
   layout_properties: {column: RMITXR}
   data_bindings:
   - {property: text, code: 'self.item[''LBL'']'}
+- name: row_account
+  properties: {}
+  type: Label
+  layout_properties: {column: QJYSBH}
+  data_bindings:
+  - {property: text, code: 'self.item[''ACC'']', writeback: false}
