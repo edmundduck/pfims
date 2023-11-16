@@ -16,4 +16,7 @@ class ExpenseAnalysisRPTemplate(ExpenseAnalysisRPTemplateTemplate):
         self.row_amount.role = Roles.AMT_NEGATIVE if self.item[ExpenseTransaction.field_amount()] < 0 else Roles.AMT_POSITIVE
 
         # Logic to generate label buttons
-        self.row_label.text = f"{self.item['name']} ({self.item[ExpenseTransaction.field_labels()]})"
+        if self.item.get(ExpenseTransaction.field_labels(), None):
+            self.row_label.text = f"{self.item['name']} ({self.item[ExpenseTransaction.field_labels()]})"
+        elif self.item.get(ExpenseTransaction.field_account(), None):
+            self.row_account.text = f"{self.item['name']} ({self.item[ExpenseTransaction.field_account()]})"

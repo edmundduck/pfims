@@ -129,6 +129,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         if v.is_valid():
             label_list = self._getall_selected_labels()
             self.subform.rpt_panel.items, bar_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_rpt_type.selected_value, self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
+            self.subform.set_column_visibility(self.dropdown_rpt_type.selected_value)
             self.build_bar_chart(bar_chart_data)
 
     def build_bar_chart(self, data, **event_args):

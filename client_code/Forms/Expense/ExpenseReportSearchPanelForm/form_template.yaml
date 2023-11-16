@@ -31,6 +31,25 @@ components:
     grid_position: IWWXTN,ELVDQC
     full_width_row: false
   components:
+  - name: flow_panel_1
+    properties: {}
+    type: FlowPanel
+    layout_properties: {grid_position: 'NLBWMG,EAXNLK'}
+    components:
+    - name: spacer_5
+      properties: {height: 32}
+      type: Spacer
+      layout_properties: {width: 32}
+    - name: label_1
+      properties: {text: Report Type, font_size: 12}
+      type: Label
+    - name: dropdown_rpt_type
+      properties:
+        include_placeholder: true
+        items: ['']
+        placeholder: Choose one below
+      type: DropDown
+      layout_properties: {width: 202.6}
   - type: FlowPanel
     properties: {}
     name: flow_panel_2
@@ -142,25 +161,6 @@ components:
       name: exp_rpt_button_plus
       layout_properties: {grid_position: 'FLAWCB,WXPDRR'}
       event_bindings: {click: exp_rpt_button_plus_click}
-  - name: flow_panel_1
-    properties: {}
-    type: FlowPanel
-    layout_properties: {grid_position: 'VFEZJG,WUWDMC'}
-    components:
-    - name: spacer_5
-      properties: {height: 32}
-      type: Spacer
-      layout_properties: {width: 32}
-    - name: label_1
-      properties: {text: Report Type, font_size: 12}
-      type: Label
-    - name: dropdown_rpt_type
-      properties:
-        include_placeholder: true
-        items: ['']
-        placeholder: Choose one below
-      type: DropDown
-      layout_properties: {width: 202.6}
   - type: FlowPanel
     properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
       foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
