@@ -132,6 +132,14 @@ class PNLDrillMode:
     MONTH = 'm'
     YEAR = 'y'
 
+class ExpenseReportType:
+    """
+    ???.
+    """
+    EXP_PER_LABEL = 'TEL'
+    BAL_ACCT = 'BOA'
+    droppdown = [('Total Expense per Label', EXP_PER_LABEL), ('Balance on Account', BAL_ACCT)]
+
 class LoggingLevel:
     """
     Logging levels used in setting.

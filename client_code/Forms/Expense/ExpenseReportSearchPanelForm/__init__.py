@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from .... import Global
 from ....Controllers import ReportSearchPanelController
 from ....Utils.ButtonModerator import ButtonModerator
-from ....Utils.Constants import Icons, ReportFormTag, Roles, SearchInterval
+from ....Utils.Constants import ExpenseReportType, Icons, ReportFormTag, Roles, SearchInterval
 from ....Utils.Logger import ClientLogger
 
 logger = ClientLogger()
@@ -22,6 +22,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         from ..ExpenseReportForm import ExpenseReportForm
         self.dropdown_interval.items = ReportSearchPanelController.generate_search_interval_dropdown()
         self.dropdown_interval.selected_value = Global.settings.get_search_interval()
+        self.dropdown_rpt_type.items = ExpenseReportType.droppdown
         self.time_datefrom.date = Global.settings.get_search_datefrom()
         self.time_dateto.date = Global.settings.get_search_dateto()
         self.subform = subform
@@ -29,9 +30,11 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         if self.subform.tag[ReportFormTag.REPORT_TAG] == ReportFormTag.EXP_LIST_RPT:
             self.button_exp_search.visible = True
             self.button_exp_analysis_search.visible = False
+            self.dropdown_rpt_type.visible = False
         elif self.subform.tag[ReportFormTag.REPORT_TAG] == ReportFormTag.EXP_ANALYSIS_RPT:
             self.button_exp_search.visible = False
             self.button_exp_analysis_search.visible = True
+            self.dropdown_rpt_type.visible = True
         self.tag = {self.label_key: {None: 1}}
         self._update_expense_enablement()
          
@@ -117,9 +120,17 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
 
     def button_exp_analysis_search_click(self, **event_args):
         """This method is called when the button is clicked"""
-        label_list = self._getall_selected_labels()
-        self.subform.rpt_panel.items, bar_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
-        self.build_bar_chart(bar_chart_data)
+        from ....Utils.Validation import Validator
+        v = Validator()    
+        v.display_when_invalid(self.valerror_title)
+        v.require_selected(self.dropdown_rpt_type, self.valerror_1, True)
+        v.highlight_when_invalid(self.dropdown_rpt_type)
+    
+        if v.is_valid():
+            label_list = self._getall_selected_labels()
+            self.subform.rpt_panel.items, bar_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_rpt_type.selected_value, self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
+            self.subform.set_column_visibility(self.dropdown_rpt_type.selected_value)
+            self.build_bar_chart(bar_chart_data)
 
     def build_bar_chart(self, data, **event_args):
         label_list, amount_list = data if data and isinstance(data, (list, tuple)) else [None, None]

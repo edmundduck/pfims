@@ -1,6 +1,6 @@
 import anvil.server
 from datetime import date
-from ..Utils.Constants import CacheKey, SearchInterval
+from ..Utils.Constants import CacheKey, ExpenseReportType, SearchInterval
 from ..Utils.Logger import ClientLogger
 
 # This is a module.
@@ -245,24 +245,31 @@ def drill_pnl_data(start_date, end_date, symbols, pnl_list, date_value, mode, ac
     result = anvil.server.call('update_pnl_list', start_date, end_date, symbols, pnl_list, date_value, mode, action)
     return result
 
-def populate_expense_analysis_data(search_interval_dropdown_selected, from_date, to_date, labels=[]):
+def populate_expense_analysis_data(report_type_dropdown_selected, search_interval_dropdown_selected, from_date, to_date, labels=[], accounts=[]):
     """
     Populate expense analysis data as repeating panel items and charts.
 
     Parameters:
+        report_type_dropdown_selected (list): The selected value in list from the report type dropdown.
         search_interval_dropdown_selected (list): The selected value in list from the search interval dropdown.
         from_date (date): Date to search from.
         to_date (date): Date to search to.
-        labels (list): List of labels.
+        labels (list): List of labels for analysis.
+        accounts (list): List of accounts for analysis.
 
     Returns:
-        result_rp (?): ?
-        result_chart1 (?): ?
-        result_chart2 (?): ?
+        result_rp (list of dict): Summarized data list based on report type selection for repeating panel to display.
+        result_chart1 (list of dict): Chart data.
+        result_chart2 (list of dict): Chart data.
     """
     interval = search_interval_dropdown_selected
+    result_rp, result_chart1, result_chart2 = [None]*3
     if interval != SearchInterval.INTERVAL_SELF_DEFINED:
         from_date = _get_start_date(date.today(), interval)
         to_date = date.today()
-    result_rp, result_chart1, result_chart2 = anvil.server.call('proc_search_expense_analysis', from_date, to_date, labels)
+    if report_type_dropdown_selected:
+        if report_type_dropdown_selected == ExpenseReportType.EXP_PER_LABEL:
+            result_rp, result_chart1, result_chart2 = anvil.server.call('proc_analyze_labels_expense_total', from_date, to_date, labels)
+        elif report_type_dropdown_selected == ExpenseReportType.BAL_ACCT:
+            result_rp, result_chart1, result_chart2 = anvil.server.call('proc_analyze_accounts_balance', from_date, to_date, accounts)
     return result_rp, result_chart1, result_chart2
