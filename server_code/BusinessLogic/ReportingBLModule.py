@@ -245,11 +245,11 @@ def proc_search_expense_list(start_date, end_date, labels=[]):
     rows = ReportingDAModule.select_transactions_filter_by_labels(start_date, end_date, labels)
     return rows
 
-@anvil.server.callable("proc_search_expense_analysis")
+@anvil.server.callable("proc_analyze_labels_expense_total")
 @logger.log_function
-def proc_search_expense_analysis(start_date, end_date, labels=[]):
+def proc_analyze_labels_expense_total(start_date, end_date, labels=[]):
     """
-    Consolidated process for generating data for expense analysis.
+    Consolidated process for data analysis of expense total of labels.
 
     Parameters:
         from_date (date): Date to search from.
@@ -258,14 +258,33 @@ def proc_search_expense_analysis(start_date, end_date, labels=[]):
 
     Returns:
         summed_total (list of dict): Summed total of expense transactions per label.
-        balance (list of dict): Balance of expense transactions per account.
-        chart1 (?): ?
-        chart2 (?): ?
+        chart1 (list of dict): Contains two dictionaries of lists formed by label names and total sum of expense per label.
+        chart2 (None): For future expansion.
     """
     summed_total = ReportingDAModule.select_summed_total_per_labels(start_date, end_date, labels)
-    balance = ReportingDAModule.select_balance_per_account(start_date, end_date)
     DL_total = Helper.to_dict_of_list(summed_total)
-    DL_balance = Helper.to_dict_of_list(balance)
     chart1 = [DL_total.get('name'), DL_total.get(ExpenseTransaction.field_amount())]
-    chart2 = [DL_balance.get('name'), DL_balance.get(ExpenseTransaction.field_amount())]
-    return summed_total, balance, chart1, chart2
+    chart2 = None
+    return summed_total, chart1, chart2
+
+@anvil.server.callable("proc_analyze_accounts_balance")
+@logger.log_function
+def proc_analyze_accounts_balance(start_date, end_date, accounts=[]):
+    """
+    Consolidated process for data analysis of accounts balance.
+
+    Parameters:
+        from_date (date): Date to search from.
+        to_date (date): Date to search to.
+        accounts (list): List of accounts.
+
+    Returns:
+        balance (list of dict): Balance of expense transactions per account.
+        chart1 (list of dict): Contains two dictionaries of lists formed by account names and account balances.
+        chart2 (None): For future expansion.
+    """
+    balance = ReportingDAModule.select_balance_per_account(start_date, end_date, accounts)
+    DL_balance = Helper.to_dict_of_list(balance)
+    chart1 = [DL_balance.get('name'), DL_balance.get(ExpenseTransaction.field_amount())]
+    chart2 = None
+    return balance, chart1, chart2

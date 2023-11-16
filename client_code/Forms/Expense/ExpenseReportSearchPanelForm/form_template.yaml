@@ -2,6 +2,25 @@ container:
   type: ColumnPanel
   properties: {col_widths: '{}'}
 components:
+- name: colpanel_error
+  properties: {}
+  type: ColumnPanel
+  layout_properties: {grid_position: 'RQXFDX,GZDYNM'}
+  components:
+  - name: valerror_title
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: 'Error(s):', font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    type: Label
+    layout_properties: {grid_position: 'NIRMBU,WEBVUC'}
+  - name: valerror_1
+    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
+      visible: false, text: '- Select a report type from the dropdown.', font_size: null,
+      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false, icon: ''}
+    type: Label
+    layout_properties: {grid_position: 'XOZMTD,IJKEIM'}
 - type: ColumnPanel
   properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
     wrap_on: mobile, col_spacing: medium, spacing_above: medium, col_widths: '{}',
@@ -138,7 +157,8 @@ components:
     - name: dropdown_rpt_type
       properties:
         include_placeholder: true
-        items: [Choose one below]
+        items: ['']
+        placeholder: Choose one below
       type: DropDown
       layout_properties: {width: 202.6}
   - type: FlowPanel
@@ -179,5 +199,6 @@ components:
 - type: ColumnPanel
   properties: {}
   name: colpanel_list
-  layout_properties: {grid_position: 'LFVFQU,AOOFNC', full_width_row: true}
+  layout_properties: {grid_position: 'LFVFQU,AOOFNC', full_width_row: false}
+  components: []
 is_package: true

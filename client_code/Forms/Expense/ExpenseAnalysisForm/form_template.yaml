@@ -22,9 +22,10 @@ components:
   properties:
     role: null
     columns:
-    - {id: RMITXR, title: Labels, data_key: LBL, width: 251, $$hashKey: 'object:4905',
+    - {id: RMITXR, title: Labels, data_key: LBL, width: '250', $$hashKey: 'object:4905',
       expand: false}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: 241, $$hashKey: 'object:4907',
+    - {id: QJYSBH, data_key: ACC, title: Account, width: '250'}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: '220', $$hashKey: 'object:4907',
       expand: false}
     auto_header: true
     tooltip: ''
