@@ -134,7 +134,7 @@ class PNLDrillMode:
 
 class ExpenseReportType:
     """
-    ???.
+    Expense report type.
     """
     EXP_PER_LABEL = 'TEL'
     BAL_ACCT = 'BOA'
@@ -157,19 +157,13 @@ class Icons:
     MENU_SHRINK = 'fa:caret-right'
     REMOVE = 'fa:minus'
 
-class ColorSchemes:
-    """
-    Color definition used in the UI.
-    """
-    BUTTON_FG = 'White'
-    BUTTON_BG = 'Blue'
-
 class Roles:
     """
     Roles used in the UI together with CSS.
     """
     AMT_NEGATIVE = 'negative-amount-label'
     AMT_POSITIVE = 'positive-amount-label'
+    BUTTON_REMOVAL = 'button-removal'
     VALID_ERROR = 'input-error'
     VALID_NORMAL = None
     LABEL = 'app-label-button'

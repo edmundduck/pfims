@@ -116,18 +116,18 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "A" else False
 
     def add_mapping_rules_criteria(self, tag_value, rule, **event_args):
-        from .....Utils.Constants import ColorSchemes, Icons
-        lbl_obj = Label(text=rule, font_size=12, foreground='indigo', icon=Icons.BULLETPOINT)
+        from .....Utils.Constants import Icons, Roles
+        lbl_obj = Label(text=rule, font_size=12, icon=Icons.BULLETPOINT)
         fp = FlowPanel(spacing_above="small", spacing_below="small", tag=tag_value)
         b = Button(
             icon=Icons.REMOVE,
-            foreground=ColorSchemes.BUTTON_BG,
-            font_size=12,
+            role= Roles.BUTTON_REMOVAL,
             align="left",
             spacing_above="small",
             spacing_below="small",
         )
         self.add_component(fp)
+        fp.add_component(Spacer(height=32, width=32))
         fp.add_component(lbl_obj)
         fp.add_component(b)
         b.set_event_handler('click', self.mapping_button_minus_click)

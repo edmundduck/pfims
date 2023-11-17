@@ -36,6 +36,8 @@ roles:
   components: [Label]
 - name: app-label-button
   components: [Button]
+- name: button-removal
+  components: [Button]
 color_scheme:
   preset_groups:
   - name: Primary Colour
