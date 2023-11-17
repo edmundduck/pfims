@@ -5,7 +5,7 @@ container:
     spacing_below: small, background: ''}
 components:
 - type: FlowPanel
-  properties: {background: 'theme:Surface Variant'}
+  properties: {background: 'theme:Primary Container'}
   name: flow_panel_1
   layout_properties: {grid_position: 'ZDRSSJ,HYEEHZ'}
   components:
@@ -98,7 +98,7 @@ components:
     layout_properties: {}
     event_bindings: {click: row_button_delete_click}
 - type: FlowPanel
-  properties: {background: 'theme:Surface Variant'}
+  properties: {background: ''}
   name: flow_panel_2
   layout_properties: {grid_position: 'TDATED,WTSLHX'}
   components:
