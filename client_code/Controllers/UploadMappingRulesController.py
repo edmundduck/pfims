@@ -193,7 +193,7 @@ def add_mapping_rules_criteria(user_input, is_new=False):
 
 @logger.log_function
 def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
-    from ..Utils.Constants import ColorSchemes, FileImportExcelColumnMappingExtraAction, Icons
+    from ..Utils.Constants import FileImportExcelColumnMappingExtraAction, Icons
     logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
     datacol_id, datacol_name = datacol_id if datacol_id and isinstance(datacol_id, list) else get_expense_table_definition_dropdown_selected_item(datacol_id) if datacol_id else [None, None]
     action_id, action_name = extraact_id if extraact_id and isinstance(extraact_id, list) else get_import_extra_action_dropdown_selected_item(extraact_id) if extraact_id else [None, None]

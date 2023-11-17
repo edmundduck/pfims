@@ -381,6 +381,11 @@ input[disabled] ~ span {
   background: linear-gradient(0deg, %color:Light Overlay 1%, %color:Light Overlay 1%), %color:Secondary Container%;
 }
 
+.anvil-role-button-removal .btn {
+  color: %color:Secondary Container%;
+  font-size: 12px;
+}
+
 /* Report title subheading styling */
 .content .anvil-role-subheading {
     border-bottom: 5px solid %color:Tertiary Container%;
