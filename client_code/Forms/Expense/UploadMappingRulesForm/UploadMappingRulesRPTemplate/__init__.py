@@ -55,6 +55,8 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from .....Error.ValidationError import ValidationError
+        
         rules = []
         for i in self.get_components():
             if isinstance(i, FlowPanel) and i.tag is not None:
@@ -63,6 +65,10 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
 
         try:
             id = UploadMappingRulesController.save_mapping_criteria(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text, self.row_desc.text)
+        except ValidationError as err:
+            logger.error(err)
+            msg = f"ERROR occurs when saving mapping group [{self.row_mapping_name.text}].\n\t - {err}"
+            Notification(msg).show()
         except Exception as err:
             logger.error(err)
             msg = f"ERROR occurs when saving mapping group [{self.row_mapping_name.text}]."
