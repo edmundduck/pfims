@@ -200,10 +200,10 @@ def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id
     target_id, target_name = [None, None] if not extratgt_id else extratgt_id if extratgt_id and isinstance(extratgt_id, list) else (
         get_label_dropdown_selected_item(extratgt_id) if action_id == FileImportExcelColumnMappingExtraAction.LABEL else get_account_dropdown_selected_item(extratgt_id)
     )
-    rule = f"Map Excel column {excelcol} to data column {datacol_name}."
-    rule = f"{rule} Extra action(s): {action_name} {target_name}" if action_name is not None else rule
+    rule_desc = f"Map Excel column {excelcol} to data column {datacol_name}."
+    rule_desc = f"{rule_desc} Extra action(s): {action_name} {target_name}" if action_name is not None else rule_desc
 
-    return [excelcol, datacol_id, action_id, target_id, rule, is_new], rule
+    return [excelcol, datacol_id, action_id, target_id, rule_desc, is_new], rule_desc
 
 @logger.log_function
 def generate_all_mapping_rules(rules):
