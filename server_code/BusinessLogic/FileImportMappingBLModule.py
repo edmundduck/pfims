@@ -1,6 +1,5 @@
 import anvil.server
 from datetime import date, datetime
-from .. import SystemProcess as sys
 from ..DataAccess import FileImportMappingDAModule
 from ..ServerUtils.LoggingModule import ServerLogger
 from ..Utils import Helper
@@ -62,16 +61,17 @@ def generate_mapping_matrix(matrix, col_def):
 
 @anvil.server.callable("proc_save_mapping")
 @logger.log_function
-def proc_save_mapping(id, name, filetype_id, rules, del_iid=None, desc=None):
+def proc_save_mapping(import_grp, del_iid=None):
     """
     Process data for updating import mapping data.
 
     Parameters:
+        import_grp (ImportMappingGroup): The import mapping group object containing all group and rules detail.
+        del_iid (string): The string of IID concatenated by comma to be deleted
         id (int): The ID of the mapping group.
         name (string): The mapping group name.
         filetype (list): The selected filetype ID.
         rules (list): The list of criteria of the rule to be saved.
-        del_iid (string): The string of IID concatenated by comma to be deleted
         desc (string): The description of the mapping rule.
 
     Returns:
@@ -80,14 +80,11 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None, desc=None):
         result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
     """
 
-    userid = sys.get_current_userid()
-    currenttime = datetime.now()
-
     # Prepare data for mappinggroup
-    mgroup = (int(userid), id, name, filetype_id, currenttime, desc) if id else (int(userid), name, filetype_id, currenttime, desc)
-    logger.trace('mgroup=', mgroup)
+    # mgroup = (int(userid), id, name, filetype_id, currenttime, desc) if id else (int(userid), name, filetype_id, currenttime, desc)
+    # logger.trace('mgroup=', mgroup)
     # Save mappinggroup
-    id = FileImportMappingDAModule.save_mapping_group(id, mgroup)
+    id = FileImportMappingDAModule.save_mapping_group(import_grp)
     
     # Prepare data for mappingrules
     tbl_def_dict = Helper.to_dict_of_list(FileImportMappingDAModule.generate_expense_tbl_def_list())

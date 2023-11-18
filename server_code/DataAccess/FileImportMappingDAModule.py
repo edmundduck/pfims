@@ -177,33 +177,33 @@ def select_mapping_matrix(id):
         return rows
 
 @logger.log_function
-def save_mapping_group(id, mogstr_group):
+def save_mapping_group(import_grp):
     """
     Save the mapping group into the DB table.
 
     Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
 
     Parameters:
-        mogstr_group (string): Mogrified string for mapping group SQL.
+        import_grp (ImportMappingGroup): The import mapping group object containing all group and rules detail.
 
     Returns:
         id (int): The mapping group ID.
     """
-    userid = sys.get_current_userid()
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             # First insert/update mapping group
-            if id:
+            if import_grp.get_id():
                 sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave, description) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET \
                 name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave, description=EXCLUDED.description WHERE mappinggroup.id=EXCLUDED.id RETURNING id".format(
                     schema=Database.SCHEMA_FIN
                 )
+                stmt = cur.mogrify(sql, (import_grp.get_user_id(), import_grp.get_id(), import_grp.get_name(), import_grp.get_file_type(), import_grp.get_lastsaved_time(), import_grp.get_description()))
             else:
                 sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave, description) VALUES (%s,DEFAULT,%s,%s,%s,%s) RETURNING id".format(
                     schema=Database.SCHEMA_FIN
                 )
-            stmt = cur.mogrify(sql, mogstr_group)
+                stmt = cur.mogrify(sql, (import_grp.get_user_id(), import_grp.get_name(), import_grp.get_file_type(), import_grp.get_lastsaved_time(), import_grp.get_description()))
             cur.execute(stmt)
             conn.commit()
             result = cur.fetchone()
@@ -217,7 +217,7 @@ def save_mapping_group(id, mogstr_group):
             raise psycopg2.OperationalError(err)
         finally:
             if cur is not None: cur.close()
-            if conn is not None: conn.close()        
+            if conn is not None: conn.close()
         return id
 
 @logger.log_function
@@ -232,7 +232,6 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
         mogstr_matrix (string): Mogrified string for mapping matrix SQL.
         del_iid (string): The string of IID concatenated by comma to be deleted
     """
-    userid = sys.get_current_userid()
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
