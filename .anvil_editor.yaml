@@ -76,10 +76,12 @@ unique_ids:
     Controllers.ExpenseFileUploadController: '1697815203466807999044689.3457'
     Utils: '168088722499519584900829.258568'
     Controllers.UploadMappingRulesController: '1697538292953229620541616.99762'
+    Entities.ImportMappingGroup: '1700318450444447162672909.8155'
     Controllers.ExpenseFileExcelImportController: '1697538091207142795890728.2163'
     Controllers.LabelMaintController: '1697625286352890565595385.8071'
     Global: '1697460388002908178606229.2985'
     Entities.BaseEntity: '1697153756755760922086916.1322'
+    Entities.ImportMappingRule: '1700318459874928700673582.8385'
     Utils.Helper: '1697796932661514517468230.8491'
     Utils.ButtonModerator: '1696342441149849584154945.8008'
   server_modules:

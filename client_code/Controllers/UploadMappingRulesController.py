@@ -231,10 +231,16 @@ def save_mapping_criteria(id, name, filetype, rules, del_iid, desc):
     Returns:
         result[0] (dict): Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
     """
+    from datetime import date, datetime
+    from .. import Global
+    from ..Entities.ImportMappingGroup import ImportMappingGroup
     if not id:
         id = None
     filetype_id, _ = filetype if filetype and isinstance(filetype, list) else [filetype, None]
     del_iid = del_iid[:-1].split(",") if del_iid else None
+    currenttime = datetime.now()
+    imp_grp = ImportMappingGroup()
+    imp_grp = imp_grp.set_user_id(Global.userid).set_id(id).set_name(name).set_file_type(filetype_id).set_description(desc).set_lastsaved_time(currenttime).set_mapping_rules(rules)
     id, _, result = anvil.server.call('proc_save_mapping', id, name, filetype_id, rules, del_iid, desc)
     if not result:
         raise RuntimeError('Error occurs in proc_save_mapping.')
