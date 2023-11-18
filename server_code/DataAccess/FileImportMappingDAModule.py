@@ -221,28 +221,32 @@ def save_mapping_group(import_grp):
         return id
 
 @logger.log_function
-def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
+def save_mapping_rules_n_matrix(import_grp, mogstr_matrix, del_iid):
     """
     Save the mapping rules and matrix into the DB table.
 
     Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
 
     Parameters:
-        mogstr_rules (string): Mogrified string for mapping rules SQL.
+        import_grp (ImportMappingGroup): The import mapping group object containing all group and rules detail.
         mogstr_matrix (string): Mogrified string for mapping matrix SQL.
         del_iid (string): The string of IID concatenated by comma to be deleted
     """
     conn = sys.db_connect()
+    id = import_grp.get_id()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             # Second insert/update mapping rules
-            if len(mogstr_rules) > 0:
+            if len(import_grp.get_mapping_rules()) > 0:
+                mogstr = [cur.mogrify("(%s, %s, %s, %s, %s, %s)", r.get_db_col_list()).decode('utf-8') for r in import_grp.get_mapping_rules()]
+                logger.debug("mogstr=", mogstr)
                 sql1 = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
-                (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
+                {p1} ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
                 etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col".format(
-                    schema=Database.SCHEMA_FIN
+                    schema=Database.SCHEMA_FIN,
+                    p1=','.join(mogstr)
                 )
-                cur.executemany(sql1, mogstr_rules)
+                cur.execute(sql1)
 
             # Third insert/update mapping matrix
             if len(mogstr_matrix) > 0:
@@ -263,12 +267,11 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
             if del_iid:
                 mogstr_delete = ','.join(cur.mogrify("%s", (d, )).decode('utf-8') for d in del_iid)
                 logger.trace('mogstr_delete=', mogstr_delete)
-                sql4 = "DELETE FROM {schema}.mappingrules WHERE gid = {gid} AND col IN ({iid})".format(
+                sql4 = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN (%s)".format(
                     schema=Database.SCHEMA_FIN,
-                    gid=id,
-                    iid=mogstr_delete
                 )
-                cur.execute(sql4)
+                stmt = cur.mogrify(sql4, (id, mogstr_delete))
+                cur.execute(stmt)
 
             # Reconciliation
             sql5 = "SELECT g.userid, g.id, g.name, g.filetype, m.datecol, m.acctcol, m.amtcol, m.remarkscol, m.stmtdtlcol, m.lblcol FROM \
@@ -277,6 +280,7 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
             )
             stmt5 = cur.mogrify(sql5, (id, ))
             cur.execute(stmt5)
+            
             conn.commit()
             rows = cur.fetchall()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")

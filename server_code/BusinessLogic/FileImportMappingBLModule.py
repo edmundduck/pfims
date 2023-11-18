@@ -80,22 +80,25 @@ def proc_save_mapping(import_grp, del_iid=None):
         result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
     """
 
-    # Prepare data for mappinggroup
-    # mgroup = (int(userid), id, name, filetype_id, currenttime, desc) if id else (int(userid), name, filetype_id, currenttime, desc)
-    # logger.trace('mgroup=', mgroup)
+    # Validation
+    if not import_grp.is_valid():
+        raise 
+
     # Save mappinggroup
     id = FileImportMappingDAModule.save_mapping_group(import_grp)
+    # Required or all mapping rules will have no updated group ID
+    import_grp = import_grp.set_id(id)
     
     # Prepare data for mappingrules
-    tbl_def_dict = Helper.to_dict_of_list(FileImportMappingDAModule.generate_expense_tbl_def_list())
-    mrules = []
-    matrixobj = {k: [] for k in tbl_def_dict.get('col_code')}
-    for rule in rules:
-        mrules.append([id, rule[0], rule[1], rule[2], rule[3] if rule[2] and rule[3] else None, rule[4]])
-        matrixobj[rule[1]] = matrixobj[rule[1]] + [rule[0]] if matrixobj[rule[1]] else [rule[0]]
-    logger.trace('mrules=', mrules)
+    logger.trace('mrules=', [str(r) for r in import_grp.get_mapping_rules()])
     
     # Prepare data for mappingmatrix
+    tbl_def_dict = Helper.to_dict_of_list(FileImportMappingDAModule.generate_expense_tbl_def_list())
+    matrixobj = {k: [] for k in tbl_def_dict.get('col_code')}
+    for rule in import_grp.get_mapping_rules():
+        tbl_def_field_id = rule.get_mapped_column_type()
+        column_id = rule.get_column_id()
+        matrixobj[tbl_def_field_id] = matrixobj[tbl_def_field_id] + [column_id] if matrixobj[tbl_def_field_id] else [column_id]
     mmatrix = generate_mapping_matrix(matrixobj, tbl_def_dict.get('col_code'))
     logger.trace('mmatrix=', mmatrix)
     
@@ -104,7 +107,7 @@ def proc_save_mapping(import_grp, del_iid=None):
     # logger.trace('mdelete=', mdelete)
 
     # Save mappingrules, mappingmatrix and mappingrules deletion
-    count = FileImportMappingDAModule.save_mapping_rules_n_matrix(id, mrules, mmatrix, del_iid)
+    count = FileImportMappingDAModule.save_mapping_rules_n_matrix(import_grp, mmatrix, del_iid)
 
     # Return the saved mapping group and rules 
     result = FileImportMappingDAModule.select_mapping_rules(id)

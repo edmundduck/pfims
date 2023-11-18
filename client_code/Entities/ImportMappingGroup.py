@@ -36,12 +36,16 @@ class ImportMappingGroup(BaseEntity):
         return getattr(self, self.__property_def__[5], None)
 
     def get_mapping_rules(self):
-        return getattr(self, self.__property_def__[6], None)
+        return getattr(self, self.__property_def__[6], [])
 
     def set_user_id(self, userid):
         return self.set_single_attribute(0, userid)
 
     def set_id(self, id):
+        rules = self.get_mapping_rules()
+        if rules and len(rules) > 0:
+            for t in range(len(rules)):
+                rules[t] = rules[t].set_group_id(id)
         return self.set_single_attribute(1, id)
         
     def set_name(self, name):
@@ -57,14 +61,26 @@ class ImportMappingGroup(BaseEntity):
         return self.set_single_attribute(5, lastsaved_time)
         
     def set_mapping_rules(self, rules):
-        return self.set_single_attribute(6, rules)
+        if isinstance(rules, ImportMappingRule):
+            return self.set_single_attribute(6, [rules.set_group_id(self.get_id())])
+        elif isinstance(rules, list):
+            rule_list = []
+            for r in rules:
+                if isinstance(r, ImportMappingRule):
+                    rule_list.append(r.set_group_id(self.get_id()))
+                elif isinstance(r, dict):
+                    rule_list.append(ImportMappingRule(r).set_group_id(self.get_id()))
+            return self.set_single_attribute(6, rule_list)
         
     def copy(self):
         return ImportMappingGroup(self.get_dict())
 
     def is_valid(self):
-        group_name, filetype, desc = [self.get_name(), self.get_file_type(), self.get_description()]
+        group_name, filetype, desc, rules = [self.get_name(), self.get_file_type(), self.get_description(), self.get_mapping_rules()]
         if not group_name or group_name.isspace(): return False
         if not filetype or filetype.isspace(): return False
         if len(desc) > 120: return False
+        for r in rules:
+            if not r.is_valid:
+                return False
         return True

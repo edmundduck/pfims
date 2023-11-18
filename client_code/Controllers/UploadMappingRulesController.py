@@ -167,13 +167,12 @@ def populate_repeating_panel_items(rp_items=None, reload=False, del_iid=None):
         logger.trace('rp_items init load', result)
     return result
 
-def add_mapping_rules_criteria(user_input, is_new=False):
+def add_mapping_rules_criteria(user_input):
     """
     Add criteria into mapping rule.
 
     Parameters:
         user_input (dict): Dictionary of all user selected dropdown values.
-        is_new (boolean): True if this criteria is newly created by user.
 
     Returns:
         result (list of dict): A list of data padded with blank items for repeating panel.
@@ -192,7 +191,8 @@ def add_mapping_rules_criteria(user_input, is_new=False):
     return properties_list, rule
 
 @logger.log_function
-def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
+def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, **event_args):
+    from ..Entities.ImportMappingRule import ImportMappingRule
     from ..Utils.Constants import FileImportExcelColumnMappingExtraAction, Icons
     logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
     datacol_id, datacol_name = datacol_id if datacol_id and isinstance(datacol_id, list) else get_expense_table_definition_dropdown_selected_item(datacol_id) if datacol_id else [None, None]
@@ -202,8 +202,15 @@ def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id
     )
     rule_desc = f"Map Excel column {excelcol} to data column {datacol_name}."
     rule_desc = f"{rule_desc} Extra action(s): {action_name} {target_name}" if action_name is not None else rule_desc
+    rule_dict = {
+        ImportMappingRule.field_column_id(): excelcol,
+        ImportMappingRule.field_mapped_column_type(): datacol_id,
+        ImportMappingRule.field_extra_action(): action_id,
+        ImportMappingRule.field_extra_action_target_code(): target_id if action_id is not None else None,
+        ImportMappingRule.field_rule_desc(): rule_desc
+    }
 
-    return [excelcol, datacol_id, action_id, target_id, rule_desc, is_new], rule_desc
+    return rule_dict, rule_desc
 
 @logger.log_function
 def generate_all_mapping_rules(rules):

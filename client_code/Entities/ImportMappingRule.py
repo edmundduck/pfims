@@ -16,6 +16,30 @@ class ImportMappingRule(BaseEntity):
     def get_column_definition():
         return ', '.join(c for c in ImportMappingRule.__db_column_def__)
 
+    @staticmethod
+    def field_group_id():
+        return ImportMappingRule.__property_def__[1]
+    
+    @staticmethod
+    def field_column_id():
+        return ImportMappingRule.__property_def__[2]
+    
+    @staticmethod
+    def field_mapped_column_type():
+        return ImportMappingRule.__property_def__[3]
+    
+    @staticmethod
+    def field_extra_action():
+        return ImportMappingRule.__property_def__[4]
+    
+    @staticmethod
+    def field_extra_action_target_code():
+        return ImportMappingRule.__property_def__[5]
+    
+    @staticmethod
+    def field_rule_desc():
+        return ImportMappingRule.__property_def__[6]
+    
     def get_user_id(self):
         return getattr(self, self.__property_def__[0], None)
         
