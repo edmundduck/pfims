@@ -79,10 +79,14 @@ def proc_save_mapping(import_grp, del_iid=None):
         count (int): The mapping matrix row count.
         result (list of dict): The merged data of both mapping rules and mapping groups grouped by mapping group ID.
     """
+    from ..Entities.AppError import AppError
 
     # Validation
     if not import_grp.is_valid():
-        raise 
+        if isinstance(import_grp.is_valid(), AppError):
+            raise import_grp.is_valid().get_error()
+        else:
+            raise TypeError('Backend validation error in import mapping data.')
 
     # Save mappinggroup
     id = FileImportMappingDAModule.save_mapping_group(import_grp)
