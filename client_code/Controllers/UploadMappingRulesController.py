@@ -241,7 +241,7 @@ def save_mapping_criteria(id, name, filetype, rules, del_iid, desc):
     currenttime = datetime.now()
     imp_grp = ImportMappingGroup()
     imp_grp = imp_grp.set_user_id(Global.userid).set_id(id).set_name(name).set_file_type(filetype_id).set_description(desc).set_lastsaved_time(currenttime).set_mapping_rules(rules)
-    id, _, result = anvil.server.call('proc_save_mapping', id, name, filetype_id, rules, del_iid, desc)
+    id, _, result = anvil.server.call('proc_save_mapping', imp_grp, del_iid)
     if not result:
         raise RuntimeError('Error occurs in proc_save_mapping.')
     return id
