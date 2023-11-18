@@ -216,7 +216,7 @@ def generate_all_mapping_rules(rules):
     return result
 
 @logger.log_function
-def save_mapping_criteria(id, name, filetype, rules, del_iid):
+def save_mapping_criteria(id, name, filetype, rules, del_iid, desc):
     """
     Convert the fields from the form for saving the mapping rule change in backend.
 
@@ -226,6 +226,7 @@ def save_mapping_criteria(id, name, filetype, rules, del_iid):
         filetype (list): The selected filetype from dropdown.
         rules (list): The list of criteria of the rule to be saved.
         del_iid (string): The criteria item ID (iid) to be removed during the update.
+        desc (string): The description of the mapping rule.
         
     Returns:
         result[0] (dict): Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
@@ -234,7 +235,7 @@ def save_mapping_criteria(id, name, filetype, rules, del_iid):
         id = None
     filetype_id, _ = filetype if filetype and isinstance(filetype, list) else [filetype, None]
     del_iid = del_iid[:-1].split(",") if del_iid else None
-    id, _, result = anvil.server.call('proc_save_mapping', id, name, filetype_id, rules, del_iid)
+    id, _, result = anvil.server.call('proc_save_mapping', id, name, filetype_id, rules, del_iid, desc)
     if not result:
         raise RuntimeError('Error occurs in proc_save_mapping.')
     return id

@@ -111,10 +111,10 @@ def select_mapping_rules(gid=None):
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
-        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} ORDER BY a.id ASC, b.col ASC" \
         if gid is None else \
-        f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        f"SELECT a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
@@ -133,6 +133,7 @@ def select_mapping_rules(gid=None):
                     'name': row['name'],
                     'filetype': row['filetype'],
                     'lastsave': row['lastsave'],
+                    'description': row['description'],
                     'rule': [[action1, action2, extra1, extra2]] if action1 is not None and action2 is not None else None
                 }
             else:
@@ -194,12 +195,12 @@ def save_mapping_group(id, mogstr_group):
         try:
             # First insert/update mapping group
             if id:
-                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET \
-                name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id".format(
+                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave, description) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET \
+                name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave, description=EXCLUDED.description WHERE mappinggroup.id=EXCLUDED.id RETURNING id".format(
                     schema=Database.SCHEMA_FIN
                 )
             else:
-                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id".format(
+                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave, description) VALUES (%s,DEFAULT,%s,%s,%s,%s) RETURNING id".format(
                     schema=Database.SCHEMA_FIN
                 )
             stmt = cur.mogrify(sql, mogstr_group)

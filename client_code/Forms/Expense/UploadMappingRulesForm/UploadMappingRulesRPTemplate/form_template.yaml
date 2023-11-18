@@ -22,10 +22,12 @@ components:
     layout_properties: {}
     data_bindings:
     - {property: text, code: 'self.item[''name'']', writeback: true}
-  - name: spacer_2
-    properties: {height: 32}
-    type: Spacer
-    layout_properties: {width: 32}
+  - name: row_desc
+    properties: {font_size: 12, placeholder: Enter description}
+    type: TextBox
+    layout_properties: {width: 336}
+    data_bindings:
+    - {property: text, code: 'self.item[''description'']', writeback: false}
   - type: Label
     properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
       visible: true, text: File type, font_size: 12, font: '', spacing_above: small,
@@ -57,30 +59,27 @@ components:
     layout_properties: {}
     data_bindings:
     - {property: selected_value, code: 'self.item[''ftype'']', writeback: true}
-  - type: ColumnPanel
-    properties: {col_widths: '{}'}
-    name: column_panel_1
-    layout_properties: {width: 288}
-    components:
-    - type: TextBox
-      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12,
-        font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
-        background: '', bold: false, underline: false}
-      name: row_hidden_id
-      layout_properties: {width: 115, grid_position: 'KOQSLE,HWNMGY'}
-      data_bindings:
-      - {property: text, code: 'self.item[''id'']', writeback: true}
-    - type: TextBox
-      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
-        border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12,
-        font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
-        background: '', bold: false, underline: false}
-      name: row_hidden_del_fid
-      layout_properties:
-        col_widths: {}
-        grid_position: KOQSLE,THZTKD
-      data_bindings: []
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: row_hidden_id
+    layout_properties: {width: 40.19999999999999}
+    data_bindings:
+    - {property: text, code: 'self.item[''id'']', writeback: true}
+  - type: TextBox
+    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '',
+      border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12,
+      font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
+      background: '', bold: false, underline: false}
+    name: row_hidden_del_fid
+    layout_properties: {width: 43.19999999999999}
+    data_bindings: []
+  - name: spacer_2
+    properties: {height: 32}
+    type: Spacer
+    layout_properties: {width: 32}
   - type: Button
     properties: {role: filled, align: center, tooltip: '', border: '', enabled: true,
       foreground: '', visible: true, text: Save, font_size: null, font: '', spacing_above: small,

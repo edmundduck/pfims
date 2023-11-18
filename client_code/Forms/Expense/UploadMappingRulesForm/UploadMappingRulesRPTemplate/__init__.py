@@ -62,7 +62,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
                 # i.remove_from_parent()
 
         try:
-            id = UploadMappingRulesController.save_mapping_criteria(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
+            id = UploadMappingRulesController.save_mapping_criteria(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text, self.row_desc.text)
         except Exception as err:
             logger.error(err)
             msg = f"ERROR occurs when saving mapping group [{self.row_mapping_name.text}]."

@@ -62,7 +62,7 @@ def generate_mapping_matrix(matrix, col_def):
 
 @anvil.server.callable("proc_save_mapping")
 @logger.log_function
-def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
+def proc_save_mapping(id, name, filetype_id, rules, del_iid=None, desc=None):
     """
     Process data for updating import mapping data.
 
@@ -72,6 +72,7 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
         filetype (list): The selected filetype ID.
         rules (list): The list of criteria of the rule to be saved.
         del_iid (string): The string of IID concatenated by comma to be deleted
+        desc (string): The description of the mapping rule.
 
     Returns:
         id (int): The ID of the mapping group.
@@ -83,7 +84,7 @@ def proc_save_mapping(id, name, filetype_id, rules, del_iid=None):
     currenttime = datetime.now()
 
     # Prepare data for mappinggroup
-    mgroup = (int(userid), id, name, filetype_id, currenttime) if id else (int(userid), name, filetype_id, currenttime)
+    mgroup = (int(userid), id, name, filetype_id, currenttime, desc) if id else (int(userid), name, filetype_id, currenttime, desc)
     logger.trace('mgroup=', mgroup)
     # Save mappinggroup
     id = FileImportMappingDAModule.save_mapping_group(id, mgroup)
