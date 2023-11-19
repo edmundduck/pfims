@@ -76,14 +76,18 @@ class ImportMappingGroup(BaseEntity):
         return ImportMappingGroup(self.get_dict())
 
     def is_valid(self):
-        from ..Error.AppError import AppError
         from ..Error.ValidationError import ValidationError
         
         group_name, filetype, desc, rules = [self.get_name(), self.get_file_type(), self.get_description(), self.get_mapping_rules()]
-        if not group_name or group_name.isspace(): return AppError(ValidationError('Group name cannot be empty.'))
-        if not filetype or filetype.isspace(): return AppError(ValidationError('File type cannot be empty.'))
-        if len(desc) > 120: return AppError(ValidationError('Description cannot exceed 120 characters.'))
+        err_msg = ""
+        if not group_name or group_name.isspace(): err_msg = err_msg + '- Group name cannot be empty\n'
+        if not filetype or filetype.isspace(): err_msg = err_msg + '- File type cannot be empty\n'
+        if len(desc) > 120: err_msg = err_msg + '- Description cannot exceed 120 characters\n'
         for r in rules:
             if not r.is_valid():
-                return r.is_valid()
-        return True
+                err_msg = err_msg + str(r.get_exception()) + '\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
+            return False
