@@ -1,5 +1,5 @@
 import anvil.server
-import datetime as datetime
+from datetime import datetime
 from .BaseEntity import BaseEntity
 
 # This is a module.
