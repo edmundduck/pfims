@@ -108,10 +108,6 @@ class ExpenseTransaction(BaseEntity):
         from ..Error.ValidationError import ValidationError
 
         tnx_date, account, amount = [self.get_tnx_date(), self.get_account(), self.get_amount()]
-        print("DEBUG")
-        tnx_date = 'ABCD'
-        account = ''
-        amount = ''
         err_msg = ""
         date_format = '%Y-%m-%d'
         if not tnx_date or str(tnx_date).isspace(): err_msg = err_msg + '- Transaction Date cannot be empty\n'

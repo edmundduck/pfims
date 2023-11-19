@@ -129,7 +129,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     @btnmod.one_click_only
     @logger.log_function
     def button_save_click(self, **event_args):
-        from .....Error.ValidationError import ValidationError
+        from ....Error.ValidationError import ValidationError
 
         """Validation"""
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
@@ -144,7 +144,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             tab_id, self.input_repeating_panel.items = ExpenseInputController.save_expense_transaction_group(self.dropdown_tabs.selected_value, tab_name, self.input_repeating_panel.items)
         except ValidationError as err:
             logger.error(err)
-            msg = f"ERROR occurs when saving expense transaction group [{self.templ_name.text}].\n{err}"
+            msg = f"ERROR occurs when saving expense transaction group [{tab_name}].\n{err}"
             Notification(msg, timeout=10).show()
         except Exception as err:
             logger.error(err)
