@@ -82,7 +82,17 @@ class ExpenseTransactionGroup(BaseEntity):
         return ExpenseTransactionGroup(self.get_dict())
 
     def is_valid(self):
-        name, status = [self.get_name(), self.get_submitted_status()]
-        if not name or name.isspace(): return False
-        if not status or status.isspace(): return False
-        return True
+        from ..Error.ValidationError import ValidationError
+        
+        name, status, transactions = [self.get_name(), self.get_submitted_status(), self.get_transactions()]
+        err_msg = ""
+        if not name or name.isspace(): err_msg = err_msg + '- Name cannot be empty\n'
+        if not status or status.isspace(): err_msg = err_msg + '- Status cannot be empty\n'
+        for t in transactions:
+            if not t.is_valid():
+                err_msg = err_msg + str(t.get_exception()) + '\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
+            return False

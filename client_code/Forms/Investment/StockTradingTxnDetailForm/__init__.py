@@ -91,7 +91,8 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
             Notification(msg, timeout=10).show()
         except Exception as err:
             logger.error(err)
-            msg = Notification(f'ERROR occurs when updating stock journal group [{self.templ_name.text}].')
+            msg = f'ERROR occurs when updating stock journal group [{self.templ_name.text}].'
+            Notification(msg).show()
         else:
             self.dropdown_templ.items = StockTradingTxnDetailController.generate_stock_journal_groups_dropdown(reload=True)
             self.dropdown_templ.selected_value = StockTradingTxnDetailController.get_stock_journal_group_dropdown_selected_item(result.get_id())
@@ -100,7 +101,7 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
             self.button_submit.enabled = StockTradingTxnDetailController.enable_stock_journal_group_submit_button(self.dropdown_templ.selected_value)
             msg = f'Stock journal group {self.templ_name.text} has been saved successfully.'
             logger.info(msg)
-        Notification(msg).show()
+            Notification(msg).show()
             
     @btnmod.one_click_only
     def button_erase_click(self, **event_args):
