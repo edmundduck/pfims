@@ -1,0 +1,77 @@
+is_package: true
+container:
+  type: HtmlTemplate
+  properties: {tooltip: '', background: '', foreground: '', border: '', visible: true,
+    role: null, html: '@theme:new-homepage.html'}
+components:
+- type: ColumnPanel
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: large, spacing_above: small, col_widths: '{}', spacing_below: small,
+    background: ''}
+  name: content_panel
+  layout_properties: {slot: default}
+  components:
+  - type: ColumnPanel
+    properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
+      wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+      spacing_below: small, background: ''}
+    name: column_panel_1
+    layout_properties: {grid_position: 'GMYWAQ,YDNMAL'}
+    components:
+    - type: ColumnPanel
+      properties: {col_widths: '{}'}
+      name: column_panel_3
+      layout_properties: {grid_position: 'AXSKXJ,TMIDYW'}
+      components:
+      - type: Label
+        properties: {role: null, align: center, tooltip: '', border: '', foreground: '',
+          visible: true, text: New User, font_size: 16, font: '', spacing_above: small,
+          icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+          underline: false, icon: ''}
+        name: label_1
+        layout_properties: {grid_position: 'FMFFUO,XLKZRZ'}
+    - type: Button
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: false,
+        foreground: 'theme:White', visible: true, text: SIGN UP, font_size: null,
+        font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+        background: 'theme:Secondary 500', bold: true, underline: false, icon: ''}
+      name: button_signup
+      layout_properties: {grid_position: 'GCYRID,BXHJNZ'}
+      event_bindings: {click: button_signup_click}
+  - type: ColumnPanel
+    properties: {role: card, tooltip: '', border: '', foreground: '', visible: true,
+      wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+      spacing_below: small, background: ''}
+    name: column_panel_2
+    layout_properties: {grid_position: 'GMYWAQ,HGBUMW'}
+    components:
+    - type: ColumnPanel
+      properties: {col_widths: '{}'}
+      name: column_panel_4
+      layout_properties: {grid_position: 'ICGUMP,QPWASK'}
+      components:
+      - type: Label
+        properties: {role: null, align: center, tooltip: '', border: '', foreground: '',
+          visible: true, text: Existing User, font_size: 16, font: '', spacing_above: small,
+          icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
+          underline: false, icon: ''}
+        name: label_2
+        layout_properties: {grid_position: 'MXSTYW,GUCZSO'}
+    - type: Button
+      properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
+        foreground: 'theme:White', visible: true, text: LOG IN, font_size: null, font: '',
+        spacing_above: small, icon_align: left, spacing_below: small, italic: false,
+        background: 'theme:Primary 700', bold: true, underline: false, icon: ''}
+      name: button_login
+      layout_properties: {grid_position: 'WWIDBN,DDIBFH'}
+      event_bindings: {click: button_login_click}
+- type: FlowPanel
+  properties: {}
+  name: navbar_links
+  layout_properties: {slot: nav-right}
+  components: []
+- name: image_1_copy_1
+  properties: {height: '72', source: _/theme/logo-no-background.png, horizontal_align: left,
+    spacing_below: small}
+  type: Image
+  layout_properties: {slot: logo}

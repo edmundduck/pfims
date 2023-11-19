@@ -12,7 +12,7 @@ services:
 - source: /runtime/services/anvil/files.yml
   client_config: {}
   server_config: {file_table: files}
-startup: {type: form, module: MainForm}
+startup: {type: module, module: StartupModule}
 package_name: PFIMS
 allow_embedding: false
 name: Personal Finance and Inventory Management System
@@ -23,7 +23,8 @@ runtime_options:
   server_spec: {base: python310-standard}
 metadata: {title: PFIMS, description: One integrated system for your own finance and inventory management}
 startup_form: null
-native_deps: {head_html: ''}
+native_deps: {head_html: "<script>\n$(document).ready(() => {\n    $('#loadingSpinner')\n\
+    \    .addClass('spinner_customized');\n})\n</script>"}
 db_schema:
   templ_journals:
     title: templ_journals

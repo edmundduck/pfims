@@ -1,0 +1,28 @@
+container:
+  type: DataRowPanel
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
+    visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none,
+    italic: false, background: '', bold: false, underline: false}
+components:
+- name: row_amount
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true,
+    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+    italic: false, background: '', bold: false, underline: false, icon: ''}
+  type: Label
+  layout_properties: {column: JRLRWP}
+  data_bindings:
+  - {property: text, code: '"${0:.2f}".format(self.item[''AMT''])'}
+- type: Label
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true,
+    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
+    italic: false, background: '', bold: false, underline: false, icon: ''}
+  name: row_label
+  layout_properties: {column: RMITXR}
+  data_bindings:
+  - {property: text, code: 'self.item[''LBL'']'}
+- name: row_account
+  properties: {}
+  type: Label
+  layout_properties: {column: QJYSBH}
+  data_bindings:
+  - {property: text, code: 'self.item[''ACC'']', writeback: false}

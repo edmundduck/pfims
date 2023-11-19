@@ -1,0 +1,119 @@
+is_package: true
+container:
+  type: ColumnPanel
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
+    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
+    spacing_below: small, background: ''}
+components:
+- type: FlowPanel
+  properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
+    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
+  name: flow_panel_1
+  components:
+  - type: Label
+    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Expense Analysis Report, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    layout_properties: {}
+    name: report_name
+- type: DataGrid
+  properties:
+    role: null
+    columns:
+    - {id: RMITXR, title: Labels, data_key: LBL, width: '250', $$hashKey: 'object:4905',
+      expand: false}
+    - {id: QJYSBH, data_key: ACC, title: Account, width: '250'}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: '220', $$hashKey: 'object:4907',
+      expand: false}
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 50
+    visible: true
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA JMLSRG,ZVJIVL', full_width_row: false}
+  name: data_grid
+  components:
+  - type: RepeatingPanel
+    properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
+      visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate,
+      background: ''}
+    layout_properties: {}
+    name: rpt_panel
+    data_bindings: []
+  - type: FlowPanel
+    properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
+      foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+    layout_properties: {slot: footer}
+    name: flow_panel_4
+    components:
+    - type: Label
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
+        visible: true, text: Rows per Page, font_size: 12, font: '', spacing_above: small,
+        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+        underline: false, icon: ''}
+      layout_properties: {}
+      name: label_4
+    - type: DropDown
+      properties:
+        role: null
+        align: full
+        tooltip: ''
+        placeholder: ''
+        border: ''
+        enabled: true
+        foreground: ''
+        items: ['20', '50', '100']
+        visible: true
+        font_size: 12
+        font: ''
+        spacing_above: small
+        spacing_below: small
+        italic: false
+        background: ''
+        bold: false
+        underline: false
+        include_placeholder: false
+      layout_properties: {}
+      event_bindings: {change: dropdown_displayrow_change}
+      name: dropdown_displayrow
+- name: hidden_data_grid
+  properties:
+    role: null
+    columns: []
+    auto_header: true
+    tooltip: ''
+    border: ''
+    foreground: ''
+    rows_per_page: 50
+    visible: false
+    wrap_on: never
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    background: ''
+  type: DataGrid
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA GBGARM,XGIOST'}
+  components: []
+- name: rpt_panel_copy_1
+  properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: true,
+    spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate,
+    background: ''}
+  type: RepeatingPanel
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA ZJDIWH,JDKBIR'}
+  data_bindings: []
+- type: Plot
+  properties: {}
+  name: plot_heatmap
+  layout_properties: {grid_position: 'ZLVMXC,PHMUMA QAXQTL,HDSHEV', full_width_row: true}
+- type: Plot
+  properties: {height: 704}
+  name: plot_bar_chart
+  layout_properties: {grid_position: 'ZLVMXC,PXXYBG', full_width_row: false}

@@ -1,6 +1,7 @@
 import anvil.server
 import anvil.users
 from .Logger import ClientLogger
+from .Constants import Roles
 
 class Validator:
     """
@@ -62,7 +63,7 @@ to check the status of the form.
     
     def require_text_field(self, text_box, error_lbl=None, show_errors_immediately=False):
         self.require(text_box, ['change', 'lost_focus'],
-                    lambda tb: tb.text not in ('', None),
+                    lambda tb: tb.text not in ('', None) and not str(tb.text).isspace(),
                     error_lbl, show_errors_immediately)
             
     def require_date_field(self, date_field, error_lbl=None, show_errors_immediately=False):
@@ -104,9 +105,9 @@ to check the status of the form.
         self._check()
 
     """To highlight the error field(s)"""
-    def highlight_when_invalid(self, component, errcolour, okcolour):
+    def highlight_when_invalid(self, component):
         def on_change(is_valid):
-            component.background = errcolour if not is_valid else okcolour
+            component.role = Roles.VALID_ERROR if not is_valid else Roles.VALID_NORMAL
         self._colours.append(on_change)
         self._check()
         

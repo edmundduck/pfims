@@ -1,9 +1,4 @@
 import anvil.server
-import anvil.users
-import anvil.tables as tables
-import anvil.tables.query as q
-from anvil.tables import app_tables
-
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
@@ -35,7 +30,7 @@ class ButtonModerator:
             if btn_source_state is not None:
                 if isinstance(result, dict) and result.get(self.OVERRIDE_KEY, None) is not None:
                     btn_source.enabled = result.get(self.OVERRIDE_KEY)
-                elif isinstance(result, list):
+                elif isinstance(result, (list, tuple)):
                     btn_source.enabled = btn_source_state
                     for r in result:
                         if isinstance(r, dict) and r.get(self.OVERRIDE_KEY, None):
