@@ -66,11 +66,9 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         try:
             id = UploadMappingRulesController.save_mapping_criteria(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text, self.row_desc.text)
         except ValidationError as err:
-            print("YYY=", type(err))
-            print("YYY1=", err.message)
             logger.error(err)
             msg = f"ERROR occurs when saving mapping group [{self.row_mapping_name.text}].\n{err}"
-            Notification(msg).show()
+            Notification(msg, timeout=10).show()
         except Exception as err:
             logger.error(err)
             msg = f"ERROR occurs when saving mapping group [{self.row_mapping_name.text}]."
