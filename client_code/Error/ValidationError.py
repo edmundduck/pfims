@@ -1,5 +1,4 @@
 import anvil.server
-import numpy as np
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -13,11 +12,11 @@ class ValidationError(anvil.server.AnvilWrappedError):
             for i in list_items:
                 if unique_dict.get(i, None) is None:
                     unique_dict[i] = i
-            return unique_dict.keys()
+            return '\n'.join(list(unique_dict.keys()))
                     
         if isinstance(message, ValidationError):
             message = str(message)
-        self.message = find_unique(message)
+        self.message = find_unique(message.split('\n'))
         super().__init__(self.message)
 
     def __str__(self):

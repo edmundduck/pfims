@@ -105,14 +105,20 @@ class ExpenseTransaction(BaseEntity):
         return ExpenseTransaction(self.get_dict())
 
     def is_valid(self):
+        from ..Error.ValidationError import ValidationError
+
         gid, tnx_date, account, amount = [self.get_group_id(), self.get_tnx_date(), self.get_account(), self.get_amount()]
+        err_msg = ""
         date_format = '%Y-%m-%d'
-        if not tnx_date or str(tnx_date).isspace(): return False
+        if not tnx_date or str(tnx_date).isspace(): err_msg = err_msg + '- Transaction Date cannot be empty\n'
         try:
             datetime.strptime(tnx_date, date_format)
         except ValueError as err:
+            err_msg = err_msg + '- Transaction Date is not in a proper date format\n'
+        if not account or str(account).isspace(): err_msg = err_msg + '- Account cannot be empty\n'
+        if not amount or str(amount).isspace(): err_msg = err_msg + '- Amount cannot be empty\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
             return False
-        if not gid or str(gid).isspace(): return False
-        if not account or str(account).isspace(): return False
-        if not amount or str(amount).isspace(): return False
-        return True
