@@ -83,7 +83,9 @@ def proc_save_mapping(import_grp, del_iid=None):
 
     # Validation
     if not import_grp.is_valid():
+        print("A")
         if isinstance(import_grp.is_valid(), AppError):
+            print("B")
             raise import_grp.is_valid().get_error()
         else:
             raise TypeError('Backend validation error in import mapping data.')
