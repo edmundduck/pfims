@@ -85,6 +85,9 @@ class ExpenseTransactionGroup(BaseEntity):
         from ..Error.ValidationError import ValidationError
         
         name, status, transactions = [self.get_name(), self.get_submitted_status(), self.get_transactions()]
+        print("DEBUG")
+        name = ''
+        status = ''
         err_msg = ""
         if not name or name.isspace(): err_msg = err_msg + '- Name cannot be empty\n'
         if not status or status.isspace(): err_msg = err_msg + '- Status cannot be empty\n'
