@@ -23,6 +23,10 @@ def proc_save_group_and_journals(jrn_grp, del_iid_list=None):
         result_u (int): Successful update row count, otherwise None.
         result_d (int): Successful delete row count, otherwise None.
     """
+    # Validation
+    if not jrn_grp.is_valid():
+        raise jrn_grp.get_exception()
+
     result_d = StockTradingDAModule.delete_journals(jrn_grp, del_iid_list)
     if jrn_grp.get_id():
         group_id = StockTradingDAModule.save_existing_stock_journal_group(jrn_grp)

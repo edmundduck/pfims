@@ -154,6 +154,8 @@ class StockJournal(BaseEntity):
         date_format = '%Y-%m-%d'
         if not buy_date or str(buy_date).isspace(): err_msg = err_msg + '- Buy Date cannot be empty\n'
         try:
+            print("DEBUG")
+            buy_date = 'ABCD'
             datetime.strptime(buy_date, date_format)
         except ValueError as err:
             err_msg = err_msg + '- Buy Date is not in a proper date format\n'
