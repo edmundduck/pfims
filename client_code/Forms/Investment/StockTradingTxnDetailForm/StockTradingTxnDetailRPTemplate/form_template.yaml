@@ -223,4 +223,6 @@ components:
     - name: row_label_iid
       properties: {font_size: 12, visible: false, align: right}
       type: Label
+  data_bindings:
+  - {property: item, code: self.item, writeback: false}
 is_package: true

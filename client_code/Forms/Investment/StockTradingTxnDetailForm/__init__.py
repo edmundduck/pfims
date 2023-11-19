@@ -73,6 +73,8 @@ class StockTradingTxnDetailForm(StockTradingTxnDetailFormTemplate):
     @logger.log_function
     def button_save_templ_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from ....Error.ValidationError import ValidationError
+        from .Error
         # Reflect updates in the row first
         # *** ESSENTIAL ***
         # Update child items from repeating panel to parent form items
