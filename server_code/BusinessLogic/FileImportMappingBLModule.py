@@ -83,6 +83,7 @@ def proc_save_mapping(import_grp, del_iid=None):
 
     # Validation
     if not import_grp.is_valid():
+        print("???=", import_grp.get_exception())
         raise import_grp.get_exception()
 
     # Save mappinggroup

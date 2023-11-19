@@ -88,7 +88,8 @@ class ImportMappingGroup(BaseEntity):
             if not r.is_valid():
                 err.append(r.is_valid())
         if err.is_empty():
-            return False
+            return True
         else:
             self.set_exception(err)
-            return True
+            print("XXX", self.get_exception())
+            return False

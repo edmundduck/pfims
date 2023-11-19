@@ -4,14 +4,16 @@ import anvil.server
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 # Ref - https://anvil.works/forum/t/handling-exception-coming-from-the-server-uplink-modules/1400
+@anvil.server.portable_class
 class ValidationError(anvil.server.AnvilWrappedError):
-    def __init__(self, message=None):
+    def __init__(self, message=''):
         if isinstance(message, ValidationError):
             message = str(message)
         self.message = message
         super().__init__(message)
 
     def __str__(self):
+        print("DEBUG __str__=", self.message)
         return self.message
 
     def __bool__(self):
@@ -22,7 +24,10 @@ class ValidationError(anvil.server.AnvilWrappedError):
         if message is not None:
             if isinstance(message, ValidationError):
                 message = str(message)
-            self.message = '\n'.join((self.message, message))
+            if self.message:
+                self.message = '\n'.join((self.message, message))
+            else:
+                self.message = message
 
     def is_empty(self):
         return True if not self.message else False
