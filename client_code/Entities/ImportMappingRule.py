@@ -90,7 +90,6 @@ class ImportMappingRule(BaseEntity):
 
         gid, col_id, col_code = [self.get_group_id(), self.get_column_id(), self.get_mapped_column_type()]
         err_msg = ""
-        if not gid or gid.isspace(): err_msg = err_msg + '- Group ID cannot be empty\n'
         if not col_id or col_id.isspace(): err_msg = err_msg + '- Column ID cannot be empty\n'
         if not col_code or col_code.isspace(): err_msg = err_msg + '- Data column cannot be empty\n'
         if not err_msg:
