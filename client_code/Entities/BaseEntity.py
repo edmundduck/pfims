@@ -16,6 +16,7 @@ class BaseEntity:
             self.set(data)
         else:
             self.set([None]*len(self.__property_def__))
+        self.error = None
 
     def __str__(self):
         return '{0}: {1}'.format(
@@ -59,6 +60,12 @@ class BaseEntity:
     def is_valid(self):
         raise NotImplementedError(f'Method is_valid() must be implemented in child class.')
 
+    def get_exception(self):
+        return self.error
+
+    def set_exception(self, error):
+        self.error = error
+        
     """
     COMMENT OUT customized serialization logic since nesting StockJournal objects inside StockJournalGroup using same customized serialization causes error.
     Ref: https://anvil.works/docs/server/portable-classes/custom-serialisation#controlling-object-construction
