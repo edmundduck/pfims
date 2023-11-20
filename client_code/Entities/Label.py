@@ -50,7 +50,14 @@ class Label(BaseEntity):
         return Label(self.get_dict())
 
     def is_valid(self):
+        from ..Error.ValidationError import ValidationError
+
         lbl_name, status = [self.get_name(), self.get_status()]
-        if not lbl_name or lbl_name.isspace(): return False
-        if not status or status.isspace(): return False
-        return True
+        err_msg = ""
+        if not lbl_name or lbl_name.isspace(): err_msg = err_msg + '- Label name cannot be empty\n'
+        if not status or status.isspace(): err_msg = err_msg + '- Status cannot be empty\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
+            return False

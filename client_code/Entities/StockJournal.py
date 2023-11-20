@@ -1,5 +1,5 @@
 import anvil.server
-import datetime as datetime
+from datetime import datetime
 from .BaseEntity import BaseEntity
 
 # This is a module.
@@ -147,17 +147,25 @@ class StockJournal(BaseEntity):
         return StockJournal(self.get_dict())
 
     def is_valid(self):
+        from ..Error.ValidationError import ValidationError
+
         buy_date, symbol, shares, total_cost = [self.get_buy_date(), self.get_symbol(), self.get_number_of_shares(), self.get_total_cost()]
+        err_msg = ""
         date_format = '%Y-%m-%d'
-        if not buy_date or str(buy_date).isspace(): return False
+        if not buy_date or str(buy_date).isspace(): err_msg = err_msg + '- Buy Date cannot be empty\n'
         try:
             datetime.strptime(buy_date, date_format)
         except ValueError as err:
+            err_msg = err_msg + '- Buy Date is not in a proper date format\n'
+        if not symbol or str(symbol).isspace(): err_msg = err_msg + '- Symbol cannot be empty\n'
+        if len(symbol) > 8 : err_msg = err_msg + '- Symbol cannot exceed 8 characeters\n'
+        if not shares or str(shares).isspace(): err_msg = err_msg + '- Number of shares cannot be empty\n'
+        if not total_cost or str(total_cost).isspace(): err_msg = err_msg + '- Total cost cannot be empty\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
             return False
-        if not symbol or str(symbol).isspace(): return False
-        if not shares or str(shares).isspace(): return False
-        if not total_cost or str(total_cost).isspace(): return False
-        return True
 
     """
     COMMENT OUT customized serialization logic since nesting StockJournal objects inside StockJournalGroup using same customized serialization causes error.

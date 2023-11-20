@@ -129,6 +129,8 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
     @btnmod.one_click_only
     @logger.log_function
     def button_save_click(self, **event_args):
+        from ....Error.ValidationError import ValidationError
+
         """Validation"""
         result = all(c._validate() for c in self.input_repeating_panel.get_components())
         if result is not True:
@@ -140,6 +142,16 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         tab_name = self.tab_name.text
         try:
             tab_id, self.input_repeating_panel.items = ExpenseInputController.save_expense_transaction_group(self.dropdown_tabs.selected_value, tab_name, self.input_repeating_panel.items)
+        except ValidationError as err:
+            logger.error(err)
+            msg = f"ERROR occurs when saving expense transaction group [{tab_name}].\n{err}"
+            Notification(msg, timeout=10).show()
+        except Exception as err:
+            logger.error(err)
+            msg = f"ERROR occurs when saving expense transaction group [{tab_name} ({tab_original_id})]." if tab_original_id else \
+                f"ERROR occurs when saving expense transaction group [{tab_name}]."
+            Notification(msg).show()
+        else:
             if tab_name != tab_original_name or (not tab_original_id and tab_id):
                 # Only trigger expense tab dropdown refresh when new tab is created or tab name is changed
                 self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
@@ -148,11 +160,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self._switch_to_submit_button()
             msg = f"Expense transaction group [{tab_name} ({tab_id})] has been saved successfully."
             logger.info(msg)
-        except Exception as err:
-            logger.error(err)
-            msg = Notification(f"ERROR occurs when saving expense transaction group [{tab_name} ({tab_original_id})].") if tab_original_id else \
-                Notification(f"ERROR occurs when saving expense transaction group [{tab_name}].") 
-        Notification(msg).show()
+            Notification(msg).show()
 
     @btnmod.one_click_only
     @logger.log_function
@@ -161,6 +169,10 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         tab_id, tab_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         try:
             result = ExpenseInputController.submit_expense_transaction_group(self.dropdown_tabs.selected_value)
+        except Exception as err:
+            logger.error(err)
+            msg = f"ERROR occurs when submitting expense transaction group [{tab_name} ({tab_id})]."
+        else:
             """ Reflect the change in template dropdown """
             self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
             self.dropdown_tabs.selected_value = None
@@ -170,9 +182,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
             self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items()
             msg = "Expense transaction group [{0} ({1})] has been submitted.".format(tab_name, tab_id)
             logger.info(msg)
-        except Exception as err:
-            logger.error(err)
-            msg = f"ERROR occurs when submitting expense transaction group [{tab_name} ({tab_id})]."
         Notification(msg).show()
 
     @btnmod.one_click_only
@@ -187,6 +196,11 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         if userconf == Alerts.CONFIRM:
             try:
                 result = ExpenseInputController.delete_expense_transaction_group(self.dropdown_tabs.selected_value)
+            except Exception as err:
+                logger.error(err)
+                msg = f"ERROR occurs when deleting expense transaction group [{exp_grp_name} ({exp_grp_id})]."
+                Notification(msg).show()
+            else:
                 """ Reflect the change in tab dropdown """
                 self.dropdown_tabs.items = ExpenseInputController.generate_expense_tabs_dropdown(reload=True)
                 self.dropdown_tabs.selected_value = None
@@ -198,10 +212,6 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
                 logger.info(msg)
                 Notification(msg).show()
                 return btnmod.override_end_state(False)
-            except Exception as err:
-                logger.error(err)
-                msg = f"ERROR occurs when deleting expense transaction group [{exp_grp_name} ({exp_grp_id})]."
-                Notification(msg).show()
 
     def tab_name_change(self, **event_args):
         """This method is called when the text in this text box is edited"""
