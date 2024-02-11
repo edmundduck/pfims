@@ -147,6 +147,9 @@ db_schema:
     - name: remembered_logins
       admin_ui: {width: 200}
       type: simpleObject
+    - name: n_password_failures
+      admin_ui: {width: 200}
+      type: number
   expense:
     title: expense
     client: none
