@@ -88,6 +88,8 @@ unique_ids:
     Utils.ButtonModerator: '1696342441149849584154945.8008'
   server_modules:
     DataAccess.AccountDAModule: '1681251190842588428188771.8152'
+    TestDataAccess.TestLabelDAModule: '1708337752064689265257731.8102'
+    TestDataAccess: '1708337708727868546741922.5934'
     DataAccess: '1697916920677130106935362.03099'
     BusinessLogic.StockTradingBLModule: '1698714065634770872848166.4581'
     ServerUtils.LoggingModule: '1688637149258632171880378.1011'
