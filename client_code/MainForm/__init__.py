@@ -21,7 +21,7 @@ class MainForm(MainFormTemplate):
         self.button_inv_pnl.role, \
         self.button_exp_input.role, \
         self.button_exp_list.role, \
-        self.button_unittest, \
+        self.button_unittest.role, \
         self.button_poc.role \
         = [None]*7
 
@@ -77,7 +77,7 @@ class MainForm(MainFormTemplate):
         """This method is called when the button is clicked"""
         self.reset_link_status()
         # self.button_unittest.role = MainFormController.switch_role(self.button_unittest.role)
-        Routing.open_poc_main_form(self)
+        Routing.open_unittest_main_form(self)
 
     def button_poc_click(self, **event_args):
         """This method is called when the button is clicked"""
