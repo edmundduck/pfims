@@ -5,8 +5,7 @@ properties:
 - {name: result_failure, type: number, important: true, default_value: 0}
 - {name: test_function, type: string, default_value: '', important: true}
 is_package: true
-events:
-- {name: click, default_event: true}
+events: []
 custom_component: true
 components:
 - name: flow_panel_1

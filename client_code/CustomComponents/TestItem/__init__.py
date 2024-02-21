@@ -10,7 +10,6 @@ class TestItem(TestItemTemplate):
         # Any code you write here will run before the form opens.
         self.label.text = self.title
         self.error_msg.visible = False
-        print(self.test_function)
         self._validate()
 
     def button_run_click(self, **event_args):
@@ -23,7 +22,7 @@ class TestItem(TestItemTemplate):
         self.result.text = f"Success ({self.result_success}) / Failure ({self.result_failure})"
 
     def _validate(self):
-        print("xx")
+        print(self.test_function)
         if isinstance(self.test_function, (list, tuple)):
             self.button_run.enabled = True
         else:
