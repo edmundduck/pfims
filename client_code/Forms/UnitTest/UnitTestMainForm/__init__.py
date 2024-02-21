@@ -9,4 +9,4 @@ class UnitTestMainForm(UnitTestMainFormTemplate):
 
         # Any code you write here will run before the form opens.
         self.test_item_1.title = "TestLabelDAModule"
-        self.test_item_1.test_function = "test_generate_labels_list_normal_case"
+        self.test_item_1.test_function = ["test_generate_labels_list_normal_case"]
