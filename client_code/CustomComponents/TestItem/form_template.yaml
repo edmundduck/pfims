@@ -18,10 +18,9 @@ components:
     properties: {}
     type: Label
     layout_properties: {expand: true}
-    data_bindings:
-    - {property: text, code: 'self.item[''title'']', writeback: false}
+    data_bindings: []
   - name: result
-    properties: {text: 'Success (self.item[''result_success''])'}
+    properties: {text: ''}
     type: Label
     layout_properties: {}
     data_bindings: []
