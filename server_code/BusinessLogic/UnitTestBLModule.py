@@ -13,10 +13,10 @@ def access_unit_test_config_file(mode=None):
         if not mode:
             return list(line for line in f if UnitTest.DELIMITER in line)
         elif mode == UnitTest.CLIENT_ONLY:
-            part = re.match(r'^# Client', f.read())
+            part = re.match(r'^# Client(.*)^#', f.read(), re.DOTALL)
             print(part)
             return list(line for line in f if UnitTest.DELIMITER in line)
         elif mode == UnitTest.SERVER_ONLY:
-            part = re.match(r'^# Server.*$', f.read())
+            part = re.match(r'^# Server(.*)^#', f.read(), re.DOTALL)
             print(part)
             return list(line for line in f if UnitTest.DELIMITER in line)
