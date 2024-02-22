@@ -1,34 +1,36 @@
-properties:
-- {name: title, type: string, default_value: Test, important: true, default_binding_prop: true,
-  multiline: true}
-- {name: result_success, type: number, important: true, default_value: 0}
-- {name: result_failure, type: number, important: true, default_value: 0}
-- {name: test_function, type: string, default_value: '', important: true}
-is_package: true
-events: []
-custom_component: true
+container: {type: ColumnPanel}
 components:
 - name: flow_panel_1
-  properties: {align: right, background: ''}
+  properties: {align: right}
   type: FlowPanel
-  layout_properties: {grid_position: 'KXNKRQ,TILOPK'}
+  layout_properties: {grid_position: 'EVJXIN,CNFAEB'}
   components:
   - name: label
     properties: {}
     type: Label
     layout_properties: {expand: true}
-    data_bindings: []
   - name: result
-    properties: {text: ''}
+    properties: {}
     type: Label
-    layout_properties: {}
-    data_bindings: []
   - name: button_run
     properties: {text: Run}
     type: Button
+    layout_properties: {}
     event_bindings: {click: button_run_click}
+  event_bindings: {show: flow_panel_1_show}
 - name: error_msg
-  properties: {role: label-error}
+  properties: {visible: false, role: label-error}
   type: Label
-  layout_properties: {grid_position: 'VQAZUD,QIFZNB'}
-container: {type: ColumnPanel}
+  layout_properties: {grid_position: 'YURDPY,QKNJET'}
+is_package: true
+custom_component: true
+properties:
+- {name: title, type: string, default_value: '', important: true, default_binding_prop: true,
+  multiline: true, description: Test case title}
+- {name: result_success, type: number, important: true, default_value: 0, description: Count of successful test run}
+- {name: result_failure, type: number, important: true, default_value: 0, description: Count of failure test run}
+- name: test_function
+  type: text[]
+  default_value: []
+  important: true
+  description: List of functions to test

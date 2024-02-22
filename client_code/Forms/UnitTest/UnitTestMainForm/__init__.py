@@ -1,5 +1,6 @@
 from ._anvil_designer import UnitTestMainFormTemplate
 from anvil import *
+from ....Controllers import UnitTestController
 import anvil.server
 
 class UnitTestMainForm(UnitTestMainFormTemplate):
@@ -8,5 +9,6 @@ class UnitTestMainForm(UnitTestMainFormTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.test_item_1.title = "TestLabelDAModule"
+        print(UnitTestController.retrieve_test_cases())
+        self.test_item_1.title = "Test LabelDAModule"
         self.test_item_1.test_function = ["test_generate_labels_list_normal_case"]

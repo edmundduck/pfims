@@ -19,9 +19,8 @@ components:
       underline: false, icon: ''}
     type: Label
     layout_properties: {grid_position: 'UKWKZM,OEOPQF'}
-- name: test_item_1
-  properties: {result_failure: 0, result_success: 0}
-  type: form:CustomComponents.TestItem
-  layout_properties: {grid_position: 'HCGFRV,RUAAJC'}
-  event_bindings: {click: test_item_1_click}
+  - name: test_item_1
+    properties: {}
+    type: form:CustomComponents.TestItem
+    layout_properties: {grid_position: 'VSWUSO,OFEWMX'}
 is_package: true
