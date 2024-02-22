@@ -14,9 +14,7 @@ def access_unit_test_config_file(mode=None):
             return list(line for line in f if UnitTest.DELIMITER in line)
         elif mode == UnitTest.CLIENT_ONLY:
             part = re.match(r'^# Client(.*)[#|$]', f.read(), re.DOTALL)
-            print(part[1])
-            return list(line for line in f if UnitTest.DELIMITER in line)
+            return list(line for line in f if UnitTest.DELIMITER in part[1]) if part else None
         elif mode == UnitTest.SERVER_ONLY:
             part = re.match(r'^# Server(.*)[#|$]', f.read(), re.DOTALL)
-            print(part[1])
-            return list(line for line in f if UnitTest.DELIMITER in line)
+            return list(line for line in f if UnitTest.DELIMITER in part[1]) if part else None
