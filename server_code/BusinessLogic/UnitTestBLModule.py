@@ -19,7 +19,7 @@ def access_unit_test_config_file(mode=None):
             return list(line for line in part[1] if UnitTest.DELIMITER in part[1]) if part else None
         elif mode == UnitTest.SERVER_ONLY:
             # part = re.search(r'# Server(.*)[#]*?', f.read(), re.DOTALL | re.DEBUG)
-            part = re.search(r'^# Server(.*)^#', f.read(), re.MULTILINE)
+            part = re.search(r'# Server(.*)#*?', f.read(), re.MULTILINE)
             print(part)
             print(part[1])
             print(list(line for line in part[1] if UnitTest.DELIMITER in part[1]) if part else None)
