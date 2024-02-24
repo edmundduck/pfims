@@ -10,8 +10,8 @@ class TestCase:
         if config_line:
             if UnitTest.DELIMITER in config_line:
                 items = config_line.split(UnitTest.DELIMITER)
-                self.title = items[0]
-                self.func = [items[1]]
+                self.title = items[0].strip()
+                self.func = items[1].replace(" ", "").split(UnitTest.DELIMITER_FUNC) if UnitTest.DELIMITER_FUNC in items[1] else [items[1].replace(" ", "")]
             else:
                 raise Error(f'Not a valid test config line.')
 

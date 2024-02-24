@@ -201,6 +201,7 @@ class ReportFormTag:
 
 class UnitTest:
     DELIMITER = ":="
+    DELIMITER_FUNC = ","
     CLIENT_ONLY = "# Client code testing"
     SERVER_ONLY = "# Server code testing"
     TEST_CONFIG_FILE = 'unittest.conf'
