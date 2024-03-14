@@ -12,7 +12,7 @@ class LoginForm(LoginFormTemplate):
     def button_login_click(self, **event_args):
         """This method is called when the button is clicked"""
         from .. import StartupModule
-        anvil.users.login_with_form()
+        anvil.users.login_with_form(allow_cancel=True)
         StartupModule.startup()
 
     def button_signup_click(self, **event_args):
