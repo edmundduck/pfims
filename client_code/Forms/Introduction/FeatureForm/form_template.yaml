@@ -4,23 +4,52 @@ components:
   properties: {text: Review Your Investment Portfolio, role: subheading}
   type: Label
   layout_properties: {grid_position: 'LVIQQL,BMGQDH'}
-- name: flow_panel_1
-  properties: {}
-  type: FlowPanel
-  layout_properties: {grid_position: 'GSXJOQ,MTZOEH'}
-  components: []
 - name: grid_panel_1
   properties: {}
   type: GridPanel
   layout_properties: {grid_position: 'LREYJF,AZIUOL'}
   components:
-  - name: text_area_1
-    properties: {enabled: false, text: Group your investment based on broker accounts to review your portfolio profit and loss in detail.,
-      height: 255}
-    type: TextArea
-    layout_properties: {row: EENGCL, width_xs: 5, col_xs: 0}
+  - name: label_2
+    properties: {text: 'You may have loads of investment statements from different
+        brokers. When do you need to review them all in one go? Possibly during tax
+        reporting season.
+
+
+        Our application can group all brokers'' investment profit and loss into the
+        same interface for you to understand how the investment is performing. Of
+        course it also helps tax reporting by getting an overall profit and loss in
+        one tax reporting year.', bold: true, font_size: 20, align: right}
+    type: Label
+    layout_properties: {row: EENGCL, width_xs: 6, col_xs: 0}
   - name: image_1
-    properties: {source: _/theme/investment_pic.jpg, height: 269}
+    properties: {source: _/theme/investment_pic.jpg, height: 312}
     type: Image
     layout_properties: {row: EENGCL, width_xs: 6, col_xs: 5}
+- name: spacer_1
+  properties: {height: '20'}
+  type: Spacer
+  layout_properties: {grid_position: 'MWLIIM,LSIGPJ'}
+- name: label_1_copy
+  properties: {text: Manage Your Expense, role: subheading}
+  type: Label
+  layout_properties: {grid_position: 'DUQTGK,DCTHWS'}
+- name: grid_panel_2
+  properties: {}
+  type: GridPanel
+  layout_properties: {grid_position: 'LBFAIM,UUBGNP'}
+  components:
+  - name: label_2_copy
+    properties: {text: 'Do you often "feel like" your expense is not that much, but
+        turnout you are shocked by the actual figure? Is that common for you to lose
+        track of the expense like this?', bold: true, font_size: 20, align: right}
+    type: Label
+    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
+  - name: image_1_copy
+    properties: {source: _/theme/expense_mgt_pic.jpg, height: 313}
+    type: Image
+    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 5}
+- name: spacer_1_copy
+  properties: {height: '20'}
+  type: Spacer
+  layout_properties: {grid_position: 'NNUHMT,YUBQWE'}
 is_package: true
