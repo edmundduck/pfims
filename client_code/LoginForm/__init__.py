@@ -21,17 +21,17 @@ class LoginForm(LoginFormTemplate):
 
     def button_feature_click(self, **event_args):
         """This method is called when the button is clicked"""
-        pass
+        Routing.open_intro_feature_form(self)
 
     def button_price_click(self, **event_args):
         """This method is called when the button is clicked"""
-        pass
+        Routing.open_intro_pricing_form(self)
 
     def button_resource_click(self, **event_args):
         """This method is called when the button is clicked"""
-        pass
+        Routing.open_intro_resource_form(self)
 
     def button_contact_click(self, **event_args):
         """This method is called when the button is clicked"""
-        pass
+        Routing.open_intro_contact_form(self)
 

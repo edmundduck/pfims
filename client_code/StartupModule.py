@@ -9,7 +9,7 @@ from .Utils import Routing
 def startup():
     user_data = anvil.server.call('get_user_data')
     if not user_data:
-        Routing.open_general_front_form()
+        Routing.open_intro_main_form()
     else:
         Global.userid, Global.email, Global.role, Global.settings = user_data
         Routing.open_logged_on_main_form()

@@ -3,10 +3,30 @@ import anvil.server
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
-def open_general_front_form():
+def open_intro_main_form():
     from ..LoginForm import LoginForm
     anvil.open_form(LoginForm())
     
+def open_intro_feature_form(self, **event_args):
+    from ..Forms.Introduction.FeatureForm import FeatureForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(FeatureForm())
+
+def open_intro_pricing_form(self, **event_args):
+    from ..Forms.Introduction.PricingForm import PricingForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(PricingForm())
+
+def open_intro_resource_form(self, **event_args):
+    from ..Forms.Introduction.ResourceForm import ResourceForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ResourceForm())
+
+def open_intro_contact_form(self, **event_args):
+    from ..Forms.Introduction.ContactForm import ContactForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ContactForm())
+
 def open_logged_on_main_form():
     from ..MainForm import MainForm
     anvil.open_form(MainForm())
