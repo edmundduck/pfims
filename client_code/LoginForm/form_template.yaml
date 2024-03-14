@@ -8,13 +8,8 @@ components:
   properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
     wrap_on: mobile, col_spacing: large, spacing_above: small, col_widths: '{}', spacing_below: small,
     background: ''}
-  name: content_panel_login
+  name: content_panel
   layout_properties: {slot: default}
-  components: []
-- type: FlowPanel
-  properties: {}
-  name: navbar_links
-  layout_properties: {slot: nav-right}
   components: []
 - name: image_1
   properties: {height: '120', source: _/theme/logo-no-background.png, horizontal_align: center,
@@ -58,7 +53,7 @@ components:
     properties: {role: null, align: left, tooltip: '', border: '', enabled: false,
       foreground: 'theme:White', visible: true, text: SIGN UP, font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Secondary 500', bold: true, underline: false, icon: ''}
+      background: '', bold: true, underline: false, icon: ''}
     name: button_signup
     layout_properties: {grid_position: 'DOLLNT,OTCWFJ'}
     event_bindings: {click: button_signup_click}
@@ -66,7 +61,7 @@ components:
     properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
       foreground: 'theme:White', visible: true, text: LOG IN, font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: 'theme:Primary 700', bold: true, underline: false, icon: ''}
+      background: '', bold: true, underline: false, icon: ''}
     name: button_login
     layout_properties: {grid_position: 'PEGBBN,RMKLZU'}
     event_bindings: {click: button_login_click}
