@@ -113,6 +113,12 @@ components:
     properties: {height: '12'}
     type: Spacer
     layout_properties: {grid_position: 'SDFYQU,EDDSQG'}
+  - name: button_unittest
+    properties: {text: Unit Test, font_size: null, icon: 'fa:sort-numeric-asc', icon_align: left,
+      role: null, bold: false, align: left}
+    type: Button
+    layout_properties: {grid_position: 'CTMZRP,ZEIYIU'}
+    event_bindings: {click: button_unittest_click}
   - name: button_poc
     properties: {text: POC, font_size: null, icon: 'fa:yelp', icon_align: left, role: null,
       bold: false, align: left}

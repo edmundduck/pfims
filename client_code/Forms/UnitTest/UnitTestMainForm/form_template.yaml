@@ -1,0 +1,26 @@
+container: {type: ColumnPanel}
+components:
+- name: column_panel_1
+  properties: {}
+  type: ColumnPanel
+  layout_properties: {grid_position: 'VXIZZB,RJZSHH'}
+  components:
+  - name: headline
+    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Test the Whole Suite, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    type: Label
+    layout_properties: {grid_position: 'WPFNSF,UBBYOA'}
+  - name: headline_2
+    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
+      visible: true, text: Test per Module, font_size: null, font: '', spacing_above: small,
+      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
+      underline: false, icon: ''}
+    type: Label
+    layout_properties: {grid_position: 'UKWKZM,OEOPQF'}
+  - name: colpanel_testcases
+    properties: {}
+    type: ColumnPanel
+    layout_properties: {grid_position: 'IGDNOX,ZWPWVK'}
+is_package: true

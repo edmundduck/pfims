@@ -108,6 +108,11 @@ def open_exp_analysis_form(self, **event_args):
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseReportSearchPanelForm(ExpenseAnalysisForm()))
 
+def open_unittest_main_form(self, **event_args):
+    from ..Forms.UnitTest.UnitTestMainForm import UnitTestMainForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(UnitTestMainForm())
+
 def open_poc_main_form(self, **event_args):
     from .._POC.form_poc_main import form_poc_main
     anvil.get_open_form().content_panel.clear()

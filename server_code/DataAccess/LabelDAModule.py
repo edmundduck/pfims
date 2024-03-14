@@ -68,7 +68,7 @@ def select_label(selected_lbl):
         row = cur.fetchone()
         logger.trace("row=", row)
         cur.close()
-        lbl = Label(row).set_user_id(userid)
+        lbl = Label(row).set_user_id(userid) if row else None
         return lbl
         
 @anvil.server.callable("create_label")
