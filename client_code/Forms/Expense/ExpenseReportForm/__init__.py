@@ -1,6 +1,5 @@
 from ._anvil_designer import ExpenseReportFormTemplate
 from anvil import *
-import anvil.server
 from ....Utils.Constants import ReportFormTag
 from ....Utils.Logger import ClientLogger
 

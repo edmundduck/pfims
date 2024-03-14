@@ -1,6 +1,5 @@
 from ._anvil_designer import RowTemplate3Template
 from anvil import *
-import anvil.server
 from ....Utils.Validation import Validator
 
 class RowTemplate3(RowTemplate3Template):

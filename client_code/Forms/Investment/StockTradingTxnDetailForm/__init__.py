@@ -1,7 +1,6 @@
 from ._anvil_designer import StockTradingTxnDetailFormTemplate
 from anvil import *
 from datetime import date
-import anvil.server
 from ....Controllers import StockTradingTxnDetailController
 from ....Utils.ButtonModerator import ButtonModerator
 from ....Utils.Logger import ClientLogger

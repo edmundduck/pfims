@@ -1,6 +1,5 @@
 from ._anvil_designer import TransactionReportRPTemplateTemplate
 from anvil import *
-import anvil.server
 from ....Utils.Constants import Roles
 
 # About amount formatting in design page's data binding field

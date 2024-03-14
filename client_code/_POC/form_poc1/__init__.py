@@ -1,6 +1,5 @@
 from ._anvil_designer import form_poc1Template
 from anvil import *
-import anvil.server
 from ...Utils.Constants import Icons
 
 class form_poc1(form_poc1Template):

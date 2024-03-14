@@ -1,6 +1,5 @@
 from ._anvil_designer import MainFormTemplate
 from anvil import *
-import anvil.server
 import anvil.users
 from ..Controllers import MainFormController
 from ..Utils import Routing

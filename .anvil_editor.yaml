@@ -20,13 +20,16 @@ unique_ids:
     Forms.Investment.PnLReportForm.PnLReportRPTemplate: OUTTZAPFSS7IJQ6B6S7IQ5RBBM6UKNAW
     Forms.UnitTest.UnitTestMainForm: '1708342431324963638988619.1736'
     Forms.Expense.LabelMaintForm: '1680473865458153362045539.65982'
+    Forms.Introduction.PricingForm: LHB4DIVTUQ5FM2265S7FQHL3P5KMTZUK
     Forms.Investment.TransactionReportForm.TransactionReportRPTemplate: 6K6GMJTMVMSL52CSQJ3CUTCSGCAZNEFP
     Forms.Admin.UserSettingForm: 5G7DFUL2LGGTGEOA7RETQ2OGQAZDZ7A7
+    Forms.Introduction.ContactForm: IRDB6YPXOTYQ3YPOYUBMHJYIW2DSKEWO
     Forms.Expense.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate: FAOBCHLWYGSA4YKQFV2OAZETRCM7IRGH
     Forms.Expense.UploadMappingRulesForm: '1682358285769365636787220.0248'
     _POC.form_poc_main: I4UQL5D742KHJ2RDJH22CP7RC7QSJ56P
     Forms.Investment.StockTradingTxnDetailForm: 7MYSTEFMWLERSXWHMZVPLOZHKNV2AAJO
     Forms.Expense.ExpenseAnalysisForm: '1698785642523108933234227.04637'
+    Forms.Introduction.ResourceForm: Y4DOUAJRTFHOE7P4EAL6CRP7DL5PLXYN
     Forms.Investment.StockTradingTxnDetailForm.StockTradingTxnDetailRPTemplate: RATFOYIZP6VUKZC3UPCLVGOSPW6MLNYC
     Forms.Expense.ExpenseAnalysisForm.HiddenRPTemplate: '1700171689885612895674165.7572'
     MainForm: TNMWRJE7DZEPVMK6Y7CTQHGKSVRCWLHW
@@ -43,6 +46,7 @@ unique_ids:
     Forms.Expense.UploadMappingRulesForm.UploadMappingRulesRPTemplate: '1682364605704371854548277.978'
     _POC.form_poc2.test_template: I7VGCOHGIK32TFWPVUUSRN2KTIJVLDLX
     Forms.Expense.ExpenseInputForm.HiddenRPTemplate: '1680471101287968195561138.4656'
+    Forms.Introduction.FeatureForm: NJ2TR4VMHC5RRERHUPRD64ZHCI47MC55
   modules:
     Controllers.ReportSearchPanelController: '1697539080798674426316364.3038'
     Controllers.UserSettingController: '1696878449911127260549219.3748'
@@ -85,6 +89,7 @@ unique_ids:
     Controllers.UploadMappingRulesController: '1697538292953229620541616.99762'
     Error: '1700350055985494714157115.8975'
     Entities.ImportMappingGroup: '1700318450444447162672909.8155'
+    Forms.Introduction: AMEAPVIXAZOFICTCVQ5TATPXHQLNQ5CT
     Controllers.ExpenseFileExcelImportController: '1697538091207142795890728.2163'
     Controllers.LabelMaintController: '1697625286352890565595385.8071'
     Global: '1697460388002908178606229.2985'

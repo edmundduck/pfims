@@ -1,6 +1,5 @@
 from ._anvil_designer import ExpenseReportSearchPanelFormTemplate
 from anvil import *
-import anvil.server
 import plotly.graph_objects as go
 from .... import Global
 from ....Controllers import ReportSearchPanelController

@@ -2,7 +2,6 @@ from ._anvil_designer import UnitTestMainFormTemplate
 from anvil import *
 from ....Controllers import UnitTestController
 from ....CustomComponents.TestItem import TestItem
-import anvil.server
 
 class UnitTestMainForm(UnitTestMainFormTemplate):
     def __init__(self, **properties):
