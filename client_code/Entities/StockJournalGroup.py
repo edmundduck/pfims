@@ -89,7 +89,7 @@ class StockJournalGroup(BaseEntity):
         group_name, broker_id, journals = [self.get_name(), self.get_broker(), self.get_journals()]
         err_msg = ""
         if not group_name or group_name.isspace(): err_msg = err_msg + '- Group name cannot be empty\n'
-        if len(group_name): err_msg = err_msg + '- Group name cannot exceed 80 characters\n'
+        if len(group_name) > 80: err_msg = err_msg + '- Group name cannot exceed 80 characters\n'
         if not broker_id or broker_id.isspace(): err_msg = err_msg + '- Broker cannot be empty\n'
         for j in journals:
             if not j.is_valid():

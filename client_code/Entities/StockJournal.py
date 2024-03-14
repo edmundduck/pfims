@@ -153,10 +153,10 @@ class StockJournal(BaseEntity):
         err_msg = ""
         date_format = '%Y-%m-%d'
         if not buy_date or str(buy_date).isspace(): err_msg = err_msg + '- Buy Date cannot be empty\n'
-        try:
-            datetime.strptime(buy_date, date_format)
-        except ValueError as err:
-            err_msg = err_msg + '- Buy Date is not in a proper date format\n'
+        # try:
+        #     datetime.strptime(buy_date, date_format)
+        # except ValueError as err:
+        #     err_msg = err_msg + '- Buy Date is not in a proper date format\n'
         if not symbol or str(symbol).isspace(): err_msg = err_msg + '- Symbol cannot be empty\n'
         if len(symbol) > 8 : err_msg = err_msg + '- Symbol cannot exceed 8 characeters\n'
         if not shares or str(shares).isspace(): err_msg = err_msg + '- Number of shares cannot be empty\n'

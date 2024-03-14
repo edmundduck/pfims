@@ -87,7 +87,7 @@ class ExpenseTransactionGroup(BaseEntity):
         name, status, transactions = [self.get_name(), self.get_submitted_status(), self.get_transactions()]
         err_msg = ""
         if not name or name.isspace(): err_msg = err_msg + '- Name cannot be empty\n'
-        if not status or status.isspace(): err_msg = err_msg + '- Status cannot be empty\n'
+        # if not status or status.isspace(): err_msg = err_msg + '- Status cannot be empty\n'
         for t in transactions:
             if not t.is_valid():
                 err_msg = err_msg + str(t.get_exception()) + '\n'
