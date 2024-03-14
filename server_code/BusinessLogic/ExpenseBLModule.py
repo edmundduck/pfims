@@ -55,6 +55,10 @@ def proc_change_expense_group(exp_grp, del_iid_list):
         exp_grp (ExpenseTransactionGroup): The expense transaction group object updated with data from DB.
         result_d (int): Successful delete row count, otherwise None.
     """
+    # Validation
+    if not exp_grp.is_valid():
+        raise exp_grp.get_exception()
+
     tab_id = ExpenseDAModule.update_expense_group(exp_grp) if exp_grp.get_id() else ExpenseDAModule.create_expense_group(exp_grp)
     if tab_id is None or tab_id <= 0:
         raise RuntimeError(f"ERROR occurs when creating or updating expense transaction group {exp_grp.get_name()}, aborting further update.")

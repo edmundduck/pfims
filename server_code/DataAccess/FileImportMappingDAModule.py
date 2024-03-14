@@ -111,10 +111,10 @@ def select_mapping_rules(gid=None):
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
-        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} ORDER BY a.id ASC, b.col ASC" \
         if gid is None else \
-        f"SELECT a.id, a.name, a.filetype, a.lastsave, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        f"SELECT a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
@@ -133,6 +133,7 @@ def select_mapping_rules(gid=None):
                     'name': row['name'],
                     'filetype': row['filetype'],
                     'lastsave': row['lastsave'],
+                    'description': row['description'],
                     'rule': [[action1, action2, extra1, extra2]] if action1 is not None and action2 is not None else None
                 }
             else:
@@ -176,33 +177,33 @@ def select_mapping_matrix(id):
         return rows
 
 @logger.log_function
-def save_mapping_group(id, mogstr_group):
+def save_mapping_group(import_grp):
     """
     Save the mapping group into the DB table.
 
     Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
 
     Parameters:
-        mogstr_group (string): Mogrified string for mapping group SQL.
+        import_grp (ImportMappingGroup): The import mapping group object containing all group and rules detail.
 
     Returns:
         id (int): The mapping group ID.
     """
-    userid = sys.get_current_userid()
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             # First insert/update mapping group
-            if id:
-                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET \
-                name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave WHERE mappinggroup.id=EXCLUDED.id RETURNING id".format(
+            if import_grp.get_id():
+                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave, description) VALUES (%s,%s,%s,%s,%s,%s) ON CONFLICT (id) DO UPDATE SET \
+                name=EXCLUDED.name, filetype=EXCLUDED.filetype, lastsave=EXCLUDED.lastsave, description=EXCLUDED.description WHERE mappinggroup.id=EXCLUDED.id RETURNING id".format(
                     schema=Database.SCHEMA_FIN
                 )
+                stmt = cur.mogrify(sql, (import_grp.get_user_id(), import_grp.get_id(), import_grp.get_name(), import_grp.get_file_type(), import_grp.get_lastsaved_time(), import_grp.get_description()))
             else:
-                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave) VALUES (%s,DEFAULT,%s,%s,%s) RETURNING id".format(
+                sql = "INSERT INTO {schema}.mappinggroup (userid, id, name, filetype, lastsave, description) VALUES (%s,DEFAULT,%s,%s,%s,%s) RETURNING id".format(
                     schema=Database.SCHEMA_FIN
                 )
-            stmt = cur.mogrify(sql, mogstr_group)
+                stmt = cur.mogrify(sql, (import_grp.get_user_id(), import_grp.get_name(), import_grp.get_file_type(), import_grp.get_lastsaved_time(), import_grp.get_description()))
             cur.execute(stmt)
             conn.commit()
             result = cur.fetchone()
@@ -216,33 +217,36 @@ def save_mapping_group(id, mogstr_group):
             raise psycopg2.OperationalError(err)
         finally:
             if cur is not None: cur.close()
-            if conn is not None: conn.close()        
+            if conn is not None: conn.close()
         return id
 
 @logger.log_function
-def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
+def save_mapping_rules_n_matrix(import_grp, mogstr_matrix, del_iid):
     """
     Save the mapping rules and matrix into the DB table.
 
     Mapping and rules ID are not generated in application side, it's handled by DB function instead, hence running SQL scripts in DB is required beforehand.
 
     Parameters:
-        mogstr_rules (string): Mogrified string for mapping rules SQL.
+        import_grp (ImportMappingGroup): The import mapping group object containing all group and rules detail.
         mogstr_matrix (string): Mogrified string for mapping matrix SQL.
         del_iid (string): The string of IID concatenated by comma to be deleted
     """
-    userid = sys.get_current_userid()
     conn = sys.db_connect()
+    id = import_grp.get_id()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             # Second insert/update mapping rules
-            if len(mogstr_rules) > 0:
+            if len(import_grp.get_mapping_rules()) > 0:
+                mogstr = [cur.mogrify("(%s, %s, %s, %s, %s, %s)", r.get_db_col_list()).decode('utf-8') for r in import_grp.get_mapping_rules()]
+                logger.debug("mogstr=", mogstr)
                 sql1 = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
-                (%s, %s, %s, %s, %s, %s) ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
+                {p1} ON CONFLICT (gid, col) DO UPDATE SET col_code=EXCLUDED.col_code, eaction=EXCLUDED.eaction, \
                 etarget=EXCLUDED.etarget, rule=EXCLUDED.rule WHERE mappingrules.gid=EXCLUDED.gid AND mappingrules.col=EXCLUDED.col".format(
-                    schema=Database.SCHEMA_FIN
+                    schema=Database.SCHEMA_FIN,
+                    p1=','.join(mogstr)
                 )
-                cur.executemany(sql1, mogstr_rules)
+                cur.execute(sql1)
 
             # Third insert/update mapping matrix
             if len(mogstr_matrix) > 0:
@@ -263,12 +267,11 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
             if del_iid:
                 mogstr_delete = ','.join(cur.mogrify("%s", (d, )).decode('utf-8') for d in del_iid)
                 logger.trace('mogstr_delete=', mogstr_delete)
-                sql4 = "DELETE FROM {schema}.mappingrules WHERE gid = {gid} AND col IN ({iid})".format(
+                sql4 = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN (%s)".format(
                     schema=Database.SCHEMA_FIN,
-                    gid=id,
-                    iid=mogstr_delete
                 )
-                cur.execute(sql4)
+                stmt = cur.mogrify(sql4, (id, mogstr_delete))
+                cur.execute(stmt)
 
             # Reconciliation
             sql5 = "SELECT g.userid, g.id, g.name, g.filetype, m.datecol, m.acctcol, m.amtcol, m.remarkscol, m.stmtdtlcol, m.lblcol FROM \
@@ -277,6 +280,7 @@ def save_mapping_rules_n_matrix(id, mogstr_rules, mogstr_matrix, del_iid):
             )
             stmt5 = cur.mogrify(sql5, (id, ))
             cur.execute(stmt5)
+            
             conn.commit()
             rows = cur.fetchall()
             logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")

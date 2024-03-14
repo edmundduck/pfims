@@ -167,13 +167,12 @@ def populate_repeating_panel_items(rp_items=None, reload=False, del_iid=None):
         logger.trace('rp_items init load', result)
     return result
 
-def add_mapping_rules_criteria(user_input, is_new=False):
+def add_mapping_rules_criteria(user_input):
     """
     Add criteria into mapping rule.
 
     Parameters:
         user_input (dict): Dictionary of all user selected dropdown values.
-        is_new (boolean): True if this criteria is newly created by user.
 
     Returns:
         result (list of dict): A list of data padded with blank items for repeating panel.
@@ -192,7 +191,8 @@ def add_mapping_rules_criteria(user_input, is_new=False):
     return properties_list, rule
 
 @logger.log_function
-def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, is_new=False, **event_args):
+def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id, **event_args):
+    from ..Entities.ImportMappingRule import ImportMappingRule
     from ..Utils.Constants import FileImportExcelColumnMappingExtraAction, Icons
     logger.debug(f"excelcol={excelcol}, datacol_id={datacol_id}, extraact_id={extraact_id}, extratgt_id={extratgt_id}")
     datacol_id, datacol_name = datacol_id if datacol_id and isinstance(datacol_id, list) else get_expense_table_definition_dropdown_selected_item(datacol_id) if datacol_id else [None, None]
@@ -200,10 +200,17 @@ def _generate_single_mapping_rule(excelcol, datacol_id, extraact_id, extratgt_id
     target_id, target_name = [None, None] if not extratgt_id else extratgt_id if extratgt_id and isinstance(extratgt_id, list) else (
         get_label_dropdown_selected_item(extratgt_id) if action_id == FileImportExcelColumnMappingExtraAction.LABEL else get_account_dropdown_selected_item(extratgt_id)
     )
-    rule = f"Map Excel column {excelcol} to data column {datacol_name}."
-    rule = f"{rule} Extra action(s): {action_name} {target_name}" if action_name is not None else rule
+    rule_desc = f"Map Excel column {excelcol} to data column {datacol_name}."
+    rule_desc = f"{rule_desc} Extra action(s): {action_name} {target_name}" if action_name is not None else rule_desc
+    rule_dict = {
+        ImportMappingRule.field_column_id(): excelcol,
+        ImportMappingRule.field_mapped_column_type(): datacol_id,
+        ImportMappingRule.field_extra_action(): action_id,
+        ImportMappingRule.field_extra_action_target_code(): target_id if action_id is not None else None,
+        ImportMappingRule.field_rule_desc(): rule_desc
+    }
 
-    return [excelcol, datacol_id, action_id, target_id, rule, is_new], rule
+    return rule_dict, rule_desc
 
 @logger.log_function
 def generate_all_mapping_rules(rules):
@@ -216,7 +223,7 @@ def generate_all_mapping_rules(rules):
     return result
 
 @logger.log_function
-def save_mapping_criteria(id, name, filetype, rules, del_iid):
+def save_mapping_criteria(id, name, filetype, rules, del_iid, desc):
     """
     Convert the fields from the form for saving the mapping rule change in backend.
 
@@ -226,15 +233,22 @@ def save_mapping_criteria(id, name, filetype, rules, del_iid):
         filetype (list): The selected filetype from dropdown.
         rules (list): The list of criteria of the rule to be saved.
         del_iid (string): The criteria item ID (iid) to be removed during the update.
+        desc (string): The description of the mapping rule.
         
     Returns:
         result[0] (dict): Includes mapping group ID; successful insert/update row count (count), otherwise None; and successful delete row count (dcount), otherwise None.
     """
+    from datetime import date, datetime
+    from .. import Global
+    from ..Entities.ImportMappingGroup import ImportMappingGroup
     if not id:
         id = None
     filetype_id, _ = filetype if filetype and isinstance(filetype, list) else [filetype, None]
     del_iid = del_iid[:-1].split(",") if del_iid else None
-    id, _, result = anvil.server.call('proc_save_mapping', id, name, filetype_id, rules, del_iid)
+    currenttime = datetime.now()
+    imp_grp = ImportMappingGroup()
+    imp_grp = imp_grp.set_user_id(Global.userid).set_id(id).set_name(name).set_file_type(filetype_id).set_description(desc).set_lastsaved_time(currenttime).set_mapping_rules(rules)
+    id, _, result = anvil.server.call('proc_save_mapping', imp_grp, del_iid)
     if not result:
         raise RuntimeError('Error occurs in proc_save_mapping.')
     return id

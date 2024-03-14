@@ -25,7 +25,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
             result = UploadMappingRulesController.generate_all_mapping_rules(self.item['rule'])
             for r in result:
                 properties_list, rule = r
-                self.add_mapping_rules_criteria(properties_list, rule)
+                self.add_criteria(properties_list, rule)
 
     @logger.log_function
     def row_button_add_click(self, **event_args):
@@ -40,8 +40,8 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         }
         # Remove the column from to be deleted list (row_hidden_del_fid) if it's updated (removed and added back)
         self.row_hidden_del_fid.text = ",".join([x for x in self.row_hidden_del_fid.text.split(",") if x != self.row_dropdown_excelcol.selected_value])
-        properties_list, rule = UploadMappingRulesController.add_mapping_rules_criteria(user_input, True)
-        self.add_mapping_rules_criteria(properties_list, rule)
+        properties_list, rule = UploadMappingRulesController.add_mapping_rules_criteria(user_input)
+        self.add_criteria(properties_list, rule)
 
     @logger.log_function
     def mapping_button_minus_click(self, **event_args):
@@ -55,14 +55,20 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def row_button_save_click(self, **event_args):
         """This method is called when the button is clicked"""
+        from .....Error.ValidationError import ValidationError
+        
         rules = []
         for i in self.get_components():
-            if isinstance(i, FlowPanel) and (i.tag is not None and isinstance(i.tag, list)):
+            if isinstance(i, FlowPanel) and i.tag is not None:
                 rules.append(i.tag)
                 # i.remove_from_parent()
 
         try:
-            id = UploadMappingRulesController.save_mapping_criteria(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text)
+            id = UploadMappingRulesController.save_mapping_criteria(self.row_hidden_id.text, self.row_mapping_name.text, self.row_dropdown_type.selected_value, rules, self.row_hidden_del_fid.text, self.row_desc.text)
+        except ValidationError as err:
+            logger.error(err)
+            msg = f"ERROR occurs when saving mapping group [{self.row_mapping_name.text}].\n{err}"
+            Notification(msg, timeout=10).show()
         except Exception as err:
             logger.error(err)
             msg = f"ERROR occurs when saving mapping group [{self.row_mapping_name.text}]."
@@ -115,7 +121,7 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
         self.row_dropdown_lbl.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "L" else False
         self.row_dropdown_acct.visible = True if self.row_dropdown_extraact.selected_value is not None and self.row_dropdown_extraact.selected_value[0] == "A" else False
 
-    def add_mapping_rules_criteria(self, tag_value, rule, **event_args):
+    def add_criteria(self, tag_value, rule, **event_args):
         from .....Utils.Constants import Icons, Roles
         lbl_obj = Label(text=rule, font_size=12, icon=Icons.BULLETPOINT)
         fp = FlowPanel(spacing_above="small", spacing_below="small", tag=tag_value)
