@@ -10,6 +10,7 @@ unique_ids:
     Forms.Investment.PnLReportForm: RXSUKLOJQBDAVUQEX2WJTJ7ASDCEMEHA
     Forms.Expense.ExpenseFileExcelImportForm.ExcelAccountsMappingRPTemplate: '1696609933404821172586110.9895'
     _POC.form_poc3: '1681770078220804355523189.5985'
+    CustomComponents.QnA: '1710452771872789083468505.0665'
     Forms.Expense.ExpenseInputForm: '1679866786840686636553602.4291'
     _POC.form_poc1.RowTemplate1.RowTemplate2: '168030606999789858443753.06984'
     LoginForm: '1697447417286999036333256.3268'
@@ -120,6 +121,7 @@ unique_ids:
     BusinessLogic.UnitTestBLModule: '1708555896074412001843485.3583'
     DataAccess.UserSettingDAModule: 7JGJZHJ343YHLDTREZYBRYRCBODPM7HV
   assets:
+    investment_pic.jpg: '171045588959061758680426.92012'
     logo-black-transparent.png: '169991003375826775627299.644665'
     logo-no-background.png: '1699839509261143617978523.7488'
     new-homepage.html: J5QGC4NFVJRLMUASFBM37UTFKGDKAKR6

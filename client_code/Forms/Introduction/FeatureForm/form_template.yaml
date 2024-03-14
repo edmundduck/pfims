@@ -1,3 +1,26 @@
 container: {type: ColumnPanel}
-components: []
+components:
+- name: label_1
+  properties: {text: Review Your Investment Portfolio, role: subheading}
+  type: Label
+  layout_properties: {grid_position: 'LVIQQL,BMGQDH'}
+- name: flow_panel_1
+  properties: {}
+  type: FlowPanel
+  layout_properties: {grid_position: 'GSXJOQ,MTZOEH'}
+  components: []
+- name: grid_panel_1
+  properties: {}
+  type: GridPanel
+  layout_properties: {grid_position: 'LREYJF,AZIUOL'}
+  components:
+  - name: text_area_1
+    properties: {enabled: false, text: Group your investment based on broker accounts to review your portfolio profit and loss in detail.,
+      height: 255}
+    type: TextArea
+    layout_properties: {row: EENGCL, width_xs: 5, col_xs: 0}
+  - name: image_1
+    properties: {source: _/theme/investment_pic.jpg, height: 269}
+    type: Image
+    layout_properties: {row: EENGCL, width_xs: 6, col_xs: 5}
 is_package: true
