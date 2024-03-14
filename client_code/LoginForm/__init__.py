@@ -19,3 +19,19 @@ class LoginForm(LoginFormTemplate):
         """This method is called when the button is clicked"""
         pass
 
+    def button_feature_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
+    def button_price_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
+    def button_resource_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
+    def button_contact_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        pass
+
