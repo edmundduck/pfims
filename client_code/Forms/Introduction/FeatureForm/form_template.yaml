@@ -38,7 +38,7 @@ components:
   type: GridPanel
   layout_properties: {grid_position: 'LBFAIM,UUBGNP'}
   components:
-  - name: label_2_2
+  - name: label_2_1
     properties: {text: 'Do you often "feel like" your expense is not that much, but
         turnout you are shocked by the actual figure? Is that common for you to lose
         track of the expense like this?
@@ -67,7 +67,7 @@ components:
   type: GridPanel
   layout_properties: {grid_position: 'IMWZFE,DUECMQ'}
   components:
-  - name: label_3_3
+  - name: label_3_1
     properties: {text: 'It is not uncommon to find that your account gets debited
         for a subscription renewal, when you actually want to cancel it. However it
         is so often to overlook or even forget to review all subscriptions under your
@@ -93,17 +93,14 @@ components:
   type: GridPanel
   layout_properties: {grid_position: 'BQBYKG,ATJPRZ'}
   components:
-  - name: label_3_3_copy
-    properties: {text: 'It is not uncommon to find that your account gets debited
-        for a subscription renewal, when you actually want to cancel it. However it
-        is so often to overlook or even forget to review all subscriptions under your
-        own management. PFIMS can list out all subscriptions based on your historical
-        expense records to help you review them in a single click.', bold: true, font_size: 20,
-      align: right}
+  - name: label_4_1
+    properties: {text: 'If you are not a minimalist, we may maintain our own precious
+        collection which can be tiny as little rocks, valuable as gems, or large as ',
+      bold: true, font_size: 20, align: right}
     type: Label
     layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
-  - name: image_3_copy
-    properties: {source: _/theme/subscription_pic.jpg, height: 313}
+  - name: image_4
+    properties: {source: _/theme/lego_pic.jpg, height: 313}
     type: Image
     layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 5}
 - name: spacer_4
