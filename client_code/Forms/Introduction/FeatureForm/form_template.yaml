@@ -85,7 +85,7 @@ components:
   type: Spacer
   layout_properties: {grid_position: 'LLEGSP,QFZDCZ'}
 - name: label_4
-  properties: {text: Keep Track of Your Precious Collections, role: subheading}
+  properties: {text: Keep Track of Your Precious Collectibles, role: subheading}
   type: Label
   layout_properties: {grid_position: 'TPYIUT,DKWJJK'}
 - name: grid_panel_4
@@ -94,9 +94,13 @@ components:
   layout_properties: {grid_position: 'BQBYKG,ATJPRZ'}
   components:
   - name: label_4_1
-    properties: {text: 'If you are not a minimalist, we may maintain our own precious
-        collection which can be tiny as little rocks, valuable as gems, or large as ',
-      bold: true, font_size: 20, align: right}
+    properties: {text: 'Unless you are a minimalist, you may maintain some precious
+        collectibles which can be tiny as little rocks, valuable as gems, thin as
+        banknotes or playable as LEGO. As size of collection grows, it becomes more
+        difficult to keep track the history of certain collectables. Such information
+        will become handy especially in a sale or a trade. PFIMS can corelate the
+        relevent information and present in a collector point of view.', bold: true,
+      font_size: 20, align: right}
     type: Label
     layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
   - name: image_4
