@@ -59,7 +59,7 @@ components:
   type: Spacer
   layout_properties: {grid_position: ',undefined'}
 - name: label_3
-  properties: {text: Be Your Subscriptions, role: subheading}
+  properties: {text: Be Aware of All Your Subscriptions, role: subheading}
   type: Label
   layout_properties: {grid_position: 'TJHKNM,ZRHGBR'}
 - name: grid_panel_3
@@ -68,15 +68,12 @@ components:
   layout_properties: {grid_position: 'IMWZFE,DUECMQ'}
   components:
   - name: label_3_3
-    properties: {text: 'Do you often "feel like" your expense is not that much, but
-        turnout you are shocked by the actual figure? Is that common for you to lose
-        track of the expense like this?
-
-
-        To grasp your financial condition, PFIMS can help you store all the expense
-        transaction or income detail by uploading your bank statements or input manually.
-        For further analysis, categorize transactions under different labels and generate
-        charts.', bold: true, font_size: 20, align: right}
+    properties: {text: 'It is not uncommon to find that your account gets debited
+        for a subscription renewal, when you actually want to cancel it. However it
+        is so often to overlook or even forget to review all subscriptions under your
+        own management. PFIMS can list out all subscriptions based on your historical
+        expense records to help you review them in a single click.', bold: true, font_size: 20,
+      align: right}
     type: Label
     layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
   - name: image_3
@@ -87,4 +84,30 @@ components:
   properties: {height: '20'}
   type: Spacer
   layout_properties: {grid_position: 'LLEGSP,QFZDCZ'}
+- name: label_4
+  properties: {text: Keep Track of Your Precious Collections, role: subheading}
+  type: Label
+  layout_properties: {grid_position: 'TPYIUT,DKWJJK'}
+- name: grid_panel_4
+  properties: {}
+  type: GridPanel
+  layout_properties: {grid_position: 'BQBYKG,ATJPRZ'}
+  components:
+  - name: label_3_3_copy
+    properties: {text: 'It is not uncommon to find that your account gets debited
+        for a subscription renewal, when you actually want to cancel it. However it
+        is so often to overlook or even forget to review all subscriptions under your
+        own management. PFIMS can list out all subscriptions based on your historical
+        expense records to help you review them in a single click.', bold: true, font_size: 20,
+      align: right}
+    type: Label
+    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
+  - name: image_3_copy
+    properties: {source: _/theme/subscription_pic.jpg, height: 313}
+    type: Image
+    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 5}
+- name: spacer_4
+  properties: {height: '20'}
+  type: Spacer
+  layout_properties: {grid_position: 'LBEUOU,RIXSCD'}
 is_package: true
