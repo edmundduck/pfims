@@ -38,6 +38,10 @@ components:
   type: GridPanel
   layout_properties: {grid_position: 'LBFAIM,UUBGNP'}
   components:
+  - name: image_2
+    properties: {source: _/theme/expense_mgt_pic.jpg, height: 313}
+    type: Image
+    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
   - name: label_2_1
     properties: {text: 'Do you often "feel like" your expense is not that much, but
         turnout you are shocked by the actual figure? Is that common for you to lose
@@ -49,11 +53,7 @@ components:
         For further analysis, categorize transactions under different labels and generate
         charts.', bold: true, font_size: 20, align: right}
     type: Label
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
-  - name: image_2
-    properties: {source: _/theme/expense_mgt_pic.jpg, height: 313}
-    type: Image
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 5}
+    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 6}
 - name: spacer_2
   properties: {height: '20'}
   type: Spacer
@@ -93,6 +93,10 @@ components:
   type: GridPanel
   layout_properties: {grid_position: 'BQBYKG,ATJPRZ'}
   components:
+  - name: image_4
+    properties: {source: _/theme/lego_pic.jpg, height: 313}
+    type: Image
+    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
   - name: label_4_1
     properties: {text: 'Unless you are a minimalist, you may maintain some precious
         collectibles which can be tiny as little rocks, valuable as gems, thin as
@@ -103,10 +107,6 @@ components:
       font_size: 20, align: right}
     type: Label
     layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
-  - name: image_4
-    properties: {source: _/theme/lego_pic.jpg, height: 313}
-    type: Image
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 5}
 - name: spacer_4
   properties: {height: '20'}
   type: Spacer
