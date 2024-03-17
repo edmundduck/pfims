@@ -51,7 +51,7 @@ components:
         To grasp your financial condition, PFIMS can help you store all the expense
         transaction or income detail by uploading your bank statements or input manually.
         For further analysis, categorize transactions under different labels and generate
-        charts.', bold: true, font_size: 20, align: right}
+        charts.', bold: true, font_size: 20, align: left}
     type: Label
     layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 6}
 - name: spacer_2
@@ -104,7 +104,7 @@ components:
         difficult to keep track the history of certain collectables. Such information
         will become handy especially in a sale or a trade. PFIMS can corelate the
         relevent information and present in a collector point of view.', bold: true,
-      font_size: 20, align: right}
+      font_size: 20, align: left}
     type: Label
     layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
 - name: spacer_4
