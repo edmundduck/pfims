@@ -10,6 +10,7 @@ unique_ids:
     Forms.Investment.PnLReportForm: RXSUKLOJQBDAVUQEX2WJTJ7ASDCEMEHA
     Forms.Expense.ExpenseFileExcelImportForm.ExcelAccountsMappingRPTemplate: '1696609933404821172586110.9895'
     _POC.form_poc3: '1681770078220804355523189.5985'
+    CustomComponents.QnA: '1710452771872789083468505.0665'
     Forms.Expense.ExpenseInputForm: '1679866786840686636553602.4291'
     _POC.form_poc1.RowTemplate1.RowTemplate2: '168030606999789858443753.06984'
     LoginForm: '1697447417286999036333256.3268'
@@ -27,6 +28,7 @@ unique_ids:
     Forms.Expense.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate: FAOBCHLWYGSA4YKQFV2OAZETRCM7IRGH
     Forms.Expense.UploadMappingRulesForm: '1682358285769365636787220.0248'
     _POC.form_poc_main: I4UQL5D742KHJ2RDJH22CP7RC7QSJ56P
+    Forms.Introduction.AppIntroForm: '1710678391181144783551676.0494'
     Forms.Investment.StockTradingTxnDetailForm: 7MYSTEFMWLERSXWHMZVPLOZHKNV2AAJO
     Forms.Expense.ExpenseAnalysisForm: '1698785642523108933234227.04637'
     Forms.Introduction.ResourceForm: Y4DOUAJRTFHOE7P4EAL6CRP7DL5PLXYN
@@ -120,9 +122,14 @@ unique_ids:
     BusinessLogic.UnitTestBLModule: '1708555896074412001843485.3583'
     DataAccess.UserSettingDAModule: 7JGJZHJ343YHLDTREZYBRYRCBODPM7HV
   assets:
-    logo-black-transparent.png: '169991003375826775627299.644665'
+    investment_pic.jpg: '171045588959061758680426.92012'
     logo-no-background.png: '1699839509261143617978523.7488'
-    new-homepage.html: J5QGC4NFVJRLMUASFBM37UTFKGDKAKR6
-    standard-page.html: D5YEDRDJMYZPOK73N7L4R7WKW5PNRV5I
-    theme-old.css: '1699466398152355447942302.40326'
     theme.css: LKAL32R6ENKSBIEKBOLZNABHFXK7Z36N
+    expense_mgt_pic.jpg: '1710458622363969391674753.6439'
+    standard-page.html: D5YEDRDJMYZPOK73N7L4R7WKW5PNRV5I
+    pfims_structure_color_inverse.png: '1710795949208682282214535.4655'
+    new-homepage.html: J5QGC4NFVJRLMUASFBM37UTFKGDKAKR6
+    theme-old.css: '1699466398152355447942302.40326'
+    lego_pic.jpg: '1710505362651599600762238.018'
+    logo-black-transparent.png: '169991003375826775627299.644665'
+    subscription_pic.jpg: '171046703370669122363512.14384'

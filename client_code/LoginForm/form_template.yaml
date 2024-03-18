@@ -11,11 +11,12 @@ components:
   name: content_panel
   layout_properties: {slot: default}
   components: []
-- name: image_1
+- name: image_logo
   properties: {height: '120', source: _/theme/logo-no-background.png, horizontal_align: center,
     spacing_below: small}
   type: Image
   layout_properties: {slot: logo}
+  event_bindings: {mouse_up: image_logo_mouse_up}
 - name: column_panel
   properties: {}
   type: ColumnPanel

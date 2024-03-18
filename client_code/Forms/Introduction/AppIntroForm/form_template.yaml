@@ -1,0 +1,26 @@
+container: {type: ColumnPanel}
+components:
+- name: headline_1
+  properties: {role: headline, text: 'PFIMS, Your One Stop Financial Management',
+    foreground: '', bold: true}
+  type: Label
+  layout_properties: {grid_position: 'DTJVEK,VFEWHM'}
+- name: grid_panel_1
+  properties: {}
+  type: GridPanel
+  layout_properties: {grid_position: 'GRVSJR,CQOAKA'}
+  components:
+  - name: label_1
+    properties: {font_size: 20, text: 'Take control of your financial status by consolidating
+        all the financial bits under one single web platform - PFIMS (Personal Financial
+        and Inventory Management System).
+
+
+        To get started by uploading your statements, it''s that easy!'}
+    type: Label
+    layout_properties: {row: BECQLZ, width_xs: 5, col_xs: 0}
+  - name: image_1
+    properties: {height: 436, source: _/theme/pfims_structure_color_inverse.png}
+    type: Image
+    layout_properties: {row: BECQLZ, width_xs: 7, col_xs: 5}
+is_package: true
