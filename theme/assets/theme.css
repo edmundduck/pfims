@@ -729,6 +729,7 @@ input[disabled] ~ span {
 
   .left-nav .btn, .left-nav .label {
     padding-left: 0;
+    font-size: 16px;
   }
 
   .left-nav .anvil-panel-col {
