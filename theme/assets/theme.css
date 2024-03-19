@@ -492,7 +492,7 @@ input[disabled] ~ span {
     left: calc(40% - 70px/2);
     width: 300px;
     height: 300px;
-    background-image: url("_/theme/logo-black-transparent.png") !important; 
+    background-image: url("_/theme/logo-white-transparent.png") !important; 
 /*     background-color: %color:Light Overlay 2 1%; */
     background-repeat: no-repeat;
     background-position: center;
@@ -793,7 +793,7 @@ input[disabled] ~ span {
     left: calc(50% - 200px/2);
     width: 200px;
     height: 200px;
-    background-image: url("_/theme/logo-black-transparent.png") !important; 
+    background-image: url("_/theme/logo-white-transparent.png") !important; 
 /*     background-color: %color:Light Overlay 2 1%; */
     background-repeat: no-repeat;
     background-position: center;
@@ -925,11 +925,12 @@ input[disabled] ~ span {
   font-size: 18px;
 }
 
-.left-nav .btn i:not(.anvil-component-icon), .left-nav .label i:not(.anvil-component-icon) {
+/* Buttons in left navigation menu bar display in different size according to having icon or not */
+.left-nav .anvil-role-button-no-icon .btn {
   font-size: 18px;
 }
 
-.left-nav .btn, .left-nav .label {
+.left-nav .btn {
   font-size: 14px;
 }
 
