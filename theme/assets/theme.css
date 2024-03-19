@@ -925,8 +925,12 @@ input[disabled] ~ span {
   font-size: 18px;
 }
 
-.left-nav .btn, .left-nav .label {
+.left-nav .btn i:not(.anvil-component-icon), .left-nav .label i:not(.anvil-component-icon) {
   font-size: 18px;
+}
+
+.left-nav .btn, .left-nav .label {
+  font-size: 14px;
 }
 
 html:not(.designer) .visible-false {
