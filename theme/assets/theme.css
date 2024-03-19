@@ -491,8 +491,8 @@ input[disabled] ~ span {
     top: calc(33% - 70px/2);
     left: calc(40% - 70px/2);
     border-radius: 2px;
-    width: 500px;
-    height: 250px;
+    width: 300px;
+    height: 200px;
     background-image: url("_/theme/logo-white-transparent.png") !important; 
 /*     background-color: %color:Light Overlay 2 1%; */
     background-repeat: no-repeat;
