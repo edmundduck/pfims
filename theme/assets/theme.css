@@ -708,6 +708,10 @@ input[disabled] ~ span {
     z-index: 2;
     background-color: rgba(0,0,0,0.2);
   }
+
+  .left-nav .btn, .left-nav .label {
+    font-size: 14px;
+  }
 }
 
 @media(max-width:698px) {
@@ -729,7 +733,6 @@ input[disabled] ~ span {
 
   .left-nav .btn, .left-nav .label {
     padding-left: 0;
-    font-size: 16px;
   }
 
   .left-nav .anvil-panel-col {
@@ -919,6 +922,10 @@ input[disabled] ~ span {
 .left-nav .anvil-role-subheading > .label-text {
   color: %color:Tertiary%;
   font-weight: bold;
+  font-size: 18px;
+}
+
+.left-nav .btn, .left-nav .label {
   font-size: 18px;
 }
 
