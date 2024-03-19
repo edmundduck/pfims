@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Secular One';
+    src: url("_/theme/SecularOne-Regular.ttf")
+}
+
 body {
   font-family: 'Trebuchet MS', sans-serif;
   font-size: 14px;
@@ -84,7 +89,7 @@ a:active:not(disabled), a:focus:not(disabled){
 /* Buttons */
 
 .btn, .btn-default, .file-loader, .file-loader > label { 
-  font-family: "FontAwesome";
+  font-family: "Secular One";
   font-size: 12px;
   text-transform: uppercase;
   font-weight: bold;
@@ -169,7 +174,7 @@ input[disabled] ~ span {
 }
 
 .checkbox input:checked:before {
-  font-family: "FontAwesome";
+  font-family: "Secular One";
   content: "\f00c";
   font-size: 10px;
   display: flex;
@@ -177,7 +182,7 @@ input[disabled] ~ span {
 }
 
 .radio input:checked:before {
-  font-family: "FontAwesome";
+  font-family: "Secular One";
   content: "\f111";
   font-size: 8px;
   display: flex;

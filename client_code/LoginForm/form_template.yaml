@@ -12,7 +12,7 @@ components:
   layout_properties: {slot: default}
   components: []
 - name: image_logo
-  properties: {height: '120', source: _/theme/logo-no-background.png, horizontal_align: center,
+  properties: {height: '70', source: _/theme/logo-no-background.png, horizontal_align: center,
     spacing_below: small}
   type: Image
   layout_properties: {slot: logo}
