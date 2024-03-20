@@ -20,7 +20,16 @@ def visible_poc_link():
     Returns:
         vis (boolean): True for testing environment, False otherwise.
     """
-    return True if anvil.app.environment.name in 'Dev' else False
+    return visible_test_env_label()
+
+def visible_unittest_link():
+    """
+    Make the unit test link visible or invisible.
+
+    Returns:
+        vis (boolean): True for testing environment, False otherwise.
+    """
+    return visible_test_env_label()
 
 def visible_group_links(role):
     """

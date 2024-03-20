@@ -15,13 +15,14 @@ services:
 startup: {type: module, module: StartupModule}
 package_name: PFIMS
 allow_embedding: false
-name: Personal Finance and Inventory Management System
+name: Financial and Inventory Management $YS
 runtime_options:
   version: 2
   client_version: '3'
   server_version: python3-full
   server_spec: {base: python310-standard}
-metadata: {title: PFIMS, description: One integrated system for your own finance and inventory management}
+metadata: {title: FIM$, description: Your one stop finance and inventory management in one integrated platform,
+  logo_img: 'asset:fim$-favicon-color.png'}
 startup_form: null
 native_deps: {head_html: "<script>\n$(document).ready(() => {\n    $('#loadingSpinner')\n\
     \    .addClass('spinner_customized');\n})\n</script>"}
@@ -29,7 +30,7 @@ db_schema:
   templ_journals:
     title: templ_journals
     client: none
-    server: full
+    server: none
     columns:
     - name: iid
       admin_ui: {width: 200}
@@ -70,7 +71,7 @@ db_schema:
   templates:
     title: templates
     client: none
-    server: full
+    server: none
     columns:
     - name: template_id
       admin_ui: {width: 200}
@@ -96,7 +97,7 @@ db_schema:
   settings:
     title: settings
     client: none
-    server: full
+    server: none
     columns:
     - name: default_broker
       admin_ui: {width: 200}
@@ -113,7 +114,7 @@ db_schema:
   brokers:
     title: brokers
     client: none
-    server: full
+    server: none
     columns:
     - name: id
       admin_ui: {width: 200}
@@ -156,7 +157,7 @@ db_schema:
   expense:
     title: expense
     client: none
-    server: full
+    server: none
     columns:
     - name: iid
       admin_ui: {width: 200}
@@ -182,6 +183,34 @@ db_schema:
     - name: remarks
       admin_ui: {width: 200}
       type: string
+  files:
+    title: Files
+    client: none
+    server: full
+    columns:
+    - name: path
+      admin_ui: {width: 200}
+      type: string
+    - name: file
+      admin_ui: {width: 200}
+      type: media
+    - name: file_version
+      admin_ui: {width: 200}
+      type: string
+  upload_files:
+    title: upload_files
+    client: none
+    server: full
+    columns:
+    - name: userid
+      admin_ui: {width: 123.4}
+      type: number
+    - name: fileobj
+      admin_ui: {width: 233.4}
+      type: media
+    - name: last_upload
+      admin_ui: {width: 200}
+      type: datetime
 secrets:
   proddb_name:
     value: {? '' : x4DQzIPabQxuQ1HKJtc6TrJ+Z6Lla6CntadZ3xPXDyR5uvKVXGz7pNJqZRUCrK2gZVXTDWvb/gdAtJxSZQcehAAKfl/wCsq27Q/fp9joi6aH8WD7N4ZwyjXYgWsvziH1x5yTNOVX}

@@ -1,3 +1,7 @@
 container: {type: ColumnPanel}
-components: []
+components:
+- name: label_1
+  properties: {text: Currently it is in closed beta. Only invited participants may have access to the application.}
+  type: Label
+  layout_properties: {grid_position: 'GGBLKN,ORPMFR'}
 is_package: true

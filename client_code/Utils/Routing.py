@@ -6,6 +6,11 @@ import anvil.server
 def open_intro_main_form():
     from ..LoginForm import LoginForm
     anvil.open_form(LoginForm())
+
+def open_intro_base_form(self, **event_args):
+    from ..Forms.Introduction.AppIntroForm import AppIntroForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(AppIntroForm())
     
 def open_intro_feature_form(self, **event_args):
     from ..Forms.Introduction.FeatureForm import FeatureForm
@@ -107,6 +112,11 @@ def open_exp_analysis_form(self, **event_args):
     from ..Forms.Expense.ExpenseAnalysisForm import ExpenseAnalysisForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseReportSearchPanelForm(ExpenseAnalysisForm()))
+
+def open_unittest_main_form(self, **event_args):
+    from ..Forms.UnitTest.UnitTestMainForm import UnitTestMainForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(UnitTestMainForm())
 
 def open_poc_main_form(self, **event_args):
     from .._POC.form_poc_main import form_poc_main

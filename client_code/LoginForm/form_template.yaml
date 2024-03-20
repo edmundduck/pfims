@@ -11,33 +11,34 @@ components:
   name: content_panel
   layout_properties: {slot: default}
   components: []
-- name: image_1
-  properties: {height: '120', source: _/theme/logo-no-background.png, horizontal_align: center,
+- name: image_logo
+  properties: {height: '70', source: _/theme/logo-no-background.png, horizontal_align: center,
     spacing_below: small}
   type: Image
   layout_properties: {slot: logo}
+  event_bindings: {mouse_up: image_logo_mouse_up}
 - name: column_panel
   properties: {}
   type: ColumnPanel
   layout_properties: {slot: left-nav}
   components:
   - name: button_feature
-    properties: {text: Features, align: left}
+    properties: {text: Features, align: left, role: button-no-icon}
     type: Button
     layout_properties: {grid_position: 'XHTFVK,XYLOVO'}
     event_bindings: {click: button_feature_click}
   - name: button_price
-    properties: {text: Pricing, align: left}
+    properties: {text: Pricing, align: left, role: button-no-icon}
     type: Button
     layout_properties: {grid_position: 'BBSPYY,JBQTYI'}
     event_bindings: {click: button_price_click}
   - name: button_resource
-    properties: {text: Resources, align: left}
+    properties: {text: Resources, align: left, role: button-no-icon}
     type: Button
     layout_properties: {grid_position: 'ZXQAVD,URSYPS'}
     event_bindings: {click: button_resource_click}
   - name: button_contact
-    properties: {text: Contact, align: left}
+    properties: {text: Contact, align: left, role: button-no-icon}
     type: Button
     layout_properties: {grid_position: 'KXGZZW,HKVBKV'}
     event_bindings: {click: button_contact_click}
@@ -50,7 +51,7 @@ components:
     type: Spacer
     layout_properties: {grid_position: 'OSHUGW,TDJCZD'}
   - type: Button
-    properties: {role: null, align: left, tooltip: '', border: '', enabled: false,
+    properties: {role: button-no-icon, align: left, tooltip: '', border: '', enabled: false,
       foreground: 'theme:White', visible: true, text: SIGN UP, font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: true, underline: false, icon: ''}
@@ -58,7 +59,7 @@ components:
     layout_properties: {grid_position: 'DOLLNT,OTCWFJ'}
     event_bindings: {click: button_signup_click}
   - type: Button
-    properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
+    properties: {role: button-no-icon, align: left, tooltip: '', border: '', enabled: true,
       foreground: 'theme:White', visible: true, text: LOG IN, font_size: null, font: '',
       spacing_above: small, icon_align: left, spacing_below: small, italic: false,
       background: '', bold: true, underline: false, icon: ''}

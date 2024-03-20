@@ -14,6 +14,7 @@ class MainForm(MainFormTemplate):
         self.app_welcome_msg.text = "{username}".format(username=Global.email)
         self.label_version.visible = MainFormController.visible_test_env_label()
         self.button_poc.visible = MainFormController.visible_poc_link()
+        self.button_unittest.visible = MainFormController.visible_unittest_link()
 
     def reset_link_status(self, **event_args):
         self.button_inv_input.role, \
@@ -21,8 +22,9 @@ class MainForm(MainFormTemplate):
         self.button_inv_pnl.role, \
         self.button_exp_input.role, \
         self.button_exp_list.role, \
+        self.button_unittest.role, \
         self.button_poc.role \
-        = [None]*6
+        = [None]*7
 
     def colpanel_link_dashb_click(self, **event_args):
         """This method is called when the link is clicked"""
@@ -71,6 +73,12 @@ class MainForm(MainFormTemplate):
         self.reset_link_status()
         # self.button_exp_analysis.role = MainFormController.switch_role(self.button_exp_analysis.role)
         Routing.open_exp_analysis_form(self)
+
+    def button_unittest_click(self, **event_args):
+        """This method is called when the button is clicked"""
+        self.reset_link_status()
+        # self.button_unittest.role = MainFormController.switch_role(self.button_unittest.role)
+        Routing.open_unittest_main_form(self)
 
     def button_poc_click(self, **event_args):
         """This method is called when the button is clicked"""
