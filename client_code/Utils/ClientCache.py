@@ -2,6 +2,7 @@ import anvil.server
 from .Constants import CacheDropdown
 from .Logger import ClientLogger
 from ..Entities.CacheListNode import DoubleLinkedList
+from .. import Global
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -21,7 +22,7 @@ class ClientCache:
         Parameters:
             key (string): A key for client cache object.
         """
-        self.name = key
+        self.name = {'key': key, 'userid': Global.userid}
 
     def __str__(self):
         """
