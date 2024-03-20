@@ -20,7 +20,7 @@ components:
     type: Label
     layout_properties: {row: BECQLZ, width_xs: 5, col_xs: 0}
   - name: image_1
-    properties: {height: 436, source: _/theme/pfims_structure_color_inverse.png}
+    properties: {height: 436, source: _/theme/pfims_structure.png}
     type: Image
     layout_properties: {row: BECQLZ, width_xs: 7, col_xs: 5}
 is_package: true
