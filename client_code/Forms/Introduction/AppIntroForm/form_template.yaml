@@ -1,8 +1,8 @@
 container: {type: ColumnPanel}
 components:
 - name: headline_1
-  properties: {role: headline, text: 'PFIMS, Your One Stop Financial Management',
-    foreground: '', bold: true}
+  properties: {role: headline, text: 'FIM$, Your One Stop Financial Management', foreground: '',
+    bold: true}
   type: Label
   layout_properties: {grid_position: 'DTJVEK,VFEWHM'}
 - name: grid_panel_1
@@ -12,8 +12,8 @@ components:
   components:
   - name: label_1
     properties: {font_size: 20, text: 'Take control of your financial status by consolidating
-        all the financial bits under one single web platform - PFIMS (Personal Financial
-        and Inventory Management System).
+        all the financial bits under one single web platform - FIM$ (Financial and
+        Inventory Management $YS).
 
 
         To get started by uploading your statements, it''s that easy!'}

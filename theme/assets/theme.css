@@ -494,11 +494,11 @@ input[disabled] ~ span {
     width: 150px;
     height: 100px;
     background-size: cover;
-    background-color: %color:Background% 50%;
+    background-color: %color:Background%;
     background-image: url("_/theme/logo-white-transparent.png") !important; 
     background-repeat: no-repeat;
     background-position: center;
-    box-shadow: 0px 0px 0px 0px rgba(255,255,255,1);
+    box-shadow: 0 0 0 0;
 /*     box-shadow: 0px 0px 10px 10px %colorLight Overlay 2 1%; */
     overflow: hidden;
     pointer-events: none;
@@ -792,14 +792,17 @@ input[disabled] ~ span {
 
   #loadingSpinner {
     position: absolute;
-    top: calc(33% - 70px/2);
-    left: calc(50% - 200px/2);
-    width: 200px;
-    height: 200px;
+    top: calc(40% - 70px/2);
+    left: calc(40% - 200px/2);
+    border-radius: 5px;
+    width: 150px;
+    height: 100px;
+    background-size: cover;
+    background-color: %color:Background%
     background-image: url("_/theme/logo-white-transparent.png") !important; 
-/*     background-color: %color:Light Overlay 2 1%; */
     background-repeat: no-repeat;
     background-position: center;
+    box-shadow: 0 0 0 0;
 /*     box-shadow: 0px 0px 10px 10px %colorLight Overlay 2 1%; */
     overflow: hidden;
     pointer-events: none;
