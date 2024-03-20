@@ -22,7 +22,8 @@ class ClientCache:
         Parameters:
             key (string): A key for client cache object.
         """
-        self.name = {'key': key, 'userid': Global.userid}
+        self.name = key
+        self.userid = Global.userid
 
     def __str__(self):
         """
@@ -31,10 +32,11 @@ class ClientCache:
         Returns:
             string: The string presentation of the client cache object for logger print out.
         """
-        return "Cache {0} name:{1} includes -\n{2}".format(
+        return "Cache {0} name:{1} owned by: {3} includes -\n{2}".format(
             self.__class__,
             self.name,
-            str(ClientCache.cache_list)
+            str(ClientCache.cache_list),
+            self.userid
         )
         
     def is_empty(self):
