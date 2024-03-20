@@ -15,13 +15,14 @@ services:
 startup: {type: module, module: StartupModule}
 package_name: PFIMS
 allow_embedding: false
-name: Personal Finance and Inventory Management System
+name: Financial and Inventory Management $YS
 runtime_options:
   version: 2
   client_version: '3'
   server_version: python3-full
   server_spec: {base: python310-standard}
-metadata: {title: PFIMS, description: One integrated system for your own finance and inventory management}
+metadata: {title: FIM$, description: Your one stop finance and inventory management in one integrated platform,
+  logo_img: 'asset:fim$-favicon-color.png'}
 startup_form: null
 native_deps: {head_html: "<script>\n$(document).ready(() => {\n    $('#loadingSpinner')\n\
     \    .addClass('spinner_customized');\n})\n</script>"}
