@@ -73,8 +73,9 @@ class ClientCache:
         """
         logger.trace(str(self))
         if Global.userid not in ClientCache.cache_list:
-            logger.debug(f"Cache of user {Global.userid} does not exist.")
-            return None
+            data = None
+            logger.debug(f"Cache of user {Global.userid} does not exist. Initiating ...")
+            ClientCache.cache_list[Global.userid] = DoubleLinkedList()
         cache_node = ClientCache.cache_list[Global.userid].pop(self.name)
         if cache_node and not cache_node.is_expired():
             data = cache_node.get_value()
@@ -96,6 +97,7 @@ class ClientCache:
             data (Object): Data to load manually.
         """
         if Global.userid not in ClientCache.cache_list:
+            logger.debug(f"Cache of user {Global.userid} does not exist. Initiating ...")
             ClientCache.cache_list[Global.userid] = DoubleLinkedList()
         cache_list = ClientCache.cache_list[Global.userid]
         if cache_list.loc(self.name) >= 0:
