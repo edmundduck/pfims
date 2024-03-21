@@ -49,7 +49,7 @@ class ClientCache:
         if self.name is None or Global.userid not in ClientCache.cache_list:
             return True
         cache_list = ClientCache.cache_list[Global.userid]
-        if cache_list.loc(self.name) < 0 or cache_list.peek(self.name).get_value() is None:
+        if cache_list.peek(self.name).get_value() is None:
             return True
         return False
     
