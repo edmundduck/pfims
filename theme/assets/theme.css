@@ -815,6 +815,7 @@ input[disabled] ~ span {
   flex-direction: column;
   background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%;
 /*   background: %color:Background%; */
+  font-family: 'Secular One';
   font-size: 14px;
   font-weight: 500;
   color: %color:On Surface Variant%;
@@ -927,7 +928,6 @@ input[disabled] ~ span {
 /* Standardize the label settings in the left navigation menu */
 .left-nav .anvil-role-subheading > .label-text {
   color: %color:Tertiary%;
-  font-weight: bold;
   font-size: 18px;
 }
 
