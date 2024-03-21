@@ -304,7 +304,7 @@ class DoubleLinkedList:
         node_to_search = self.head
         position = 0
         while node_to_search:
-            if node_to_search.get_key() == key and node_to_search.:
+            if node_to_search.get_key() == key:
                 return position
             else:
                 node_to_search = node_to_search.get_next()
