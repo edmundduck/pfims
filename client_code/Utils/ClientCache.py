@@ -51,7 +51,7 @@ class ClientCache:
             boolean: Return True if all conditions above are set.
         """
         if not self.name: return False
-        if not ClientCache.cache_list[Global.userid]: return False
+        if Global.userid not in ClientCache.cache_list: return False
         if self.is_expired(): return False
         if self.is_empty(): return False
         return True
@@ -89,18 +89,14 @@ class ClientCache:
             data (Object): Cache stored by the provided key. None if the provided key does not exist in cache or has been expired.
         """
         logger.trace(str(self))
-        if Global.userid not in ClientCache.cache_list:
+        if not self:
             data = None
-            logger.debug(f"Cache of user {Global.userid} does not exist. Initiating ...")
-            ClientCache.cache_list[Global.userid] = DoubleLinkedList()
-        cache_node = ClientCache.cache_list[Global.userid].pop(self.name)
-        if cache_node and not cache_node.is_expired():
+            logger.debug(f"Data {self.name} from cache is either not exist or expired.")
+        else:
+            cache_node = ClientCache.cache_list[Global.userid].pop(self.name)
             data = cache_node.get_value()
             ClientCache.cache_list[Global.userid].add_to_head(key=None, data=cache_node)
             logger.debug(f"Data {self.name} retrieved from cache.")
-        else:
-            data = None
-            logger.debug(f"Data {self.name} from cache is either not exist or expired.")
         return data
     
     def set_cache(self, data):
