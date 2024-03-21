@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Secular One';
+    src: url("_/theme/SecularOne-Regular.ttf")
+}
+
 body {
   font-family: 'Trebuchet MS', sans-serif;
   font-size: 14px;
@@ -84,7 +89,7 @@ a:active:not(disabled), a:focus:not(disabled){
 /* Buttons */
 
 .btn, .btn-default, .file-loader, .file-loader > label { 
-  font-family: "FontAwesome";
+  font-family: "Secular One";
   font-size: 12px;
   text-transform: uppercase;
   font-weight: bold;
@@ -483,14 +488,17 @@ input[disabled] ~ span {
 
 #loadingSpinner {
     position: absolute;
-    top: calc(33% - 70px/2);
-    left: calc(40% - 70px/2);
-    width: 300px;
-    height: 300px;
-    background-image: url("_/theme/logo-black-transparent.png") !important; 
-/*     background-color: %color:Light Overlay 2 1%; */
+    top: calc(40% - 70px/2);
+    left: calc(48% - 70px/2);
+    border-radius: 5px;
+    width: 150px;
+    height: 100px;
+    background-size: cover;
+    background-color: %color:Background%;
+    background-image: url("_/theme/logo-white-transparent.png") !important; 
     background-repeat: no-repeat;
     background-position: center;
+    box-shadow: 0 0 0 0;
 /*     box-shadow: 0px 0px 10px 10px %colorLight Overlay 2 1%; */
     overflow: hidden;
     pointer-events: none;
@@ -703,6 +711,10 @@ input[disabled] ~ span {
     z-index: 2;
     background-color: rgba(0,0,0,0.2);
   }
+
+  .left-nav .btn, .left-nav .label {
+    font-size: 14px;
+  }
 }
 
 @media(max-width:698px) {
@@ -780,14 +792,17 @@ input[disabled] ~ span {
 
   #loadingSpinner {
     position: absolute;
-    top: calc(33% - 70px/2);
-    left: calc(50% - 200px/2);
-    width: 200px;
-    height: 200px;
-    background-image: url("_/theme/logo-black-transparent.png") !important; 
-/*     background-color: %color:Light Overlay 2 1%; */
+    top: calc(40% - 70px/2);
+    left: calc(40% - 200px/2);
+    border-radius: 5px;
+    width: 150px;
+    height: 100px;
+    background-size: cover;
+    background-color: %color:Background%
+    background-image: url("_/theme/logo-white-transparent.png") !important; 
     background-repeat: no-repeat;
     background-position: center;
+    box-shadow: 0 0 0 0;
 /*     box-shadow: 0px 0px 10px 10px %colorLight Overlay 2 1%; */
     overflow: hidden;
     pointer-events: none;
@@ -800,6 +815,7 @@ input[disabled] ~ span {
   flex-direction: column;
   background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%;
 /*   background: %color:Background%; */
+  font-family: 'Secular One';
   font-size: 14px;
   font-weight: 500;
   color: %color:On Surface Variant%;
@@ -912,8 +928,16 @@ input[disabled] ~ span {
 /* Standardize the label settings in the left navigation menu */
 .left-nav .anvil-role-subheading > .label-text {
   color: %color:Tertiary%;
-  font-weight: bold;
   font-size: 18px;
+}
+
+/* Buttons in left navigation menu bar display in different size according to having icon or not */
+.left-nav .anvil-role-button-no-icon .btn {
+  font-size: 18px;
+}
+
+.left-nav .btn {
+  font-size: 14px;
 }
 
 html:not(.designer) .visible-false {

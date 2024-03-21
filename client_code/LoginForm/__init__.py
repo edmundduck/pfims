@@ -1,6 +1,5 @@
 from ._anvil_designer import LoginFormTemplate
 from anvil import *
-import anvil.server
 import anvil.users
 from ..Utils import Routing
 
@@ -8,6 +7,10 @@ class LoginForm(LoginFormTemplate):
     def __init__(self, **properties):
         # Set Form properties and Data Bindings.
         self.init_components(**properties)
+
+        # Cannot call Routing method here
+        from ..Forms.Introduction.AppIntroForm import AppIntroForm
+        self.content_panel.add_component(AppIntroForm())
 
     def button_login_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -35,3 +38,6 @@ class LoginForm(LoginFormTemplate):
         """This method is called when the button is clicked"""
         Routing.open_intro_contact_form(self)
 
+    def image_logo_mouse_up(self, x, y, button, **event_args):
+        """This method is called when a mouse button is released on this component"""
+        Routing.open_intro_base_form(self)
