@@ -38,6 +38,23 @@ class ClientCache:
             self.name,
             str(ClientCache.cache_list)
         )
+
+    def __bool__(self):
+        """
+        Return truthy if all conditions are met,
+            1. Cache name exists
+            2. cache_list belonging to a user ID exists
+            3. Cache hasn't expired.
+            4. Cache isn't empty (Value is truthy).
+
+        Returns:
+            boolean: Return True if all conditions above are set.
+        """
+        if not self.name: return False
+        if not ClientCache.cache_list[Global.userid]: return False
+        if self.is_expired(): return False
+        if self.is_empty(): return False
+        return True
         
     def is_empty(self):
         """
