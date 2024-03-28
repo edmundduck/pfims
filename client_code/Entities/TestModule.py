@@ -21,8 +21,7 @@ class TestModule:
                 result = func()
                 if result:
                     failure_count += 1
-                    if isinstance(result, (list, tuple)):
-                        failure_msg.append(result)
+                    failure_msg.append(result)
                 else:
                     success_count += 1
         return {

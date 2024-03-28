@@ -12,7 +12,7 @@ from .. import SystemProcess as sys
 class TestAccountDAModule(TestModule):
     def get_test_object(self):
         return Account({
-            "userid": 365825345,
+            "userid": '365825345',
             "id": 1,
             "name": "Account Test",
             "ccy": "GBP",
@@ -43,6 +43,8 @@ class TestAccountDAModule(TestModule):
     @anvil.server.callable
     def test_select_account(self):
         acct = self.get_test_object()
+        print(f"1:{acct}")
+        print(f"2:{AccountDAModule.select_account(acct.get_id())}")
         try:
             assert AccountDAModule.select_account(acct.get_id()) == acct, "Retrieved account from database is not the same as expected."
         except AssertionError:
