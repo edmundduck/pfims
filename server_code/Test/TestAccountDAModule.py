@@ -35,20 +35,20 @@ class TestAccountDAModule(TestModule):
 
     @anvil.server.callable
     def test_generate_accounts_list(self):
+        err = ["Retrieved account list is expected to be either list or tuple only."]
         try:
-            assert isinstance(AccountDAModule.generate_accounts_list(), (list, tuple)), "Retrieved account from database is not the same as expected."
+            assert isinstance(AccountDAModule.generate_accounts_list(), (list, tuple)), err[0]
         except AssertionError:
-            return "Retrieved account list is neither a list nor a tuple."
+            return err[0]
 
     @anvil.server.callable
     def test_select_account(self):
+        err = ["Retrieved account from database is not the same as expected."]
         acct = self.get_test_object()
-        print(f"1:{acct}")
-        print(f"2:{AccountDAModule.select_account(acct.get_id())}")
         try:
-            assert AccountDAModule.select_account(acct.get_id()) == acct, "Retrieved account from database is not the same as expected."
+            assert AccountDAModule.select_account(acct.get_id()) == acct, err[0]
         except AssertionError:
-            return "Retrieved account from database is not the same as expected."
+            return err[0]
 
     @anvil.server.callable
     def test_create_delete_single_account(self):

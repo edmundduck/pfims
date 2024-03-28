@@ -13,7 +13,7 @@ class TestLabelDAModule(TestModule):
         return Label({
             "userid": '365825345',
             "id": 1,
-            "name": "膳食",
+            "name": "Label Unit Test",
             "status": True,
             "keywords": ''
         })
@@ -22,26 +22,35 @@ class TestLabelDAModule(TestModule):
         return Label({
             "userid": sys.get_current_userid(),
             "id": None,
-            "name": "Unit Test Label 1",
+            "name": "Unit Test Label New",
             "status": True,
             "keywords": ''
         })
 
     @anvil.server.callable
     def test_generate_labels_list(self):
-        assert (result := isinstance(LabelDAModule.generate_labels_list(), (list, tuple)))
-        return result
+        err = ["Retrieved label list is expected to be either list or tuple only."]
+        try:
+            assert isinstance(LabelDAModule.generate_labels_list(), (list, tuple)), err[0]
+        except AssertionError:
+            return err[0]
 
     @anvil.server.callable
     def test_generate_labels_mapping_action_list(self):
-        assert (result := isinstance(LabelDAModule.generate_labels_mapping_action_list(), (list, tuple)))
-        return result
+        err = ["Retrieved labels mapping action list is expected to be either list or tuple only."]
+        try:
+            assert isinstance(LabelDAModule.generate_labels_mapping_action_list(), (list, tuple)), err[0]
+        except AssertionError:
+            return err[0]
 
     @anvil.server.callable
     def test_select_label(self):
+        err = ["Retrieved label from database is not the same as expected."]
         lbl = self.get_test_object()
-        assert (result := LabelDAModule.select_label(lbl.get_id()) == lbl)
-        return result
+        try:
+            assert LabelDAModule.select_label(lbl.get_id()) == lbl, err[0]
+        except AssertionError:
+            return err[0]
 
     @anvil.server.callable
     def test_create_delete_single_label(self):
