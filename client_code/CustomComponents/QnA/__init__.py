@@ -1,5 +1,6 @@
 from ._anvil_designer import QnATemplate
 from anvil import *
+import anvil.server
 
 class QnA(QnATemplate):
     def __init__(self, **properties):

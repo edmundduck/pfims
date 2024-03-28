@@ -1,6 +1,7 @@
 from ._anvil_designer import TestItemTemplate
 from anvil import *
 import anvil.server
+from ...Controllers import UnitTestController
 
 class TestItem(TestItemTemplate):
     def __init__(self, **properties):
@@ -19,17 +20,11 @@ class TestItem(TestItemTemplate):
 
     def button_run_click(self, **event_args):
         """This method is called when the button is clicked"""
-        for f in self.test_function:
-            if anvil.server.call(f):
-                self.result_success += 1
-            else:
-                self.result_failure += 1
+        result = UnitTestController.submit_server_test_cases(self.test_function)
+        if result.get(self.title):
+            self.result_success = result.get(self.title).get('success_count')
+            self.result_failure = result.get(self.title).get('failure_count')
         self.result.text = f"Success ({self.result_success}) / Failure ({self.result_failure})"
 
     def _validate(self):
-        if isinstance(self.test_function, (list, tuple)):
-            self.button_run.enabled = True
-        else:
-            self.button_run.enabled = False
-            self.error_msg.visible = True
-            self.error_msg.text = "Error: test_function properties must be either List or Tuple."
+        self.button_run.enabled = True
