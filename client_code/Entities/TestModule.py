@@ -13,16 +13,20 @@ class TestModule:
     def test_all_methods(self):
         success_count = 0
         failure_count = 0
+        failure_msg = []
         this_name = inspect.currentframe().f_code.co_name
         for method in dir(self):
             if callable(getattr(self, method)) and method.startswith("test") and method != this_name:
                 func = getattr(self, method)
                 result = func()
                 if result:
-                    success_count += 1
-                else:
                     failure_count += 1
+                    if isinstance(result, (list, tuple)):
+                        failure_msg.append(result)
+                else:
+                    success_count += 1
         return {
             'success_count': success_count,
-            'failure_count': failure_count
+            'failure_count': failure_count,
+            'failure_messages': failure_msg
         }

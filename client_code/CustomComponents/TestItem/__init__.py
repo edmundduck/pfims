@@ -24,6 +24,13 @@ class TestItem(TestItemTemplate):
         if result.get(self.title):
             self.result_success = result.get(self.title).get('success_count')
             self.result_failure = result.get(self.title).get('failure_count')
+            if result.get(self.title).get('failure_messages'):
+                self.error_msg.text = result.get(self.title).get('failure_messages')
+                self.error_msg.visible = True
+            else:
+                self.error_msg.text = None
+                self.error_msg.visible = False
+                
         self.result.text = f"Success ({self.result_success}) / Failure ({self.result_failure})"
 
     def _validate(self):
