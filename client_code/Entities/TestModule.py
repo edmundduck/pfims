@@ -25,7 +25,7 @@ class TestModule:
                 else:
                     success_count += 1
         return {
-            'success_count': success_count,
-            'failure_count': failure_count,
-            'failure_messages': failure_msg
+            UnitTest.SUCCESS_CNT: success_count,
+            UnitTest.FAIL_CNT: failure_count,
+            UnitTest.FAIL_MSG: failure_msg
         }

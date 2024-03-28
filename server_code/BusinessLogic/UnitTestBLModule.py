@@ -10,7 +10,7 @@ import inspect
 # rather than in the user's browser.
 
 @anvil.server.callable
-def access_unit_test_config_file(mode=None):
+def access_unit_test_list(mode=None):
     return [v.__name__ for k, v in sys.modules.items() if '.Test.' in k]
 
 @anvil.server.callable

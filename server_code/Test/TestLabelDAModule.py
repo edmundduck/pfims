@@ -11,7 +11,7 @@ from .. import SystemProcess as sys
 class TestLabelDAModule(TestModule):
     def get_test_object(self):
         return Label({
-            "userid": sys.get_current_userid(),
+            "userid": '365825345',
             "id": 1,
             "name": "膳食",
             "status": True,

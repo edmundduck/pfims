@@ -13,5 +13,5 @@ class UnitTestMainForm(UnitTestMainFormTemplate):
         for test_entity in UnitTestController.retrieve_test_cases():
             item = TestItem()
             item.title = test_entity
-            item.test_function = test_entity
+            item.modules = test_entity
             self.colpanel_testcases.add_component(item)
