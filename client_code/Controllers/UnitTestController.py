@@ -8,5 +8,5 @@ from ..Utils.Constants import UnitTest
 def retrieve_test_cases():
     return anvil.server.call('access_unit_test_config_file')
 
-def submit_server_test_cases(class_list):
-    return anvil.server.call('execute_server_test_cases', class_list)
+def submit_server_test_cases(module):
+    return anvil.server.call('execute_server_test_cases', module)

@@ -29,8 +29,8 @@ properties:
   multiline: true, description: Test case title}
 - {name: result_success, type: number, important: true, default_value: 0, description: Count of successful test run}
 - {name: result_failure, type: number, important: true, default_value: 0, description: Count of failure test run}
-- name: test_function
+- name: modules
   type: text[]
   default_value: []
   important: true
-  description: List of functions to test
+  description: List of modules to test

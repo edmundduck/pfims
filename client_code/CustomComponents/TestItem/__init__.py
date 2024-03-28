@@ -21,19 +21,12 @@ class TestItem(TestItemTemplate):
 
     def button_run_click(self, **event_args):
         """This method is called when the button is clicked"""
-        result = UnitTestController.submit_server_test_cases(self.test_function)
-        if result.get(self.title):
-            self.result_success = result.get(self.title).get('success_count')
-            self.result_failure = result.get(self.title).get('failure_count')
-            print(f"failure? {result.get(self.title).get('failure_messages')}")
-            if result.get(self.title).get('failure_messages'):
-                self.error_msg.text = "\n".join(result.get(self.title).get('failure_messages'))
-                self.error_msg.visible = True
-            else:
-                self.error_msg.text = None
-                self.error_msg.visible = False
-                
+        [self.result_success, self.result_failure, self.error_msg.text] = UnitTestController.submit_server_test_cases(self.modules)
         self.result.text = f"Success ({self.result_success}) / Failure ({self.result_failure})"
+        if self.error_msg.text:
+            self.error_msg.visible = True
+        else:
+            self.error_msg.visible = False    
 
     def _validate(self):
         pass
