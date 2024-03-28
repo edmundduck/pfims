@@ -13,8 +13,8 @@ class TestAccountDAModule(TestModule):
     def get_test_object(self):
         return Account({
             "userid": sys.get_current_userid(),
-            "id": 1801,
-            "name": "EMPTY",
+            "id": 1,
+            "name": "Account Test",
             "ccy": "GBP",
             "valid_from": datetime.strptime("2023-07-01", "%Y-%m-%d").date(),
             "valid_to": datetime.strptime("2023-07-02", "%Y-%m-%d").date(),
@@ -25,7 +25,7 @@ class TestAccountDAModule(TestModule):
         return Account({
             "userid": sys.get_current_userid(),
             "id": None,
-            "name": "NEW ACCT",
+            "name": "NEW ACCT for Test",
             "ccy": "GBP",
             "valid_from": None,
             "valid_to": None,
