@@ -54,28 +54,42 @@ class TestLabelDAModule(TestModule):
 
     @anvil.server.callable
     def test_create_delete_single_label(self):
+        err = [
+            "Created label returned from database does not match the originally defined attributes.", 
+            "Created label remains in database after deletion.", 
+            "Fail to delete the created label.", 
+            "Fail to create a label for testing."
+        ]
         lbl = self.get_sample_create_object()
         new_id = LabelDAModule.create_label(lbl)
         try:
-            if new_id:
-                new_id = new_id[0]
+            assert LabelDAModule.select_label(new_id[0]) == lbl.set_id(new_id[0]), err[0]
+        except AssertionError:
+            return err[0]
         except IndexError:
-            pass
-        assert (result := LabelDAModule.select_label(new_id) == lbl.set_id(new_id))
-        result = LabelDAModule.delete_label(lbl.set_id(new_id))
+            return err[3]
+        result = LabelDAModule.delete_label(lbl.set_id(new_id[0]))
         if result and result > 0:
-            assert (result_del := LabelDAModule.select_label(new_id) == None)
-            return all([result, result_del])
+            try:
+                assert LabelDAModule.select_label(new_id[0]) == None, err[1]
+            except AssertionError:
+                return err[1]
         else:
-            assert False
+            return err[2]
 
     @anvil.server.callable
     def test_update_label(self):
+        err = [
+            "Update account returned from database does not match the originally defined attributes.", 
+            "Fail to update the account."
+        ]
         lbl = self.get_test_object().set_keywords('Unittest')
         result = LabelDAModule.update_label(lbl)
         if result and result > 0:
-            assert (result := LabelDAModule.select_label(lbl.get_id()) == lbl)
+            try:
+                assert LabelDAModule.select_label(lbl.get_id()) == lbl, err[0]
+            except AssertionError:
+                return err[0]
             LabelDAModule.update_label(lbl.set_keywords(''))
-            return result
         else:
-            assert False
+            return err[1]

@@ -12,6 +12,6 @@ def submit_server_test_cases(module):
     if result.get(module):
         single_result = result.get(module)
         error_msg = "\n".join(single_result.get(UnitTest.FAIL_MSG)) if single_result.get(UnitTest.FAIL_MSG) else None
-        return single_result.get(UnitTest.SUCCESS_CNT), single_result.get(UnitTest.SUCCESS_CNT), error_msg
+        return single_result.get(UnitTest.SUCCESS_CNT), single_result.get(UnitTest.FAIL_CNT), error_msg
     else:
         return 0, 0, None
