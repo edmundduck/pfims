@@ -14,11 +14,11 @@ class TestExpenseDAModule(TestModule):
     def get_test_object(self):
         return [
             ExpenseTransactionGroup({
-                "userid": '365825345',
+                "userid": 365825345,
                 "tab_id": 1,
                 "tab_name": "Unit Test Expense Group",
                 "submitted": True,
-                "tab_create": datetime.strptime("2023-01-01", "%Y-%m-%d").date(),
+                "tab_create": datetime.strptime("2023-01-01", "%Y-%m-%d"),
                 "tab_lastsave": None,
                 "tab_submitted": None
             }),
@@ -57,6 +57,7 @@ class TestExpenseDAModule(TestModule):
         exp_grp, _ = self.get_test_object()
         try:
             print(f"DEBUG: {exp_grp}")
+            print(f"DEBUG: {ExpenseDAModule.select_expense_group(exp_grp)}")
             assert ExpenseDAModule.select_expense_group(exp_grp) == exp_grp, err[0]
         except AssertionError:
             return err[0]
@@ -65,6 +66,8 @@ class TestExpenseDAModule(TestModule):
         err = ["Retrieved expense transactions from database are not the same as expected."]
         exp_grp, trx = self.get_test_object()
         try:
+            print(f"DEBUG2: {trx}")
+            print(f"DEBUG2: {ExpenseDAModule.select_transactions(exp_grp)}")
             assert ExpenseDAModule.select_transactions(exp_grp) == trx, err[0]
         except AssertionError:
             return err[0]
