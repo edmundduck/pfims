@@ -33,7 +33,6 @@ class TestAccountDAModule(TestModule):
 
         })
 
-    @anvil.server.callable
     def test_generate_accounts_list(self):
         err = ["Retrieved account list is expected to be either list or tuple only."]
         try:
@@ -41,7 +40,6 @@ class TestAccountDAModule(TestModule):
         except AssertionError:
             return err[0]
 
-    @anvil.server.callable
     def test_select_account(self):
         err = ["Retrieved account from database is not the same as expected."]
         acct = self.get_test_object()
@@ -50,7 +48,6 @@ class TestAccountDAModule(TestModule):
         except AssertionError:
             return err[0]
 
-    @anvil.server.callable
     def test_create_delete_single_account(self):
         err = [
             "Created account returned from database does not match the originally defined attributes.", 
@@ -72,7 +69,6 @@ class TestAccountDAModule(TestModule):
         else:
             return err[2]
 
-    @anvil.server.callable
     def test_update_account(self):
         err = [
             "Update account returned from database does not match the originally defined attributes.", 

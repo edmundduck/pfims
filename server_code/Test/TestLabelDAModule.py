@@ -27,7 +27,6 @@ class TestLabelDAModule(TestModule):
             "keywords": ''
         })
 
-    @anvil.server.callable
     def test_generate_labels_list(self):
         err = ["Retrieved label list is expected to be either list or tuple only."]
         try:
@@ -35,7 +34,6 @@ class TestLabelDAModule(TestModule):
         except AssertionError:
             return err[0]
 
-    @anvil.server.callable
     def test_generate_labels_mapping_action_list(self):
         err = ["Retrieved labels mapping action list is expected to be either list or tuple only."]
         try:
@@ -43,7 +41,6 @@ class TestLabelDAModule(TestModule):
         except AssertionError:
             return err[0]
 
-    @anvil.server.callable
     def test_select_label(self):
         err = ["Retrieved label from database is not the same as expected."]
         lbl = self.get_test_object()
@@ -52,7 +49,6 @@ class TestLabelDAModule(TestModule):
         except AssertionError:
             return err[0]
 
-    @anvil.server.callable
     def test_create_delete_single_label(self):
         err = [
             "Created label returned from database does not match the originally defined attributes.", 
@@ -77,7 +73,6 @@ class TestLabelDAModule(TestModule):
         else:
             return err[2]
 
-    @anvil.server.callable
     def test_update_label(self):
         err = [
             "Update account returned from database does not match the originally defined attributes.", 
