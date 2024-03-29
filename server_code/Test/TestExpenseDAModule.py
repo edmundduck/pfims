@@ -25,12 +25,12 @@ class TestExpenseDAModule(TestModule):
             ExpenseTransaction({
                 "iid": 1,
                 "tab_id": 1,
-                "trandate": datetime.strptime("2023-01-01", "%Y-%m-%d").date(),
-                "account_id": 1,
-                "amount": 100,
-                "labels": [1],
-                "remarks": "Unit test trx 1",
-                "stmt_dtl": None
+                "DTE": datetime.strptime("2023-01-01", "%Y-%m-%d").date(),
+                "ACC": 1,
+                "AMT": 100,
+                "LBL": [1],
+                "RMK": "Unit test trx 1",
+                "STD": None
             })
         ]
 
