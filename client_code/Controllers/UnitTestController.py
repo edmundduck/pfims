@@ -5,6 +5,8 @@ from ..Utils.Constants import UnitTest
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
 def retrieve_test_cases():
+    # DEBUG
+    print(f"retrieve_test_cases={anvil.server.call('access_unit_test_data')}")
     return anvil.server.call('access_unit_test_list')
 
 def submit_server_test_cases(module):
