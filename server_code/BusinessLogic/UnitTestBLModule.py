@@ -10,11 +10,26 @@ import inspect
 # rather than in the user's browser.
 
 @anvil.server.callable
-def access_unit_test_list(mode=None):
+def access_unit_test_list():
+    """
+    Return the list of unit test cases.
+
+    Returns:
+        list (list): A list of module names where module names match the unit test module standard.
+    """
     return [v.__name__ for k, v in sys.modules.items() if '.Test.' in k]
 
 @anvil.server.callable
 def execute_server_test_cases(class_list=[]):
+    """
+    Execute all the server code test cases.
+
+    Parameters:
+        class_list (list of str): A list of module or class names to be included for test.
+
+    Returns:
+        result (dict of dict): Result dictionary which contains each module's unit test result, and the result is also a dictionary which includes all the test attributes.
+    """
     # Return list of corresponding methods of classes under modules named with '.Test'
     all_methods = {}
     result = {}

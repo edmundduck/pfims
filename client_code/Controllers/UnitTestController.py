@@ -9,9 +9,26 @@ from ..Utils.Logger import ClientLogger
 logger = ClientLogger()
 
 def retrieve_test_cases():
+    """
+    Return the list of unit test cases.
+
+    Returns:
+        list (list): A list of module names where module names match the unit test module standard.
+    """
     return anvil.server.call('access_unit_test_list')
 
 def submit_server_test_cases(module):
+    """
+    Execute all the server code test cases.
+
+    Parameters:
+        module (list of str): A list of module or class names to be included for test.
+
+    Returns:
+        success_count (int): The count of successful test cases per executed module.
+        failure_count (int): The count of failure test cases per executed module.
+        error_msg (list of str): The list of error messages returned from failure test cases.
+    """
     logger.debug(f"Initializing unit test data ...")
     anvil.server.call('initialize_unit_test_data')
     logger.debug(f"Executing test cases {module} ...")
