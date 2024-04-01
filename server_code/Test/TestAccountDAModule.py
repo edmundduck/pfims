@@ -12,7 +12,7 @@ from .. import SystemProcess as sys
 class TestAccountDAModule(TestModule):
     def get_test_object(self):
         return Account({
-            "userid": '365825345',
+            "userid": 365825345,
             "id": 1,
             "name": "Account Test",
             "ccy": "GBP",
@@ -71,7 +71,7 @@ class TestAccountDAModule(TestModule):
 
     def test_update_account(self):
         err = [
-            "Update account returned from database does not match the originally defined attributes.", 
+            "Updated account returned from database does not match the originally defined attributes.", 
             "Fail to update the account."
         ]
         acct = self.get_test_object().set_name('Unittest')

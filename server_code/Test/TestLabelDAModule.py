@@ -11,11 +11,11 @@ from .. import SystemProcess as sys
 class TestLabelDAModule(TestModule):
     def get_test_object(self):
         return Label({
-            "userid": '365825345',
+            "userid": 365825345,
             "id": 1,
             "name": "Label Unit Test",
             "status": True,
-            "keywords": ''
+            "keywords": None
         })
 
     def get_sample_create_object(self):
@@ -24,7 +24,7 @@ class TestLabelDAModule(TestModule):
             "id": None,
             "name": "Unit Test Label New",
             "status": True,
-            "keywords": ''
+            "keywords": None
         })
 
     def test_generate_labels_list(self):
@@ -75,7 +75,7 @@ class TestLabelDAModule(TestModule):
 
     def test_update_label(self):
         err = [
-            "Update account returned from database does not match the originally defined attributes.", 
+            "Updated account returned from database does not match the originally defined attributes.", 
             "Fail to update the account."
         ]
         lbl = self.get_test_object().set_keywords('Unittest')
