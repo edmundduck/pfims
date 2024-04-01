@@ -12,6 +12,9 @@ logger = ServerLogger()
 
 @anvil.server.callable
 def initialize_unit_test_data():
+    """
+    Initialize data for unit test by loading data from script.
+    """
     conn = sys.db_connect()
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
