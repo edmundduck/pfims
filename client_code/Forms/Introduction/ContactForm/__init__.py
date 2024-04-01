@@ -1,5 +1,6 @@
 from ._anvil_designer import ContactFormTemplate
 from anvil import *
+import anvil.server
 
 class ContactForm(ContactFormTemplate):
     def __init__(self, **properties):

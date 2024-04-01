@@ -1,5 +1,6 @@
 from ._anvil_designer import FeatureFormTemplate
 from anvil import *
+import anvil.server
 
 class FeatureForm(FeatureFormTemplate):
     def __init__(self, **properties):

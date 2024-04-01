@@ -54,7 +54,8 @@ def select_expense_group(exp_grp):
         cur.execute(stmt)
         row = cur.fetchone()
         cur.close()
-    return ExpenseTransactionGroup(row)
+        exp_grp = ExpenseTransactionGroup(row) if row else None
+    return exp_grp
 
 @logger.log_function
 def select_transactions(exp_grp):
@@ -69,6 +70,7 @@ def select_transactions(exp_grp):
     Returns:
         rows (list of RealDictRow): A list of transactions belonging to the group.
     """
+    from ..Utils import Helper
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         sql = "SELECT iid, tab_id, trandate AS {tdate}, account_id AS {account}, amount AS {amount}, \
@@ -86,8 +88,12 @@ def select_transactions(exp_grp):
         cur.execute(stmt)
         rows = cur.fetchall()
         logger.trace("rows=", rows)
+
+        # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
+        # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
+        tnx_list = Helper.upper_dict_keys(rows, ExpenseTransaction.get_data_transform_definition())
         cur.close()
-        return rows
+        return [ExpenseTransaction(r) for r in tnx_list]
 
 @logger.log_function
 def upsert_transactions(exp_grp):

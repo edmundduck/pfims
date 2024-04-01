@@ -1,5 +1,6 @@
 from ._anvil_designer import PnLReportFormTemplate
 from anvil import *
+import anvil.server
 from ....Controllers import ReportSearchPanelController
 from ....Utils.Logger import ClientLogger
 

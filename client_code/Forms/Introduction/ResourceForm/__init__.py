@@ -1,5 +1,6 @@
 from ._anvil_designer import ResourceFormTemplate
 from anvil import *
+import anvil.server
 
 class ResourceForm(ResourceFormTemplate):
     def __init__(self, **properties):
