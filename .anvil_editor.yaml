@@ -120,6 +120,7 @@ unique_ids:
     DataAccess.FileImportMappingDAModule: '1682547745565167613178875.7249'
     BusinessLogic.FileImportMappingBLModule: '1698095559658355360647003.10834'
     DataAccess.LabelDAModule: '168125039375128547034086.94137'
+    Test.TestReportingDAModule: '1712004133380416119231675.32416'
     BusinessLogic.ReportingBLModule: '1698697476821763291100705.8843'
     Test.TestAccountDAModule: '171158809269315306550518.172201'
     BusinessLogic.UnitTestBLModule: '1708555896074412001843485.3583'
