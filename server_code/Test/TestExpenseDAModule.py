@@ -17,7 +17,7 @@ class TestExpenseDAModule(TestModule):
                 "userid": 365825345,
                 "tab_id": 1,
                 "tab_name": "Unit Test Expense Group",
-                "submitted": True,
+                "submitted": False,
                 "tab_create": datetime(2023, 1, 1, 0, 0, tzinfo=timezone.utc),
                 "tab_lastsave": None,
                 "tab_submitted": None
@@ -39,7 +39,7 @@ class TestExpenseDAModule(TestModule):
             "userid": sys.get_current_userid(),
             "tab_id": None,
             "tab_name": "Unit Test NEW Exp Grp",
-            "submitted": True,
+            "submitted": False,
             "tab_create": datetime(2023, 12, 29, 0, 0, tzinfo=timezone.utc),
             "tab_lastsave": datetime(2023, 12, 30, 0, 0, tzinfo=timezone.utc),
             "tab_submitted": None

@@ -135,6 +135,14 @@ class ClientCache:
             logger.debug(f"Cache {self.name} cleared.")
             return data
 
+    @staticmethod
+    def clear_all_cache():
+        """
+        Remove all cache.
+        """
+        ClientCache.cache_list = {}
+        logger.debug(f"All cache are cleared.")
+
 class ClientDropdownCache(ClientCache):
     def __init__(self, funcname):
         """
