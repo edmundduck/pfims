@@ -1,50 +1,15 @@
 import anvil.server
 import pytest
-from datetime import datetime, timezone
 from ..DataAccess import ExpenseDAModule
 from ..Entities.ExpenseTransactionGroup import ExpenseTransactionGroup
 from ..Entities.ExpenseTransaction import ExpenseTransaction
 from ..Entities.TestModule import TestModule
-from .. import SystemProcess as sys
+from ..Utils import MockUpData
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 class TestExpenseDAModule(TestModule):
-    def get_test_object(self):
-        return [
-            ExpenseTransactionGroup({
-                "userid": 365825345,
-                "tab_id": 1,
-                "tab_name": "Unit Test Expense Group",
-                "submitted": False,
-                "tab_create": datetime(2023, 1, 1, 0, 0, tzinfo=timezone.utc),
-                "tab_lastsave": None,
-                "tab_submitted": None
-            }),
-            ExpenseTransaction({
-                "iid": 1,
-                "tab_id": 1,
-                "DTE": datetime.strptime("2023-01-01", "%Y-%m-%d").date(),
-                "ACC": 1,
-                "AMT": 100,
-                "LBL": [1],
-                "RMK": "Unit test trx 1",
-                "STD": None
-            })
-        ]
-
-    def get_sample_create_object(self):
-        return ExpenseTransactionGroup({
-            "userid": sys.get_current_userid(),
-            "tab_id": None,
-            "tab_name": "Unit Test NEW Exp Grp",
-            "submitted": False,
-            "tab_create": datetime(2023, 12, 29, 0, 0, tzinfo=timezone.utc),
-            "tab_lastsave": datetime(2023, 12, 30, 0, 0, tzinfo=timezone.utc),
-            "tab_submitted": None
-        })
-
     def test_generate_expense_groups_list(self):
         err = ["Retrieved expense group list is expected to be either list or tuple only."]
         try:
@@ -54,7 +19,7 @@ class TestExpenseDAModule(TestModule):
 
     def test_select_expense_group(self):
         err = ["Retrieved expense group from database is not the same as expected."]
-        exp_grp, _ = self.get_test_object()
+        exp_grp = ExpenseTransactionGroup(MockUpData.get_first_element(MockUpData.get_mockup_transaction_group)())
         try:
             assert ExpenseDAModule.select_expense_group(exp_grp) == exp_grp, err[0]
         except AssertionError:
@@ -65,9 +30,10 @@ class TestExpenseDAModule(TestModule):
             "Retrieved expense transactions from database are not the same as expected.",
             "Cannot retrieve any expense transactions."
         ]
-        exp_grp, trx = self.get_test_object()
+        exp_grp = ExpenseTransactionGroup(MockUpData.get_first_element(MockUpData.get_mockup_transaction_group)())
+        tnx = ExpenseTransaction(MockUpData.get_first_element(MockUpData.get_mockup_transactions)())
         try:
-            assert ExpenseDAModule.select_transactions(exp_grp)[0] == trx, err[0]
+            assert ExpenseDAModule.select_transactions(exp_grp)[0] == tnx, err[0]
         except AssertionError:
             return err[0]
         except IndexError:
@@ -80,7 +46,8 @@ class TestExpenseDAModule(TestModule):
             "Fail to delete the created transaction.",
             "Cannot retrieve transaction IID or the IID is corrupted."
         ]
-        exp_grp, tnx = self.get_test_object()
+        exp_grp = ExpenseTransactionGroup(MockUpData.get_first_element(MockUpData.get_mockup_transaction_group)())
+        tnx = ExpenseTransaction(MockUpData.get_first_element(MockUpData.get_mockup_transactions)())
         exp_grp = exp_grp.set_transactions(tnx)
         iid = ExpenseDAModule.upsert_transactions(exp_grp)
         try:
@@ -105,11 +72,9 @@ class TestExpenseDAModule(TestModule):
             "Created expense group remains in database after deletion.", 
             "Fail to delete the created expense group."
         ]
-        exp_grp = self.get_sample_create_object()
+        exp_grp = ExpenseTransactionGroup(MockUpData.get_first_element(MockUpData.get_new_mockup_transaction_group)())
         new_id = ExpenseDAModule.create_expense_group(exp_grp)
         new_grp = exp_grp.set_id(new_id)
-        print(f"DEBUG={ExpenseDAModule.select_expense_group(new_grp)}")
-        print(f"DEBUG={exp_grp.set_id(new_id)}")
         try:
             assert ExpenseDAModule.select_expense_group(new_grp) == exp_grp.set_id(new_id), err[0]
         except AssertionError:
@@ -129,7 +94,7 @@ class TestExpenseDAModule(TestModule):
             "Updated expense group returned from database does not match the originally defined attributes.", 
             "Fail to update the expense group."
         ]
-        exp_grp, _ = self.get_test_object()
+        exp_grp = ExpenseTransactionGroup(MockUpData.get_first_element(MockUpData.get_mockup_transaction_group)())
         exp_grp = exp_grp.set_name('Unit Test Expense Group Modified')
         result = ExpenseDAModule.update_expense_group(exp_grp)
         if result and result > 0:

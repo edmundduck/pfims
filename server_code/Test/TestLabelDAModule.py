@@ -3,30 +3,12 @@ import pytest
 from ..DataAccess import LabelDAModule
 from ..Entities.Label import Label
 from ..Entities.TestModule import TestModule
-from .. import SystemProcess as sys
+from ..Utils import MockUpData
 
 # This is a server module. It runs on the Anvil server,
 # rather than in the user's browser.
 
 class TestLabelDAModule(TestModule):
-    def get_test_object(self):
-        return Label({
-            "userid": 365825345,
-            "id": 1,
-            "name": "Label Unit Test",
-            "status": True,
-            "keywords": None
-        })
-
-    def get_sample_create_object(self):
-        return Label({
-            "userid": sys.get_current_userid(),
-            "id": None,
-            "name": "Unit Test Label New",
-            "status": True,
-            "keywords": None
-        })
-
     def test_generate_labels_list(self):
         err = ["Retrieved label list is expected to be either list or tuple only."]
         try:
@@ -43,7 +25,7 @@ class TestLabelDAModule(TestModule):
 
     def test_select_label(self):
         err = ["Retrieved label from database is not the same as expected."]
-        lbl = self.get_test_object()
+        lbl = Label(MockUpData.get_first_element(MockUpData.get_mockup_label)())
         try:
             assert LabelDAModule.select_label(lbl.get_id()) == lbl, err[0]
         except AssertionError:
@@ -56,7 +38,7 @@ class TestLabelDAModule(TestModule):
             "Fail to delete the created label.", 
             "Fail to create a label for testing."
         ]
-        lbl = self.get_sample_create_object()
+        lbl = Label(MockUpData.get_first_element(MockUpData.get_new_mockup_label)())
         new_id = LabelDAModule.create_label(lbl)
         try:
             assert LabelDAModule.select_label(new_id[0]) == lbl.set_id(new_id[0]), err[0]
@@ -78,7 +60,7 @@ class TestLabelDAModule(TestModule):
             "Updated account returned from database does not match the originally defined attributes.", 
             "Fail to update the account."
         ]
-        lbl = self.get_test_object().set_keywords('Unittest')
+        lbl = Label(MockUpData.get_first_element(MockUpData.get_mockup_label)()).set_keywords('Unittest')
         result = LabelDAModule.update_label(lbl)
         if result and result > 0:
             try:

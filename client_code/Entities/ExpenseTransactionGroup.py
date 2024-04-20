@@ -77,6 +77,8 @@ class ExpenseTransactionGroup(BaseEntity):
                 elif isinstance(t, dict):
                     transactions_list.append(ExpenseTransaction(t).set_group_id(self.get_id()))
             return self.set_single_attribute(7, transactions_list)
+        else:
+            raise TypeError(f"Only the following data types are accepted in set_transactions: ExpenseTransaction, list of ExpenseTransaction or list or dict.")
 
     def copy(self):
         return ExpenseTransactionGroup(self.get_dict())

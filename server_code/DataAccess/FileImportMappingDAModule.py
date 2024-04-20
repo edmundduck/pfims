@@ -111,10 +111,10 @@ def select_mapping_rules(gid=None):
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         # Mapping group can have no rules so left join is required
-        sql = f"SELECT a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        sql = f"SELECT a.userid, a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} ORDER BY a.id ASC, b.col ASC" \
         if gid is None else \
-        f"SELECT a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
+        f"SELECT a.userid, a.id, a.name, a.filetype, a.lastsave, a.description, b.col, b.col_code, b.eaction, b.etarget, b.rule FROM fin.mappinggroup a LEFT JOIN \
         fin.mappingrules b ON a.id = b.gid WHERE a.userid = {userid} AND a.id = {gid} ORDER BY a.id ASC, b.col ASC"
         cur.execute(sql)
         rows = cur.fetchall()
@@ -129,6 +129,7 @@ def select_mapping_rules(gid=None):
             extra2 = row['etarget']
             if result.get(row['id'], None) is None:
                 result[row['id']] = {
+                    'userid': row['userid'],
                     'id': row['id'],
                     'name': row['name'],
                     'filetype': row['filetype'],
@@ -237,7 +238,7 @@ def save_mapping_rules_n_matrix(import_grp, mogstr_matrix, del_iid):
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         try:
             # Second insert/update mapping rules
-            if len(import_grp.get_mapping_rules()) > 0:
+            if import_grp.get_mapping_rules() and len(import_grp.get_mapping_rules()) > 0:
                 mogstr = [cur.mogrify("(%s, %s, %s, %s, %s, %s)", r.get_db_col_list()).decode('utf-8') for r in import_grp.get_mapping_rules()]
                 logger.debug("mogstr=", mogstr)
                 sql1 = "INSERT INTO {schema}.mappingrules (gid, col, col_code, eaction, etarget, rule) VALUES \
@@ -249,7 +250,7 @@ def save_mapping_rules_n_matrix(import_grp, mogstr_matrix, del_iid):
                 cur.execute(sql1)
 
             # Third insert/update mapping matrix
-            if len(mogstr_matrix) > 0:
+            if mogstr_matrix and len(mogstr_matrix) > 0:
                 sql2 = "DELETE FROM {schema}.mappingmatrix WHERE gid = %s".format(
                     schema=Database.SCHEMA_FIN
                 )
