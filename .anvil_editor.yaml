@@ -99,6 +99,7 @@ unique_ids:
     Entities.ImportMappingRule: '1700318459874928700673582.8385'
     Utils.Helper: '1697796932661514517468230.8491'
     Utils.ButtonModerator: '1696342441149849584154945.8008'
+    Utils.MockUpData: W5DXSG22SXTSL67KCIIM2KKVSLDMHVY3
   server_modules:
     DataAccess.AccountDAModule: '1681251190842588428188771.8152'
     DataAccess.UnitTestDAModule: '1711843717691548815225800.7395'
@@ -143,3 +144,4 @@ unique_ids:
     logo-white-transparent.png: '1710857875856354265122026.2041'
     subscription_pic.jpg: '171046703370669122363512.14384'
     SecularOne-Regular.ttf: '1710849194920698116365789.0168'
+  scripts: {}

@@ -25,8 +25,7 @@ components:
 is_package: true
 custom_component: true
 properties:
-- {name: title, type: string, default_value: '', important: true, default_binding_prop: true,
-  multiline: true, description: Test case title}
+- {name: title, type: string, default_value: '', important: true, default_binding_prop: true, multiline: true, description: Test case title}
 - {name: result_success, type: number, important: true, default_value: 0, description: Count of successful test run}
 - {name: result_failure, type: number, important: true, default_value: 0, description: Count of failure test run}
 - name: modules

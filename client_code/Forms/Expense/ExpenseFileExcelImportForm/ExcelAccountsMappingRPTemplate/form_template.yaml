@@ -1,8 +1,6 @@
 container:
   type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
-    visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none,
-    italic: false, background: '', bold: false, underline: false}
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true, visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none, italic: false, background: '', bold: false, underline: false}
   data_bindings: []
 components:
 - type: DropDown
@@ -30,10 +28,7 @@ components:
   data_bindings:
   - {property: selected_value, code: 'self.item[''tgtacct'']', writeback: true}
 - type: TextBox
-  properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New account name,
-    border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12,
-    font: '', spacing_above: small, type: text, spacing_below: small, italic: false,
-    background: '', bold: false, underline: false}
+  properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New account name, border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small, italic: false, background: '', bold: false, underline: false}
   name: input_account
   layout_properties: {column: WIDMCS}
   data_bindings:
@@ -70,9 +65,7 @@ components:
   data_bindings:
   - {property: selected_value, code: 'self.item[''action'']', writeback: true}
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
-    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-    italic: false, background: '', bold: false, underline: false, icon: ''}
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   name: hidden_acct_action
   layout_properties: {column: DUOBFI}
 is_package: true

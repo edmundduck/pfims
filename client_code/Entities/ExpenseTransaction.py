@@ -116,7 +116,7 @@ class ExpenseTransaction(BaseEntity):
         # except ValueError as err:
         #     err_msg = err_msg + '- Transaction Date is not in a proper date format\n'
         if not account or str(account).isspace(): err_msg = err_msg + '- Account cannot be empty\n'
-        if not amount or str(amount).isspace(): err_msg = err_msg + '- Amount cannot be empty\n'
+        if amount is None or str(amount).isspace(): err_msg = err_msg + '- Amount cannot be empty\n'
         if not err_msg:
             return True
         else:

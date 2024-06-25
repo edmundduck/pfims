@@ -1,32 +1,24 @@
 is_package: true
 container:
   type: ColumnPanel
-  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true,
-    wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}',
-    spacing_below: small, background: ''}
+  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true, wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}', spacing_below: small, background: ''}
 components:
 - type: FlowPanel
-  properties: {role: null, spacing: medium, align: left, tooltip: '', border: '',
-    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+  properties: {role: null, spacing: medium, align: left, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
   layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
   name: flow_panel_1
   components:
   - type: Label
-    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Expense Analysis Report, font_size: null, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
+    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '', visible: true, text: Expense Analysis Report, font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
     layout_properties: {}
     name: report_name
 - type: DataGrid
   properties:
     role: null
     columns:
-    - {id: RMITXR, title: Labels, data_key: LBL, width: '250', $$hashKey: 'object:4905',
-      expand: false}
+    - {id: RMITXR, title: Labels, data_key: LBL, width: '250', $$hashKey: 'object:4905', expand: false}
     - {id: QJYSBH, data_key: ACC, title: Account, width: '250'}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: '220', $$hashKey: 'object:4907',
-      expand: false}
+    - {id: JRLRWP, title: Amount, data_key: AMT, width: '220', $$hashKey: 'object:4907', expand: false}
     auto_header: true
     tooltip: ''
     border: ''
@@ -42,23 +34,17 @@ components:
   name: data_grid
   components:
   - type: RepeatingPanel
-    properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-      visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate,
-      background: ''}
+    properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate, background: ''}
     layout_properties: {}
     name: rpt_panel
     data_bindings: []
   - type: FlowPanel
-    properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
-      foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+    properties: {role: null, spacing: medium, align: right, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
     layout_properties: {slot: footer}
     name: flow_panel_4
     components:
     - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-        visible: true, text: Rows per Page, font_size: 12, font: '', spacing_above: small,
-        icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-        underline: false, icon: ''}
+      properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: Rows per Page, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
       layout_properties: {}
       name: label_4
     - type: DropDown
@@ -103,9 +89,7 @@ components:
   layout_properties: {grid_position: 'ZLVMXC,PHMUMA GBGARM,XGIOST'}
   components: []
 - name: rpt_panel_copy_1
-  properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: true,
-    spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate,
-    background: ''}
+  properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseAnalysisForm.ExpenseAnalysisRPTemplate, background: ''}
   type: RepeatingPanel
   layout_properties: {grid_position: 'ZLVMXC,PHMUMA ZJDIWH,JDKBIR'}
   data_bindings: []
