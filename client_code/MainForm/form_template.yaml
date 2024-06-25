@@ -18,7 +18,7 @@ components:
   components:
   - type: Label
     properties: {role: text, align: left, tooltip: '', border: '', foreground: 'theme:Primary',
-      visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
+      visible: true, text: '', font_size: 14, font: '', spacing_above: small, icon_align: left,
       spacing_below: small, italic: false, background: '', bold: false, underline: false,
       icon: ''}
     name: app_welcome_msg
@@ -60,7 +60,7 @@ components:
       name: app_logout
       event_bindings: {click: app_logout_click}
   - name: label_1
-    properties: {bold: true, font: '', text: Investment, font_size: null, foreground: '',
+    properties: {bold: false, font: '', text: Investment, font_size: null, foreground: '',
       role: subheading}
     type: Label
     layout_properties: {grid_position: 'DGEWTY,QLOAOZ', full_width_row: true}
@@ -88,7 +88,7 @@ components:
     type: Spacer
     layout_properties: {grid_position: 'IPHPEM,WAYJXM', full_width_row: true}
   - name: label_2
-    properties: {text: Expense, foreground: '', bold: true, font_size: null, role: subheading}
+    properties: {text: Expense, foreground: '', bold: false, font_size: null, role: subheading}
     type: Label
     layout_properties: {grid_position: 'KTUKYP,SRDLST', full_width_row: true}
   - name: button_exp_input

@@ -222,10 +222,12 @@ secrets:
     value: {? '' : hFFP2sbXodXdz/XX8wfAToV1Cvgn/bJLW0hCDuLlB6sI5Oplwnj9kK/pAkMVmG2KFKHWlRqaex38RPFxLLxKTbqns6bIf5mfQM/1j0ObV1k6vUuXN8LPu3bBaVxok6fo74tTd2aTu++PCb6hUh/nq1YirDim5FY9rkAjSZ8K4Aq3A9ArM3J9GFCkrmpr3q4vrpODyY0PYexoaA9s}
     type: secret
   devdb_app_pw:
-    value: {? '' : XPj7+97OiQ/9vxj1UdbMN4LqpYZcZlxFiMhDt8ss1ZUMMfhxQ7eURaBHnX9AVwElw0l44UzTObG1aeVXKSZL9E2/OWxsnRQVLQmTqgWxF1Pj7whwfhslH3cigEowliLo8U/VAj6B9eehKKfuKke54FRBr9Z0y4U=}
+    value: {? '' : XPj7+97OiQ/9vxj1UdbMN4LqpYZcZlxFiMhDt8ss1ZUMMfhxQ7eURaBHnX9AVwElw0l44UzTObG1aeVXKSZL9E2/OWxsnRQVLQmTqgWxF1Pj7whwfhslH3cigEowliLo8U/VAj6B9eehKKfuKke54FRBr9Z0y4U=,
+      GD34C5SRFWM5LYQZ: HqIpU3F4pzY8GSjS6gIhWbZdx2a13/jsJiCfmqvohNhUwXnouHuBc2eNQ35s67l0I7cEgCrv2wP6ArqV8igOKzVtS5FBcFppdmSAS/HfVHuggIvLpZ2xXW3Ie+vwVf7G5v3Lh4y5K/ke25X6ETIVvnfu1RCmllA=}
     type: secret
   devdb_app_usr:
-    value: {? '' : Cbsr3Rmm1diM3gZFjOswOqnIbvWZwJKEW8jOx2moUSAMpworznxvaGcYawpM6S3C1oNkNSkAJhGfva03thDKJgRTkKSdkMooM7/s52LoK0cLsZKRBNm/JImjfAtnf0vS+RJDjbIHENU=}
+    value: {? '' : Cbsr3Rmm1diM3gZFjOswOqnIbvWZwJKEW8jOx2moUSAMpworznxvaGcYawpM6S3C1oNkNSkAJhGfva03thDKJgRTkKSdkMooM7/s52LoK0cLsZKRBNm/JImjfAtnf0vS+RJDjbIHENU=,
+      GD34C5SRFWM5LYQZ: 6ORL1VY/rweXPcoTB4ef60eCbbsBvuHygSHDyKeaNvw41ImvSyj+tMaTvdqZzAOaR1THlmYBY0qdsL/zBapXdus8l9duqQgZD4JFP3i9EjmtexwXM3C7fiUreP7gCGQS+Q/xpHhUw9IL}
     type: secret
   devdb_host:
     value: {? '' : z2YcSeManfJBLoKT1wmot56U15f+Ki06QkofK1BJSbPJShZTTmM+hQxMwKn7c9H2ZWlb8NFuX8UWvpKquw4r+YiH0jJyJeJ3k5FuULRl7IR1HMy095z9eHhHR6pIDl84UT0fnMKEIMkRVkJWeiSH874hsECOMH3L2dfTqqXCMMKkLxUGVGDdVwCveKyzaVkO1A1aabcOnZqsUMuJ}
@@ -240,6 +242,7 @@ secrets:
     value: {? '' : lAFyIGItVqKuLMguFqtAkkqzSJysV6Kj5vdoOElYE/RqJF+9ndJrdO1VBFQ9x5b786C0UW3azwbRQl6WqRcOU1VzDpN8/+OehGMFxrj8Wjhnngma1Dm0DZPCn2t97/YJd9D79oeSD/RXZCxrdV+JuH5W8bwe60s=}
     type: secret
   devdb_name:
-    value: {? '' : qA5Z/8K/54VGE8vDF1Djx2XHKwRaNKT9bO3CGWqxlQyLX5Q5tOQ61xHQOs/uOf2+KKVZ8rWJCTFZAzA5kAdECai/6JXb0FDk8j+FDXyaZ2uPIw8mNLdUsyoRFQi1KFKHmVk1D/Zc9Tbd}
+    value: {? '' : qA5Z/8K/54VGE8vDF1Djx2XHKwRaNKT9bO3CGWqxlQyLX5Q5tOQ61xHQOs/uOf2+KKVZ8rWJCTFZAzA5kAdECai/6JXb0FDk8j+FDXyaZ2uPIw8mNLdUsyoRFQi1KFKHmVk1D/Zc9Tbd,
+      GD34C5SRFWM5LYQZ: Yi6XR8oJdECYi4A5Kn4cTOyfLtOF91mzhTizAjpbU+5rd6eeJ1cpoQU18AFhWol/sxPJ4zqGQFkDmUz0ukiA3D6lzGqyasHVioPTGO3M9njOrlQY3plLl4B8rQY5qOGPxfpoEBta5jtcXA==}
     type: secret
 renamed: true

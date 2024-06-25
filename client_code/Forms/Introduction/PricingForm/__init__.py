@@ -1,5 +1,6 @@
 from ._anvil_designer import PricingFormTemplate
 from anvil import *
+import anvil.server
 
 class PricingForm(PricingFormTemplate):
     def __init__(self, **properties):
