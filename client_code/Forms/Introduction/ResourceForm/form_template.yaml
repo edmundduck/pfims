@@ -9,10 +9,7 @@ components:
   type: form:CustomComponents.QnA
   layout_properties: {grid_position: 'OPHNBQ,JNFZQI'}
 - name: qn_a_5
-  properties: {question: 'Can I login with my Google or Facebook accounts?', answer: 'Login
-      via other applications like Google, Facebook and others, that we called OAuth
-      2.0 authentication, is not ready for now. It will be implemented in the near
-      future.'}
+  properties: {question: 'Can I login with my Google or Facebook accounts?', answer: 'Login via other applications like Google, Facebook and others, that we called OAuth 2.0 authentication, is not ready for now. It will be implemented in the near future.'}
   type: form:CustomComponents.QnA
   layout_properties: {grid_position: 'NALNCZ,SSUYXA'}
 - name: qn_a_2
@@ -20,17 +17,11 @@ components:
   type: form:CustomComponents.QnA
   layout_properties: {grid_position: 'HTUBXC,YSWJSW'}
 - name: qn_a_3
-  properties: {question: 'Can I have my account and all my data erased from the application?',
-    answer: 'Of course you can. Should you choose to leave, please send an email to
-      support@pfims.co.uk.'}
+  properties: {question: 'Can I have my account and all my data erased from the application?', answer: 'Of course you can. Should you choose to leave, please send an email to support@pfims.co.uk.'}
   type: form:CustomComponents.QnA
   layout_properties: {grid_position: 'SQWIAS,OIWGCE'}
 - name: qn_a_4
-  properties: {question: 'Are languages other than English supported?', answer: 'We
-      support languages other than English on narrative fields like account names,
-      remarks and so on. For statement upload however, capturing data from statements
-      upload only supports English for now. Please make sure the statements are in
-      English otherwise it will yield unexpected result.'}
+  properties: {question: 'Are languages other than English supported?', answer: 'We support languages other than English on narrative fields like account names, remarks and so on. For statement upload however, capturing data from statements upload only supports English for now. Please make sure the statements are in English otherwise it will yield unexpected result.'}
   type: form:CustomComponents.QnA
   layout_properties: {grid_position: 'LHLULR,UTLDRN'}
 is_package: true
