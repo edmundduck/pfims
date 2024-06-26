@@ -338,7 +338,23 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         result = [ExpenseTransaction().copy().get_dict() for i in range(ExpenseConfig.DEFAULT_ROW_NUM)]
         logger.trace('rp_items blank=', result)
     return result
-        
+
+def update_label_id_list(rp_items):
+    """
+    Update label ID list to be list type for the provided repeating items.
+
+    Parameters:
+        rp_items (list of dict): Repeating panel item.
+
+    Returns:
+        rp_items (list of dict): A list of data refreshed with list type for all labels field.
+    """
+
+    from ..Entities.ExpenseTransaction import ExpenseTransaction
+    for i in rp_items:
+        i[ExpenseTransaction.field_labels()] = generate_label_id_list(i.get(ExpenseTransaction.field_labels()))
+    return rp_items
+
 @logger.log_function
 def save_expense_transaction_group(group_dropdown_selected, group_name, transactions):
     """
