@@ -1,88 +1,81 @@
-# About This [Anvil](https://anvil.works/?utm_source=github:app_README) App
+<img alt="FIM$ Logo" src="https://personal-fim-system.anvil.app/_/theme/pfims_structure.png" />
 
-### Build web apps with nothing but Python.
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-0.7.8.3-blue.svg?cacheSeconds=2592000" />
+  <a href="https://github.com/edmundduck/project_personal_budget" target="_blank">
+    <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+  </a>
+  <a href="#" target="_blank">
+    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg" />
+  </a>
+</p>
 
-The app in this repository is built with [Anvil](https://anvil.works?utm_source=github:app_README), the framework for building web apps with nothing but Python. You can clone this app into your own Anvil account to use and modify.
+# FIM$ - Personal Finance and Inventory Management System
 
-Below, you will find:
-- [How to open this app](#opening-this-app-in-anvil-and-getting-it-online) in Anvil and deploy it online
-- Information [about Anvil](#about-anvil)
-- And links to some handy [documentation and tutorials](#tutorials-and-documentation)
+Take control of your financial status by consolidating all the financial bits under one single web platform, such as
 
-## Opening this app in Anvil and getting it online
+- inputting or uploading expense detail in Excel format
+- uploading PDF bank statements
+- inputting investment detail
+- reviewing overall expense and investment reports
+- reviewing expense in a particular category(s)
 
-### Cloning the app
+### Technology Stack
 
-Go to the [Anvil Editor](https://anvil.works/build?utm_source=github:app_README) (you might need to sign up for a free account) and click on “Clone from GitHub” (underneath the “Blank App” option):
+- <img alt="Python" src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue">
+- <img alt="PostgreSQL" src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white">
+- <img alt="CSS" src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white">
 
-<img src="https://anvil.works/docs/version-control-new-ide/img/git/clone-from-github.png" alt="Clone from GitHub"/>
+## Getting Started
 
-Enter the URL of this GitHub repository. If you're not yet logged in, choose "GitHub credentials" as the authentication method and click "Connect to GitHub".
+The app in this repository is built with [Anvil](https://anvil.works?utm_source=github:app_README), the framework for building web apps with nothing but Python. This app has to be run in either Anvil web interface or in your own Anvil server.
 
-<img src="https://anvil.works/docs/version-control-new-ide/img/git/clone-app-from-git.png" alt="Clone App from Git modal"/>
+- [Run in own Anvil server](https://anvil.works/docs/how-to/app-server)
+- You will need an Anvil account to [Run in Anvil web interface](https://anvil.works/docs/how-to/development-production)
 
-Finally, click "Clone App".
+## Setting Up Your PostgreSQL Database
 
-This app will then be in your Anvil account, ready for you to run it or start editing it! **Any changes you make will be automatically pushed back to this repository, if you have permission!** You might want to [make a new branch](https://anvil.works/docs/version-control-new-ide?utm_source=github:app_README).
+Pending
 
-### Running the app yourself:
+## Setting Up Application Secrets
 
-Find the **Run** button at the top-right of the Anvil editor:
+To get the app running a couple of application secrets have to be configured in Anvil environment.
 
-<img src="https://anvil.works/docs/img/run-button-new-ide.png"/>
+### Development Parameters
 
+- devdb_host
+- devdb_name
+- devdb_port
+- devdb_app_usr
+- devdb_app_pw
 
-### Publishing the app on your own URL
+### Production Parameters
 
-Now you've cloned the app, you can [deploy it on the internet with two clicks](https://anvil.works/docs/deployment/quickstart?utm_source=github:app_README)! Find the **Publish** button at the top-right of the editor:
+- proddb_host
+- proddb_name
+- proddb_port
+- proddb_app_usr
+- proddb_app_pw
 
-<img src="https://anvil.works/docs/deployment-new-ide/img/environments/publish-button.png"/>
+## Roadmap
 
-When you click it, you will see the Publish dialog:
+- [x] Create stock trading detail input
+- [x] Create expense detail input
+- [x] Create expense detail upload by Excel
+- [x] Create expense detail upload by bank statement
+- [x] Create stock trading detail report
+- [x] Create expense detail report
+- [x] Create descritive content prior logon
+- [ ] Create customizable dashboard
+- [ ] Create activity panel
+- [ ] Create help section
+- [ ] Create LEGO inventory extension
+- [ ] Create collection extension
+More to come!
 
-<img src="https://anvil.works/docs/deployment-new-ide/img/quickstart/empty-environments-dialog.png"/>
+## Author
 
-Click **Publish This App**, and you will see that your app has been deployed at a new, public URL:
+👤 **Edmund Chan**
 
-<img src="https://anvil.works/docs/deployment-new-ide/img/quickstart/default-public-environment.png"/>
-
-That's it - **your app is now online**. Click the link and try it!
-
-## About Anvil
-
-If you’re new to Anvil, welcome! Anvil is a platform for building full-stack web apps with nothing but Python. No need to wrestle with JS, HTML, CSS, Python, SQL and all their frameworks – just build it all in Python.
-
-<figure>
-<figcaption><h3>Learn About Anvil In 80 Seconds👇</h3></figcaption>
-<a href="https://www.youtube.com/watch?v=3V-3g1mQ5GY" target="_blank">
-<img
-  src="https://anvil-website-static.s3.eu-west-2.amazonaws.com/anvil-in-80-seconds-YouTube.png"
-  alt="Anvil In 80 Seconds"
-/>
-</a>
-</figure>
-<br><br>
-
-[![Try Anvil Free](https://anvil-website-static.s3.eu-west-2.amazonaws.com/mark-complete.png)](https://anvil.works?utm_source=github:app_README)
-
-To learn more about Anvil, visit [https://anvil.works](https://anvil.works?utm_source=github:app_README).
-
-## Tutorials and documentation
-
-### Tutorials
-
-If you are just starting out with Anvil, why not **[try the 10-minute Feedback Form tutorial](https://anvil.works/learn/tutorials/feedback-form?utm_source=github:app_README)**? It features step-by-step tutorials that will introduce you to the most important parts of Anvil.
-
-Anvil has tutorials on:
-- [Building Dashboards](https://anvil.works/learn/tutorials/data-science#dashboarding?utm_source=github:app_README)
-- [Multi-User Applications](https://anvil.works/learn/tutorials/multi-user-apps?utm_source=github:app_README)
-- [Building Web Apps with an External Database](https://anvil.works/learn/tutorials/external-database?utm_source=github:app_README)
-- [Deploying Machine Learning Models](https://anvil.works/learn/tutorials/deploy-machine-learning-model?utm_source=github:app_README)
-- [Taking Payments with Stripe](https://anvil.works/learn/tutorials/stripe?utm_source=github:app_README)
-- And [much more....](https://anvil.works/learn/tutorials?utm_source=github:app_README)
-
-### Reference Documentation
-
-The Anvil reference documentation provides comprehensive information on how to use Anvil to build web applications. You can find the documentation [here](https://anvil.works/docs/overview?utm_source=github:app_README).
-
-If you want to get to the basics as quickly as possible, each section of this documentation features a [Quick-Start Guide](https://anvil.works/docs/overview/quickstarts?utm_source=github:app_README).
+* Website: https://github.com/edmundduck
+* Github: [@mon](https://github.com/edmundduck)
