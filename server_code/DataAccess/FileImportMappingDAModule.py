@@ -268,11 +268,13 @@ def save_mapping_rules_n_matrix(import_grp, mogstr_matrix, del_iid):
             if del_iid:
                 mogstr_delete = ','.join(cur.mogrify("%s", (d, )).decode('utf-8') for d in del_iid)
                 logger.trace('mogstr_delete=', mogstr_delete)
-                sql4 = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN (%s)".format(
+                sql4 = "DELETE FROM {schema}.mappingrules WHERE gid = %s AND col IN ({del_col})".format(
                     schema=Database.SCHEMA_FIN,
+                    del_col=mogstr_delete,
                 )
-                stmt = cur.mogrify(sql4, (id, mogstr_delete))
+                stmt = cur.mogrify(sql4, (id, ))
                 cur.execute(stmt)
+                logger.debug(f"cur.query (rowcount)={cur.query} ({cur.rowcount})")
 
             # Reconciliation
             sql5 = "SELECT g.userid, g.id, g.name, g.filetype, m.datecol, m.acctcol, m.amtcol, m.remarkscol, m.stmtdtlcol, m.lblcol FROM \
