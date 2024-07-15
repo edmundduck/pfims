@@ -10,7 +10,7 @@ class ExpenseTransaction(BaseEntity):
     # __db_column_def__ = ['iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl']
     __db_column_def__ = ['iid', 'tab_id', 'DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
     __property_def__ = ['userid'] + __db_column_def__
-    __data_transform_def__ = ['DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
+    __data_transform_def__ = ['DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD', 'EXTLBL']
     
     def __init__(self, data=None):
         super().__init__(data)
@@ -46,6 +46,11 @@ class ExpenseTransaction(BaseEntity):
     @staticmethod
     def field_statement_detail():
         return ExpenseTransaction.__data_transform_def__[5]
+
+    @staticmethod
+    # A column which contains extra labels introduced by upload mapping criteria rules
+    def field_extra_labels():
+        return ExpenseTransaction.__data_transform_def__[6]
 
     def get_user_id(self):
         return getattr(self, self.__property_def__[0], None)
