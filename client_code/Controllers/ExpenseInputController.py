@@ -135,17 +135,14 @@ def generate_label_id_list(id_obj):
         result (list of int): List of label IDs.
     """
 
-    result = []
     if id_obj is not None:
         if isinstance(id_obj, int):
-            result = [id_obj]
-        elif isinstance(id_obj, tuple):
-            result = list(id_obj)
-        elif isinstance(id_obj, list):
-            result = id_obj
+            return [id_obj]
+        elif isinstance(id_obj, (tuple, list)):
+            return [x for x in id_obj if isinstance(x, int)]
         else:
             raise TypeError('The parameter is not either integer or list/tuple.')
-    return result
+    return []
 
 def get_account_dropdown_selected_item(acct_id):
     """

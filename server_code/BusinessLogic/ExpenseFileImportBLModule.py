@@ -177,6 +177,8 @@ def update_labels_mapping(data, mapping):
     Returns:
         df (dataframe): Processed dataframe.
     """
+    from ..Entities.Label import Label
+
     # 1. Get all items with action = 'C', and grab new field to create new labels
     # DL = Dict of Lists
     DL = Helper.to_dict_of_list(mapping)
@@ -190,13 +192,13 @@ def update_labels_mapping(data, mapping):
         'status': [ True for i in range(len(pos_create)) ]
     }
     # labels param is transposed from DL to LD (List of Dicts)
-    lbl_list = [dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())]
+    lbl_list = [Label(dict(zip(lbl_mogstr, col))) for col in zip(*lbl_mogstr.values())]
     lbl_id = LabelDAModule.create_label(lbl_list)
     logger.debug("Label created with ID lbl_id=", lbl_id)
     if lbl_id is None: raise Exception("Fail to create label.")
 
     # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-    for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = [lbl_id[lbl_loc], lbl_list[lbl_loc].get('name')]
+    for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = [lbl_id[lbl_loc], lbl_list[lbl_loc].get_name()]
     logger.trace("2) Replace labels with action = 'C' to the newly created label codes in step 1")
     logger.trace("DL['tgtlbl']=", DL['tgtlbl'])
 
