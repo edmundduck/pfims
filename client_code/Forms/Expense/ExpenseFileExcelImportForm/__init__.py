@@ -28,6 +28,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
             self.accounts_mapping_panel.items = ExpenseFileExcelImportController.populate_accounts_repeating_panel_items(accounts)
             logger.trace("self.accounts_mapping_panel.items=", self.accounts_mapping_panel.items)
             self.flow_panel_step7.visible = True
+        if len(labels) == 0: self.button_next.visible = True
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
 
