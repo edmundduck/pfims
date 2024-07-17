@@ -1,7 +1,7 @@
 <img alt="FIM$ Logo" src="https://personal-fim-system.anvil.app/_/theme/pfims_structure.png" />
 
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-0.7.8.3-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-0.7.8.6-blue.svg?cacheSeconds=2592000" />
   <a href="https://github.com/edmundduck/project_personal_budget" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
   </a>
