@@ -1,5 +1,6 @@
 from ._anvil_designer import ExpenseReportSearchPanelFormTemplate
 from anvil import *
+import anvil.server
 import plotly.graph_objects as go
 from .... import Global
 from ....Controllers import ReportSearchPanelController
@@ -80,7 +81,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
         self.time_datefrom.date = Global.settings.get_search_datefrom()
         self.time_dateto.date = Global.settings.get_search_dateto()
         self.dropdown_interval.selected_value = Global.settings.get_search_interval()
-        self.dropdown_symbol.items = []
+        self.dropdown_label.selected_value = None
         self._rmvall_selected_labels()
         self.subform.rpt_panel.items = []
         self.button_exp_search.enabled = False

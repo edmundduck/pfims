@@ -60,7 +60,10 @@ def __get_label__(label_dropdown_selected, reload=False):
     else:
         lbl = anvil.server.call('select_label', lbl_id)
         cache.set_cache({lbl_id: lbl})
-        logger.trace(f'lbl_id={lbl.get_id()} / lbl={str(lbl)}')
+        if lbl:
+            logger.trace(f'lbl_id={lbl.get_id()} / lbl={str(lbl)}')
+        else:
+            logger.trace(f'lbl is None={lbl}')
     return lbl
 
 def get_label_name(label_dropdown_selected, reload=False):
@@ -75,7 +78,7 @@ def get_label_name(label_dropdown_selected, reload=False):
         lbl.get_name (string): Selected label's name.
     """
     lbl = __get_label__(label_dropdown_selected, reload)
-    return lbl.get_name()
+    return lbl.get_name() if lbl else None
 
 def get_label_status(label_dropdown_selected, reload=False):
     """
@@ -89,9 +92,9 @@ def get_label_status(label_dropdown_selected, reload=False):
         lbl.get_status (date): Selected label's status.
     """
     lbl = __get_label__(label_dropdown_selected, reload)
-    if lbl.get_status() is None:
+    if lbl and lbl.get_status() is None:
         lbl = lbl.set_status(True)
-    return lbl.get_status()
+    return lbl.get_status() if lbl else True
 
 def get_label_keywords(label_dropdown_selected, reload=False):
     """
@@ -105,7 +108,7 @@ def get_label_keywords(label_dropdown_selected, reload=False):
         lbl.get_keywords (list of string): Selected label's keywords.
     """
     lbl = __get_label__(label_dropdown_selected, reload)
-    return lbl.get_keywords()
+    return lbl.get_keywords() if lbl else None
 
 def enable_label_update_button(label_selection):
     """

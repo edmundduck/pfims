@@ -1,5 +1,6 @@
 from ._anvil_designer import ExpenseAnalysisFormTemplate
 from anvil import *
+import anvil.server
 import plotly.graph_objects as go
 from ....Utils.Constants import ExpenseReportType, ReportFormTag
 from ....Entities.ExpenseTransaction import ExpenseTransaction

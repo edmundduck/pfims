@@ -57,7 +57,7 @@ def select_account(selected_acct):
         row = cur.fetchone()
         logger.trace("row=", row)
         cur.close()
-        acct = Account(row).set_user_id(userid)
+        acct = Account(row).set_user_id(userid) if row else None
         return acct
 
 @anvil.server.callable("create_account")

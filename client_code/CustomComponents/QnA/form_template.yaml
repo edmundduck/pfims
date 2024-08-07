@@ -1,0 +1,19 @@
+container: {type: ColumnPanel}
+components:
+- name: label_q
+  properties: {foreground: 'theme:Primary', background: ''}
+  type: Label
+  layout_properties: {grid_position: 'AUBJQB,TONMSR'}
+- name: label_a
+  properties: {}
+  type: Label
+  layout_properties: {grid_position: 'OABBQB,RAFHYB'}
+- name: spacer_1
+  properties: {height: '20'}
+  type: Spacer
+  layout_properties: {grid_position: 'FRDVWR,ZDHZIS'}
+is_package: true
+custom_component: true
+properties:
+- {name: question, type: string, default_value: '', important: true, default_binding_prop: true, multiline: true}
+- {name: answer, type: string, default_value: '', important: true, multiline: true}

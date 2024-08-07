@@ -1,5 +1,5 @@
 import anvil.server
-import datetime as datetime
+from datetime import datetime
 from .BaseEntity import BaseEntity
 
 # This is a module.
@@ -10,7 +10,7 @@ class ExpenseTransaction(BaseEntity):
     # __db_column_def__ = ['iid', 'tab_id', 'trandate', 'account_id', 'amount', 'labels', 'remarks', 'stmt_dtl']
     __db_column_def__ = ['iid', 'tab_id', 'DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
     __property_def__ = ['userid'] + __db_column_def__
-    __data_transform_def__ = ['DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD']
+    __data_transform_def__ = ['DTE', 'ACC', 'AMT', 'LBL', 'RMK', 'STD', 'EXTLBL']
     
     def __init__(self, data=None):
         super().__init__(data)
@@ -46,6 +46,11 @@ class ExpenseTransaction(BaseEntity):
     @staticmethod
     def field_statement_detail():
         return ExpenseTransaction.__data_transform_def__[5]
+
+    @staticmethod
+    # A column which contains extra labels introduced by upload mapping criteria rules
+    def field_extra_labels():
+        return ExpenseTransaction.__data_transform_def__[6]
 
     def get_user_id(self):
         return getattr(self, self.__property_def__[0], None)
@@ -105,14 +110,20 @@ class ExpenseTransaction(BaseEntity):
         return ExpenseTransaction(self.get_dict())
 
     def is_valid(self):
-        gid, tnx_date, account, amount = [self.get_group_id(), self.get_tnx_date(), self.get_account(), self.get_amount()]
+        from ..Error.ValidationError import ValidationError
+
+        tnx_date, account, amount = [self.get_tnx_date(), self.get_account(), self.get_amount()]
+        err_msg = ""
         date_format = '%Y-%m-%d'
-        if not tnx_date or str(tnx_date).isspace(): return False
-        try:
-            datetime.strptime(tnx_date, date_format)
-        except ValueError as err:
+        if not tnx_date or str(tnx_date).isspace(): err_msg = err_msg + '- Transaction Date cannot be empty\n'
+        # try:
+        #     datetime.strptime(tnx_date, date_format)
+        # except ValueError as err:
+        #     err_msg = err_msg + '- Transaction Date is not in a proper date format\n'
+        if not account or str(account).isspace(): err_msg = err_msg + '- Account cannot be empty\n'
+        if amount is None or str(amount).isspace(): err_msg = err_msg + '- Amount cannot be empty\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
             return False
-        if not gid or str(gid).isspace(): return False
-        if not account or str(account).isspace(): return False
-        if not amount or str(amount).isspace(): return False
-        return True

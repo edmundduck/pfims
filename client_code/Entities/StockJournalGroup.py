@@ -84,7 +84,18 @@ class StockJournalGroup(BaseEntity):
         return StockJournalGroup(self.get_dict())
 
     def is_valid(self):
-        group_name, broker_id = [self.get_name(), self.get_broker()]
-        if not group_name or group_name.isspace(): return False
-        if not broker_id or broker_id.isspace(): return False
-        return True
+        from ..Error.ValidationError import ValidationError
+        
+        group_name, broker_id, journals = [self.get_name(), self.get_broker(), self.get_journals()]
+        err_msg = ""
+        if not group_name or group_name.isspace(): err_msg = err_msg + '- Group name cannot be empty\n'
+        if len(group_name) > 80: err_msg = err_msg + '- Group name cannot exceed 80 characters\n'
+        if not broker_id or broker_id.isspace(): err_msg = err_msg + '- Broker cannot be empty\n'
+        for j in journals:
+            if not j.is_valid():
+                err_msg = err_msg + str(j.get_exception()) + '\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
+            return False

@@ -2,6 +2,7 @@ import anvil.server
 from .Constants import CacheDropdown
 from .Logger import ClientLogger
 from ..Entities.CacheListNode import DoubleLinkedList
+from .. import Global
 
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
@@ -12,7 +13,7 @@ logger = ClientLogger()
 class ClientCache:
 
     # Class variable to store cache
-    cache_list = DoubleLinkedList()
+    cache_list = {}
 
     def __init__(self, key):
         """
@@ -22,6 +23,8 @@ class ClientCache:
             key (string): A key for client cache object.
         """
         self.name = key
+        if Global.userid not in ClientCache.cache_list:
+            ClientCache.cache_list[Global.userid] = DoubleLinkedList()
 
     def __str__(self):
         """
@@ -35,6 +38,23 @@ class ClientCache:
             self.name,
             str(ClientCache.cache_list)
         )
+
+    def __bool__(self):
+        """
+        Return truthy if all conditions are met,
+            1. Cache name exists
+            2. cache_list belonging to a user ID exists
+            3. Cache hasn't expired.
+            4. Cache isn't empty (Value is truthy).
+
+        Returns:
+            boolean: Return True if all conditions above are set.
+        """
+        if not self.name: return False
+        if Global.userid not in ClientCache.cache_list: return False
+        if self.is_expired(): return False
+        if self.is_empty(): return False
+        return True
         
     def is_empty(self):
         """
@@ -43,9 +63,10 @@ class ClientCache:
         Returns:
             boolean: Return True if the cache is empty.
         """
-        if self.name is None or ClientCache.cache_list.loc(self.name) < 0:
+        if self.name is None or Global.userid not in ClientCache.cache_list:
             return True
-        if ClientCache.cache_list.peek(self.name).get_value() is None:
+        cache_list = ClientCache.cache_list[Global.userid]
+        if cache_list.peek(self.name).get_value() is None:
             return True
         return False
     
@@ -56,7 +77,7 @@ class ClientCache:
         Returns:
             boolean: Return True if the cache is expired.
         """
-        if self.name is None or ClientCache.cache_list.peek(self.name).is_expired():
+        if self.name is None or Global.userid not in ClientCache.cache_list or ClientCache.cache_list[Global.userid].peek(self.name).is_expired():
             return True
         return False
     
@@ -68,14 +89,14 @@ class ClientCache:
             data (Object): Cache stored by the provided key. None if the provided key does not exist in cache or has been expired.
         """
         logger.trace(str(self))
-        cache_node = ClientCache.cache_list.pop(self.name)
-        if cache_node and not cache_node.is_expired():
-            data = cache_node.get_value()
-            ClientCache.cache_list.add_to_head(key=None, data=cache_node)
-            logger.debug(f"Data {self.name} retrieved from cache.")
-        else:
+        if not self:
             data = None
             logger.debug(f"Data {self.name} from cache is either not exist or expired.")
+        else:
+            cache_node = ClientCache.cache_list[Global.userid].pop(self.name)
+            data = cache_node.get_value()
+            ClientCache.cache_list[Global.userid].add_to_head(key=None, data=cache_node)
+            logger.debug(f"Data {self.name} retrieved from cache.")
         return data
     
     def set_cache(self, data):
@@ -88,13 +109,17 @@ class ClientCache:
         Returns:
             data (Object): Data to load manually.
         """
-        if ClientCache.cache_list.loc(self.name) >= 0:
-            cache_node = ClientCache.cache_list.pop(self.name)
+        if Global.userid not in ClientCache.cache_list:
+            logger.debug(f"Cache of user {Global.userid} does not exist. Initiating ...")
+            ClientCache.cache_list[Global.userid] = DoubleLinkedList()
+        cache_list = ClientCache.cache_list[Global.userid]
+        if cache_list.loc(self.name) >= 0:
+            cache_node = cache_list.pop(self.name)
             logger.debug(f"Cache {self.name} removed before set_cache.")
             cache_node.set_value(data)
-            ClientCache.cache_list.add_to_head(key=None, data=cache_node)
+            cache_list.add_to_head(key=None, data=cache_node)
         else:
-            ClientCache.cache_list.add_to_head(self.name, data)            
+            cache_list.add_to_head(self.name, data)
         logger.debug(f"Cache {self.name} configured from set_cache.")
         return data
     
@@ -105,9 +130,18 @@ class ClientCache:
         Returns:
             data (any Object): Data of the cleared cache.
         """
-        data = ClientCache.cache_list.pop(self.name).get_value()
-        logger.debug(f"Cache {self.name} cleared.")
-        return data
+        if Global.userid in ClientCache.cache_list:
+            data = ClientCache.cache_list[Global.userid].pop(self.name).get_value()
+            logger.debug(f"Cache {self.name} cleared.")
+            return data
+
+    @staticmethod
+    def clear_all_cache():
+        """
+        Remove all cache.
+        """
+        ClientCache.cache_list = {}
+        logger.debug(f"All cache are cleared.")
 
 class ClientDropdownCache(ClientCache):
     def __init__(self, funcname):
@@ -162,9 +196,9 @@ class ClientPersistentCache(ClientCache):
         """
         from ..Entities.CacheListNode import Node
         super().__init__(funcname)
-        position = ClientCache.cache_list.loc(self.name)
+        position = ClientCache.cache_list[Global.userid].loc(self.name)
         if position < 0:
-            ClientCache.cache_list.add_to_head(key=None, data=Node(self.name, [], minutes=0))
+            ClientCache.cache_list[Global.userid].add_to_head(key=None, data=Node(self.name, [], minutes=0))
 
     def is_expired(self):
         """

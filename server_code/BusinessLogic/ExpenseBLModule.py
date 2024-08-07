@@ -37,8 +37,9 @@ def proc_select_expense_group(exp_grp):
     tnx_list = ExpenseDAModule.select_transactions(exp_grp)
     # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
     # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-    tnx_list = Helper.upper_dict_keys(tnx_list, ExpenseTransaction.get_data_transform_definition())
-    exp_grp = exp_grp.set_transactions(list(ExpenseTransaction(r).set_user_id(userid) for r in tnx_list))
+    # tnx_list = Helper.upper_dict_keys(tnx_list, ExpenseTransaction.get_data_transform_definition())
+    # exp_grp = exp_grp.set_transactions(list(ExpenseTransaction(r).set_user_id(userid) for r in tnx_list))
+    exp_grp = exp_grp.set_transactions(tnx_list)
     return exp_grp
 
 @anvil.server.callable("proc_change_expense_group")
@@ -55,6 +56,10 @@ def proc_change_expense_group(exp_grp, del_iid_list):
         exp_grp (ExpenseTransactionGroup): The expense transaction group object updated with data from DB.
         result_d (int): Successful delete row count, otherwise None.
     """
+    # Validation
+    if not exp_grp.is_valid():
+        raise exp_grp.get_exception()
+
     tab_id = ExpenseDAModule.update_expense_group(exp_grp) if exp_grp.get_id() else ExpenseDAModule.create_expense_group(exp_grp)
     if tab_id is None or tab_id <= 0:
         raise RuntimeError(f"ERROR occurs when creating or updating expense transaction group {exp_grp.get_name()}, aborting further update.")

@@ -62,8 +62,15 @@ class Account(BaseEntity):
         return Account(self.get_dict())
 
     def is_valid(self):
+        from ..Error.ValidationError import ValidationError
+
         acct_name, ccy, status = [self.get_name(), self.get_base_currency(), self.get_status()]
-        if not acct_name or acct_name.isspace(): return False
-        if not ccy or ccy.isspace(): return False
-        if not status or status.isspace(): return False
-        return True
+        err_msg = ""
+        if not acct_name or acct_name.isspace(): err_msg = err_msg + '- Account name cannot be empty\n'
+        if not ccy or ccy.isspace(): err_msg = err_msg + '- Currency cannot be empty\n'
+        if not status or status.isspace():  err_msg = err_msg + '- Status cannot be empty\n'
+        if not err_msg:
+            return True
+        else:
+            self.set_exception(ValidationError(err_msg))
+            return False

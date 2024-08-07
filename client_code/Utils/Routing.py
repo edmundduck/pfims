@@ -3,6 +3,39 @@ import anvil.server
 # This is a module.
 # You can define variables and functions here, and use them from any form. For example, in a top-level form:
 
+def open_intro_main_form():
+    from ..LoginForm import LoginForm
+    anvil.open_form(LoginForm())
+
+def open_intro_base_form(self, **event_args):
+    from ..Forms.Introduction.AppIntroForm import AppIntroForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(AppIntroForm())
+    
+def open_intro_feature_form(self, **event_args):
+    from ..Forms.Introduction.FeatureForm import FeatureForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(FeatureForm())
+
+def open_intro_pricing_form(self, **event_args):
+    from ..Forms.Introduction.PricingForm import PricingForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(PricingForm())
+
+def open_intro_resource_form(self, **event_args):
+    from ..Forms.Introduction.ResourceForm import ResourceForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ResourceForm())
+
+def open_intro_contact_form(self, **event_args):
+    from ..Forms.Introduction.ContactForm import ContactForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(ContactForm())
+
+def open_logged_on_main_form():
+    from ..MainForm import MainForm
+    anvil.open_form(MainForm())
+    
 def open_dashboard_form(self, **event_args):
     from ..Forms.DashboardForm import DashboardForm
     anvil.get_open_form().content_panel.clear()
@@ -79,6 +112,11 @@ def open_exp_analysis_form(self, **event_args):
     from ..Forms.Expense.ExpenseAnalysisForm import ExpenseAnalysisForm
     anvil.get_open_form().content_panel.clear()
     anvil.get_open_form().content_panel.add_component(ExpenseReportSearchPanelForm(ExpenseAnalysisForm()))
+
+def open_unittest_main_form(self, **event_args):
+    from ..Forms.UnitTest.UnitTestMainForm import UnitTestMainForm
+    anvil.get_open_form().content_panel.clear()
+    anvil.get_open_form().content_panel.add_component(UnitTestMainForm())
 
 def open_poc_main_form(self, **event_args):
     from .._POC.form_poc_main import form_poc_main

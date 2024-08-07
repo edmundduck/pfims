@@ -198,3 +198,13 @@ class ReportFormTag:
     EXP_ANALYSIS_RPT = 'exprpt02'
     STOCK_TXN_RPT = 'stockrpt01'
     STOCK_PNL_RPT = 'stockrpt02'
+
+class UnitTest:
+    SUCCESS_CNT = 'success_count'
+    FAIL_CNT = 'failure_count'
+    FAIL_MSG = 'failure_messages'
+    DELIMITER = ":="
+    DELIMITER_FUNC = ","
+    CLIENT_ONLY = "# Client code testing"
+    SERVER_ONLY = "# Server code testing"
+    TEST_CONFIG_FILE = 'unittest.conf'
