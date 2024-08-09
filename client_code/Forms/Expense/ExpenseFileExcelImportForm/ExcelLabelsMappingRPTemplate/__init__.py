@@ -29,11 +29,10 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         
         action, _ = self.dropdown_lbl_action.selected_value if self.dropdown_lbl_action.selected_value is not None else [None, None]
         self.dropdown_lbl_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_dropdown(self.dropdown_lbl_action.selected_value)
-        if not self.dropdown_lbl_map_to.visible:
-            self.dropdown2_lbl_map_to.visible, self.dropdown3_lbl_map_to.visible, self.dropdown4_lbl_map_to.visible = [False] * 3
-        else:
-            if self.dropdown_lbl_map_to.selected_value:
-                self.dropdown2_lbl_map_to.visible = True
+        self.dropdown2_lbl_map_to.vislble = self.dropdown_lbl_map_to.visible and self.dropdown2_lbl_map_to.selected_value
+        logger.info(f"{self.dropdown_lbl_map_to.visible} / {self.dropdown2_lbl_map_to.selected_value} / {self.dropdown_lbl_map_to.visible and self.dropdown2_lbl_map_to.selected_value}")
+        self.dropdown3_lbl_map_to.visible = self.dropdown_lbl_map_to.visible and self.dropdown3_lbl_map_to.selected_value
+        self.dropdown4_lbl_map_to.visible = self.dropdown_lbl_map_to.visible and self.dropdown4_lbl_map_to.selected_value
         self.input_label.visible = ExpenseFileExcelImportController.visible_account_label_textfield(self.dropdown_lbl_action.selected_value)
         prev = self.hidden_lbl_action.text
         self.hidden_lbl_action.text = action
