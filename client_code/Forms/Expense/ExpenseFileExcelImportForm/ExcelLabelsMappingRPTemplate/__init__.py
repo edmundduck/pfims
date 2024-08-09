@@ -13,8 +13,8 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
 
         # Any code you write here will run before the form opens.
         self.dropdown_lbl_action.items = ExpenseFileExcelImportController.generate_labels_mapping_action_dropdown()
-        self.dropdown_lbl_map_to.items = ExpenseFileExcelImportController.generate_labels_dropdown()
-        self.dropdown_lbl_map_to.visible = False
+        self.dropdown_lbl_map_to.items, self.dropdown2_lbl_map_to.items, self.dropdown3_lbl_map_to.items = [ExpenseFileExcelImportController.generate_labels_dropdown()] * 3
+        self.dropdown_lbl_map_to.visible, self.dropdown2_lbl_map_to.visible, self.dropdown3_lbl_map_to.visible = [False] * 3
         self.hidden_lbl_action.text = None
         self.input_label.visible = False
 
@@ -38,3 +38,11 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         self.dropdown_lbl_action.selected_value = ExpenseFileExcelImportController.get_labels_mapping_action_dropdown_selected_item(action)
         self.item['action'] = ExpenseFileExcelImportController.get_labels_mapping_action_dropdown_selected_item(action)
         self.dropdown_lbl_action_change()
+
+    def dropdown_lbl_map_to_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.dropdown2_lbl_map_to.visible = True if self.dropdown_lbl_map_to.selected_value else False
+
+    def dropdown2_lbl_map_to_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.dropdown3_lbl_map_to.visible = True if self.dropdown2_lbl_map_to.selected_value else False
