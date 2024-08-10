@@ -142,5 +142,5 @@ components:
   type: DropDown
   layout_properties: {column: IZVDKG}
   data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
+  - {property: selected_value, code: 'self.item[''tgtlbl4'']', writeback: true}
 is_package: true
