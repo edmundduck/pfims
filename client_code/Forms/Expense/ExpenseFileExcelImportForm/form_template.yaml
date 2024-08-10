@@ -101,11 +101,11 @@ components:
       spacing_above: small
       columns:
       - {id: LFIIUE, title: '', data_key: src_label, $$hashKey: 'object:9382'}
-      - {id: DUOBFI, title: '', data_key: tgt_label, $$hashKey: 'object:9383'}
-      - {id: WIDMCS, title: '', data_key: new_label, $$hashKey: 'object:9384'}
-      - {id: ZYHDYV, data_key: column_1, title: Column 1}
-      - {id: OIEJUK, data_key: column_2, title: Column 2}
-      - {id: IZVDKG, data_key: column_3, title: Column 3}
+      - {id: DUOBFI, title: '', data_key: action, $$hashKey: 'object:9383'}
+      - {id: WIDMCS, title: '', data_key: tgt_label, $$hashKey: 'object:9384'}
+      - {id: ZYHDYV, data_key: tgt_label2, title: ''}
+      - {id: OIEJUK, data_key: tgt_label3, title: ''}
+      - {id: IZVDKG, data_key: tgt_label4, title: ''}
       background: ''
       rows_per_page: 30
       wrap_on: never
