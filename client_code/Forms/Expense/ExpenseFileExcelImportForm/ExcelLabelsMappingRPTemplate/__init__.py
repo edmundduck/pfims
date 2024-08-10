@@ -15,6 +15,7 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         self.dropdown_lbl_action.items = ExpenseFileExcelImportController.generate_labels_mapping_action_dropdown()
         self.dropdown_lbl_map_to.items, self.dropdown2_lbl_map_to.items, self.dropdown3_lbl_map_to.items, self.dropdown4_lbl_map_to.items = [ExpenseFileExcelImportController.generate_labels_dropdown()] * 4
         self.dropdown_lbl_map_to.visible, self.dropdown2_lbl_map_to.visible, self.dropdown3_lbl_map_to.visible, self.dropdown4_lbl_map_to.visible = [False] * 4
+        self.dropdown2_lbl_map_to.selected_value, self.dropdown3_lbl_map_to.selected_value, self.dropdown4_lbl_map_to.selected_value = [None] * 3
         self.hidden_lbl_action.text = None
         self.input_label.visible = False
 
