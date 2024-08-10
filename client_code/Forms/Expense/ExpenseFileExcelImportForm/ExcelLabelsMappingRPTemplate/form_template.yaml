@@ -92,7 +92,7 @@ components:
   type: DropDown
   layout_properties: {column: ZYHDYV}
   data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
+  - {property: selected_value, code: 'self.item[''tgtlbl2'']', writeback: true}
   event_bindings: {change: dropdown2_lbl_map_to_change}
 - name: dropdown3_lbl_map_to
   properties:
@@ -117,7 +117,7 @@ components:
   type: DropDown
   layout_properties: {column: OIEJUK}
   data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
+  - {property: selected_value, code: 'self.item[''tgtlbl3'']', writeback: true}
   event_bindings: {change: dropdown3_lbl_map_to_change}
 - name: dropdown4_lbl_map_to
   properties:
@@ -142,5 +142,5 @@ components:
   type: DropDown
   layout_properties: {column: IZVDKG}
   data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
+  - {property: selected_value, code: 'self.item[''tgtlbl4'']', writeback: true}
 is_package: true
