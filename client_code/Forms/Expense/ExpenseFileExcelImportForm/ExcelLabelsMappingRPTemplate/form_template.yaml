@@ -27,6 +27,7 @@ components:
   layout_properties: {column: WIDMCS}
   data_bindings:
   - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
+  - {property: items, code: 'self.item[''tgtlbl'']', writeback: false}
   event_bindings: {change: dropdown_lbl_map_to_change}
 - type: Label
   properties: {align: right}
@@ -87,6 +88,7 @@ components:
   layout_properties: {column: ZYHDYV}
   data_bindings:
   - {property: selected_value, code: 'self.item[''tgtlbl2'']', writeback: true}
+  - {property: items, code: 'self.item[''tgtlbl2'']', writeback: false}
   event_bindings: {change: dropdown2_lbl_map_to_change}
 - name: dropdown3_lbl_map_to
   properties:
@@ -112,6 +114,7 @@ components:
   layout_properties: {column: OIEJUK}
   data_bindings:
   - {property: selected_value, code: 'self.item[''tgtlbl3'']', writeback: true}
+  - {property: items, code: 'self.item[''tgtlbl3'']', writeback: false}
   event_bindings: {change: dropdown3_lbl_map_to_change}
 - name: dropdown4_lbl_map_to
   properties:
@@ -137,10 +140,5 @@ components:
   layout_properties: {column: IZVDKG}
   data_bindings:
   - {property: selected_value, code: 'self.item[''tgtlbl4'']', writeback: true}
-- type: TextBox
-  properties: {role: null, bold: false, align: left, placeholder: New label name, spacing_above: small, background: '', type: text, underline: false, font: '', hide_text: false, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: ''}
-  name: input_label
-  layout_properties: {column: IZVDKG}
-  data_bindings:
-  - {property: text, code: 'self.item[''new'']', writeback: true}
+  - {property: items, code: 'self.item[''tgtlbl4'']', writeback: false}
 is_package: true
