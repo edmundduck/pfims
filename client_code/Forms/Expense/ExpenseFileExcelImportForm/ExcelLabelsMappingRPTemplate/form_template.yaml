@@ -9,7 +9,7 @@ components:
     include_placeholder: true
     bold: false
     align: full
-    placeholder: Choose mapping label
+    placeholder: Map a label
     spacing_above: small
     background: ''
     underline: false
