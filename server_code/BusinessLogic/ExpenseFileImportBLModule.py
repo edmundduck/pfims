@@ -211,15 +211,25 @@ def update_labels_mapping(data, mapping):
         for lbl_mapping in LD:
             if lbl_mapping is not None:
                 if lbl_mapping.get('action')[0] == "S":
-                    df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], None, inplace=True)                    
+                    df[ExpenseTransaction.field_labels()] = df[ExpenseTransaction.field_labels()].apply(lambda x: None if lbl_mapping['srclbl'] == x else x)
                 elif lbl_mapping.get('tgtlbl') is not None:
-                    id = lbl_mapping['tgtlbl'][0]
-                    df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], id, inplace=True)
+                    def replace_list_lbl_id(row):
+                        element1 = lbl_mapping.get('tgtlbl')[0] if lbl_mapping.get('tgtlbl') and len(lbl_mapping.get('tgtlbl')) > 0 else None
+                        element2 = lbl_mapping.get('tgtlbl2')[0] if lbl_mapping.get('tgtlbl2') and len(lbl_mapping.get('tgtlbl2')) > 0 else None
+                        element3 = lbl_mapping.get('tgtlbl3')[0] if lbl_mapping.get('tgtlbl3') and len(lbl_mapping.get('tgtlbl3')) > 0 else None
+                        element4 = lbl_mapping.get('tgtlbl4')[0] if lbl_mapping.get('tgtlbl4') and len(lbl_mapping.get('tgtlbl4')) > 0 else None
+                        if row == lbl_mapping['srclbl']:
+                            return [element1, element2, element3, element4]
+                        else:
+                            return row
+                    df[ExpenseTransaction.field_labels()] = df[ExpenseTransaction.field_labels()].apply(replace_list_lbl_id)
     logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
-    logger.trace("df=", df.to_string())
+    logger.trace(f"df={df.to_string()}")
 
     # 4. Merge the extra labels column into target label
-    df[ExpenseTransaction.field_labels()] = df.apply(lambda row: [row[ExpenseTransaction.field_labels()], row[ExpenseTransaction.field_extra_labels()]], axis=1)
+    def listify(x):
+        return x if isinstance(x, (list, tuple)) else [x]
+    df[ExpenseTransaction.field_labels()] = df.apply(lambda row: listify(row[ExpenseTransaction.field_labels()]) + listify(row[ExpenseTransaction.field_extra_labels()]), axis=1)
 
     # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
     # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe

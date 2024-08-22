@@ -13,8 +13,9 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
 
         # Any code you write here will run before the form opens.
         self.dropdown_lbl_action.items = ExpenseFileExcelImportController.generate_labels_mapping_action_dropdown()
-        self.dropdown_lbl_map_to.items = ExpenseFileExcelImportController.generate_labels_dropdown()
-        self.dropdown_lbl_map_to.visible = False
+        self.dropdown_lbl_map_to.items, self.dropdown2_lbl_map_to.items, self.dropdown3_lbl_map_to.items, self.dropdown4_lbl_map_to.items = [ExpenseFileExcelImportController.generate_labels_dropdown()] * 4
+        self.dropdown_lbl_map_to.visible, self.dropdown2_lbl_map_to.visible, self.dropdown3_lbl_map_to.visible, self.dropdown4_lbl_map_to.visible = [False] * 4
+        self.dropdown2_lbl_map_to.selected_value, self.dropdown3_lbl_map_to.selected_value, self.dropdown4_lbl_map_to.selected_value = [None] * 3
         self.hidden_lbl_action.text = None
         self.input_label.visible = False
 
@@ -29,6 +30,9 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         
         action, _ = self.dropdown_lbl_action.selected_value if self.dropdown_lbl_action.selected_value is not None else [None, None]
         self.dropdown_lbl_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_dropdown(self.dropdown_lbl_action.selected_value)
+        self.dropdown2_lbl_map_to.visible = self.dropdown_lbl_map_to.visible and ExpenseFileExcelImportController.visible_account_label_map_to_extra_dropdown(self.dropdown_lbl_map_to.selected_value)
+        self.dropdown3_lbl_map_to.visible = self.dropdown_lbl_map_to.visible and ExpenseFileExcelImportController.visible_account_label_map_to_extra_dropdown(self.dropdown2_lbl_map_to.selected_value)
+        self.dropdown4_lbl_map_to.visible = self.dropdown_lbl_map_to.visible and ExpenseFileExcelImportController.visible_account_label_map_to_extra_dropdown(self.dropdown3_lbl_map_to.selected_value)
         self.input_label.visible = ExpenseFileExcelImportController.visible_account_label_textfield(self.dropdown_lbl_action.selected_value)
         prev = self.hidden_lbl_action.text
         self.hidden_lbl_action.text = action
@@ -38,3 +42,28 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         self.dropdown_lbl_action.selected_value = ExpenseFileExcelImportController.get_labels_mapping_action_dropdown_selected_item(action)
         self.item['action'] = ExpenseFileExcelImportController.get_labels_mapping_action_dropdown_selected_item(action)
         self.dropdown_lbl_action_change()
+
+    def dropdown_lbl_map_to_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.dropdown2_lbl_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_extra_dropdown(self.dropdown_lbl_map_to.selected_value)
+        if not self.dropdown_lbl_map_to.selected_value:
+            self.dropdown3_lbl_map_to.visible, self.dropdown4_lbl_map_to.visible = [self.dropdown2_lbl_map_to.visible] * 2
+            self.item['tgtlbl2'], self.item['tgtlbl3'], self.item['tgtlbl4'] = [None] * 3
+            self.refresh_data_bindings()
+
+    def dropdown2_lbl_map_to_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.dropdown3_lbl_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_extra_dropdown(self.dropdown2_lbl_map_to.selected_value)
+        if not self.dropdown2_lbl_map_to.selected_value:
+            self.dropdown4_lbl_map_to.visible = self.dropdown3_lbl_map_to.visible
+            self.item['tgtlbl3'], self.item['tgtlbl4'] = [None] * 2
+            self.refresh_data_bindings()
+ 
+    def dropdown3_lbl_map_to_change(self, **event_args):
+        """This method is called when an item is selected"""
+        self.dropdown4_lbl_map_to.visible = ExpenseFileExcelImportController.visible_account_label_map_to_extra_dropdown(self.dropdown3_lbl_map_to.selected_value)
+        if not self.dropdown3_lbl_map_to.selected_value: 
+            self.item['tgtlbl4'] = None
+            # Refresh data binding instead of manually set selected_value as None to keep the code clean
+            # self.dropdown4_lbl_map_to.selected_value = None
+            self.refresh_data_bindings()
