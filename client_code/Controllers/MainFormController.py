@@ -11,7 +11,7 @@ def visible_test_env_label():
     Returns:
         vis (boolean): True for testing environment, False otherwise.
     """
-    return True if anvil.app.environment.name in 'Dev' else False
+    return False if anvil.app.environment.name in 'Prod' else True
 
 def visible_poc_link():
     """

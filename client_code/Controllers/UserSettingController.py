@@ -205,7 +205,7 @@ def visible_logging_panel():
     Returns:
         Boolean: True for visible, false for invisible.
     """
-    return True if anvil.app.environment.name in 'Dev' else False
+    return False if anvil.app.environment.name in 'Prod' else False
 
 @logger.log_function
 def change_settings(broker_dropdown_selected, interval_dropdown_selected, datefrom, dateto, logging_level):

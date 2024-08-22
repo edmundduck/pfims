@@ -44,18 +44,18 @@ def db_connect():
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
     import psycopg2
-    if anvil.app.environment.name in 'Dev':
-        connection = psycopg2.connect(
-            dbname=anvil.secrets.get_secret('devdb_name'),
-            host=anvil.secrets.get_secret('devdb_host'),
-            port=anvil.secrets.get_secret('devdb_port'),
-            user=anvil.secrets.get_secret('devdb_app_usr'),
-            password=anvil.secrets.get_secret('devdb_app_pw'))
-    else:
+    if anvil.app.environment.name in 'Prod':
         connection = psycopg2.connect(
             dbname=anvil.secrets.get_secret('proddb_name'),
             host=anvil.secrets.get_secret('proddb_host'),
             port=anvil.secrets.get_secret('proddb_port'),
             user=anvil.secrets.get_secret('proddb_app_usr'),
             password=anvil.secrets.get_secret('proddb_app_pw'))
+    else:
+        connection = psycopg2.connect(
+            dbname=anvil.secrets.get_secret('devdb_name'),
+            host=anvil.secrets.get_secret('devdb_host'),
+            port=anvil.secrets.get_secret('devdb_port'),
+            user=anvil.secrets.get_secret('devdb_app_usr'),
+            password=anvil.secrets.get_secret('devdb_app_pw'))
     return connection
