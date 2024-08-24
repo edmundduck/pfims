@@ -199,6 +199,11 @@ components:
     col_widths: {}
     grid_position: EAKVAM,NLXOAT
   components:
+  - name: timer_row_show
+    properties: {interval: 0}
+    type: Timer
+    layout_properties: {}
+    event_bindings: {tick: timer_row_show_tick}
   - type: Label
     properties: {role: null, bold: false, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: false, border: '', italic: false, font_size: 12, tooltip: '', text: '0'}
     name: hidden_action_count
