@@ -31,6 +31,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         if len(labels) == 0: self.button_next.visible = True
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
+        self.dropdown_actions_for_all_labels.add_event_handler('x-row-change', self.handle_revert_all_labels_dropdown_action)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -71,6 +72,13 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
             pass
         self.enable_next_button()
 
+    def handle_revert_all_labels_dropdown_action(self, **event_args):
+        if self.dropdown_actions_for_all_labels.selected_value:
+            if self.timer_row_show.interval > 0:
+                self.dropdown_actions_for_all_labels.selected_value = None
+            else:
+                self.timer_row_show
+
     def dropdown_actions_for_all_labels_change(self, **event_args):
         """This method is called when an item is selected"""
         action, _ = self.dropdown_actions_for_all_labels.selected_value if self.dropdown_actions_for_all_labels.selected_value is not None else [None, None]
@@ -80,3 +88,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         """This method is called when an item is selected"""
         action, _ = self.dropdown_actions_for_all_accounts.selected_value if self.dropdown_actions_for_all_accounts.selected_value is not None else [None, None]
         self.accounts_mapping_panel.raise_event_on_children('x-apply-action-to-all-accounts', action=action)
+
+    def timer_row_show_tick(self, **event_args):
+        """This method is called Every [interval] seconds. Does not trigger if [interval] is 0."""
+        self.timer_row_show.interval = 0
