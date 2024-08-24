@@ -2,6 +2,7 @@ container:
   type: DataRowPanel
   properties: {role: null, bold: false, align: left, spacing_above: none, background: '', underline: false, font: '', auto_display_data: true, foreground: '', spacing_below: none, visible: true, border: '', italic: false, font_size: 12, tooltip: ''}
   data_bindings: []
+  event_bindings: {show: form_show}
 components:
 - type: DropDown
   properties:
