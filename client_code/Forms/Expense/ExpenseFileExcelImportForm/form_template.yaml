@@ -123,6 +123,7 @@ components:
       properties: {spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
       type: RepeatingPanel
       layout_properties: {}
+    data_bindings: []
 - type: FlowPanel
   properties: {}
   name: flow_panel_step7
