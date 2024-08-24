@@ -1,37 +1,38 @@
+is_package: true
 container:
   type: ColumnPanel
   properties: {col_widths: '{}'}
 components:
-- name: flow_panel_1
-  properties: {align: right}
+- properties: {align: right}
   type: FlowPanel
   layout_properties: {grid_position: 'RYYBSX,QRWSIW'}
+  name: flow_panel_1
   components:
   - type: Button
     properties: {role: filled, bold: false, align: center, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: Manage Upload Mappings}
-    name: button_nav_upload_mapping
     layout_properties: {}
     event_bindings: {click: button_nav_upload_mapping_click}
+    name: button_nav_upload_mapping
   - type: Button
     properties: {role: filled, bold: false, align: center, spacing_above: small, background: '', icon: 'fa:chevron-circle-left', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: Back to Input Expense}
-    name: button_nav_input_exp
     layout_properties: {}
     event_bindings: {click: button_nav_input_exp_click}
+    name: button_nav_input_exp
 - type: FlowPanel
   properties: {}
-  name: flow_panel_step5
   layout_properties:
     col_widths: {}
     grid_position: GSTUVZ,HFWNTV
+  name: flow_panel_step5
   components:
   - type: Label
     properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: 'fa:long-arrow-right', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: Step 5}
-    name: label_step5
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
+    name: label_step5
   - type: Label
     properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: 'Choose existing tab or create new             '}
-    name: label_step5a
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
+    name: label_step5a
   - type: DropDown
     properties:
       role: null
@@ -52,24 +53,23 @@ components:
       enabled: true
       font_size: 12
       tooltip: ''
-    name: dropdown_tabs
     layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
     event_bindings: {}
+    name: dropdown_tabs
 - type: FlowPanel
   properties: {}
-  name: flow_panel_step6
   layout_properties: {grid_position: 'VZJQVS,OKKXAA'}
+  name: flow_panel_step6
   components:
   - type: Label
     properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: 'fa:long-arrow-right', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: Step 6}
-    name: label_step6
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
+    name: label_step6
   - type: Label
     properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: 'Configure labels mapping                           '}
-    name: label_step6a
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - name: dropdown_actions_for_all_labels
-    properties:
+    name: label_step6a
+  - properties:
       role: null
       include_placeholder: true
       bold: false
@@ -90,13 +90,13 @@ components:
       tooltip: ''
     type: DropDown
     event_bindings: {change: dropdown_actions_for_all_labels_change}
-- name: flow_panel_step6_data
-  properties: {}
+    name: dropdown_actions_for_all_labels
+- properties: {}
   type: FlowPanel
   layout_properties: {grid_position: 'SEPARI,VCMLQK'}
+  name: flow_panel_step6_data
   components:
-  - name: data_grid_1
-    properties:
+  - properties:
       role: null
       spacing_above: small
       columns:
@@ -118,26 +118,27 @@ components:
       tooltip: ''
     type: DataGrid
     layout_properties: {width: 511.6, expand: true}
+    name: data_grid_1
     components:
-    - name: labels_mapping_panel
-      properties: {spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
+    - properties: {spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFileExcelImportForm.ExcelLabelsMappingRPTemplate}
       type: RepeatingPanel
       layout_properties: {}
+      name: labels_mapping_panel
 - type: FlowPanel
   properties: {}
-  name: flow_panel_step7
   layout_properties:
     col_widths: {}
     grid_position: JFAMHG,HYKAJR
+  name: flow_panel_step7
   components:
   - type: Label
     properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: 'fa:long-arrow-right', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: Step 7}
-    name: label_step7
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
+    name: label_step7
   - type: Label
     properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: 'Configure accounts mapping                     '}
-    name: label_step7a
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
+    name: label_step7a
   - type: DataGrid
     properties:
       role: null
@@ -156,13 +157,13 @@ components:
       visible: true
       border: ''
       tooltip: ''
-    name: data_grid_2
     layout_properties: {width: 511.6}
+    name: data_grid_2
     components:
     - type: FlowPanel
       properties: {role: null, vertical_align: full, align: left, spacing_above: small, background: '', foreground: '', spacing_below: small, visible: true, border: '', tooltip: '', spacing: medium}
-      name: flow_panel_apply_all_accounts
       layout_properties: {}
+      name: flow_panel_apply_all_accounts
       components:
       - type: DropDown
         properties:
@@ -184,27 +185,31 @@ components:
           enabled: true
           font_size: 12
           tooltip: ''
-        name: dropdown_actions_for_all_accounts
         layout_properties: {}
         event_bindings: {change: dropdown_actions_for_all_accounts_change}
+        name: dropdown_actions_for_all_accounts
     - type: RepeatingPanel
       properties: {role: null, spacing_above: none, background: '', item_template: Forms.Expense.ExpenseFileExcelImportForm.ExcelAccountsMappingRPTemplate, foreground: '', items: null, spacing_below: none, visible: true, border: '', tooltip: ''}
-      name: accounts_mapping_panel
       layout_properties: {}
+      name: accounts_mapping_panel
 - type: FlowPanel
   properties: {role: null, align: right, spacing_above: small, background: '', foreground: '', spacing_below: small, visible: true, border: '', tooltip: '', spacing: medium}
-  name: flow_panel_last
   layout_properties:
     col_widths: {}
     grid_position: EAKVAM,NLXOAT
+  name: flow_panel_last
   components:
+  - properties: {interval: 0}
+    type: Timer
+    layout_properties: {}
+    event_bindings: {tick: timer_row_show_tick}
+    name: timer_row_show
   - type: Label
     properties: {role: null, bold: false, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: false, border: '', italic: false, font_size: 12, tooltip: '', text: '0'}
-    name: hidden_action_count
     layout_properties: {grid_position: 'EAKVAM,UJELHX'}
+    name: hidden_action_count
   - type: Button
     properties: {role: null, bold: false, align: center, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: Proceed}
-    name: button_next
     layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
     event_bindings: {click: button_next_click}
-is_package: true
+    name: button_next

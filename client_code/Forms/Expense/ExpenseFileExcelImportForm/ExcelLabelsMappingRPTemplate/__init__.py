@@ -23,6 +23,11 @@ class ExcelLabelsMappingRPTemplate(ExcelLabelsMappingRPTemplateTemplate):
         self.dropdown_lbl_map_to.selected_value = ExpenseFileExcelImportController.get_label_dropdown_selected_item(self.item['tgtlbl'] if self.item['tgtlbl'] is not None else None)
         self.add_event_handler('x-apply-action-to-all-labels', self.apply_action_to_all_labels)
 
+    def form_show(self, **event_args):
+        """This method is called when the form is shown on the page"""
+        # self.parent = RepearingPanel / .parent = DataGrid / .parent = FlowPanel / .parent = Form
+        self.parent.parent.parent.parent.raise_event('x-row-show')
+
     @logger.log_function
     def dropdown_lbl_action_change(self, **event_args):
         """This method is called when an item is selected"""
