@@ -31,7 +31,7 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
         if len(labels) == 0: self.button_next.visible = True
         self.hidden_action_count.text = len(labels)
         self.labels_mapping_panel.add_event_handler('x-handle-action-count', self.handle_action_count)
-        self.dropdown_actions_for_all_labels.add_event_handler('x-row-change', self.handle_revert_all_labels_dropdown_action)
+        self.add_event_handler('x-row-show', self.reset_dropdown_actions_for_all_labels)
 
     def button_nav_upload_mapping_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -72,12 +72,12 @@ class ExpenseFileExcelImportForm(ExpenseFileExcelImportFormTemplate):
             pass
         self.enable_next_button()
 
-    def handle_revert_all_labels_dropdown_action(self, **event_args):
+    def reset_dropdown_actions_for_all_labels(self, **event_args):
         if self.dropdown_actions_for_all_labels.selected_value:
             if self.timer_row_show.interval > 0:
                 self.dropdown_actions_for_all_labels.selected_value = None
             else:
-                self.timer_row_show
+                self.timer_row_show.interval = 1
 
     def dropdown_actions_for_all_labels_change(self, **event_args):
         """This method is called when an item is selected"""
