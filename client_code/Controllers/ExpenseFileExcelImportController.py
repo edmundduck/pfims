@@ -119,6 +119,19 @@ def visible_account_label_map_to_dropdown(action_selection):
         result = False
     return result
 
+def visible_account_label_map_to_extra_dropdown(action_selection):
+    """
+    Make the account map to (extra other than the first one) dropdown visible or invisible.
+
+    Parameters:
+        action_selection (list): Selected action from dropdown.
+
+    Returns:
+        result (boolean): True for visible, false for invisible.
+    """
+    result = True if action_selection else False
+    return result
+
 def visible_account_label_textfield(action_selection):
     """
     Make the account text field visible or invisible.
@@ -176,11 +189,15 @@ def populate_labels_repeating_panel_items(data):
     tuple_converted_lbl = [tuple(i) if i is not None else None for i in anvil.server.call('predict_relevant_labels', data, generate_labels_dropdown())]
     # Transpose Dict of Lists (DL) to List of Dicts (LD)
     # Ref - https://stackoverflow.com/questions/37489245/transposing-pivoting-a-dict-of-lists-in-python
+    none_list = [ None for i in range(len(data))]
     DL_lbl = {
         'srclbl': data,
-        'action': [ None for i in range(len(data))] if data is not None else [ None ],
+        'action': none_list if data is not None else [ None ],
         # Prefill "labels map to" dropdown by finding high proximity choices
         'tgtlbl': tuple_converted_lbl,
+        'tgtlbl2': none_list,
+        'tgtlbl3': none_list,
+        'tgtlbl4': none_list,
         'new': data
     }
     logger.trace("DL_lbl=", DL_lbl)

@@ -122,10 +122,10 @@ def import_file(file, tablist, rules, extra):
             has_acct_mapping = True
         
         # Convert column in character ID to number for Pandas read_excel
-        col = list(map(lambda x: ord(i[x].lower()) - 97 if 'a' <= i[x].lower() <= 'z' else None , col_name))
+        col = list(map(lambda x: ord(i.get(x).lower()) - 97 if i.get(x) and 'a' <= i.get(x).lower() <= 'z' else None , col_name))
         common_col = set(i.values()).intersection(extra_dl.get('col')) if extra_dl.get('col', None) is not None else {}
-                
-        nonNanList, nanList = ([c for c in col_name if i[c] not in (None, '')], [c for c in col_name if i[c] in (None, '')])
+
+        nonNanList, nanList = ([c for c in col_name if i.get(c) not in (None, '')], [c for c in col_name if i.get(c) in (None, '')])
         for t in tablist:
             # iloc left one is row, right one is column
             # 1) Filter required columns
@@ -145,8 +145,8 @@ def import_file(file, tablist, rules, extra):
                 if extra_dl.get('eaction')[extra_dl_pointer] == 'A':
                     tmp_df[ExpenseTransaction.field_account()] = int(extra_dl.get('etarget')[extra_dl_pointer])
                 elif extra_dl.get('eaction')[extra_dl_pointer] == 'L':
-                    tmp_df[ExpenseTransaction.field_labels()] = extra_dl.get('etarget')[extra_dl_pointer] if tmp_df[ExpenseTransaction.field_labels()] in (None, '') else tmp_df[ExpenseTransaction.field_labels()] + extra_dl.get('etarget')[extra_dl_pointer]
-                logger.trace("4) Map extra action logic\ntmp_df=", tmp_df)
+                    tmp_df[ExpenseTransaction.field_extra_labels()] = int(extra_dl.get('etarget')[extra_dl_pointer])
+                logger.trace("4) Map extra action logic\ntmp_df=", tmp_df.to_string())
             
             # 5) Concat temp DF to the resultant DF
             new_df = pd.concat([tmp_df.loc[:, col_name]], ignore_index=True, join="outer") if new_df is None else pd.concat([new_df, tmp_df.loc[:, col_name]], ignore_index=True, join="outer")
@@ -177,6 +177,8 @@ def update_labels_mapping(data, mapping):
     Returns:
         df (dataframe): Processed dataframe.
     """
+    from ..Entities.Label import Label
+
     # 1. Get all items with action = 'C', and grab new field to create new labels
     # DL = Dict of Lists
     DL = Helper.to_dict_of_list(mapping)
@@ -190,13 +192,13 @@ def update_labels_mapping(data, mapping):
         'status': [ True for i in range(len(pos_create)) ]
     }
     # labels param is transposed from DL to LD (List of Dicts)
-    lbl_list = [dict(zip(lbl_mogstr, col)) for col in zip(*lbl_mogstr.values())]
+    lbl_list = [Label(dict(zip(lbl_mogstr, col))) for col in zip(*lbl_mogstr.values())]
     lbl_id = LabelDAModule.create_label(lbl_list)
     logger.debug("Label created with ID lbl_id=", lbl_id)
     if lbl_id is None: raise Exception("Fail to create label.")
 
     # 2. Replace labels with action = 'C' to the newly created label codes in step 1
-    for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = [lbl_id[lbl_loc], lbl_list[lbl_loc].get('name')]
+    for lbl_loc in range(len(lbl_id)): DL['tgtlbl'][pos_create[lbl_loc]] = [lbl_id[lbl_loc], lbl_list[lbl_loc].get_name()]
     logger.trace("2) Replace labels with action = 'C' to the newly created label codes in step 1")
     logger.trace("DL['tgtlbl']=", DL['tgtlbl'])
 
@@ -209,12 +211,26 @@ def update_labels_mapping(data, mapping):
         for lbl_mapping in LD:
             if lbl_mapping is not None:
                 if lbl_mapping.get('action')[0] == "S":
-                    df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], None, inplace=True)                    
+                    df[ExpenseTransaction.field_labels()] = df[ExpenseTransaction.field_labels()].apply(lambda x: None if lbl_mapping['srclbl'] == x else x)
                 elif lbl_mapping.get('tgtlbl') is not None:
-                    id = lbl_mapping['tgtlbl'][0]
-                    df[ExpenseTransaction.field_labels()].replace(lbl_mapping['srclbl'], id, inplace=True)
+                    def replace_list_lbl_id(row):
+                        element1 = lbl_mapping.get('tgtlbl')[0] if lbl_mapping.get('tgtlbl') and len(lbl_mapping.get('tgtlbl')) > 0 else None
+                        element2 = lbl_mapping.get('tgtlbl2')[0] if lbl_mapping.get('tgtlbl2') and len(lbl_mapping.get('tgtlbl2')) > 0 else None
+                        element3 = lbl_mapping.get('tgtlbl3')[0] if lbl_mapping.get('tgtlbl3') and len(lbl_mapping.get('tgtlbl3')) > 0 else None
+                        element4 = lbl_mapping.get('tgtlbl4')[0] if lbl_mapping.get('tgtlbl4') and len(lbl_mapping.get('tgtlbl4')) > 0 else None
+                        if row == lbl_mapping['srclbl']:
+                            return [element1, element2, element3, element4]
+                        else:
+                            return row
+                    df[ExpenseTransaction.field_labels()] = df[ExpenseTransaction.field_labels()].apply(replace_list_lbl_id)
     logger.trace("3) Replace labels with action = 'M' and 'C' to the target label codes in df")
-    logger.trace("df=", df)
+    logger.trace(f"df={df.to_string()}")
+
+    # 4. Merge the extra labels column into target label
+    def listify(x):
+        return x if isinstance(x, (list, tuple)) else [x]
+    df[ExpenseTransaction.field_labels()] = df.apply(lambda row: listify(row[ExpenseTransaction.field_labels()]) + listify(row[ExpenseTransaction.field_extra_labels()]), axis=1)
+
     # df.fillna(value={ExpenseTransaction.field_remarks():None, ExpenseTransaction.field_statement_detail():None, ExpenseTransaction.field_amount():0}, inplace=True)
     # Sorting ref: https://stackoverflow.com/questions/28161356/convert-column-to-date-format-pandas-dataframe
     return df.replace([np.nan], [None]).sort_values(by=ExpenseTransaction.field_date(), key=pd.to_datetime, ascending=False, ignore_index=True).to_dict(orient='records')

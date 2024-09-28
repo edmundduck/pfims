@@ -25,7 +25,7 @@ class BaseEntity:
         )
     
     def __eq__(self, other):
-        if self and other:
+        if self and other and isinstance(self, BaseEntity) and isinstance(other, BaseEntity):
             result = all(getattr(self, self.__property_def__[i], None) == getattr(other, other.__property_def__[i], None) for i in range(len(self.__property_def__)))
             return result
         elif not self and not other:

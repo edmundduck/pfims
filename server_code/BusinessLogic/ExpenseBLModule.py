@@ -37,8 +37,9 @@ def proc_select_expense_group(exp_grp):
     tnx_list = ExpenseDAModule.select_transactions(exp_grp)
     # Special handling to make keys found in expense_tbl_def all in upper case to match with client UI, server and DB definition
     # Without this the repeating panel can display none of the data returned from DB as the keys case from dict are somehow auto-lowered
-    tnx_list = Helper.upper_dict_keys(tnx_list, ExpenseTransaction.get_data_transform_definition())
-    exp_grp = exp_grp.set_transactions(list(ExpenseTransaction(r).set_user_id(userid) for r in tnx_list))
+    # tnx_list = Helper.upper_dict_keys(tnx_list, ExpenseTransaction.get_data_transform_definition())
+    # exp_grp = exp_grp.set_transactions(list(ExpenseTransaction(r).set_user_id(userid) for r in tnx_list))
+    exp_grp = exp_grp.set_transactions(tnx_list)
     return exp_grp
 
 @anvil.server.callable("proc_change_expense_group")

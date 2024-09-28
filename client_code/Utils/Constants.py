@@ -200,6 +200,9 @@ class ReportFormTag:
     STOCK_PNL_RPT = 'stockrpt02'
 
 class UnitTest:
+    SUCCESS_CNT = 'success_count'
+    FAIL_CNT = 'failure_count'
+    FAIL_MSG = 'failure_messages'
     DELIMITER = ":="
     DELIMITER_FUNC = ","
     CLIENT_ONLY = "# Client code testing"

@@ -15,6 +15,5 @@ components:
 is_package: true
 custom_component: true
 properties:
-- {name: question, type: string, default_value: '', important: true, default_binding_prop: true,
-  multiline: true}
+- {name: question, type: string, default_value: '', important: true, default_binding_prop: true, multiline: true}
 - {name: answer, type: string, default_value: '', important: true, multiline: true}

@@ -1,5 +1,6 @@
 from ._anvil_designer import InvestmentReportSearchPanelFormTemplate
 from anvil import *
+import anvil.server
 from datetime import date
 from ....Controllers import ReportSearchPanelController
 from .... import Global

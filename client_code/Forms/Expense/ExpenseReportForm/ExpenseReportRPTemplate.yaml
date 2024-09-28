@@ -1,48 +1,33 @@
 container:
   type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true,
-    visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none,
-    italic: false, background: '', bold: false, underline: false}
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true, visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none, italic: false, background: '', bold: false, underline: false}
 components:
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
-    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-    italic: false, background: '', bold: false, underline: false, icon: ''}
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties: {column: JNEVXO}
   data_bindings:
   - {code: 'self.item[''iid'']', property: text}
   name: row_hidden_iid
 - type: Label
-  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-    visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
-    spacing_below: small, italic: false, background: '', bold: false, underline: false,
-    icon: ''}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties: {column: JRLRWP}
   data_bindings:
   - {code: '"${0:.2f}".format(self.item[''AMT''])', property: text}
   name: row_label_amt
 - type: Label
-  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-    visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
-    spacing_below: small, italic: false, background: '', bold: false, underline: false,
-    icon: ''}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties: {column: WXPMEY}
   data_bindings:
   - {code: '"${0:.2f}".format(self.item[''debt''])', property: text}
   name: row_label_debt
 - type: Label
-  properties: {role: null, align: right, tooltip: '', border: '', foreground: '',
-    visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left,
-    spacing_below: small, italic: false, background: '', bold: false, underline: false,
-    icon: ''}
+  properties: {role: null, align: right, tooltip: '', border: '', foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties: {column: LMHMKP}
   data_bindings:
   - {code: '"${0:.2f}".format(self.item[''debt_pym''])', property: text}
   name: row_label_debt_pym
 - type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false,
-    text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-    italic: false, background: '', bold: false, underline: false, icon: ''}
+  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties: {column: WKXYPE}
   data_bindings:
   - {code: 'self.item[''tab_id'']', property: text}
@@ -78,9 +63,6 @@ components:
   - {code: 'self.item[''LBL'']', property: tag}
   name: row_panel_labels
 - type: Link
-  properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: '',
-    visible: true, text: '', font_size: null, wrap_on: mobile, font: '', col_spacing: medium,
-    spacing_above: small, icon_align: left, col_widths: '', spacing_below: small,
-    italic: false, background: '', bold: false, underline: false, icon: ''}
+  properties: {role: null, url: '', align: center, tooltip: '', border: '', foreground: '', visible: true, text: '', font_size: null, wrap_on: mobile, font: '', col_spacing: medium, spacing_above: small, icon_align: left, col_widths: '', spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties: {column: DMKCOL}
   name: row_label_acct

@@ -8,66 +8,41 @@ components:
   layout_properties: {grid_position: 'HQQIRP,CGSBHC'}
   components:
   - type: Button
-    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true,
-      foreground: '', visible: true, text: Manage Upload Mappings, font_size: 12,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: false, underline: false, icon: ''}
+    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Manage Upload Mappings, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
     name: button_nav_upload_mapping
     layout_properties: {}
     event_bindings: {click: button_nav_upload_mapping_click}
   - type: Button
-    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true,
-      foreground: '', visible: true, text: Back to Input Expense, font_size: 12, font: '',
-      spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: false, underline: false, icon: 'fa:chevron-circle-left'}
+    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Back to Input Expense, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:chevron-circle-left'}
     name: button_nav_input_exp
     layout_properties: {}
     event_bindings: {click: button_nav_input_exp_click}
 - type: Label
-  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-    visible: false, text: 'Error(s):', font_size: 14, font: '', spacing_above: small,
-    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: ''}
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: 'Error(s):', font_size: 14, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties:
     col_widths: {}
     grid_position: BJXHGI,ABWTJJ
   name: valerror_title
 - type: Label
-  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-    visible: false, text: '- Dropdown "Mapping Target" must be chosen when the column
-      header is required in mapping', font_size: 12, font: '', spacing_above: small,
-    icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-    underline: false, icon: ''}
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '- Dropdown "Mapping Target" must be chosen when the column header is required in mapping', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties:
     col_widths: {}
     grid_position: ENONMA,FNDZWD
   name: valerror_1
 - type: Label
-  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-    visible: false, text: '- Dropdown "Sign" must be chosen when column mapping is
-      "Amount"', font_size: 12, font: '', spacing_above: small, icon_align: left,
-    spacing_below: small, italic: false, background: '', bold: false, underline: false,
-    icon: ''}
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '- Dropdown "Sign" must be chosen when column mapping is "Amount"', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties:
     col_widths: {}
     grid_position: AMNQWC,BECJUY
   name: valerror_2
 - type: Label
-  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-    visible: false, text: '- Dropdown "Account" must be chosen when the account is
-      required in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left,
-    spacing_below: small, italic: false, background: '', bold: false, underline: false,
-    icon: ''}
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '- Dropdown "Account" must be chosen when the account is required in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties:
     col_widths: {}
     grid_position: JIMKZD,QNUBJR
   name: valerror_3
 - type: Label
-  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '',
-    visible: false, text: '- Dropdown "Label" must be chosen when the account is required
-      in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left,
-    spacing_below: small, italic: false, background: '', bold: false, underline: false,
-    icon: ''}
+  properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '- Dropdown "Label" must be chosen when the account is required in extra action', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
   layout_properties:
     col_widths: {}
     grid_position: IWGMYE,XCSHKB
@@ -80,17 +55,11 @@ components:
     grid_position: GSTUVZ,HFWNTV
   components:
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Step 5, font_size: 16, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
-      underline: false, icon: 'fa:long-arrow-right'}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: Step 5, font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: 'fa:long-arrow-right'}
     name: label_step5
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Choose existing tab or create new             ', font_size: 16,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: true, underline: false, icon: ''}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: 'Choose existing tab or create new             ', font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: ''}
     name: label_step5a
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
   - type: DropDown
@@ -124,17 +93,11 @@ components:
     grid_position: SKIWMT,JIMGDR
   components:
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Step 6, font_size: 16, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
-      underline: false, icon: 'fa:long-arrow-right'}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: Step 6, font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: 'fa:long-arrow-right'}
     name: label_step6
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Configure columns mapping                      ', font_size: 16,
-      font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false,
-      background: '', bold: true, underline: false, icon: ''}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: 'Configure columns mapping                      ', font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: ''}
     name: label_step6a
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
   - type: DataGrid
@@ -159,9 +122,7 @@ components:
     layout_properties: {width: 511.6}
     components:
     - type: RepeatingPanel
-      properties: {role: null, tooltip: '', border: '', foreground: '', items: null,
-        visible: true, spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFilePDFImportForm.PDFColumnsMappingRPTemplate,
-        background: ''}
+      properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: true, spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseFilePDFImportForm.PDFColumnsMappingRPTemplate, background: ''}
       name: cols_mapping_panel
       layout_properties: {}
 - type: FlowPanel
@@ -172,17 +133,11 @@ components:
     grid_position: YQJCPF,THMILU
   components:
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: Step 7, font_size: 16, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: true,
-      underline: false, icon: 'fa:long-arrow-right'}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: Step 7, font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: 'fa:long-arrow-right'}
     name: label_step7
     layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: true, text: 'Apply additional changes                            ',
-      font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small,
-      italic: false, background: '', bold: true, underline: false, icon: ''}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: 'Apply additional changes                            ', font_size: 16, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: ''}
     name: label_step7a
     layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
   - type: ColumnPanel
@@ -191,10 +146,7 @@ components:
     layout_properties: {width: 331}
     components:
     - type: CheckBox
-      properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
-        foreground: '', allow_indeterminate: false, visible: true, text: Account,
-        font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false,
-        background: '', bold: false, checked: false, underline: false}
+      properties: {role: null, align: left, tooltip: '', border: '', enabled: true, foreground: '', allow_indeterminate: false, visible: true, text: Account, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, background: '', bold: false, checked: false, underline: false}
       name: cb_account
       layout_properties: {grid_position: 'LAELGF,DHTDJG'}
       event_bindings: {change: cb_account_change}
@@ -222,10 +174,7 @@ components:
       layout_properties: {grid_position: 'LAELGF,DBRYON'}
       event_bindings: {}
     - type: CheckBox
-      properties: {role: null, align: left, tooltip: '', border: '', enabled: true,
-        foreground: '', allow_indeterminate: false, visible: true, text: Labels, font_size: 12,
-        font: '', spacing_above: small, spacing_below: small, italic: false, background: '',
-        bold: false, checked: false, underline: false}
+      properties: {role: null, align: left, tooltip: '', border: '', enabled: true, foreground: '', allow_indeterminate: false, visible: true, text: Labels, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, background: '', bold: false, checked: false, underline: false}
       name: cb_labels
       layout_properties:
         col_widths: {}
@@ -256,25 +205,18 @@ components:
         col_widths: {}
         grid_position: QPNYXH,RGCQGV
 - type: FlowPanel
-  properties: {role: null, spacing: medium, align: right, tooltip: '', border: '',
-    foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
+  properties: {role: null, spacing: medium, align: right, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
   name: flow_panel_last
   layout_properties:
     col_widths: {}
     grid_position: EAKVAM,NLXOAT
   components:
   - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '',
-      visible: false, text: '0', font_size: 12, font: '', spacing_above: small, icon_align: left,
-      spacing_below: small, italic: false, background: '', bold: false, underline: false,
-      icon: ''}
+    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '0', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
     name: hidden_mapping_count
     layout_properties: {grid_position: 'EAKVAM,UJELHX'}
   - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true,
-      foreground: '', visible: true, text: Proceed, font_size: 12, font: '', spacing_above: small,
-      icon_align: left, spacing_below: small, italic: false, background: '', bold: false,
-      underline: false, icon: ''}
+    properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Proceed, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
     name: button_next
     layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
     event_bindings: {click: button_next_click}

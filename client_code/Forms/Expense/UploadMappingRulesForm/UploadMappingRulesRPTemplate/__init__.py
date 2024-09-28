@@ -46,9 +46,9 @@ class UploadMappingRulesRPTemplate(UploadMappingRulesRPTemplateTemplate):
     @logger.log_function
     def mapping_button_minus_click(self, **event_args):
         b = event_args['sender']
-        if b.parent.tag[0] and not b.parent.tag[-1]:
-            self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag[0]},"
-        logger.trace(f"b.parent.tag[0]={b.parent.tag[0]}, self.row_hidden_del_fid.text={self.row_hidden_del_fid.text}")
+        if b.parent.tag:
+            self.row_hidden_del_fid.text = self.row_hidden_del_fid.text + f"{b.parent.tag.get('col')},"
+        logger.trace(f"b.parent.tag.get('col')={b.parent.tag.get('col')}, self.row_hidden_del_fid.text={self.row_hidden_del_fid.text}")
         b.parent.remove_from_parent()
 
     @btnmod.one_click_only

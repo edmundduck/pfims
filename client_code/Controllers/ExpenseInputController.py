@@ -135,17 +135,14 @@ def generate_label_id_list(id_obj):
         result (list of int): List of label IDs.
     """
 
-    result = []
     if id_obj is not None:
         if isinstance(id_obj, int):
-            result = [id_obj]
-        elif isinstance(id_obj, tuple):
-            result = list(id_obj)
-        elif isinstance(id_obj, list):
-            result = id_obj
+            return [id_obj]
+        elif isinstance(id_obj, (tuple, list)):
+            return [x for x in id_obj if isinstance(x, int)]
         else:
             raise TypeError('The parameter is not either integer or list/tuple.')
-    return result
+    return []
 
 def get_account_dropdown_selected_item(acct_id):
     """
@@ -338,7 +335,23 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         result = [ExpenseTransaction().copy().get_dict() for i in range(ExpenseConfig.DEFAULT_ROW_NUM)]
         logger.trace('rp_items blank=', result)
     return result
-        
+
+def update_label_id_list(rp_items):
+    """
+    Update label ID list to be list type for the provided repeating items.
+
+    Parameters:
+        rp_items (list of dict): Repeating panel item.
+
+    Returns:
+        rp_items (list of dict): A list of data refreshed with list type for all labels field.
+    """
+
+    from ..Entities.ExpenseTransaction import ExpenseTransaction
+    for i in rp_items:
+        i[ExpenseTransaction.field_labels()] = generate_label_id_list(i.get(ExpenseTransaction.field_labels()))
+    return rp_items
+
 @logger.log_function
 def save_expense_transaction_group(group_dropdown_selected, group_name, transactions):
     """
