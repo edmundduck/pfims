@@ -1,168 +1,168 @@
-container:
-  type: ColumnPanel
-  properties: {col_widths: '{}'}
 components:
-- type: ColumnPanel
-  properties: {role: card, tooltip: '', border: '', foreground: '', visible: true, wrap_on: mobile, col_spacing: medium, spacing_above: medium, col_widths: '{"LEHJTD":30}', spacing_below: medium, background: ''}
-  name: colpanel_search
-  layout_properties:
-    col_widths: {}
-    grid_position: IWWXTN,ELVDQC
-    full_width_row: false
-  components:
-  - type: FlowPanel
-    properties: {}
-    name: flow_panel_2
-    layout_properties: {grid_position: 'ALKAHM,GEDAFW', full_width_row: true}
-    components:
-    - name: spacer_1
+- components:
+  - components:
+    - layout_properties: {expand: false, width: 30}
+      name: spacer_1
       properties: {height: 32}
       type: Spacer
-      layout_properties: {width: 30, expand: false}
-    - type: Label
-      properties: {role: null, align: right, tooltip: '', border: '', foreground: '', visible: true, text: 'Interval ', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
+    - layout_properties: {grid_position: 'SVNURG,LMOPUE'}
       name: label_2
-      layout_properties: {grid_position: 'SVNURG,LMOPUE'}
-    - name: spacer_6
+      properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: 'Interval ', tooltip: '', underline: false, visible: true}
+      type: Label
+    - layout_properties: {width: 6}
+      name: spacer_6
       properties: {height: 32}
       type: Spacer
-      layout_properties: {width: 6}
-    - type: DropDown
-      properties:
-        role: null
-        align: full
-        tooltip: ''
-        placeholder: Choose one below
-        border: ''
-        enabled: true
-        foreground: ''
-        items: []
-        visible: true
-        font_size: 12
-        font: ''
-        spacing_above: small
-        spacing_below: small
-        italic: false
-        background: ''
-        bold: false
-        underline: false
-        include_placeholder: true
-      name: dropdown_interval
+    - event_bindings: {change: dropdown_interval_change}
       layout_properties: {grid_position: 'SVNURG,CGSFIB'}
-      event_bindings: {change: dropdown_interval_change}
-    - type: DatePicker
-      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '', placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: time_datefrom
-      layout_properties: {grid_position: 'SVNURG,FOCPNB', width: 174.4}
-      event_bindings: {change: time_datefrom_change}
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: to, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-      name: label_timetotime
-      layout_properties: {grid_position: 'SVNURG,FHFBEI'}
-    - type: DatePicker
-      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '', placeholder: '', border: '', enabled: true, foreground: '', visible: true, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: time_dateto
-      layout_properties: {grid_position: 'SVNURG,SPAIGB', width: 175.4}
-      event_bindings: {change: time_dateto_change}
-  - type: FlowPanel
-    properties: {}
-    name: panel_symbol
-    layout_properties: {grid_position: 'RTTCZV,LEHJTD', full_width_row: true}
-    components:
-    - name: spacer_2
-      properties: {height: 32}
-      type: Spacer
-      layout_properties: {width: 30}
-    - type: Label
-      properties: {role: null, align: right, tooltip: '', border: '', foreground: '', visible: true, text: Symbol, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-      name: label_3
-      layout_properties: {grid_position: 'FLAWCB,BQECIK'}
-    - name: spacer_5
-      properties: {height: 32}
-      type: Spacer
-      layout_properties: {width: 10}
-    - type: DropDown
+      name: dropdown_interval
       properties:
-        role: null
         align: full
-        tooltip: ''
-        placeholder: '[Symbol]'
-        border: ''
-        enabled: true
-        foreground: ''
-        items: []
-        visible: true
-        font_size: 12
-        font: ''
-        spacing_above: small
-        spacing_below: small
-        italic: false
         background: ''
         bold: false
-        underline: false
+        border: ''
+        enabled: true
+        font: ''
+        font_size: 12
+        foreground: ''
         include_placeholder: true
+        italic: false
+        items: []
+        placeholder: Choose one below
+        role: null
+        spacing_above: small
+        spacing_below: small
+        tooltip: ''
+        underline: false
+        visible: true
+      type: DropDown
+    - event_bindings: {change: time_datefrom_change}
+      layout_properties: {grid_position: 'SVNURG,FOCPNB', width: 174.4}
+      name: time_datefrom
+      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+      type: DatePicker
+    - layout_properties: {grid_position: 'SVNURG,FHFBEI'}
+      name: label_timetotime
+      properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: to, tooltip: '', underline: false, visible: true}
+      type: Label
+    - event_bindings: {change: time_dateto_change}
+      layout_properties: {grid_position: 'SVNURG,SPAIGB', width: 175.4}
+      name: time_dateto
+      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+      type: DatePicker
+    layout_properties: {full_width_row: true, grid_position: 'ALKAHM,GEDAFW'}
+    name: flow_panel_2
+    properties: {}
+    type: FlowPanel
+  - components:
+    - layout_properties: {width: 30}
+      name: spacer_2
+      properties: {height: 32}
+      type: Spacer
+    - layout_properties: {grid_position: 'FLAWCB,BQECIK'}
+      name: label_3
+      properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Symbol, tooltip: '', underline: false, visible: true}
+      type: Label
+    - layout_properties: {width: 10}
+      name: spacer_5
+      properties: {height: 32}
+      type: Spacer
+    - layout_properties: {grid_position: 'FLAWCB,NVJSHO'}
       name: dropdown_symbol
-      layout_properties: {grid_position: 'FLAWCB,NVJSHO'}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:plus'}
-      name: tranx_rpt_button_plus
+      properties:
+        align: full
+        background: ''
+        bold: false
+        border: ''
+        enabled: true
+        font: ''
+        font_size: 12
+        foreground: ''
+        include_placeholder: true
+        italic: false
+        items: []
+        placeholder: '[Symbol]'
+        role: null
+        spacing_above: small
+        spacing_below: small
+        tooltip: ''
+        underline: false
+        visible: true
+      type: DropDown
+    - event_bindings: {click: tranx_rpt_button_plus_click}
       layout_properties: {grid_position: 'FLAWCB,WXPDRR'}
-      event_bindings: {click: tranx_rpt_button_plus_click}
-  - type: FlowPanel
-    properties: {role: null, spacing: medium, align: right, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
-    name: panel_tranx_list
-    layout_properties: {grid_position: 'TQHMZN,XVLQJZ', full_width_row: true}
-    components:
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false, text: PANEL FOR TRANSACTION LIST, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
+      name: tranx_rpt_button_plus
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:plus', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+      type: Button
+    layout_properties: {full_width_row: true, grid_position: 'RTTCZV,LEHJTD'}
+    name: panel_symbol
+    properties: {}
+    type: FlowPanel
+  - components:
+    - layout_properties: {}
       name: label_1
-      layout_properties: {}
-    - type: Button
-      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Generate CSV (ALL), font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-      name: button_tranx_gen_csv
+      properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: PANEL FOR TRANSACTION LIST, tooltip: '', underline: false, visible: false}
+      type: Label
+    - event_bindings: {click: button_tranx_gen_csv_click}
       layout_properties:
         col_widths: {}
         grid_position: RRJTEU,FTYYVN
-      event_bindings: {click: button_tranx_gen_csv_click}
-    - type: Button
-      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
+      name: button_tranx_gen_csv
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: outlined, spacing_above: small, spacing_below: small, text: Generate CSV (ALL), tooltip: '', underline: false, visible: true}
+      type: Button
+    - event_bindings: {click: button_tranx_search_click}
+      layout_properties: {}
       name: button_tranx_search
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: outlined, spacing_above: small, spacing_below: small, text: Search, tooltip: '', underline: false, visible: true}
+      type: Button
+    - event_bindings: {click: button_tranx_reset_click}
       layout_properties: {}
-      event_bindings: {click: button_tranx_search_click}
-    - type: Button
-      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Reset, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
       name: button_tranx_reset
-      layout_properties: {}
-      event_bindings: {click: button_tranx_reset_click}
-    - name: spacer_3
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: outlined, spacing_above: small, spacing_below: small, text: Reset, tooltip: '', underline: false, visible: true}
+      type: Button
+    - layout_properties: {width: 30}
+      name: spacer_3
       properties: {height: 32}
       type: Spacer
-      layout_properties: {width: 30}
-  - type: FlowPanel
-    properties: {role: null, spacing: medium, align: right, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
-    name: panel_pnl_report
-    layout_properties: {grid_position: 'UOWBRV,CQWAHK', full_width_row: true}
-    components:
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false, text: PANEL FOR PNL REPORT, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
+    layout_properties: {full_width_row: true, grid_position: 'TQHMZN,XVLQJZ'}
+    name: panel_tranx_list
+    properties: {align: right, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+    type: FlowPanel
+  - components:
+    - layout_properties: {}
       name: label_4
+      properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: PANEL FOR PNL REPORT, tooltip: '', underline: false, visible: false}
+      type: Label
+    - event_bindings: {click: button_pnl_search_click}
       layout_properties: {}
-    - type: Button
-      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Search, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
       name: button_pnl_search
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: outlined, spacing_above: small, spacing_below: small, text: Search, tooltip: '', underline: false, visible: true}
+      type: Button
+    - event_bindings: {click: button_pnl_reset_click}
       layout_properties: {}
-      event_bindings: {click: button_pnl_search_click}
-    - type: Button
-      properties: {role: outlined, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Reset, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
       name: button_pnl_reset
-      layout_properties: {}
-      event_bindings: {click: button_pnl_reset_click}
-    - name: spacer_4
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: outlined, spacing_above: small, spacing_below: small, text: Reset, tooltip: '', underline: false, visible: true}
+      type: Button
+    - layout_properties: {width: 30}
+      name: spacer_4
       properties: {height: 32}
       type: Spacer
-      layout_properties: {width: 30}
-- type: ColumnPanel
-  properties: {}
+    layout_properties: {full_width_row: true, grid_position: 'UOWBRV,CQWAHK'}
+    name: panel_pnl_report
+    properties: {align: right, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+    type: FlowPanel
+  layout_properties:
+    col_widths: {}
+    full_width_row: false
+    grid_position: IWWXTN,ELVDQC
+  name: colpanel_search
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{"LEHJTD":30}', foreground: '', role: card, spacing_above: medium, spacing_below: medium, tooltip: '', visible: true, wrap_on: mobile}
+  type: ColumnPanel
+- layout_properties: {full_width_row: true, grid_position: 'LFVFQU,AOOFNC'}
   name: colpanel_list
-  layout_properties: {grid_position: 'LFVFQU,AOOFNC', full_width_row: true}
+  properties: {}
+  type: ColumnPanel
+container:
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
 is_package: true

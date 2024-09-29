@@ -1,41 +1,41 @@
-container:
-  type: ColumnPanel
-  properties: {col_widths: '{}'}
 components:
-- name: flow_panel_1
-  properties: {align: right}
-  type: FlowPanel
-  layout_properties: {grid_position: 'LRHUNE,KHYKWV'}
-  components:
-  - type: Button
-    properties: {role: filled, align: right, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Create Mapping, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:filter'}
+- components:
+  - event_bindings: {click: button_create_mapping_click}
     name: button_create_mapping
-    event_bindings: {click: button_create_mapping_click}
-  - type: Button
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:filter', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Create Mapping, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_file_import_click}
+    name: button_file_import
     properties:
-      role: filled
       align: right
-      tooltip: ''
-      border: ''
-      enabled: true
-      foreground: ''
-      visible: true
-      text: |
-        File Import
-      font_size: 12
-      font: ''
-      spacing_above: small
-      icon_align: left
-      spacing_below: small
-      italic: false
       background: ''
       bold: false
-      underline: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
       icon: fa:chevron-circle-left
-    name: button_file_import
-    event_bindings: {click: button_file_import_click}
-- type: RepeatingPanel
-  properties: {item_template: Forms.Expense.UploadMappingRulesForm.UploadMappingRulesRPTemplate}
+      icon_align: left
+      italic: false
+      role: filled
+      spacing_above: small
+      spacing_below: small
+      text: |
+        File Import
+      tooltip: ''
+      underline: false
+      visible: true
+    type: Button
+  layout_properties: {grid_position: 'LRHUNE,KHYKWV'}
+  name: flow_panel_1
+  properties: {align: right}
+  type: FlowPanel
+- layout_properties: {grid_position: 'LTOPDH,LKKWHN'}
   name: repeating_panel_1
-  layout_properties: {grid_position: 'LTOPDH,LKKWHN'}
+  properties: {item_template: Forms.Expense.UploadMappingRulesForm.UploadMappingRulesRPTemplate}
+  type: RepeatingPanel
+container:
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
 is_package: true

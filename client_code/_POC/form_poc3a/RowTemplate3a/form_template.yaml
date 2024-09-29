@@ -1,9 +1,9 @@
-container: {type: DataRowPanel}
 components:
-- type: TextBox
-  properties: {}
-  name: text_box_1
+- data_bindings:
+  - {code: 'self.item[''test'']', property: text, writeback: true}
   layout_properties: {column: UUWVZS}
-  data_bindings:
-  - {property: text, code: 'self.item[''test'']', writeback: true}
+  name: text_box_1
+  properties: {}
+  type: TextBox
+container: {type: DataRowPanel}
 is_package: true

@@ -1,27 +1,27 @@
-container: {type: ColumnPanel}
 components:
-- name: label_1
-  properties: {text: FAQ, role: subheading}
+- layout_properties: {grid_position: 'WEBRMF,WWNSRA'}
+  name: label_1
+  properties: {role: subheading, text: FAQ}
   type: Label
-  layout_properties: {grid_position: 'WEBRMF,WWNSRA'}
-- name: qn_a_1
-  properties: {question: 'Is this application free to use?', answer: Currently the access is granted per invitation. If you have got an invitation then you can use it for free until further announcement.}
+- layout_properties: {grid_position: 'OPHNBQ,JNFZQI'}
+  name: qn_a_1
+  properties: {answer: Currently the access is granted per invitation. If you have got an invitation then you can use it for free until further announcement., question: 'Is this application free to use?'}
   type: form:CustomComponents.QnA
-  layout_properties: {grid_position: 'OPHNBQ,JNFZQI'}
-- name: qn_a_5
-  properties: {question: 'Can I login with my Google or Facebook accounts?', answer: 'Login via other applications like Google, Facebook and others, that we called OAuth 2.0 authentication, is not ready for now. It will be implemented in the near future.'}
+- layout_properties: {grid_position: 'NALNCZ,SSUYXA'}
+  name: qn_a_5
+  properties: {answer: 'Login via other applications like Google, Facebook and others, that we called OAuth 2.0 authentication, is not ready for now. It will be implemented in the near future.', question: 'Can I login with my Google or Facebook accounts?'}
   type: form:CustomComponents.QnA
-  layout_properties: {grid_position: 'NALNCZ,SSUYXA'}
-- name: qn_a_2
-  properties: {question: 'How will my personal or financial data be used?', answer: Please be assured that all your personal data and financial data will be solely kept in this platform. They will not be used for marketing purposes or by any third parties.}
+- layout_properties: {grid_position: 'HTUBXC,YSWJSW'}
+  name: qn_a_2
+  properties: {answer: Please be assured that all your personal data and financial data will be solely kept in this platform. They will not be used for marketing purposes or by any third parties., question: 'How will my personal or financial data be used?'}
   type: form:CustomComponents.QnA
-  layout_properties: {grid_position: 'HTUBXC,YSWJSW'}
-- name: qn_a_3
-  properties: {question: 'Can I have my account and all my data erased from the application?', answer: 'Of course you can. Should you choose to leave, please send an email to support@pfims.co.uk.'}
+- layout_properties: {grid_position: 'SQWIAS,OIWGCE'}
+  name: qn_a_3
+  properties: {answer: 'Of course you can. Should you choose to leave, please send an email to support@pfims.co.uk.', question: 'Can I have my account and all my data erased from the application?'}
   type: form:CustomComponents.QnA
-  layout_properties: {grid_position: 'SQWIAS,OIWGCE'}
-- name: qn_a_4
-  properties: {question: 'Are languages other than English supported?', answer: 'We support languages other than English on narrative fields like account names, remarks and so on. For statement upload however, capturing data from statements upload only supports English for now. Please make sure the statements are in English otherwise it will yield unexpected result.'}
+- layout_properties: {grid_position: 'LHLULR,UTLDRN'}
+  name: qn_a_4
+  properties: {answer: 'We support languages other than English on narrative fields like account names, remarks and so on. For statement upload however, capturing data from statements upload only supports English for now. Please make sure the statements are in English otherwise it will yield unexpected result.', question: 'Are languages other than English supported?'}
   type: form:CustomComponents.QnA
-  layout_properties: {grid_position: 'LHLULR,UTLDRN'}
+container: {type: ColumnPanel}
 is_package: true

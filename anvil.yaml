@@ -1,27 +1,191 @@
-services:
-- source: /runtime/services/tables.yml
-  client_config: {}
-  server_config: {auto_create_missing_columns: false}
-- source: /runtime/services/anvil/users.yml
-  client_config: {allow_signup: false, enable_automatically: true, use_email: true, confirm_email: true, allow_remember_me: true, remember_me_days: 7, require_secure_passwords: true}
-  server_config: {user_table: users}
-- source: /runtime/services/anvil/secrets.yml
-  client_config: {}
-  server_config: {}
-- source: /runtime/services/anvil/files.yml
-  client_config: {}
-  server_config: {file_table: files}
-startup: {type: module, module: StartupModule}
-package_name: PFIMS
 allow_embedding: false
+db_schema:
+  brokers:
+    client: none
+    columns:
+    - admin_ui: {width: 200}
+      name: id
+      type: string
+    - admin_ui: {width: 200}
+      name: name
+      type: string
+    - admin_ui: {width: 200}
+      name: ccy
+      type: string
+    server: none
+    title: brokers
+  expense:
+    client: none
+    columns:
+    - admin_ui: {width: 200}
+      name: iid
+      type: string
+    - admin_ui: {width: 200}
+      name: tran_date
+      type: date
+    - admin_ui: {width: 200}
+      name: category
+      type: string
+    - admin_ui: {width: 200}
+      name: src
+      type: string
+    - admin_ui: {width: 200}
+      name: amt
+      type: number
+    - admin_ui: {width: 200}
+      name: debt
+      type: number
+    - admin_ui: {width: 200}
+      name: debt_pym
+      type: number
+    - admin_ui: {width: 200}
+      name: remarks
+      type: string
+    server: none
+    title: expense
+  files:
+    client: none
+    columns:
+    - admin_ui: {width: 200}
+      name: path
+      type: string
+    - admin_ui: {width: 200}
+      name: file
+      type: media
+    - admin_ui: {width: 200}
+      name: file_version
+      type: string
+    server: full
+    title: Files
+  settings:
+    client: none
+    columns:
+    - admin_ui: {width: 200}
+      name: default_broker
+      type: string
+    - admin_ui: {width: 200}
+      name: default_interval
+      type: string
+    - admin_ui: {width: 200}
+      name: default_datefrom
+      type: date
+    - admin_ui: {width: 200}
+      name: default_dateto
+      type: date
+    server: none
+    title: settings
+  templ_journals:
+    client: none
+    columns:
+    - admin_ui: {width: 200}
+      name: iid
+      type: number
+    - admin_ui: {width: 200}
+      name: template_id
+      type: string
+    - admin_ui: {width: 200}
+      name: sell_date
+      type: date
+    - admin_ui: {width: 200}
+      name: buy_date
+      type: date
+    - admin_ui: {width: 200}
+      name: symbol
+      type: string
+    - admin_ui: {width: 200}
+      name: qty
+      type: number
+    - admin_ui: {width: 200}
+      name: sales
+      type: number
+    - admin_ui: {width: 200}
+      name: cost
+      type: number
+    - admin_ui: {width: 200}
+      name: fee
+      type: number
+    - admin_ui: {width: 200}
+      name: sell_price
+      type: number
+    - admin_ui: {width: 200}
+      name: buy_price
+      type: number
+    - admin_ui: {width: 200}
+      name: pnl
+      type: number
+    server: none
+    title: templ_journals
+  templates:
+    client: none
+    columns:
+    - admin_ui: {width: 200}
+      name: template_id
+      type: string
+    - admin_ui: {width: 200}
+      name: template_name
+      type: string
+    - admin_ui: {width: 200}
+      name: broker_id
+      type: string
+    - admin_ui: {width: 200}
+      name: submitted
+      type: bool
+    - admin_ui: {width: 200}
+      name: template_create
+      type: datetime
+    - admin_ui: {width: 200}
+      name: template_lastsave
+      type: datetime
+    - admin_ui: {width: 200}
+      name: template_submitted
+      type: datetime
+    server: none
+    title: templates
+  upload_files:
+    client: none
+    columns:
+    - admin_ui: {width: 123.4}
+      name: userid
+      type: number
+    - admin_ui: {width: 233.4}
+      name: fileobj
+      type: media
+    - admin_ui: {width: 200}
+      name: last_upload
+      type: datetime
+    server: full
+    title: upload_files
+  users:
+    client: none
+    columns:
+    - admin_ui: {width: 200}
+      name: email
+      type: string
+    - admin_ui: {width: 100}
+      name: enabled
+      type: bool
+    - admin_ui: {width: 200}
+      name: password_hash
+      type: string
+    - admin_ui: {width: 200}
+      name: confirmed_email
+      type: bool
+    - admin_ui: {width: 200}
+      name: last_login
+      type: datetime
+    - admin_ui: {width: 200}
+      name: remembered_logins
+      type: simpleObject
+    - admin_ui: {width: 200}
+      name: n_password_failures
+      type: number
+    - admin_ui: {width: 200}
+      name: role
+      type: string
+    server: full
+    title: Users
+metadata: {description: Your one stop finance and inventory management in one integrated platform, logo_img: 'asset:fim$-favicon-color.png', title: FIM$}
 name: Financial and Inventory Management $YS
-runtime_options:
-  version: 2
-  client_version: '3'
-  server_version: python3-full
-  server_spec: {base: python310-standard}
-metadata: {title: FIM$, description: Your one stop finance and inventory management in one integrated platform, logo_img: 'asset:fim$-favicon-color.png'}
-startup_form: null
 native_deps:
   head_html: |-
     <script>
@@ -30,220 +194,56 @@ native_deps:
         .addClass('spinner_customized');
     })
     </script>
-db_schema:
-  templ_journals:
-    title: templ_journals
-    client: none
-    server: none
-    columns:
-    - name: iid
-      admin_ui: {width: 200}
-      type: number
-    - name: template_id
-      admin_ui: {width: 200}
-      type: string
-    - name: sell_date
-      admin_ui: {width: 200}
-      type: date
-    - name: buy_date
-      admin_ui: {width: 200}
-      type: date
-    - name: symbol
-      admin_ui: {width: 200}
-      type: string
-    - name: qty
-      admin_ui: {width: 200}
-      type: number
-    - name: sales
-      admin_ui: {width: 200}
-      type: number
-    - name: cost
-      admin_ui: {width: 200}
-      type: number
-    - name: fee
-      admin_ui: {width: 200}
-      type: number
-    - name: sell_price
-      admin_ui: {width: 200}
-      type: number
-    - name: buy_price
-      admin_ui: {width: 200}
-      type: number
-    - name: pnl
-      admin_ui: {width: 200}
-      type: number
-  templates:
-    title: templates
-    client: none
-    server: none
-    columns:
-    - name: template_id
-      admin_ui: {width: 200}
-      type: string
-    - name: template_name
-      admin_ui: {width: 200}
-      type: string
-    - name: broker_id
-      admin_ui: {width: 200}
-      type: string
-    - name: submitted
-      admin_ui: {width: 200}
-      type: bool
-    - name: template_create
-      admin_ui: {width: 200}
-      type: datetime
-    - name: template_lastsave
-      admin_ui: {width: 200}
-      type: datetime
-    - name: template_submitted
-      admin_ui: {width: 200}
-      type: datetime
-  settings:
-    title: settings
-    client: none
-    server: none
-    columns:
-    - name: default_broker
-      admin_ui: {width: 200}
-      type: string
-    - name: default_interval
-      admin_ui: {width: 200}
-      type: string
-    - name: default_datefrom
-      admin_ui: {width: 200}
-      type: date
-    - name: default_dateto
-      admin_ui: {width: 200}
-      type: date
-  brokers:
-    title: brokers
-    client: none
-    server: none
-    columns:
-    - name: id
-      admin_ui: {width: 200}
-      type: string
-    - name: name
-      admin_ui: {width: 200}
-      type: string
-    - name: ccy
-      admin_ui: {width: 200}
-      type: string
-  users:
-    title: Users
-    client: none
-    server: full
-    columns:
-    - name: email
-      admin_ui: {width: 200}
-      type: string
-    - name: enabled
-      admin_ui: {width: 100}
-      type: bool
-    - name: password_hash
-      admin_ui: {width: 200}
-      type: string
-    - name: confirmed_email
-      admin_ui: {width: 200}
-      type: bool
-    - name: last_login
-      admin_ui: {width: 200}
-      type: datetime
-    - name: remembered_logins
-      admin_ui: {width: 200}
-      type: simpleObject
-    - name: n_password_failures
-      admin_ui: {width: 200}
-      type: number
-    - name: role
-      admin_ui: {width: 200}
-      type: string
-  expense:
-    title: expense
-    client: none
-    server: none
-    columns:
-    - name: iid
-      admin_ui: {width: 200}
-      type: string
-    - name: tran_date
-      admin_ui: {width: 200}
-      type: date
-    - name: category
-      admin_ui: {width: 200}
-      type: string
-    - name: src
-      admin_ui: {width: 200}
-      type: string
-    - name: amt
-      admin_ui: {width: 200}
-      type: number
-    - name: debt
-      admin_ui: {width: 200}
-      type: number
-    - name: debt_pym
-      admin_ui: {width: 200}
-      type: number
-    - name: remarks
-      admin_ui: {width: 200}
-      type: string
-  files:
-    title: Files
-    client: none
-    server: full
-    columns:
-    - name: path
-      admin_ui: {width: 200}
-      type: string
-    - name: file
-      admin_ui: {width: 200}
-      type: media
-    - name: file_version
-      admin_ui: {width: 200}
-      type: string
-  upload_files:
-    title: upload_files
-    client: none
-    server: full
-    columns:
-    - name: userid
-      admin_ui: {width: 123.4}
-      type: number
-    - name: fileobj
-      admin_ui: {width: 233.4}
-      type: media
-    - name: last_upload
-      admin_ui: {width: 200}
-      type: datetime
-secrets:
-  proddb_name:
-    value: {? '' : x4DQzIPabQxuQ1HKJtc6TrJ+Z6Lla6CntadZ3xPXDyR5uvKVXGz7pNJqZRUCrK2gZVXTDWvb/gdAtJxSZQcehAAKfl/wCsq27Q/fp9joi6aH8WD7N4ZwyjXYgWsvziH1x5yTNOVX}
-    type: secret
-  proddb_port:
-    value: {? '' : 65JRzuouoOX6monqteVGtI1K5dkVX4I6NSgYdR9R7xtav7H6kp1L+a0EZCGCjZU2Cq8ggzTSyuvWXhfSsHvHA8SY4khskpY9YI4g+57Yz6fSyO4on5ikJAa59LCwl4OkHJNZ}
-    type: secret
-  proddb_host:
-    value: {? '' : hFFP2sbXodXdz/XX8wfAToV1Cvgn/bJLW0hCDuLlB6sI5Oplwnj9kK/pAkMVmG2KFKHWlRqaex38RPFxLLxKTbqns6bIf5mfQM/1j0ObV1k6vUuXN8LPu3bBaVxok6fo74tTd2aTu++PCb6hUh/nq1YirDim5FY9rkAjSZ8K4Aq3A9ArM3J9GFCkrmpr3q4vrpODyY0PYexoaA9s}
-    type: secret
-  devdb_app_pw:
-    value: {? '' : XPj7+97OiQ/9vxj1UdbMN4LqpYZcZlxFiMhDt8ss1ZUMMfhxQ7eURaBHnX9AVwElw0l44UzTObG1aeVXKSZL9E2/OWxsnRQVLQmTqgWxF1Pj7whwfhslH3cigEowliLo8U/VAj6B9eehKKfuKke54FRBr9Z0y4U=, GD34C5SRFWM5LYQZ: HqIpU3F4pzY8GSjS6gIhWbZdx2a13/jsJiCfmqvohNhUwXnouHuBc2eNQ35s67l0I7cEgCrv2wP6ArqV8igOKzVtS5FBcFppdmSAS/HfVHuggIvLpZ2xXW3Ie+vwVf7G5v3Lh4y5K/ke25X6ETIVvnfu1RCmllA=}
-    type: secret
-  devdb_app_usr:
-    value: {? '' : Cbsr3Rmm1diM3gZFjOswOqnIbvWZwJKEW8jOx2moUSAMpworznxvaGcYawpM6S3C1oNkNSkAJhGfva03thDKJgRTkKSdkMooM7/s52LoK0cLsZKRBNm/JImjfAtnf0vS+RJDjbIHENU=, GD34C5SRFWM5LYQZ: 6ORL1VY/rweXPcoTB4ef60eCbbsBvuHygSHDyKeaNvw41ImvSyj+tMaTvdqZzAOaR1THlmYBY0qdsL/zBapXdus8l9duqQgZD4JFP3i9EjmtexwXM3C7fiUreP7gCGQS+Q/xpHhUw9IL}
-    type: secret
-  devdb_host:
-    value: {? '' : z2YcSeManfJBLoKT1wmot56U15f+Ki06QkofK1BJSbPJShZTTmM+hQxMwKn7c9H2ZWlb8NFuX8UWvpKquw4r+YiH0jJyJeJ3k5FuULRl7IR1HMy095z9eHhHR6pIDl84UT0fnMKEIMkRVkJWeiSH874hsECOMH3L2dfTqqXCMMKkLxUGVGDdVwCveKyzaVkO1A1aabcOnZqsUMuJ}
-    type: secret
-  devdb_port:
-    value: {? '' : KAGN3euax2sJrjc8NlKYMI9rz9gUkkKaFgJGInjmtnr0Evbj0Yr39XVE/RSfMi6P10cRHcCLXamrNNxXVWAlxXHENg62TA7hzrXqQHj98bJ8DvD2w5HDM0CC4l625iisq2p2}
-    type: secret
-  proddb_app_usr:
-    value: {? '' : 06OkM5JtvSNrZffpWvhR2lqOTl4jH5W/Qib3e7tSZpNI5ONHC4xQtsNsc2c0Ug1OVY3syV8k6YLPaMCmnERbk8OBTnfp1WbvKIb20F0g86jnu7yTH3MyFh8lv5u1ed+kqRb+/9oDVBk=}
-    type: secret
-  proddb_app_pw:
-    value: {? '' : lAFyIGItVqKuLMguFqtAkkqzSJysV6Kj5vdoOElYE/RqJF+9ndJrdO1VBFQ9x5b786C0UW3azwbRQl6WqRcOU1VzDpN8/+OehGMFxrj8Wjhnngma1Dm0DZPCn2t97/YJd9D79oeSD/RXZCxrdV+JuH5W8bwe60s=}
-    type: secret
-  devdb_name:
-    value: {? '' : qA5Z/8K/54VGE8vDF1Djx2XHKwRaNKT9bO3CGWqxlQyLX5Q5tOQ61xHQOs/uOf2+KKVZ8rWJCTFZAzA5kAdECai/6JXb0FDk8j+FDXyaZ2uPIw8mNLdUsyoRFQi1KFKHmVk1D/Zc9Tbd, GD34C5SRFWM5LYQZ: Yi6XR8oJdECYi4A5Kn4cTOyfLtOF91mzhTizAjpbU+5rd6eeJ1cpoQU18AFhWol/sxPJ4zqGQFkDmUz0ukiA3D6lzGqyasHVioPTGO3M9njOrlQY3plLl4B8rQY5qOGPxfpoEBta5jtcXA==}
-    type: secret
+package_name: PFIMS
 renamed: true
+runtime_options:
+  client_version: '3'
+  server_spec: {base: python310-standard}
+  server_version: python3-full
+  version: 2
+secrets:
+  devdb_app_pw:
+    type: secret
+    value: {? '' : XPj7+97OiQ/9vxj1UdbMN4LqpYZcZlxFiMhDt8ss1ZUMMfhxQ7eURaBHnX9AVwElw0l44UzTObG1aeVXKSZL9E2/OWxsnRQVLQmTqgWxF1Pj7whwfhslH3cigEowliLo8U/VAj6B9eehKKfuKke54FRBr9Z0y4U=, GD34C5SRFWM5LYQZ: HqIpU3F4pzY8GSjS6gIhWbZdx2a13/jsJiCfmqvohNhUwXnouHuBc2eNQ35s67l0I7cEgCrv2wP6ArqV8igOKzVtS5FBcFppdmSAS/HfVHuggIvLpZ2xXW3Ie+vwVf7G5v3Lh4y5K/ke25X6ETIVvnfu1RCmllA=}
+  devdb_app_usr:
+    type: secret
+    value: {? '' : Cbsr3Rmm1diM3gZFjOswOqnIbvWZwJKEW8jOx2moUSAMpworznxvaGcYawpM6S3C1oNkNSkAJhGfva03thDKJgRTkKSdkMooM7/s52LoK0cLsZKRBNm/JImjfAtnf0vS+RJDjbIHENU=, GD34C5SRFWM5LYQZ: 6ORL1VY/rweXPcoTB4ef60eCbbsBvuHygSHDyKeaNvw41ImvSyj+tMaTvdqZzAOaR1THlmYBY0qdsL/zBapXdus8l9duqQgZD4JFP3i9EjmtexwXM3C7fiUreP7gCGQS+Q/xpHhUw9IL}
+  devdb_host:
+    type: secret
+    value: {? '' : z2YcSeManfJBLoKT1wmot56U15f+Ki06QkofK1BJSbPJShZTTmM+hQxMwKn7c9H2ZWlb8NFuX8UWvpKquw4r+YiH0jJyJeJ3k5FuULRl7IR1HMy095z9eHhHR6pIDl84UT0fnMKEIMkRVkJWeiSH874hsECOMH3L2dfTqqXCMMKkLxUGVGDdVwCveKyzaVkO1A1aabcOnZqsUMuJ}
+  devdb_name:
+    type: secret
+    value: {? '' : qA5Z/8K/54VGE8vDF1Djx2XHKwRaNKT9bO3CGWqxlQyLX5Q5tOQ61xHQOs/uOf2+KKVZ8rWJCTFZAzA5kAdECai/6JXb0FDk8j+FDXyaZ2uPIw8mNLdUsyoRFQi1KFKHmVk1D/Zc9Tbd, GD34C5SRFWM5LYQZ: Yi6XR8oJdECYi4A5Kn4cTOyfLtOF91mzhTizAjpbU+5rd6eeJ1cpoQU18AFhWol/sxPJ4zqGQFkDmUz0ukiA3D6lzGqyasHVioPTGO3M9njOrlQY3plLl4B8rQY5qOGPxfpoEBta5jtcXA==}
+  devdb_port:
+    type: secret
+    value: {? '' : KAGN3euax2sJrjc8NlKYMI9rz9gUkkKaFgJGInjmtnr0Evbj0Yr39XVE/RSfMi6P10cRHcCLXamrNNxXVWAlxXHENg62TA7hzrXqQHj98bJ8DvD2w5HDM0CC4l625iisq2p2}
+  proddb_app_pw:
+    type: secret
+    value: {? '' : lAFyIGItVqKuLMguFqtAkkqzSJysV6Kj5vdoOElYE/RqJF+9ndJrdO1VBFQ9x5b786C0UW3azwbRQl6WqRcOU1VzDpN8/+OehGMFxrj8Wjhnngma1Dm0DZPCn2t97/YJd9D79oeSD/RXZCxrdV+JuH5W8bwe60s=}
+  proddb_app_usr:
+    type: secret
+    value: {? '' : 06OkM5JtvSNrZffpWvhR2lqOTl4jH5W/Qib3e7tSZpNI5ONHC4xQtsNsc2c0Ug1OVY3syV8k6YLPaMCmnERbk8OBTnfp1WbvKIb20F0g86jnu7yTH3MyFh8lv5u1ed+kqRb+/9oDVBk=}
+  proddb_host:
+    type: secret
+    value: {? '' : hFFP2sbXodXdz/XX8wfAToV1Cvgn/bJLW0hCDuLlB6sI5Oplwnj9kK/pAkMVmG2KFKHWlRqaex38RPFxLLxKTbqns6bIf5mfQM/1j0ObV1k6vUuXN8LPu3bBaVxok6fo74tTd2aTu++PCb6hUh/nq1YirDim5FY9rkAjSZ8K4Aq3A9ArM3J9GFCkrmpr3q4vrpODyY0PYexoaA9s}
+  proddb_name:
+    type: secret
+    value: {? '' : x4DQzIPabQxuQ1HKJtc6TrJ+Z6Lla6CntadZ3xPXDyR5uvKVXGz7pNJqZRUCrK2gZVXTDWvb/gdAtJxSZQcehAAKfl/wCsq27Q/fp9joi6aH8WD7N4ZwyjXYgWsvziH1x5yTNOVX}
+  proddb_port:
+    type: secret
+    value: {? '' : 65JRzuouoOX6monqteVGtI1K5dkVX4I6NSgYdR9R7xtav7H6kp1L+a0EZCGCjZU2Cq8ggzTSyuvWXhfSsHvHA8SY4khskpY9YI4g+57Yz6fSyO4on5ikJAa59LCwl4OkHJNZ}
+services:
+- client_config: {}
+  server_config: {auto_create_missing_columns: false}
+  source: /runtime/services/tables.yml
+- client_config: {allow_remember_me: true, allow_signup: false, confirm_email: true, enable_automatically: true, remember_me_days: 7, require_secure_passwords: true, use_email: true}
+  server_config: {user_table: users}
+  source: /runtime/services/anvil/users.yml
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/anvil/secrets.yml
+- client_config: {}
+  server_config: {file_table: files}
+  source: /runtime/services/anvil/files.yml
+startup: {module: StartupModule, type: module}
+startup_form: null

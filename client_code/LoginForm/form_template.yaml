@@ -1,58 +1,58 @@
-is_package: true
-container:
-  type: HtmlTemplate
-  properties: {tooltip: '', background: '', foreground: '', border: '', visible: true, role: null, html: '@theme:new-homepage.html'}
 components:
-- type: ColumnPanel
-  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true, wrap_on: mobile, col_spacing: large, spacing_above: small, col_widths: '{}', spacing_below: small, background: ''}
-  name: content_panel
+- components: []
   layout_properties: {slot: default}
-  components: []
-- name: image_logo
-  properties: {height: '70', source: _/theme/logo-no-background.png, horizontal_align: center, spacing_below: small}
-  type: Image
+  name: content_panel
+  properties: {background: '', border: '', col_spacing: large, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  type: ColumnPanel
+- event_bindings: {mouse_up: image_logo_mouse_up}
   layout_properties: {slot: logo}
-  event_bindings: {mouse_up: image_logo_mouse_up}
-- name: column_panel
+  name: image_logo
+  properties: {height: '70', horizontal_align: center, source: _/theme/logo-no-background.png, spacing_below: small}
+  type: Image
+- components:
+  - event_bindings: {click: button_feature_click}
+    layout_properties: {grid_position: 'XHTFVK,XYLOVO'}
+    name: button_feature
+    properties: {align: left, role: button-no-icon, text: Features}
+    type: Button
+  - event_bindings: {click: button_price_click}
+    layout_properties: {grid_position: 'BBSPYY,JBQTYI'}
+    name: button_price
+    properties: {align: left, role: button-no-icon, text: Pricing}
+    type: Button
+  - event_bindings: {click: button_resource_click}
+    layout_properties: {grid_position: 'ZXQAVD,URSYPS'}
+    name: button_resource
+    properties: {align: left, role: button-no-icon, text: Resources}
+    type: Button
+  - event_bindings: {click: button_contact_click}
+    layout_properties: {grid_position: 'KXGZZW,HKVBKV'}
+    name: button_contact
+    properties: {align: left, role: button-no-icon, text: Contact}
+    type: Button
+  - layout_properties: {grid_position: 'RZWQXW,NHJFVJ'}
+    name: spacer_1
+    properties: {height: 32}
+    type: Spacer
+  - layout_properties: {grid_position: 'OSHUGW,TDJCZD'}
+    name: spacer_2
+    properties: {height: 32}
+    type: Spacer
+  - event_bindings: {click: button_signup_click}
+    layout_properties: {grid_position: 'DOLLNT,OTCWFJ'}
+    name: button_signup
+    properties: {align: left, background: '', bold: true, border: '', enabled: false, font: '', font_size: null, foreground: 'theme:White', icon: '', icon_align: left, italic: false, role: button-no-icon, spacing_above: small, spacing_below: small, text: SIGN UP, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_login_click}
+    layout_properties: {grid_position: 'PEGBBN,RMKLZU'}
+    name: button_login
+    properties: {align: left, background: '', bold: true, border: '', enabled: true, font: '', font_size: null, foreground: 'theme:White', icon: '', icon_align: left, italic: false, role: button-no-icon, spacing_above: small, spacing_below: small, text: LOG IN, tooltip: '', underline: false, visible: true}
+    type: Button
+  layout_properties: {slot: left-nav}
+  name: column_panel
   properties: {}
   type: ColumnPanel
-  layout_properties: {slot: left-nav}
-  components:
-  - name: button_feature
-    properties: {text: Features, align: left, role: button-no-icon}
-    type: Button
-    layout_properties: {grid_position: 'XHTFVK,XYLOVO'}
-    event_bindings: {click: button_feature_click}
-  - name: button_price
-    properties: {text: Pricing, align: left, role: button-no-icon}
-    type: Button
-    layout_properties: {grid_position: 'BBSPYY,JBQTYI'}
-    event_bindings: {click: button_price_click}
-  - name: button_resource
-    properties: {text: Resources, align: left, role: button-no-icon}
-    type: Button
-    layout_properties: {grid_position: 'ZXQAVD,URSYPS'}
-    event_bindings: {click: button_resource_click}
-  - name: button_contact
-    properties: {text: Contact, align: left, role: button-no-icon}
-    type: Button
-    layout_properties: {grid_position: 'KXGZZW,HKVBKV'}
-    event_bindings: {click: button_contact_click}
-  - name: spacer_1
-    properties: {height: 32}
-    type: Spacer
-    layout_properties: {grid_position: 'RZWQXW,NHJFVJ'}
-  - name: spacer_2
-    properties: {height: 32}
-    type: Spacer
-    layout_properties: {grid_position: 'OSHUGW,TDJCZD'}
-  - type: Button
-    properties: {role: button-no-icon, align: left, tooltip: '', border: '', enabled: false, foreground: 'theme:White', visible: true, text: SIGN UP, font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: ''}
-    name: button_signup
-    layout_properties: {grid_position: 'DOLLNT,OTCWFJ'}
-    event_bindings: {click: button_signup_click}
-  - type: Button
-    properties: {role: button-no-icon, align: left, tooltip: '', border: '', enabled: true, foreground: 'theme:White', visible: true, text: LOG IN, font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: true, underline: false, icon: ''}
-    name: button_login
-    layout_properties: {grid_position: 'PEGBBN,RMKLZU'}
-    event_bindings: {click: button_login_click}
+container:
+  properties: {background: '', border: '', foreground: '', html: '@theme:new-homepage.html', role: null, tooltip: '', visible: true}
+  type: HtmlTemplate
+is_package: true

@@ -1,217 +1,217 @@
-container:
-  type: ColumnPanel
-  properties: {role: null, tooltip: '', border: groove, foreground: '', visible: true, wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}', spacing_below: small, background: ''}
 components:
-- type: FlowPanel
-  properties: {background: 'theme:Primary Container'}
-  name: flow_panel_1
-  layout_properties: {grid_position: 'ZDRSSJ,HYEEHZ'}
-  components:
-  - name: spacer_1
+- components:
+  - layout_properties: {width: 32}
+    name: spacer_1
     properties: {height: 32}
     type: Spacer
-    layout_properties: {width: 32}
-  - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter mapping rule name, border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small, italic: false, background: '', bold: false, underline: false}
-    name: row_mapping_name
+  - data_bindings:
+    - {code: 'self.item[''name'']', property: text, writeback: true}
     layout_properties: {}
-    data_bindings:
-    - {property: text, code: 'self.item[''name'']', writeback: true}
-  - name: row_desc
+    name: row_mapping_name
+    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Enter mapping rule name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    type: TextBox
+  - data_bindings:
+    - {code: 'self.item[''description'']', property: text, writeback: false}
+    layout_properties: {width: 336}
+    name: row_desc
     properties: {font_size: 12, placeholder: Enter description}
     type: TextBox
-    layout_properties: {width: 336}
-    data_bindings:
-    - {property: text, code: 'self.item[''description'']', writeback: false}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: File type, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
+  - layout_properties: {}
     name: label_3
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: File type, tooltip: '', underline: false, visible: true}
+    type: Label
+  - data_bindings:
+    - {code: 'self.item[''ftype'']', property: selected_value, writeback: true}
     layout_properties: {}
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: ''
-      border: ''
-      enabled: true
-      foreground: ''
-      items: ['']
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: false
     name: row_dropdown_type
-    layout_properties: {}
-    data_bindings:
-    - {property: selected_value, code: 'self.item[''ftype'']', writeback: true}
-  - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '', border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small, italic: false, background: '', bold: false, underline: false}
-    name: row_hidden_id
+    properties:
+      align: full
+      background: ''
+      bold: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: false
+      italic: false
+      items: ['']
+      placeholder: ''
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  - data_bindings:
+    - {code: 'self.item[''id'']', property: text, writeback: true}
     layout_properties: {width: 40.19999999999999}
-    data_bindings:
-    - {property: text, code: 'self.item[''id'']', writeback: true}
-  - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: '', border: '', enabled: false, foreground: '', visible: false, text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small, italic: false, background: '', bold: false, underline: false}
-    name: row_hidden_del_fid
+    name: row_hidden_id
+    properties: {align: left, background: '', bold: false, border: '', enabled: false, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: false}
+    type: TextBox
+  - data_bindings: []
     layout_properties: {width: 43.19999999999999}
-    data_bindings: []
-  - name: spacer_2
+    name: row_hidden_del_fid
+    properties: {align: left, background: '', bold: false, border: '', enabled: false, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: false}
+    type: TextBox
+  - layout_properties: {width: 32}
+    name: spacer_2
     properties: {height: 32}
     type: Spacer
-    layout_properties: {width: 32}
-  - type: Button
-    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Save, font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
+  - event_bindings: {click: row_button_save_click}
+    layout_properties: {}
     name: row_button_save
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Save, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: row_button_delete_click}
     layout_properties: {}
-    event_bindings: {click: row_button_save_click}
-  - type: Button
-    properties: {role: filled, align: center, tooltip: '', border: '', enabled: true, foreground: 'theme:Tertiary Container', visible: true, text: Delete, font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
     name: row_button_delete
-    layout_properties: {}
-    event_bindings: {click: row_button_delete_click}
-- type: FlowPanel
-  properties: {background: ''}
-  name: flow_panel_2
-  layout_properties: {grid_position: 'TDATED,WTSLHX'}
-  components:
-  - name: spacer_3
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: 'theme:Tertiary Container', icon: '', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
+    type: Button
+  layout_properties: {grid_position: 'ZDRSSJ,HYEEHZ'}
+  name: flow_panel_1
+  properties: {background: 'theme:Primary Container'}
+  type: FlowPanel
+- components:
+  - layout_properties: {width: 32}
+    name: spacer_3
     properties: {height: 32}
     type: Spacer
-    layout_properties: {width: 32}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: 'Map Excel column ', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
+  - data_bindings: []
+    layout_properties: {}
     name: row_lbl_1
-    layout_properties: {}
-    data_bindings: []
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: ''
-      border: ''
-      enabled: true
-      foreground: ''
-      items: [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z]
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: false
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: 'Map Excel column ', tooltip: '', underline: false, visible: true}
+    type: Label
+  - layout_properties: {}
     name: row_dropdown_excelcol
-    layout_properties: {}
-  - type: Label
-    properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: ' to data column ', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-    name: row_lbl_2
-    layout_properties: {grid_position: 'BHSPDO,ASOCLE'}
-  - type: DropDown
     properties:
-      role: null
       align: full
-      tooltip: ''
-      placeholder: ''
-      border: ''
-      enabled: true
-      foreground: ''
-      items: []
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
       background: ''
       bold: false
-      underline: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
       include_placeholder: false
+      italic: false
+      items: [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z]
+      placeholder: ''
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  - layout_properties: {grid_position: 'BHSPDO,ASOCLE'}
+    name: row_lbl_2
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: ' to data column ', tooltip: '', underline: false, visible: true}
+    type: Label
+  - layout_properties: {}
     name: row_dropdown_datacol
-    layout_properties: {}
-  - name: spacer_4
+    properties:
+      align: full
+      background: ''
+      bold: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: false
+      italic: false
+      items: []
+      placeholder: ''
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  - layout_properties: {width: 32}
+    name: spacer_4
     properties: {height: 32}
     type: Spacer
-    layout_properties: {width: 32}
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: Choose additional action
-      border: ''
-      enabled: true
-      foreground: ''
-      items: []
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: true
+  - event_bindings: {change: row_dropdown_extraact_change, show: row_dropdown_extraact_show}
+    layout_properties: {}
     name: row_dropdown_extraact
-    layout_properties: {}
-    event_bindings: {change: row_dropdown_extraact_change, show: row_dropdown_extraact_show}
-  - type: DropDown
     properties:
-      role: null
       align: full
-      tooltip: ''
-      placeholder: Choose label
-      border: ''
-      enabled: true
-      foreground: ''
-      items: []
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
       background: ''
       bold: false
-      underline: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
       include_placeholder: true
-    name: row_dropdown_lbl
-    layout_properties: {}
-  - type: DropDown
-    properties:
+      italic: false
+      items: []
+      placeholder: Choose additional action
       role: null
-      align: full
-      tooltip: ''
-      placeholder: ''
-      border: ''
-      enabled: true
-      foreground: ''
-      items: [Choose account]
-      visible: true
-      font_size: 12
-      font: ''
       spacing_above: small
       spacing_below: small
-      italic: false
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  - layout_properties: {}
+    name: row_dropdown_lbl
+    properties:
+      align: full
       background: ''
       bold: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: true
+      italic: false
+      items: []
+      placeholder: Choose label
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
       underline: false
-      include_placeholder: false
+      visible: true
+    type: DropDown
+  - layout_properties: {}
     name: row_dropdown_acct
+    properties:
+      align: full
+      background: ''
+      bold: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: false
+      italic: false
+      items: [Choose account]
+      placeholder: ''
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  - event_bindings: {click: row_button_add_click}
     layout_properties: {}
-  - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:plus'}
     name: row_button_add
-    layout_properties: {}
-    event_bindings: {click: row_button_add_click}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:plus', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    type: Button
+  layout_properties: {grid_position: 'TDATED,WTSLHX'}
+  name: flow_panel_2
+  properties: {background: ''}
+  type: FlowPanel
+container:
+  properties: {background: '', border: groove, col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  type: ColumnPanel
 is_package: true

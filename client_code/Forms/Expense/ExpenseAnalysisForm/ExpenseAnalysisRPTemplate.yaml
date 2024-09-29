@@ -1,22 +1,22 @@
-container:
-  type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true, visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none, italic: false, background: '', bold: false, underline: false}
 components:
-- name: row_amount
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-  type: Label
+- data_bindings:
+  - {code: '"${0:.2f}".format(self.item[''AMT''])', property: text}
   layout_properties: {column: JRLRWP}
-  data_bindings:
-  - {property: text, code: '"${0:.2f}".format(self.item[''AMT''])'}
-- type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-  name: row_label
+  name: row_amount
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  type: Label
+- data_bindings:
+  - {code: 'self.item[''LBL'']', property: text}
   layout_properties: {column: RMITXR}
-  data_bindings:
-  - {property: text, code: 'self.item[''LBL'']'}
-- name: row_account
+  name: row_label
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  type: Label
+- data_bindings:
+  - {code: 'self.item[''ACC'']', property: text, writeback: false}
+  layout_properties: {column: QJYSBH}
+  name: row_account
   properties: {}
   type: Label
-  layout_properties: {column: QJYSBH}
-  data_bindings:
-  - {property: text, code: 'self.item[''ACC'']', writeback: false}
+container:
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  type: DataRowPanel
