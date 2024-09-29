@@ -65,7 +65,7 @@ components:
     type: DropDown
   - data_bindings:
     - {code: 'self.item[''AMT'']', property: text, writeback: true}
-    event_bindings: {change: row_amt_change}
+    event_bindings: {change: row_amt_change, focus: row_amt_focus, lost_focus: row_amt_lost_focus}
     layout_properties: {column: JRLRWP}
     name: row_amt
     properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}

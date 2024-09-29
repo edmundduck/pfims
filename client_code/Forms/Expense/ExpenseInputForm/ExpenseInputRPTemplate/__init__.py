@@ -126,6 +126,14 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         """This method is called when the text in this text box is edited"""
         self.parent.raise_event('x-switch-to-save-button')
 
+    def row_amt_lost_focus(self, **event_args):
+        """This method is called when the TextBox loses focus"""
+        self.row_amt.text = self.row_acct.selected_value[2] + self.row_amt.text if isinstance(self.row_acct.selected_value, list) else self.row_amt.text
+
+    def row_amt_focus(self, **event_args):
+        """This method is called when the TextBox gets focus"""
+        self.row_amt.text = self.row_amt.text[1:] if self.row_amt.text else self.row_amt.text
+
     def row_remarks_change(self, **event_args):
         """This method is called when the text in this text box is edited"""
         self.parent.raise_event('x-switch-to-save-button')
