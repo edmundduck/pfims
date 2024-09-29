@@ -24,8 +24,10 @@ def generate_accounts_list():
     userid = sys.get_current_userid()
     conn = sys.db_connect()
     with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        sql = "SELECT * FROM {schema}.accounts WHERE userid = {userid} ORDER BY status ASC, valid_from DESC, valid_to DESC, id DESC".format(
+        sql = "SELECT a.*, c.symbol FROM {schema}.accounts a, {refschema}.ccy c WHERE \
+        a.userid = {userid} AND a.ccy = c.abbv ORDER BY a.status ASC, a.valid_from DESC, a.valid_to DESC, a.id DESC".format(
             schema=Database.SCHEMA_FIN,
+            refschema=Database.SCHEMA_REFDATA,
             userid=userid
         )
         cur.execute(sql)
