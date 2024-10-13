@@ -62,24 +62,17 @@ def to_dict_of_list(LD):
         DL = {}
     return DL
 
-def get_account_currency_symbol(acctid):
+def get_account_currency_symbol(acct_id):
     """
-    Change the key(s) in a dict to be upper case.
+    Return either the currency symbol or abbreviation of a given account ID.
 
-    If key_list is None, then all keys in a dict will be changed to upper case, otherwise only change those found in key_list.
+    Currency abbreviation will only be returned if symbol cannot be found or empty.
 
     Parameters:
-        key_list (list): List of key requiring to be upper case.
+        acct_id (int): Account ID.
 
     Returns:
-        result (list of dict): List of dict containing keys in upper case.
+        result (string): Currency symbol or abbreviation of the given account ID.
     """
-    DL = {}
-    if rows is not None and len(rows) > 0:
-        for k in rows[0].keys():
-            if k.upper() in key_list or not key_list:
-                DL[k.upper()] = [row[k] for row in rows]
-            else:
-                DL[k] = [row[k] for row in rows]  
-    result = to_list_of_dict(DL)
-    return result
+    from ..Controllers.AccountMaintController import AccountMaintController
+    AccountMaintController.generate_accounts_dropdown()
