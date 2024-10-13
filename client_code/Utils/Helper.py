@@ -61,3 +61,25 @@ def to_dict_of_list(LD):
     else:
         DL = {}
     return DL
+
+def get_account_currency_symbol(acctid):
+    """
+    Change the key(s) in a dict to be upper case.
+
+    If key_list is None, then all keys in a dict will be changed to upper case, otherwise only change those found in key_list.
+
+    Parameters:
+        key_list (list): List of key requiring to be upper case.
+
+    Returns:
+        result (list of dict): List of dict containing keys in upper case.
+    """
+    DL = {}
+    if rows is not None and len(rows) > 0:
+        for k in rows[0].keys():
+            if k.upper() in key_list or not key_list:
+                DL[k.upper()] = [row[k] for row in rows]
+            else:
+                DL[k] = [row[k] for row in rows]  
+    result = to_list_of_dict(DL)
+    return result

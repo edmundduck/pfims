@@ -235,9 +235,8 @@ def get_transactions(group_dropdown_selected, reload=False):
         for j in exp_grp.get_transactions():
             tmp = j.get_dict()
             tmp[ExpenseTransaction.field_amount()] = Helper.? + tmp[ExpenseTransaction.field_amount()]
-        return
-    else:
-        return result
+            result += tmp
+    return result
 
 def get_blank_row_button_text(button_text):
     """
