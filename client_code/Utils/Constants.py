@@ -31,6 +31,7 @@ class CacheKey:
     """
     DICT_LABEL_LIST = DD_LABEL
     DICT_LABEL = 'labels_dict'
+    DICT_ACCOUNT_SYMBOL = 'accounts_symbol_dict'
     
     """
     Keys for objects
@@ -48,7 +49,7 @@ class CacheKey:
 
 class CacheDropdown:
     DROPDOWN_MAPPPING = {
-        CacheKey.DD_ACCOUNT: ['generate_accounts_list', lambda d: list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name'], r['symbol']]) for r in d)],
+        CacheKey.DD_ACCOUNT: ['generate_accounts_list', lambda d: list((r['name'] + " (" + str(r['id']) + ")", [r['id'], r['name'], r['symbol'], r['ccy']]) for r in d)],
         CacheKey.DD_BROKER: ['generate_brokers_simplified_list', lambda d: list((''.join([r['name'], ' [', r['ccy'], ']']), (r['broker_id'], r['name'], r['ccy'])) for r in d)],
         CacheKey.DD_CURRENCY: ['generate_currency_list', lambda d: list((r['abbv'] + " " + r['name'] + " (" + r['symbol'] + ")" if r['symbol'] else r['abbv'] + " " + r['name'], r['abbv']) for r in d)],
         CacheKey.DD_EXPENSE_TAB: ['generate_expense_groups_list', lambda d: list((r['tab_name'] + ' (' + str(r['tab_id']) + ')', [r['tab_id'], r['tab_name']]) for r in d)],

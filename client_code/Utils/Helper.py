@@ -74,5 +74,18 @@ def get_account_currency_symbol(acct_id):
     Returns:
         result (string): Currency symbol or abbreviation of the given account ID.
     """
-    from ..Controllers.AccountMaintController import AccountMaintController
-    AccountMaintController.generate_accounts_dropdown()
+    from ..Controllers import AccountMaintController
+    from ..Utils.ClientCache import ClientCache
+    from ..Utils.Constants import CacheKey
+    cache = ClientCache(CacheKey.DICT_ACCOUNT_SYMBOL)
+
+    if any((cache.is_empty(), cache.is_expired())):
+        DL = {}
+        for a in AccountMaintController.generate_accounts_dropdown():
+            acct_key = a[1]
+            if acct_key:
+                DL[acct_key[0]] = acct_key[2] if acct_key[2] else acct_key[3]
+        cache.set_cache(DL)
+        return DL.get(acct_id)
+    else:
+        return cache.get_cache().get(acct_id)

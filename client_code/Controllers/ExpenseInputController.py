@@ -227,6 +227,7 @@ def get_transactions(group_dropdown_selected, reload=False):
     """
     from ..Entities.ExpenseTransaction import ExpenseTransaction
     from ..Utils.ClientCache import ClientPersistentCache
+    from ..Utils import Helper
     cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
     exp_grp = __get_expense_transaction_group__(group_dropdown_selected, reload)
     cache.clear_cache()
@@ -234,7 +235,9 @@ def get_transactions(group_dropdown_selected, reload=False):
     if exp_grp.get_transactions():
         for j in exp_grp.get_transactions():
             tmp = j.get_dict()
-            tmp[ExpenseTransaction.field_amount()] = Helper.? + tmp[ExpenseTransaction.field_amount()]
+            print(tmp)
+            ** ERROR **
+            tmp[ExpenseTransaction.field_amount()] = f"{Helper.get_account_currency_symbol(j.get_account())}{tmp[ExpenseTransaction.field_amount()]}"
             result += tmp
     return result
 
