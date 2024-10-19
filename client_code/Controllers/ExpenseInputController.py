@@ -235,8 +235,8 @@ def get_transactions(group_dropdown_selected, reload=False):
     if exp_grp.get_transactions():
         for j in exp_grp.get_transactions():
             tmp = j.get_dict()
-            print(tmp)
-            ** ERROR **
+            print(f"OoOooOO {tmp}")
+            #** ERROR **
             tmp[ExpenseTransaction.field_amount()] = f"{Helper.get_account_currency_symbol(j.get_account())}{tmp[ExpenseTransaction.field_amount()]}"
             result += tmp
     return result
