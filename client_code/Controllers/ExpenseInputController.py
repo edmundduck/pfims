@@ -1,4 +1,5 @@
 import anvil.server
+import re
 from ..Utils.Constants import CacheKey, ExpenseConfig
 from ..Utils.Logger import ClientLogger
 
@@ -235,10 +236,8 @@ def get_transactions(group_dropdown_selected, reload=False):
     if exp_grp.get_transactions():
         for j in exp_grp.get_transactions():
             tmp = j.get_dict()
-            print(f"OoOooOO {tmp}")
-            #** ERROR **
             tmp[ExpenseTransaction.field_amount()] = f"{Helper.get_account_currency_symbol(j.get_account())}{tmp[ExpenseTransaction.field_amount()]}"
-            result += tmp
+            result.append(tmp)
     return result
 
 def get_blank_row_button_text(button_text):
@@ -308,6 +307,38 @@ def enable_expense_group_delete_button(group_selection):
     """
     group_id = group_selection[0] if isinstance(group_selection, (list, tuple)) else group_selection
     return False if group_id in (None, '') or str(group_id).isspace() else True
+
+def add_currency_symbol(selected_acct, amount_without_symbol):
+    """
+    Add currency symbol or abbreviation in front of the amount field.
+
+    Parameters:
+        selected_acct (list): Selected account.
+        amount_without_symbol (string): The amount field with only numbers and dp.
+
+    Returns:
+        amount (string): The amount field with currency symbol or abbreviation.
+    """
+    if isinstance(selected_acct, (list, tuple)):
+        try:
+            ccy_symbol = selected_acct[2] if selected_acct[2] else selected_acct[3]
+        except IndexError:
+            ccy_symbol = ""
+        return ccy_symbol + amount_without_symbol
+    else:
+        return amount_without_symbol
+
+def remove_currency_symbol(amount_with_symbol):
+    """
+    Remove currency symbol or abbreviation from the amount field.
+
+    Parameters:
+        amount_with_symbol (string): The amount field with currency symbol or abbreviation.
+        
+    Returns:
+        amount (string): The amount field with only numbers and dp.
+    """
+    return re.sub("^[^0-9,.]*", "", amount_with_symbol)
 
 def populate_repeating_panel_items(rp_items=None, reload=False):
     """
