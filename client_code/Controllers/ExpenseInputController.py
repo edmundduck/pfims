@@ -375,20 +375,24 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         logger.trace('rp_items blank=', result)
     return result
 
-def update_label_id_list(rp_items):
+def patch_repeating_panel_items(rp_items):
     """
-    Update label ID list to be list type for the provided repeating items.
+    Perform repeating items patching pre-submission to server processing.
 
     Parameters:
-        rp_items (list of dict): Repeating panel item.
+        rp_items (list of dict): Repeating panel items.
 
     Returns:
-        rp_items (list of dict): A list of data refreshed with list type for all labels field.
+        rp_items (list of dict): Updated repeating panel items.
     """
 
     from ..Entities.ExpenseTransaction import ExpenseTransaction
     for i in rp_items:
+        # Some label ID list in repeating panel items are not refreshed as list type as not navigated and triggerd the ExpenseInputRPTemplate init method,
+        # Hence update label ID list to be list type for the provided repeating items.
         i[ExpenseTransaction.field_labels()] = generate_label_id_list(i.get(ExpenseTransaction.field_labels()))
+        # Remove currency symbol for all amount fields.
+        i[ExpenseTransaction.field_amount()] = remove_currency_symbol(i.get(ExpenseTransaction.field_amount()))
     return rp_items
 
 @logger.log_function

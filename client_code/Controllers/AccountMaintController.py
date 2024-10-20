@@ -204,6 +204,7 @@ def create_account(acct_name, currency_dropdown_selected, date_validfrom, date_v
     from ..Entities.Account import Account
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.OBJ_ACCOUNT)
+    cache2 = ClientCache(CacheKey.DICT_ACCOUNT_SYMBOL)
 
     ccy = currency_dropdown_selected if currency_dropdown_selected is not None else None
     acct = Account().set_user_id(Global.userid).set_name(acct_name).set_base_currency(ccy).set_valid_datefrom(date_validfrom).set_valid_dateto(date_validto).set_status(status)
@@ -214,6 +215,7 @@ def create_account(acct_name, currency_dropdown_selected, date_validfrom, date_v
         logger.trace('id=', id)
         acct = acct.set_id(id)
         cache.set_cache({acct.get_id(): acct})
+        cache2.clear_cache()
     return acct
 
 @logger.log_function
@@ -236,6 +238,7 @@ def update_account(account_dropdown_selected, acct_name, currency_dropdown_selec
     from ..Entities.Account import Account
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.OBJ_ACCOUNT)
+    cache2 = ClientCache(CacheKey.DICT_ACCOUNT_SYMBOL)
 
     acct_id, _ = account_dropdown_selected if account_dropdown_selected is not None else [None, None]
     ccy = currency_dropdown_selected if currency_dropdown_selected is not None else None
@@ -246,6 +249,7 @@ def update_account(account_dropdown_selected, acct_name, currency_dropdown_selec
     else:
         logger.trace('result=', result)
         cache.set_cache({acct.get_id(): acct})
+        cache2.clear_cache()
     return acct
 
 @logger.log_function
@@ -263,6 +267,7 @@ def delete_account(account_dropdown_selected):
     from ..Entities.Account import Account
     from ..Utils.ClientCache import ClientCache
     cache = ClientCache(CacheKey.OBJ_ACCOUNT)
+    cache2 = ClientCache(CacheKey.DICT_ACCOUNT_SYMBOL)
 
     acct_id, acct_name = account_dropdown_selected if account_dropdown_selected is not None else [None, None]
     acct = Account().set_user_id(Global.userid).set_id(acct_id).set_name(acct_name)
@@ -272,4 +277,5 @@ def delete_account(account_dropdown_selected):
     else:
         logger.trace('result=', result)
         cache.clear_cache()
+        cache2.clear_cache()
     return result

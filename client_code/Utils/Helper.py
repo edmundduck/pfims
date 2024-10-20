@@ -84,7 +84,7 @@ def get_account_currency_symbol(acct_id):
         for acct in anvil.server.call('generate_accounts_list'):
             # Has dependency on how data columns are retrieved in DB
             # TODO - 'symbol' is hardcoded
-            DL[acct[Account.field_id()]] = acct['symbol'] if acct['symbol'] else acct[Account.field_base_currency()]
+            DL[acct[Account.field_id()]] = acct['symbol'] if acct['symbol'] else acct[Account.field_base_currency()] if acct[Account.field_base_currency()] else ""
         cache.set_cache(DL)
         return DL.get(acct_id)
     else:
