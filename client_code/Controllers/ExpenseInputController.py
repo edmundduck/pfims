@@ -1,5 +1,6 @@
 import anvil.server
 import re
+from ..Utils import Helper
 from ..Utils.Constants import CacheKey, ExpenseConfig
 from ..Utils.Logger import ClientLogger
 
@@ -319,14 +320,8 @@ def add_currency_symbol(selected_acct, amount_without_symbol):
     Returns:
         amount (string): The amount field with currency symbol or abbreviation.
     """
-    if isinstance(selected_acct, (list, tuple)):
-        try:
-            ccy_symbol = selected_acct[2] if selected_acct[2] else selected_acct[3]
-        except IndexError:
-            ccy_symbol = ""
-        return ccy_symbol + amount_without_symbol
-    else:
-        return amount_without_symbol
+    if isinstance(selected_acct, (list, tuple)) and len(selected_acct) > 0:
+        return f"{Helper.get_account_currency_symbol(selected_acct[0])}{amount_without_symbol}"
 
 def remove_currency_symbol(amount_with_symbol):
     """
