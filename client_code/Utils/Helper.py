@@ -61,3 +61,31 @@ def to_dict_of_list(LD):
     else:
         DL = {}
     return DL
+
+def get_account_currency_symbol(acct_id):
+    """
+    Return either the currency symbol or abbreviation of a given account ID.
+
+    Currency abbreviation will only be returned if symbol cannot be found or empty.
+
+    Parameters:
+        acct_id (int): Account ID.
+
+    Returns:
+        result (string): Currency symbol or abbreviation of the given account ID.
+    """
+    from ..Entities.Account import Account
+    from ..Utils.ClientCache import ClientCache
+    from ..Utils.Constants import CacheKey
+    cache = ClientCache(CacheKey.DICT_ACCOUNT_SYMBOL)
+
+    if any((cache.is_empty(), cache.is_expired())):
+        DL = {}
+        for acct in anvil.server.call('generate_accounts_list'):
+            # Has dependency on how data columns are retrieved in DB
+            # TODO - 'symbol' is hardcoded
+            DL[acct[Account.field_id()]] = acct['symbol'] if acct['symbol'] else acct[Account.field_base_currency()]
+        cache.set_cache(DL)
+        return DL.get(acct_id)
+    else:
+        return cache.get_cache().get(acct_id)

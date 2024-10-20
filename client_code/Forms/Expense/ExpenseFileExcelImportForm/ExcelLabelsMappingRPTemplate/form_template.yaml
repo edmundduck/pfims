@@ -1,147 +1,147 @@
+components:
+- data_bindings:
+  - {code: 'self.item[''tgtlbl'']', property: selected_value, writeback: true}
+  event_bindings: {change: dropdown_lbl_map_to_change}
+  layout_properties: {column: WIDMCS}
+  name: dropdown_lbl_map_to
+  properties:
+    align: full
+    background: ''
+    bold: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
+    include_placeholder: true
+    italic: false
+    items: []
+    placeholder: Map a label
+    role: null
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
+  type: DropDown
+- data_bindings:
+  - {code: 'self.item[''srclbl'']', property: text}
+  layout_properties: {column: LFIIUE}
+  name: src_label
+  properties: {align: right}
+  type: Label
+- data_bindings:
+  - {code: 'self.item[''action'']', property: selected_value, writeback: true}
+  event_bindings: {change: dropdown_lbl_action_change}
+  layout_properties: {column: DUOBFI}
+  name: dropdown_lbl_action
+  properties:
+    align: full
+    background: ''
+    bold: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
+    include_placeholder: true
+    italic: false
+    items: []
+    placeholder: Choose action
+    role: null
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
+  type: DropDown
+- layout_properties: {column: DUOBFI}
+  name: hidden_lbl_action
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: false}
+  type: Label
+- data_bindings:
+  - {code: 'self.item[''new'']', property: text, writeback: true}
+  layout_properties: {column: WIDMCS}
+  name: input_label
+  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: New label name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+  type: TextBox
+- data_bindings:
+  - {code: 'self.item[''tgtlbl2'']', property: selected_value, writeback: true}
+  event_bindings: {change: dropdown2_lbl_map_to_change}
+  layout_properties: {column: ZYHDYV}
+  name: dropdown2_lbl_map_to
+  properties:
+    align: full
+    background: ''
+    bold: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
+    include_placeholder: true
+    italic: false
+    items: []
+    placeholder: Additional label
+    role: null
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
+  type: DropDown
+- data_bindings:
+  - {code: 'self.item[''tgtlbl3'']', property: selected_value, writeback: true}
+  event_bindings: {change: dropdown3_lbl_map_to_change}
+  layout_properties: {column: OIEJUK}
+  name: dropdown3_lbl_map_to
+  properties:
+    align: full
+    background: ''
+    bold: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
+    include_placeholder: true
+    italic: false
+    items: []
+    placeholder: Additional label
+    role: null
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
+  type: DropDown
+- data_bindings:
+  - {code: 'self.item[''tgtlbl4'']', property: selected_value, writeback: true}
+  layout_properties: {column: IZVDKG}
+  name: dropdown4_lbl_map_to
+  properties:
+    align: full
+    background: ''
+    bold: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
+    include_placeholder: true
+    italic: false
+    items: []
+    placeholder: Additional label
+    role: null
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
+  type: DropDown
 container:
-  type: DataRowPanel
-  properties: {role: null, bold: false, align: left, spacing_above: none, background: '', underline: false, font: '', auto_display_data: true, foreground: '', spacing_below: none, visible: true, border: '', italic: false, font_size: 12, tooltip: ''}
   data_bindings: []
   event_bindings: {show: form_show}
-components:
-- type: DropDown
-  properties:
-    role: null
-    include_placeholder: true
-    bold: false
-    align: full
-    placeholder: Map a label
-    spacing_above: small
-    background: ''
-    underline: false
-    font: ''
-    foreground: ''
-    items: []
-    spacing_below: small
-    visible: true
-    border: ''
-    italic: false
-    enabled: true
-    font_size: 12
-    tooltip: ''
-  name: dropdown_lbl_map_to
-  layout_properties: {column: WIDMCS}
-  data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl'']', writeback: true}
-  event_bindings: {change: dropdown_lbl_map_to_change}
-- type: Label
-  properties: {align: right}
-  name: src_label
-  layout_properties: {column: LFIIUE}
-  data_bindings:
-  - {property: text, code: 'self.item[''srclbl'']'}
-- type: DropDown
-  properties:
-    role: null
-    include_placeholder: true
-    bold: false
-    align: full
-    placeholder: Choose action
-    spacing_above: small
-    background: ''
-    underline: false
-    font: ''
-    foreground: ''
-    items: []
-    spacing_below: small
-    visible: true
-    border: ''
-    italic: false
-    enabled: true
-    font_size: 12
-    tooltip: ''
-  name: dropdown_lbl_action
-  layout_properties: {column: DUOBFI}
-  event_bindings: {change: dropdown_lbl_action_change}
-  data_bindings:
-  - {property: selected_value, code: 'self.item[''action'']', writeback: true}
-- type: Label
-  properties: {role: null, bold: false, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: false, border: '', italic: false, font_size: 12, tooltip: '', text: ''}
-  name: hidden_lbl_action
-  layout_properties: {column: DUOBFI}
-- type: TextBox
-  properties: {role: null, bold: false, align: left, placeholder: New label name, spacing_above: small, background: '', type: text, underline: false, font: '', hide_text: false, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: ''}
-  name: input_label
-  layout_properties: {column: WIDMCS}
-  data_bindings:
-  - {property: text, code: 'self.item[''new'']', writeback: true}
-- name: dropdown2_lbl_map_to
-  properties:
-    role: null
-    include_placeholder: true
-    bold: false
-    align: full
-    placeholder: Additional label
-    spacing_above: small
-    background: ''
-    underline: false
-    font: ''
-    foreground: ''
-    items: []
-    spacing_below: small
-    visible: true
-    border: ''
-    italic: false
-    enabled: true
-    font_size: 12
-    tooltip: ''
-  type: DropDown
-  layout_properties: {column: ZYHDYV}
-  data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl2'']', writeback: true}
-  event_bindings: {change: dropdown2_lbl_map_to_change}
-- name: dropdown3_lbl_map_to
-  properties:
-    role: null
-    include_placeholder: true
-    bold: false
-    align: full
-    placeholder: Additional label
-    spacing_above: small
-    background: ''
-    underline: false
-    font: ''
-    foreground: ''
-    items: []
-    spacing_below: small
-    visible: true
-    border: ''
-    italic: false
-    enabled: true
-    font_size: 12
-    tooltip: ''
-  type: DropDown
-  layout_properties: {column: OIEJUK}
-  data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl3'']', writeback: true}
-  event_bindings: {change: dropdown3_lbl_map_to_change}
-- name: dropdown4_lbl_map_to
-  properties:
-    role: null
-    include_placeholder: true
-    bold: false
-    align: full
-    placeholder: Additional label
-    spacing_above: small
-    background: ''
-    underline: false
-    font: ''
-    foreground: ''
-    items: []
-    spacing_below: small
-    visible: true
-    border: ''
-    italic: false
-    enabled: true
-    font_size: 12
-    tooltip: ''
-  type: DropDown
-  layout_properties: {column: IZVDKG}
-  data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtlbl4'']', writeback: true}
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  type: DataRowPanel
 is_package: true

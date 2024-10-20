@@ -1,71 +1,71 @@
-container:
-  type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true, visible: true, font_size: 12, font: '', spacing_above: none, spacing_below: none, italic: false, background: '', bold: false, underline: false}
-  data_bindings: []
 components:
-- type: DropDown
-  properties:
-    role: null
-    align: full
-    tooltip: ''
-    placeholder: Choose mapping account
-    border: ''
-    enabled: true
-    foreground: ''
-    items: []
-    visible: true
-    font_size: 12
-    font: ''
-    spacing_above: small
-    spacing_below: small
-    italic: false
-    background: ''
-    bold: false
-    underline: false
-    include_placeholder: true
+- data_bindings:
+  - {code: 'self.item[''tgtacct'']', property: selected_value, writeback: true}
+  layout_properties: {column: WIDMCS}
   name: dropdown_acct_map_to
-  layout_properties: {column: WIDMCS}
-  data_bindings:
-  - {property: selected_value, code: 'self.item[''tgtacct'']', writeback: true}
-- type: TextBox
-  properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: New account name, border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small, italic: false, background: '', bold: false, underline: false}
-  name: input_account
-  layout_properties: {column: WIDMCS}
-  data_bindings:
-  - {property: text, code: 'self.item[''newacct'']', writeback: true}
-- type: Label
-  properties: {}
-  name: src_account
-  layout_properties: {column: LFIIUE}
-  data_bindings:
-  - {property: text, code: 'self.item[''srcacct'']'}
-- type: DropDown
   properties:
-    role: null
     align: full
-    tooltip: ''
-    placeholder: Choose action
-    border: ''
-    enabled: true
-    foreground: ''
-    items: []
-    visible: true
-    font_size: 12
-    font: ''
-    spacing_above: small
-    spacing_below: small
-    italic: false
     background: ''
     bold: false
-    underline: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
     include_placeholder: true
-  name: dropdown_acct_action
-  layout_properties: {column: DUOBFI}
+    italic: false
+    items: []
+    placeholder: Choose mapping account
+    role: null
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
+  type: DropDown
+- data_bindings:
+  - {code: 'self.item[''newacct'']', property: text, writeback: true}
+  layout_properties: {column: WIDMCS}
+  name: input_account
+  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: New account name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+  type: TextBox
+- data_bindings:
+  - {code: 'self.item[''srcacct'']', property: text}
+  layout_properties: {column: LFIIUE}
+  name: src_account
+  properties: {}
+  type: Label
+- data_bindings:
+  - {code: 'self.item[''action'']', property: selected_value, writeback: true}
   event_bindings: {change: dropdown_acct_action_change}
-  data_bindings:
-  - {property: selected_value, code: 'self.item[''action'']', writeback: true}
-- type: Label
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '', font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-  name: hidden_acct_action
   layout_properties: {column: DUOBFI}
+  name: dropdown_acct_action
+  properties:
+    align: full
+    background: ''
+    bold: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
+    include_placeholder: true
+    italic: false
+    items: []
+    placeholder: Choose action
+    role: null
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
+  type: DropDown
+- layout_properties: {column: DUOBFI}
+  name: hidden_acct_action
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: false}
+  type: Label
+container:
+  data_bindings: []
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  type: DataRowPanel
 is_package: true

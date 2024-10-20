@@ -1,101 +1,101 @@
-container: {type: ColumnPanel}
 components:
-- name: label_1
-  properties: {text: Review Your Investment Portfolio, role: subheading}
+- layout_properties: {grid_position: 'LVIQQL,BMGQDH'}
+  name: label_1
+  properties: {role: subheading, text: Review Your Investment Portfolio}
   type: Label
-  layout_properties: {grid_position: 'LVIQQL,BMGQDH'}
-- name: grid_panel_1
-  properties: {}
-  type: GridPanel
-  layout_properties: {grid_position: 'LREYJF,AZIUOL'}
-  components:
-  - name: label_1_1
+- components:
+  - layout_properties: {col_xs: 0, row: EENGCL, width_xs: 6}
+    name: label_1_1
     properties:
+      align: right
+      bold: true
+      font_size: 20
       text: |-
         You may have loads of investment statements from different brokers. When do you need to review them all in one go? Possibly during tax reporting season.
 
         PFIMS can group all brokers' investment profit and loss into the same interface for you to understand how the investment is performing. Of course it also helps tax reporting by getting an overall profit and loss in one tax reporting year.
-      bold: true
-      font_size: 20
-      align: right
     type: Label
-    layout_properties: {row: EENGCL, width_xs: 6, col_xs: 0}
-  - name: image_1
-    properties: {source: _/theme/investment_pic.jpg, height: 312}
+  - layout_properties: {col_xs: 5, row: EENGCL, width_xs: 6}
+    name: image_1
+    properties: {height: 312, source: _/theme/investment_pic.jpg}
     type: Image
-    layout_properties: {row: EENGCL, width_xs: 6, col_xs: 5}
-- name: spacer_1
-  properties: {height: '20'}
-  type: Spacer
-  layout_properties: {grid_position: 'MWLIIM,LSIGPJ'}
-- name: label_2
-  properties: {text: Manage Your Expense, role: subheading}
-  type: Label
-  layout_properties: {grid_position: 'DUQTGK,DCTHWS'}
-- name: grid_panel_2
+  layout_properties: {grid_position: 'LREYJF,AZIUOL'}
+  name: grid_panel_1
   properties: {}
   type: GridPanel
-  layout_properties: {grid_position: 'LBFAIM,UUBGNP'}
-  components:
-  - name: image_2
-    properties: {source: _/theme/expense_mgt_pic.jpg, height: 313}
+- layout_properties: {grid_position: 'MWLIIM,LSIGPJ'}
+  name: spacer_1
+  properties: {height: '20'}
+  type: Spacer
+- layout_properties: {grid_position: 'DUQTGK,DCTHWS'}
+  name: label_2
+  properties: {role: subheading, text: Manage Your Expense}
+  type: Label
+- components:
+  - layout_properties: {col_xs: 0, row: JXQVDG, width_xs: 6}
+    name: image_2
+    properties: {height: 313, source: _/theme/expense_mgt_pic.jpg}
     type: Image
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
-  - name: label_2_1
+  - layout_properties: {col_xs: 6, row: JXQVDG, width_xs: 6}
+    name: label_2_1
     properties:
+      align: left
+      bold: true
+      font_size: 20
       text: |-
         Do you often "feel like" your expense is not that much, but turnout you are shocked by the actual figure? Is that common for you to lose track of the expense like this?
 
         To grasp your financial condition, PFIMS can help you store all the expense transaction or income detail by uploading your bank statements or input manually. For further analysis, categorize transactions under different labels and generate charts.
-      bold: true
-      font_size: 20
-      align: left
     type: Label
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 6}
-- name: spacer_2
-  properties: {height: '20'}
-  type: Spacer
-  layout_properties: {grid_position: ',undefined'}
-- name: label_3
-  properties: {text: Be Aware of All Your Subscriptions, role: subheading}
-  type: Label
-  layout_properties: {grid_position: 'TJHKNM,ZRHGBR'}
-- name: grid_panel_3
+  layout_properties: {grid_position: 'LBFAIM,UUBGNP'}
+  name: grid_panel_2
   properties: {}
   type: GridPanel
+- layout_properties: {grid_position: ',undefined'}
+  name: spacer_2
+  properties: {height: '20'}
+  type: Spacer
+- layout_properties: {grid_position: 'TJHKNM,ZRHGBR'}
+  name: label_3
+  properties: {role: subheading, text: Be Aware of All Your Subscriptions}
+  type: Label
+- components:
+  - layout_properties: {col_xs: 0, row: JXQVDG, width_xs: 6}
+    name: label_3_1
+    properties: {align: right, bold: true, font_size: 20, text: 'It is not uncommon to find that your account gets debited for a subscription renewal, when you actually want to cancel it. However it is so often to overlook or even forget to review all subscriptions under your own management. PFIMS can list out all subscriptions based on your historical expense records to help you review them in a single click.'}
+    type: Label
+  - layout_properties: {col_xs: 5, row: JXQVDG, width_xs: 6}
+    name: image_3
+    properties: {height: 313, source: _/theme/subscription_pic.jpg}
+    type: Image
   layout_properties: {grid_position: 'IMWZFE,DUECMQ'}
-  components:
-  - name: label_3_1
-    properties: {text: 'It is not uncommon to find that your account gets debited for a subscription renewal, when you actually want to cancel it. However it is so often to overlook or even forget to review all subscriptions under your own management. PFIMS can list out all subscriptions based on your historical expense records to help you review them in a single click.', bold: true, font_size: 20, align: right}
-    type: Label
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
-  - name: image_3
-    properties: {source: _/theme/subscription_pic.jpg, height: 313}
-    type: Image
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 5}
-- name: spacer_3
-  properties: {height: '20'}
-  type: Spacer
-  layout_properties: {grid_position: 'LLEGSP,QFZDCZ'}
-- name: label_4
-  properties: {text: Keep Track of Your Precious Collectibles, role: subheading}
-  type: Label
-  layout_properties: {grid_position: 'TPYIUT,DKWJJK'}
-- name: grid_panel_4
+  name: grid_panel_3
   properties: {}
   type: GridPanel
-  layout_properties: {grid_position: 'BQBYKG,ATJPRZ'}
-  components:
-  - name: image_4
-    properties: {source: _/theme/lego_pic.jpg, height: 313}
-    type: Image
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
-  - name: label_4_1
-    properties: {text: 'Unless you are a minimalist, you may maintain some precious collectibles which can be tiny as little rocks, valuable as gems, thin as banknotes or playable as LEGO. As size of collection grows, it becomes more difficult to keep track the history of certain collectables. Such information will become handy especially in a sale or a trade. PFIMS can corelate the relevent information and present in a collector point of view.', bold: true, font_size: 20, align: left}
-    type: Label
-    layout_properties: {row: JXQVDG, width_xs: 6, col_xs: 0}
-- name: spacer_4
+- layout_properties: {grid_position: 'LLEGSP,QFZDCZ'}
+  name: spacer_3
   properties: {height: '20'}
   type: Spacer
-  layout_properties: {grid_position: 'LBEUOU,RIXSCD'}
+- layout_properties: {grid_position: 'TPYIUT,DKWJJK'}
+  name: label_4
+  properties: {role: subheading, text: Keep Track of Your Precious Collectibles}
+  type: Label
+- components:
+  - layout_properties: {col_xs: 0, row: JXQVDG, width_xs: 6}
+    name: image_4
+    properties: {height: 313, source: _/theme/lego_pic.jpg}
+    type: Image
+  - layout_properties: {col_xs: 0, row: JXQVDG, width_xs: 6}
+    name: label_4_1
+    properties: {align: left, bold: true, font_size: 20, text: 'Unless you are a minimalist, you may maintain some precious collectibles which can be tiny as little rocks, valuable as gems, thin as banknotes or playable as LEGO. As size of collection grows, it becomes more difficult to keep track the history of certain collectables. Such information will become handy especially in a sale or a trade. PFIMS can corelate the relevent information and present in a collector point of view.'}
+    type: Label
+  layout_properties: {grid_position: 'BQBYKG,ATJPRZ'}
+  name: grid_panel_4
+  properties: {}
+  type: GridPanel
+- layout_properties: {grid_position: 'LBEUOU,RIXSCD'}
+  name: spacer_4
+  properties: {height: '20'}
+  type: Spacer
+container: {type: ColumnPanel}
 is_package: true

@@ -1,191 +1,191 @@
-is_package: true
-container:
-  type: ColumnPanel
-  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true, wrap_on: mobile, col_spacing: small, spacing_above: small, col_widths: '{"IEWBUN":14}', spacing_below: small, background: ''}
-  event_bindings: {}
 components:
-- name: flow_panel_1
+- components:
+  - event_bindings: {click: button_file_import_click}
+    name: button_file_import
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:files-o', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: File Import, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_add_rows_click}
+    name: button_add_rows
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:list', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Add %n rows, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_lbl_maint_click}
+    name: button_lbl_maint
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:tags', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Manage Labels, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_acct_maint_click}
+    name: button_acct_maint
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:cc', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Manage Accounts, tooltip: '', underline: false, visible: true}
+    type: Button
+  layout_properties: {grid_position: 'HTVRIO,EFASUB'}
+  name: flow_panel_1
   properties: {align: right}
   type: FlowPanel
-  layout_properties: {grid_position: 'HTVRIO,EFASUB'}
-  components:
-  - type: Button
-    properties: {role: filled, align: right, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: File Import, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:files-o'}
-    event_bindings: {click: button_file_import_click}
-    name: button_file_import
-  - type: Button
-    properties: {role: filled, align: right, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Add %n rows, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:list'}
-    event_bindings: {click: button_add_rows_click}
-    name: button_add_rows
-  - type: Button
-    properties: {role: filled, align: right, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Manage Labels, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:tags'}
-    event_bindings: {click: button_lbl_maint_click}
-    name: button_lbl_maint
-  - type: Button
-    properties: {role: filled, align: right, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Manage Accounts, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:cc'}
-    event_bindings: {click: button_acct_maint_click}
-    name: button_acct_maint
-- name: flow_panel_3
+- components:
+  - event_bindings: {change: tab_name_change}
+    layout_properties: {width: 180}
+    name: tab_name
+    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Enter tab name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    type: TextBox
+  - event_bindings: {change: dropdown_labels_change}
+    layout_properties: {width: 180}
+    name: dropdown_labels
+    properties:
+      align: full
+      background: ''
+      bold: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: true
+      italic: false
+      items: []
+      placeholder: Apply labels
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  - event_bindings: {change: dropdown_tabs_change}
+    layout_properties: {width: 180}
+    name: dropdown_tabs
+    properties:
+      align: full
+      background: ''
+      bold: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: true
+      italic: false
+      items: ['']
+      placeholder: Create new tab
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  layout_properties: {grid_position: 'AZDSCP,PBDQVK'}
+  name: flow_panel_3
   properties: {}
   type: FlowPanel
-  layout_properties: {grid_position: 'AZDSCP,PBDQVK'}
-  components:
-  - type: TextBox
-    properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Enter tab name, border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small, italic: false, background: '', bold: false, underline: false}
-    layout_properties: {width: 180}
-    event_bindings: {change: tab_name_change}
-    name: tab_name
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: Apply labels
-      border: ''
-      enabled: true
-      foreground: ''
-      items: []
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: true
-    layout_properties: {width: 180}
-    event_bindings: {change: dropdown_labels_change}
-    name: dropdown_labels
-  - type: DropDown
-    properties:
-      role: null
-      align: full
-      tooltip: ''
-      placeholder: Create new tab
-      border: ''
-      enabled: true
-      foreground: ''
-      items: ['']
-      visible: true
-      font_size: 12
-      font: ''
-      spacing_above: small
-      spacing_below: small
-      italic: false
-      background: ''
-      bold: false
-      underline: false
-      include_placeholder: true
-    layout_properties: {width: 180}
-    event_bindings: {change: dropdown_tabs_change}
-    name: dropdown_tabs
-- name: flow_panel_4
+- components:
+  - event_bindings: {change: cb_hide_remarks_change}
+    name: cb_hide_remarks
+    properties: {align: right, allow_indeterminate: false, background: '', bold: false, border: '', checked: false, enabled: true, font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: small, spacing_below: small, text: Hide Remarks, tooltip: '', underline: false, visible: true}
+    type: CheckBox
+  - event_bindings: {change: cb_hide_stmtdtl_change}
+    name: cb_hide_stmtdtl
+    properties: {align: right, allow_indeterminate: false, background: '', bold: false, border: '', checked: false, enabled: true, font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: small, spacing_below: small, text: Hide Statement Detail, tooltip: '', underline: false, visible: true}
+    type: CheckBox
+  layout_properties: {grid_position: 'AZDSCP,AETLRR'}
+  name: flow_panel_4
   properties: {align: right}
   type: FlowPanel
-  layout_properties: {grid_position: 'AZDSCP,AETLRR'}
-  components:
-  - type: CheckBox
-    properties: {role: null, align: right, tooltip: '', border: '', enabled: true, foreground: '', allow_indeterminate: false, visible: true, text: Hide Remarks, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, background: '', bold: false, checked: false, underline: false}
-    event_bindings: {change: cb_hide_remarks_change}
-    name: cb_hide_remarks
-  - type: CheckBox
-    properties: {role: null, align: right, tooltip: '', border: '', enabled: true, foreground: '', allow_indeterminate: false, visible: true, text: Hide Statement Detail, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, background: '', bold: false, checked: false, underline: false}
-    event_bindings: {change: cb_hide_stmtdtl_change}
-    name: cb_hide_stmtdtl
-- type: ColumnPanel
-  properties: {col_widths: '{}'}
-  layout_properties: {grid_position: 'VUYRUG,CDQYHH', full_width_row: false}
-  name: column_panel_3
-  components:
-  - type: Label
-    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: 'Error(s):', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-    layout_properties: {grid_position: 'ITTCFU,GJAXRV'}
+- components:
+  - layout_properties: {grid_position: 'ITTCFU,GJAXRV'}
     name: valerror_title
-  - type: Label
-    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '- Field "Date" cannot be empty', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-    layout_properties: {grid_position: 'NLIMSF,HJEEMW'}
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: label-error, spacing_above: small, spacing_below: small, text: 'Error(s):', tooltip: '', underline: false, visible: false}
+    type: Label
+  - layout_properties: {grid_position: 'NLIMSF,HJEEMW'}
     name: valerror_1
-  - type: Label
-    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '- Dropdown "Account" cannot be empty', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-    layout_properties: {grid_position: 'XGCNXC,QFEXYI'}
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: label-error, spacing_above: small, spacing_below: small, text: '- Field "Date" cannot be empty', tooltip: '', underline: false, visible: false}
+    type: Label
+  - layout_properties: {grid_position: 'XGCNXC,QFEXYI'}
     name: valerror_2
-  - type: Label
-    properties: {role: label-error, align: left, tooltip: '', border: '', foreground: '', visible: false, text: '- Field "Amount" cannot be empty', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-    layout_properties: {grid_position: 'AGMSMU,RXYAGU'}
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: label-error, spacing_above: small, spacing_below: small, text: '- Dropdown "Account" cannot be empty', tooltip: '', underline: false, visible: false}
+    type: Label
+  - layout_properties: {grid_position: 'AGMSMU,RXYAGU'}
     name: valerror_3
-- type: DataGrid
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: label-error, spacing_above: small, spacing_below: small, text: '- Field "Amount" cannot be empty', tooltip: '', underline: false, visible: false}
+    type: Label
+  layout_properties: {full_width_row: false, grid_position: 'VUYRUG,CDQYHH'}
+  name: column_panel_3
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
+- components:
+  - layout_properties: {}
+    name: input_repeating_panel
+    properties: {background: '', border: '', foreground: '', item_template: Forms.Expense.ExpenseInputForm.ExpenseInputRPTemplate, items: null, role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+    type: RepeatingPanel
+  event_bindings: {}
+  layout_properties: {full_width_row: false, grid_position: 'NWFNJJ,FGWDLC'}
+  name: data_grid_1
   properties:
-    role: null
-    columns:
-    - {id: YAYOIZ, title: '', data_key: obsolete_key_1, width: '15', $$hashKey: 'object:40092'}
-    - {id: TOZXSD, title: '', data_key: LBL, width: '8', $$hashKey: 'object:40093'}
-    - {id: JNEVXO, title: '', data_key: iid, width: '8', $$hashKey: 'object:40081'}
-    - {id: SBYHGF, title: '', data_key: cb, $$hashKey: 'object:131320', width: '30'}
-    - {id: DNGCRO, title: Date, data_key: DTE, width: '130', $$hashKey: 'object:40082'}
-    - {id: RMITXR, title: Account, data_key: ACC, width: '180', $$hashKey: 'object:40084'}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: '100', $$hashKey: 'object:40086'}
-    - {id: DGKRSZ, title: Remarks, data_key: RMK, expand: false, width: '250', $$hashKey: 'object:40089'}
-    - {id: ROQBQR, title: Statement Detail, data_key: STD, $$hashKey: 'object:57645', width: '250'}
-    - {id: HHYTTP, title: Labels, data_key: labels_button, $$hashKey: 'object:57643', width: '280'}
     auto_header: true
-    tooltip: ''
+    background: ''
     border: ''
+    columns:
+    - {$$hashKey: 'object:40092', data_key: obsolete_key_1, id: YAYOIZ, title: '', width: '15'}
+    - {$$hashKey: 'object:40093', data_key: LBL, id: TOZXSD, title: '', width: '8'}
+    - {$$hashKey: 'object:40081', data_key: iid, id: JNEVXO, title: '', width: '8'}
+    - {$$hashKey: 'object:131320', data_key: cb, id: SBYHGF, title: '', width: '30'}
+    - {$$hashKey: 'object:40082', data_key: DTE, id: DNGCRO, title: Date, width: '130'}
+    - {$$hashKey: 'object:40084', data_key: ACC, id: RMITXR, title: Account, width: '180'}
+    - {$$hashKey: 'object:40086', data_key: AMT, id: JRLRWP, title: Amount, width: '100'}
+    - {$$hashKey: 'object:40089', data_key: RMK, expand: false, id: DGKRSZ, title: Remarks, width: '250'}
+    - {$$hashKey: 'object:57645', data_key: STD, id: ROQBQR, title: Statement Detail, width: '250'}
+    - {$$hashKey: 'object:57643', data_key: labels_button, id: HHYTTP, title: Labels, width: '280'}
     foreground: ''
+    role: null
     rows_per_page: 100
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
     visible: true
     wrap_on: never
-    show_page_controls: true
-    spacing_above: small
-    spacing_below: small
-    background: ''
-  layout_properties: {grid_position: 'NWFNJJ,FGWDLC', full_width_row: false}
-  event_bindings: {}
-  name: data_grid_1
-  components:
-  - type: RepeatingPanel
-    properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseInputForm.ExpenseInputRPTemplate, background: ''}
+  type: DataGrid
+- components:
+  - event_bindings: {click: button_save_click}
     layout_properties: {}
-    name: input_repeating_panel
-- type: FlowPanel
-  properties: {role: null, spacing: medium, align: right, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
-  layout_properties: {slot: footer, grid_position: 'PJYNLV,PJONAN'}
-  name: flow_panel_2
-  components:
-  - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: 'theme:Black', visible: true, text: Save, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: 'theme:Secondary 500', bold: false, underline: false, icon: ''}
-    layout_properties: {}
-    event_bindings: {click: button_save_click}
     name: button_save_exptab
-  - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: 'theme:White', visible: true, text: Delete, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: 'theme:Gray 800', bold: false, underline: false, icon: ''}
+    properties: {align: center, background: 'theme:Secondary 500', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:Black', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Save, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_delete_click}
     layout_properties: {}
-    event_bindings: {click: button_delete_click}
     name: button_delete_exptab
-  - type: Button
-    properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: 'theme:White', visible: true, text: Clear, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: 'theme:Gray 300', bold: false, underline: false, icon: ''}
-    layout_properties: {}
+    properties: {align: center, background: 'theme:Gray 800', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:White', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
+    type: Button
+  - layout_properties: {}
     name: button_clear
-- type: DataGrid
-  properties:
-    role: null
-    columns: []
-    auto_header: true
-    tooltip: ''
-    border: ''
-    foreground: ''
-    rows_per_page: 20
-    visible: false
-    wrap_on: never
-    show_page_controls: true
-    spacing_above: small
-    spacing_below: small
-    background: ''
+    properties: {align: center, background: 'theme:Gray 300', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:White', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Clear, tooltip: '', underline: false, visible: true}
+    type: Button
+  layout_properties: {grid_position: 'PJYNLV,PJONAN', slot: footer}
+  name: flow_panel_2
+  properties: {align: right, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+  type: FlowPanel
+- components:
+  - layout_properties: {}
+    name: repeating_panel_1
+    properties: {background: '', border: '', foreground: '', item_template: Forms.Expense.ExpenseInputForm.HiddenRPTemplate, items: null, role: null, spacing_above: none, spacing_below: none, tooltip: '', visible: false}
+    type: RepeatingPanel
   layout_properties: {grid_position: 'WRTVSL,ZAQHFU'}
   name: hidden_data_grid
-  components:
-  - type: RepeatingPanel
-    properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: false, spacing_above: none, spacing_below: none, item_template: Forms.Expense.ExpenseInputForm.HiddenRPTemplate, background: ''}
-    layout_properties: {}
-    name: repeating_panel_1
+  properties:
+    auto_header: true
+    background: ''
+    border: ''
+    columns: []
+    foreground: ''
+    role: null
+    rows_per_page: 20
+    show_page_controls: true
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    visible: false
+    wrap_on: never
+  type: DataGrid
+container:
+  event_bindings: {}
+  properties: {background: '', border: '', col_spacing: small, col_widths: '{"IEWBUN":14}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  type: ColumnPanel
+is_package: true

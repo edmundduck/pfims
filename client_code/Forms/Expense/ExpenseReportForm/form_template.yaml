@@ -1,82 +1,82 @@
-is_package: true
-container:
-  type: ColumnPanel
-  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true, wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}', spacing_below: small, background: ''}
 components:
-- type: FlowPanel
-  properties: {role: null, spacing: medium, align: left, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
-  layout_properties: {grid_position: 'EGWQSM,IAUJDY', full_width_row: false}
-  name: flow_panel_1
-  components:
-  - type: Label
-    properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '', visible: true, text: Expense List Report, font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-    layout_properties: {}
+- components:
+  - layout_properties: {}
     name: report_name
-- type: DataGrid
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: subheading, spacing_above: small, spacing_below: small, text: Expense List Report, tooltip: '', underline: false, visible: true}
+    type: Label
+  layout_properties: {full_width_row: false, grid_position: 'EGWQSM,IAUJDY'}
+  name: flow_panel_1
+  properties: {align: left, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+  type: FlowPanel
+- components:
+  - layout_properties: {}
+    name: rpt_panel
+    properties: {background: '', border: '', foreground: '', item_template: Forms.Expense.ExpenseReportForm.ExpenseReportRPTemplate, items: null, role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+    type: RepeatingPanel
+  - components:
+    - layout_properties: {}
+      name: label_4
+      properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Rows per Page, tooltip: '', underline: false, visible: true}
+      type: Label
+    - event_bindings: {change: dropdown_displayrow_change}
+      layout_properties: {}
+      name: dropdown_displayrow
+      properties:
+        align: full
+        background: ''
+        bold: false
+        border: ''
+        enabled: true
+        font: ''
+        font_size: 12
+        foreground: ''
+        include_placeholder: false
+        italic: false
+        items: ['20', '50', '100']
+        placeholder: ''
+        role: null
+        spacing_above: small
+        spacing_below: small
+        tooltip: ''
+        underline: false
+        visible: true
+      type: DropDown
+    layout_properties: {slot: footer}
+    name: flow_panel_4
+    properties: {align: right, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+    type: FlowPanel
+  layout_properties:
+    col_widths: {}
+    full_width_row: false
+    grid_position: ZLVMXC,LTILAR
+  name: data_grid
   properties:
-    role: null
-    columns:
-    - {id: JNEVXO, title: '', data_key: iid, width: '0', $$hashKey: 'object:4903'}
-    - {id: DNGCRO, title: Date, data_key: DTE, width: '80', $$hashKey: 'object:4904'}
-    - {id: DMKCOL, title: Account, data_key: ACC, width: 221, $$hashKey: 'object:4906', expand: false}
-    - {id: JRLRWP, title: Amount, data_key: AMT, width: 109, $$hashKey: 'object:4907', expand: false}
-    - {id: NMAPTI, title: Remarks, data_key: RMK, expand: false, width: 211, $$hashKey: 'object:4910'}
-    - {id: UNZWYW, title: Statement Detail, data_key: STD, $$hashKey: 'object:4958', width: 209, expand: false}
-    - {id: RMITXR, title: Labels, data_key: LBL, width: '100', $$hashKey: 'object:4905', expand: true}
-    - {id: WXPMEY, title: Debt, data_key: debt, width: '70', $$hashKey: 'object:4908'}
-    - {id: LMHMKP, title: Debt Payment, data_key: debt_pym, width: '70', $$hashKey: 'object:4909'}
     auto_header: true
-    tooltip: ''
+    background: ''
     border: ''
+    columns:
+    - {$$hashKey: 'object:4903', data_key: iid, id: JNEVXO, title: '', width: '0'}
+    - {$$hashKey: 'object:4904', data_key: DTE, id: DNGCRO, title: Date, width: '80'}
+    - {$$hashKey: 'object:4906', data_key: ACC, expand: false, id: DMKCOL, title: Account, width: 221}
+    - {$$hashKey: 'object:4907', data_key: AMT, expand: false, id: JRLRWP, title: Amount, width: 109}
+    - {$$hashKey: 'object:4910', data_key: RMK, expand: false, id: NMAPTI, title: Remarks, width: 211}
+    - {$$hashKey: 'object:4958', data_key: STD, expand: false, id: UNZWYW, title: Statement Detail, width: 209}
+    - {$$hashKey: 'object:4905', data_key: LBL, expand: true, id: RMITXR, title: Labels, width: '100'}
+    - {$$hashKey: 'object:4908', data_key: debt, id: WXPMEY, title: Debt, width: '70'}
+    - {$$hashKey: 'object:4909', data_key: debt_pym, id: LMHMKP, title: Debt Payment, width: '70'}
     foreground: ''
+    role: null
     rows_per_page: 50
-    visible: true
-    wrap_on: never
     show_page_controls: true
     spacing_above: small
     spacing_below: small
-    background: ''
-  layout_properties:
-    col_widths: {}
-    grid_position: ZLVMXC,LTILAR
-    full_width_row: false
-  name: data_grid
-  components:
-  - type: RepeatingPanel
-    properties: {role: null, tooltip: '', border: '', foreground: '', items: null, visible: true, spacing_above: small, spacing_below: small, item_template: Forms.Expense.ExpenseReportForm.ExpenseReportRPTemplate, background: ''}
-    layout_properties: {}
-    name: rpt_panel
-  - type: FlowPanel
-    properties: {role: null, spacing: medium, align: right, tooltip: '', border: '', foreground: '', visible: true, spacing_above: small, spacing_below: small, background: ''}
-    layout_properties: {slot: footer}
-    name: flow_panel_4
-    components:
-    - type: Label
-      properties: {role: null, align: left, tooltip: '', border: '', foreground: '', visible: true, text: Rows per Page, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-      layout_properties: {}
-      name: label_4
-    - type: DropDown
-      properties:
-        role: null
-        align: full
-        tooltip: ''
-        placeholder: ''
-        border: ''
-        enabled: true
-        foreground: ''
-        items: ['20', '50', '100']
-        visible: true
-        font_size: 12
-        font: ''
-        spacing_above: small
-        spacing_below: small
-        italic: false
-        background: ''
-        bold: false
-        underline: false
-        include_placeholder: false
-      layout_properties: {}
-      event_bindings: {change: dropdown_displayrow_change}
-      name: dropdown_displayrow
+    tooltip: ''
+    visible: true
+    wrap_on: never
+  type: DataGrid
+container:
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  type: ColumnPanel
 data_bindings:
-- {property: tag, code: '', writeback: false}
+- {code: '', property: tag, writeback: false}
+is_package: true

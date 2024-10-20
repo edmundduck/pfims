@@ -1,17 +1,17 @@
-container: {type: DataRowPanel}
 components:
-- type: TextBox
-  properties: {}
-  name: text_box_1
+- data_bindings:
+  - {code: 'self.item[''test'']', property: text, writeback: true}
   layout_properties: {column: UUWVZS}
-  data_bindings:
-  - {property: text, code: 'self.item[''test'']', writeback: true}
-- type: DropDown
+  name: text_box_1
   properties: {}
+  type: TextBox
+- layout_properties: {column: TUSTXE}
   name: drop_down_1
-  layout_properties: {column: TUSTXE}
-- type: DatePicker
   properties: {}
+  type: DropDown
+- layout_properties: {column: SXNLWL}
   name: date_picker_1
-  layout_properties: {column: SXNLWL}
+  properties: {}
+  type: DatePicker
+container: {type: DataRowPanel}
 is_package: true

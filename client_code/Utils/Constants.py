@@ -31,6 +31,7 @@ class CacheKey:
     """
     DICT_LABEL_LIST = DD_LABEL
     DICT_LABEL = 'labels_dict'
+    DICT_ACCOUNT_SYMBOL = 'accounts_symbol_dict'
     
     """
     Keys for objects

@@ -1,12 +1,12 @@
-container: {type: ColumnPanel}
 components:
-- name: label_1
-  properties: {text: Contact Us, role: subheading}
+- layout_properties: {grid_position: 'JSYWAH,FZKDDE'}
+  name: label_1
+  properties: {role: subheading, text: Contact Us}
   type: Label
-  layout_properties: {grid_position: 'JSYWAH,FZKDDE'}
-- name: link_1
-  properties: {text: support@pfims.co.uk, icon: 'fa:envelope', url: 'mailto: support@pfims.co.uk'}
-  type: Link
+- data_bindings: []
   layout_properties: {grid_position: 'SOSVSG,XTNYFO'}
-  data_bindings: []
+  name: link_1
+  properties: {icon: 'fa:envelope', text: support@pfims.co.uk, url: 'mailto: support@pfims.co.uk'}
+  type: Link
+container: {type: ColumnPanel}
 is_package: true

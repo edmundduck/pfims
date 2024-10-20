@@ -1,15 +1,11 @@
-container: {type: ColumnPanel}
 components:
-- name: headline_1
-  properties: {role: headline, text: 'FIM$, Your One Stop Financial Management', foreground: '', bold: true}
+- layout_properties: {grid_position: 'DTJVEK,VFEWHM'}
+  name: headline_1
+  properties: {bold: true, foreground: '', role: headline, text: 'FIM$, Your One Stop Financial Management'}
   type: Label
-  layout_properties: {grid_position: 'DTJVEK,VFEWHM'}
-- name: grid_panel_1
-  properties: {}
-  type: GridPanel
-  layout_properties: {grid_position: 'GRVSJR,CQOAKA'}
-  components:
-  - name: label_1
+- components:
+  - layout_properties: {col_xs: 0, row: BECQLZ, width_xs: 5}
+    name: label_1
     properties:
       font_size: 20
       text: |-
@@ -17,9 +13,13 @@ components:
 
         To get started by uploading your statements, it's that easy!
     type: Label
-    layout_properties: {row: BECQLZ, width_xs: 5, col_xs: 0}
-  - name: image_1
+  - layout_properties: {col_xs: 5, row: BECQLZ, width_xs: 7}
+    name: image_1
     properties: {height: 436, source: _/theme/pfims_structure.png}
     type: Image
-    layout_properties: {row: BECQLZ, width_xs: 7, col_xs: 5}
+  layout_properties: {grid_position: 'GRVSJR,CQOAKA'}
+  name: grid_panel_1
+  properties: {}
+  type: GridPanel
+container: {type: ColumnPanel}
 is_package: true

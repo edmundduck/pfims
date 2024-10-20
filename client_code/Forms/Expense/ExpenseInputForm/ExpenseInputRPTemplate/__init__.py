@@ -126,6 +126,14 @@ class ExpenseInputRPTemplate(ExpenseInputRPTemplateTemplate):
         """This method is called when the text in this text box is edited"""
         self.parent.raise_event('x-switch-to-save-button')
 
+    def row_amt_lost_focus(self, **event_args):
+        """This method is called when the TextBox loses focus"""
+        self.row_amt.text = ExpenseInputController.add_currency_symbol(self.row_acct.selected_value, self.row_amt.text)
+
+    def row_amt_focus(self, **event_args):
+        """This method is called when the TextBox gets focus"""
+        self.row_amt.text = ExpenseInputController.remove_currency_symbol(self.row_amt.text)
+
     def row_remarks_change(self, **event_args):
         """This method is called when the text in this text box is edited"""
         self.parent.raise_event('x-switch-to-save-button')
