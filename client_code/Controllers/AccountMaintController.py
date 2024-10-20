@@ -77,7 +77,7 @@ def __get_account__(account_dropdown_selected, reload=False):
         acct (Account): Account object corresponding to the selected account ID.
     """
     from ..Utils.ClientCache import ClientCache
-    acct_id, _, _ = account_dropdown_selected if account_dropdown_selected else [None, None, None]
+    acct_id = account_dropdown_selected[0] if account_dropdown_selected and len(account_dropdown_selected) > 0 else None
     cache = ClientCache(CacheKey.OBJ_ACCOUNT)
     if not reload and not cache.is_empty() and not cache.is_expired() and cache.get_cache().get(acct_id, None):
         acct = cache.get_cache().get(acct_id, None)
