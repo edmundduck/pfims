@@ -237,7 +237,7 @@ def get_transactions(group_dropdown_selected, reload=False):
     if exp_grp.get_transactions():
         for j in exp_grp.get_transactions():
             tmp = j.get_dict()
-            tmp[ExpenseTransaction.field_amount()] = add_currency_symbol(j.get_account(), tmp[ExpenseTransaction.field_amount()])
+            tmp[ExpenseTransaction.field_amount()] = add_currency_symbol(tmp.get(ExpenseTransaction.field_account()), tmp.get(ExpenseTransaction.field_amount()))
             result.append(tmp)
     return result
 
@@ -321,9 +321,9 @@ def add_currency_symbol(selected_acct, amount_without_symbol):
         amount (string): The amount field with currency symbol or abbreviation.
     """
     if isinstance(selected_acct, (list, tuple)) and len(selected_acct) > 0:
-        return re.sub("(-*)([0-9,.]+)", f"\1{Helper.get_account_currency_symbol(selected_acct[0])}\2", amount_without_symbol)
+        return re.sub("(-*)([0-9,.]+)", f"\1{Helper.get_account_currency_symbol(selected_acct[0])}\2", str(amount_without_symbol))
     elif isinstance(selected_acct, int):
-        return re.sub("(-*)([0-9,.]+)", f"\1{Helper.get_account_currency_symbol(selected_acct)}\2", amount_without_symbol)
+        return re.sub("(-*)([0-9,.]+)", f"\1{Helper.get_account_currency_symbol(selected_acct)}\2", str(amount_without_symbol))
     return amount_without_symbol
 
 def remove_currency_symbol(amount_with_symbol):
@@ -336,7 +336,7 @@ def remove_currency_symbol(amount_with_symbol):
     Returns:
         amount (string): The amount field with only numbers and dp.
     """
-    return re.sub("^[^0-9,.-]*", "", amount_with_symbol)
+    return re.sub("[^0-9,.-]*", "", str(amount_with_symbol))
 
 def populate_repeating_panel_items(rp_items=None, reload=False):
     """
