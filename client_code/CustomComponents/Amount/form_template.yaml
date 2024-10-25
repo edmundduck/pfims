@@ -1,9 +1,11 @@
 components:
-- layout_properties: {grid_position: 'CIUANQ,ETDLKO'}
+- event_bindings: {lost_focus: editable_amt_lost_focus}
+  layout_properties: {grid_position: 'CIUANQ,ETDLKO'}
   name: editable_amt
-  properties: {}
+  properties: {hide_text: false, type: number}
   type: TextBox
-- layout_properties: {grid_position: 'MTKBBA,OUUMPC'}
+- event_bindings: {focus: display_amt_focus}
+  layout_properties: {grid_position: 'MTKBBA,OUUMPC'}
   name: display_amt
   properties: {}
   type: TextBox
@@ -16,5 +18,11 @@ properties:
 - {default_value: '', important: true, name: ccy_symbol, type: string}
 - {default_value: '', important: true, name: ccy_abbv, type: string}
 - {default_value: true, important: true, name: readonly, type: boolean}
+- default_value: left
+  important: true
+  name: align
+  options: [left, center, right]
+  type: enum
+- {important: true, name: font_size, type: number}
 toolbox_item:
   icon: {dark: 'asset:designer_icons/amount_ccy.png', light: 'asset:designer_icons/amount_ccy.png'}

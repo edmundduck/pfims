@@ -7,6 +7,7 @@ from ..form_poc2 import form_poc2
 from ..form_poc3 import form_poc3
 from ..form_poc3a import form_poc3a
 from ..form_poc4 import form_poc4
+from ..form_poc5 import form_poc5
 from ...Utils import Constants as const
 
 class form_poc_main(form_poc_mainTemplate):
@@ -22,7 +23,8 @@ class form_poc_main(form_poc_mainTemplate):
             ('form_poc2 - Repeating items', 'form_poc2'),
             ('form_poc3 - Parent calls child validation', 'form_poc3'),
             ('form_poc3a - Child validation done in parent', 'form_poc3a'),
-            ('form_poc4 - Cache rework', 'form_poc4')
+            ('form_poc4 - Cache rework', 'form_poc4'),
+            ('form_poc5 - Customized amount', 'form_poc5')
         ]
 
     def button_select_click(self, **event_args):
@@ -38,3 +40,5 @@ class form_poc_main(form_poc_mainTemplate):
             self.test_panel.add_component(form_poc3a())
         elif self.drop_down_1.selected_value == "form_poc4":
             self.test_panel.add_component(form_poc4())
+        elif self.drop_down_1.selected_value == "form_poc5":
+            self.test_panel.add_component(form_poc5())
