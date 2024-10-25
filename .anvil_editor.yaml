@@ -1,6 +1,8 @@
 unique_ids:
   assets:
     SecularOne-Regular.ttf: '1710849194920698116365789.0168'
+    designer_icons/.gitkeep: '172989134238341884538475.17381'
+    designer_icons/amount_ccy.png: '1729891342697467499985880.8242'
     expense_mgt_pic.jpg: '1710458622363969391674753.6439'
     fim$-favicon-color.png: '1710952783235281455563674.2544'
     investment_pic.jpg: '171045588959061758680426.92012'
@@ -15,6 +17,7 @@ unique_ids:
     theme-old.css: '1699466398152355447942302.40326'
     theme.css: LKAL32R6ENKSBIEKBOLZNABHFXK7Z36N
   forms:
+    CustomComponents.Amount: '1729891028948351431949583.82806'
     CustomComponents.QnA: '1710452771872789083468505.0665'
     CustomComponents.TestItem: '1708554170305579585824283.3762'
     Forms.Admin.UserSettingForm: 5G7DFUL2LGGTGEOA7RETQ2OGQAZDZ7A7
