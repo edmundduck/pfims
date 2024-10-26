@@ -11,12 +11,16 @@ components:
   type: TextBox
 container: {type: ColumnPanel}
 custom_component: true
+events:
+- default_event: true
+  name: change
+  parameters: []
 is_package: true
 properties:
-- {default_binding_prop: true, default_value: '', important: true, name: amount, type: string}
-- {default_value: 2, important: true, name: dp, type: number}
-- {default_value: '', important: true, name: ccy_symbol, type: string}
-- {default_value: '', important: true, name: ccy_abbv, type: string}
+- {allow_binding_writeback: true, default_binding_prop: true, default_value: '', description: Amount without currency symbol or abbreviation, important: true, name: amount, type: string}
+- {default_value: 2, description: Decimal place, important: true, name: dp, type: number}
+- {default_value: '', description: Currency symbol, important: true, name: ccy_symbol, type: string}
+- {default_value: '', description: Currency code, important: true, name: ccy_abbv, type: string}
 - {default_value: true, important: true, name: readonly, type: boolean}
 - default_value: left
   important: true

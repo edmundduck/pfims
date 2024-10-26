@@ -6,9 +6,9 @@ components:
   properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: false}
   type: Label
 - data_bindings:
-  - {code: '"${0:.2f}".format(self.item[''AMT''])', property: text}
+  - {code: '"${0:.2f}".format(self.item[''AMT''])', property: text, writeback: false}
   layout_properties: {column: JRLRWP}
-  name: row_label_amt
+  name: row_label_amt_bak
   properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - data_bindings:
@@ -63,6 +63,13 @@ components:
   name: row_label_acct
   properties: {align: center, background: '', bold: false, border: '', col_spacing: medium, col_widths: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, url: '', visible: true, wrap_on: mobile}
   type: Link
+- data_bindings:
+  - {code: 'self.item[''AMT'']', property: amount, writeback: false}
+  event_bindings: {change: row_label_amt_change}
+  layout_properties: {column: JRLRWP}
+  name: row_label_amt
+  properties: {align: right, ccy_abbv: ''}
+  type: form:CustomComponents.Amount
 container:
   properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel

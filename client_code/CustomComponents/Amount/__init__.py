@@ -12,6 +12,8 @@ class Amount(AmountTemplate):
         self.display_amt.text = f"{self._format_ccy_display()}{self.amount}"
         self.editable_amt.visible = False
         self.display_amt.visible = True
+        self.editable_amt.enabled = not self.readonly
+        self.display_amt.enabled = not self.readonly
         self.editable_amt.align, self.display_amt.align = [self.align]*2
         self.editable_amt.font_size, self.display_amt.font_size = [self.font_size]*2
 
