@@ -17,6 +17,7 @@ class Amount(AmountTemplate):
         self.display_amt.enabled = not self.readonly
         self.editable_amt.align, self.display_amt.align = [self.align]*2
         self.editable_amt.font_size, self.display_amt.font_size = [self.font_size]*2
+        self.set_event_handler('change', self._update)
 
     def display_amt_focus(self, **event_args):
         """This method is called when the TextBox gets focus"""
@@ -35,3 +36,7 @@ class Amount(AmountTemplate):
 
     def _format_ccy_display(self):
         return self.ccy_symbol if self.ccy_symbol else self.ccy_abbv if self.ccy_abbv else ""
+
+    def _update(self):
+        self.editable_amt.text = self.amount
+        self.display_amt.text = f"{self._format_ccy_display()}{self.amount}"
