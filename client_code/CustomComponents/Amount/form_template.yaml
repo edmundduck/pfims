@@ -1,10 +1,14 @@
 components:
-- event_bindings: {lost_focus: editable_amt_lost_focus}
+- data_bindings:
+  - {code: 'self.item[''amount'']', property: text, writeback: false}
+  event_bindings: {lost_focus: editable_amt_lost_focus}
   layout_properties: {grid_position: 'CIUANQ,ETDLKO'}
   name: editable_amt
   properties: {hide_text: false, type: number}
   type: TextBox
-- event_bindings: {focus: display_amt_focus}
+- data_bindings:
+  - {code: 'self.item[''amount'']', property: text, writeback: false}
+  event_bindings: {focus: display_amt_focus}
   layout_properties: {grid_position: 'MTKBBA,OUUMPC'}
   name: display_amt
   properties: {}
@@ -17,7 +21,14 @@ events:
   parameters: []
 is_package: true
 properties:
-- {allow_binding_writeback: true, default_binding_prop: true, default_value: '', description: Amount without currency symbol or abbreviation, important: true, name: amount, type: string}
+- allow_binding_writeback: true
+  binding_writeback_events: [change]
+  default_binding_prop: true
+  default_value: ''
+  description: Amount without currency symbol or abbreviation
+  important: true
+  name: amount
+  type: string
 - {default_value: 2, description: Decimal place, important: true, name: dp, type: number}
 - {default_value: '', description: Currency symbol, important: true, name: ccy_symbol, type: string}
 - {default_value: '', description: Currency code, important: true, name: ccy_abbv, type: string}

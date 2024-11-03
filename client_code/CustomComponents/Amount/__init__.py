@@ -10,6 +10,7 @@ class Amount(AmountTemplate):
         # Any code you write here will run before the form opens.
         self.editable_amt.text = self.amount
         self.display_amt.text = f"{self._format_ccy_display()}{self.amount}"
+        print(f"{self.amount}")
         self.editable_amt.visible = False
         self.display_amt.visible = True
         self.editable_amt.enabled = not self.readonly
@@ -19,12 +20,14 @@ class Amount(AmountTemplate):
 
     def display_amt_focus(self, **event_args):
         """This method is called when the TextBox gets focus"""
+        print(f"{self.amount}")
         self.editable_amt.visible = True
         self.display_amt.visible = False
         self.editable_amt.focus()
 
     def editable_amt_lost_focus(self, **event_args):
         """This method is called when the TextBox loses focus"""
+        print(f"{self.amount}")
         self.amount = self.editable_amt.text
         self.display_amt.text = f"{self._format_ccy_display()}{self.amount}"
         self.editable_amt.visible = False

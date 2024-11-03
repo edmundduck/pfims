@@ -2,15 +2,15 @@ components:
 - data_bindings: []
   layout_properties: {grid_position: 'MXTVKS,YXEYKW'}
   name: amount_1
-  properties: {font_size: 12}
+  properties: {font_size: 12, readonly: false}
   type: form:CustomComponents.Amount
 - layout_properties: {grid_position: 'DFLOYF,IBGYPW'}
   name: amount_2
-  properties: {font_size: 12}
+  properties: {font_size: 12, readonly: false}
   type: form:CustomComponents.Amount
 - layout_properties: {grid_position: 'KRNMEH,OVHDAW'}
   name: amount_3
-  properties: {font_size: 12}
+  properties: {font_size: 12, readonly: false}
   type: form:CustomComponents.Amount
 container: {type: ColumnPanel}
 is_package: true
