@@ -1,28 +1,18 @@
 components:
 - data_bindings:
   - {code: 'self.item[''amount'']', property: text, writeback: false}
-  event_bindings: {lost_focus: editable_amt_lost_focus}
+  event_bindings: {focus: amount_field_focus, lost_focus: amount_field_lost_focus}
   layout_properties: {grid_position: 'CIUANQ,ETDLKO'}
-  name: editable_amt
+  name: amount_field
   properties: {hide_text: false, type: number}
-  type: TextBox
-- data_bindings:
-  - {code: 'self.item[''amount'']', property: text, writeback: false}
-  event_bindings: {focus: display_amt_focus}
-  layout_properties: {grid_position: 'MTKBBA,OUUMPC'}
-  name: display_amt
-  properties: {}
   type: TextBox
 container: {type: ColumnPanel}
 custom_component: true
-events:
-- default_event: true
-  name: change
-  parameters: []
+events: []
 is_package: true
 properties:
 - allow_binding_writeback: true
-  binding_writeback_events: [change]
+  binding_writeback_events: []
   default_binding_prop: true
   default_value: ''
   description: Amount without currency symbol or abbreviation

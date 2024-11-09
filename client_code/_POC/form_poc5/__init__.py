@@ -9,7 +9,7 @@ class form_poc5(form_poc5Template):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        self.amount_1.amount = 5
+        #self.amount_1.amount = 5
         self.amount_1.ccy_symbol = "$"
         self.amount_1.ccy_abbv = "USD"
         self.amount_2.ccy_symbol = ""
