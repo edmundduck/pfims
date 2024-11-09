@@ -8,7 +8,7 @@ class Amount(AmountTemplate):
         self.init_components(**properties)
 
         # Any code you write here will run before the form opens.
-        # self.amount_field.text = f"{self._format_ccy_display()}{self.amount}"
+        self.amount_field.text = f"{self._format_ccy_display()}{self.amount}"
         self.amount_field.enabled = not self.readonly
         self.amount_field.align = self.align
         self.amount_field.font_size = self.font_size
@@ -21,9 +21,12 @@ class Amount(AmountTemplate):
         """This method is called when the TextBox loses focus"""
         print(f"_amount={self._amount}")
         print(f"amount={self.amount}")
-        print(f"self.amount_field.text={self.amount}")
-        self.amount = self.amount_field.text
-        self.amount_field.text = f"{self._format_ccy_display()}{self._amount}"
+        print(f"self.amount_field.text={self.amount_field.text}")
+        self._amount = self.amount_field.text
+        print(f"_amount={self._amount}")
+        print(f"amount={self.amount}")
+        print(f"self.amount_field.text={self.amount_field.text}")
+        self.amount_field.text = f"{self._format_ccy_display()}{self.amount}"
 
     def _format_ccy_display(self):
         return self.ccy_symbol if self.ccy_symbol else self.ccy_abbv if self.ccy_abbv else ""
