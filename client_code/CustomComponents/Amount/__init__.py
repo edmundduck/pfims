@@ -9,6 +9,8 @@ class Amount(AmountTemplate):
 
         # Any code you write here will run before the form opens.
         # self.amount_field.text = f"{self._format_ccy_display()}{self.amount}"
+        self.amount_field.text = "HEY"
+        print(f"1 self.amount_field.text={self.amount_field.text}")
         self.amount_field.enabled = not self.readonly
         self.amount_field.align = self.align
         self.amount_field.font_size = self.font_size
