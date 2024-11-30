@@ -28,9 +28,10 @@ class Amount(AmountTemplate):
         # self._amount = self.amount_field.text
         # print(f"_amount={self._amount}")
         # print(f"amount={self.amount}")
-        # print(f"self.amount_field.text={self.amount_field.text}")
+        print(f"self.amount_field.text={self.amount_field.text}")
         # self.amount_field.text = f"{self._format_ccy_display()}{self.amount}"
         self.amount_field.text = "ABC"
+        print(f"self.amount_field.text={self.amount_field.text}")
 
     def _format_ccy_display(self):
         return self.ccy_symbol if self.ccy_symbol else self.ccy_abbv if self.ccy_abbv else ""
