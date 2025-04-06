@@ -199,6 +199,18 @@ renamed: true
 runtime_options:
   client_version: '3'
   server_spec: {base: python310-standard}
+  server_spec_disabled:
+    base: python310-standard
+    requirements: |-
+      psycopg2
+      openpyxl
+      tabulate
+      requests==2.31.0
+      fuzzywuzzy==0.18.0
+      pandas
+      certifi==2023.7.22
+      pdfplumber
+      xlrd
   server_version: python3-full
   version: 2
 secrets:

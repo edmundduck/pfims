@@ -1,4 +1,3 @@
-psycopg2
 openpyxl
 tabulate
 requests==2.31.0
@@ -7,3 +6,4 @@ pandas
 certifi==2023.7.22
 pdfplumber
 xlrd
+psycopg2
