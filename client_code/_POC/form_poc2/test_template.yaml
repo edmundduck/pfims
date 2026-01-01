@@ -1,44 +1,44 @@
 components:
-- type: Label
-  properties: {}
+- layout_properties: {column: JNEVXO}
   name: hidden_use_only
-  layout_properties: {column: JNEVXO}
-- type: Label
   properties: {}
-  name: row_label_sales
+  type: Label
+- data_bindings:
+  - {code: '"{0:.2f}".format(self.item[''sales''])', property: text}
   layout_properties: {column: JRLRWP}
-  data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''sales''])'}
-- type: Label
+  name: row_label_sales
   properties: {}
-  name: row_label_cost
+  type: Label
+- data_bindings:
+  - {code: '"{0:.2f}".format(self.item[''cost''])', property: text}
   layout_properties: {column: WXPMEY}
-  data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''cost''])'}
-- type: Label
+  name: row_label_cost
   properties: {}
-  name: row_label_sell_price
+  type: Label
+- data_bindings:
+  - {code: '"{0:.2f}".format(self.item[''sell_price''])', property: text}
   layout_properties: {column: DGKRSZ}
-  data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''sell_price''])'}
-- type: Label
+  name: row_label_sell_price
   properties: {}
-  name: row_label_buy_price
+  type: Label
+- data_bindings:
+  - {code: '"{0:.2f}".format(self.item[''buy_price''])', property: text}
   layout_properties: {column: IFVNQY}
-  data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''buy_price''])'}
-- type: Label
+  name: row_label_buy_price
   properties: {}
-  name: row_label_pnl
+  type: Label
+- data_bindings:
+  - {code: '"{0:.2f}".format(self.item[''pnl''])', property: text}
   layout_properties: {column: NMAPTI}
-  data_bindings:
-  - {property: text, code: '"{0:.2f}".format(self.item[''pnl''])'}
-- type: Button
-  properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: '', font_size: null, font: '', spacing_above: small, icon_align: left_edge, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:plus-square'}
-  name: button_vis
+  name: row_label_pnl
+  properties: {}
+  type: Label
+- event_bindings: {click: button_vis_click}
   layout_properties: {column: JKIJSW}
-  event_bindings: {click: button_vis_click}
+  name: button_vis
+  properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:plus-square', icon_align: left_edge, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  type: Button
 container:
-  type: DataRowPanel
-  properties: {role: null, align: left, tooltip: '', border: '', foreground: '', auto_display_data: true, visible: true, font_size: null, font: '', spacing_above: none, spacing_below: none, italic: false, background: '', bold: false, underline: false}
   data_bindings: []
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  type: DataRowPanel

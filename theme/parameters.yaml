@@ -1,202 +1,202 @@
-roles:
-- name: text
-  components: [Label, Link]
-- name: subheading
-  components: [Label]
-- name: input-prompt
-  components: [Label]
-- name: headline
-  components: [Label]
-  displayInToolbox: true
-  title: Headline
-  display_in_toolbox: true
-- name: card
-  components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel]
-  displayInToolbox: true
-  title: Card
-  display_in_toolbox: true
-- name: selected
-  components: [Link]
-- name: filled
-  components: [Button, FileLoader]
-- name: outlined
-  components: [Button, FileLoader]
-- name: input-error
-  components: [TextArea, TextBox, DatePicker]
-  display_in_toolbox: false
-- name: label-error
-  components: [Label]
-- name: table-manual-header
-  components: [DataRowPanel]
-- name: investment-input-table
-  components: [DataGrid]
-- name: positive-amount-label
-  components: [Label]
-- name: negative-amount-label
-  components: [Label]
-- name: app-label-button
-  components: [Button]
-- name: button-removal
-  components: [Button]
-- name: button-no-icon
-  components: [Button]
 color_scheme:
+  colors:
+  - {color: '#FF8906', name: Primary}
+  - {color: '#716040', name: Primary Container}
+  - {color: '#FFFFFE', name: Secondary}
+  - {color: '#F25F4C', name: Secondary Container}
+  - {color: '#EADDCF', name: Tertiary}
+  - {color: '#F25F4C', name: Tertiary Container}
+  - {color: '#FD0600', name: Error}
+  - {color: '#0F0E17', name: Background}
+  - {color: '#E1E3DF', name: On Background}
+  - {color: '#A7A9BE', name: Surface}
+  - {color: '#0F0E17', name: On Surface}
+  - {color: 'rgba(140, 120, 100, 1)', name: Surface Variant}
+  - {color: '#C0C9C1', name: On Surface Variant}
+  - {color: '#A7A9BE', name: Outline}
+  - {color: 'rgba(238, 210, 168, 0.2)', name: Dark Overlay 1}
+  - {color: 'rgba(238, 210, 168, 0.5)', name: Dark Overlay 2}
+  - {color: 'rgba(238, 210, 168, 0.2)', name: Light Overlay 1}
+  - {color: 'rgba(238, 210, 168, 0.5)', name: Light Overlay 2}
+  - {color: 'rgba(133, 133, 139, 0.12)', name: Disabled Container}
+  - {color: '#85858B', name: On Disabled}
+  - {color: 'rgba(238, 210, 168, 0.05)', name: Primary Overlay 1}
+  - {color: 'rgba(238, 210, 168, 0.08)', name: Primary Overlay 2}
+  - {color: 'rgba(238, 210, 168, 0.11)', name: Primary Overlay 3}
+  - {color: Red, name: Pure Red}
+  - {color: Green, name: Pure Green}
   preset_groups:
   - name: Primary Colour
     options:
-    - name: Blue
-      colors:
-      - {name: Primary 500, color: '#2196F3'}
-      - {name: Primary 700, color: '#1976D2'}
-    - name: Orange
-      colors:
-      - {name: Primary 500, color: '#FF9800'}
-      - {name: Primary 700, color: '#F57C00'}
-    - name: Red
-      colors:
-      - {name: Primary 500, color: '#F44336'}
-      - {name: Primary 700, color: '#D32F2F'}
-    - name: Pink
-      colors:
-      - {name: Primary 500, color: '#E91E63'}
-      - {name: Primary 700, color: '#C2185B'}
-    - name: Purple
-      colors:
-      - {name: Primary 500, color: '#9C27B0'}
-      - {name: Primary 700, color: '#7B1FA2'}
-    - name: Deep Purple
-      colors:
-      - {name: Primary 500, color: '#673AB7'}
-      - {name: Primary 700, color: '#512DA8'}
-    - name: Indigo
-      colors:
-      - {name: Primary 500, color: '#3F51B5'}
-      - {name: Primary 700, color: '#303F9F'}
-    - name: Light Blue
-      colors:
-      - {name: Primary 500, color: '#03A9F4'}
-      - {name: Primary 700, color: '#0288D1'}
-    - name: Cyan
-      colors:
-      - {name: Primary 500, color: '#00BCD4'}
-      - {name: Primary 700, color: '#0097A7'}
-    - name: Teal
-      colors:
-      - {name: Primary 500, color: '#009688'}
-      - {name: Primary 700, color: '#00796B'}
-    - name: Green
-      colors:
-      - {name: Primary 500, color: '#4CAF50'}
-      - {name: Primary 700, color: '#388E3C'}
-    - name: Light Green
-      colors:
-      - {name: Primary 500, color: '#8BC34A'}
-      - {name: Primary 700, color: '#689F38'}
-    - name: Lime
-      colors:
-      - {name: Primary 500, color: '#CDDC39'}
-      - {name: Primary 700, color: '#AFB42B'}
-    - name: Deep orange
-      colors:
-      - {name: Primary 500, color: '#FF5722'}
-      - {name: Primary 700, color: '#E64A19'}
-    - name: Brown
-      colors:
-      - {name: Primary 500, color: '#795548'}
-      - {name: Primary 700, color: '#5D4037'}
-    - name: Grey
-      colors:
-      - {name: Primary 500, color: '#9E9E9E'}
-      - {name: Primary 700, color: '#616161'}
+    - colors:
+      - {color: '#2196F3', name: Primary 500}
+      - {color: '#1976D2', name: Primary 700}
+      name: Blue
+    - colors:
+      - {color: '#FF9800', name: Primary 500}
+      - {color: '#F57C00', name: Primary 700}
+      name: Orange
+    - colors:
+      - {color: '#F44336', name: Primary 500}
+      - {color: '#D32F2F', name: Primary 700}
+      name: Red
+    - colors:
+      - {color: '#E91E63', name: Primary 500}
+      - {color: '#C2185B', name: Primary 700}
+      name: Pink
+    - colors:
+      - {color: '#9C27B0', name: Primary 500}
+      - {color: '#7B1FA2', name: Primary 700}
+      name: Purple
+    - colors:
+      - {color: '#673AB7', name: Primary 500}
+      - {color: '#512DA8', name: Primary 700}
+      name: Deep Purple
+    - colors:
+      - {color: '#3F51B5', name: Primary 500}
+      - {color: '#303F9F', name: Primary 700}
+      name: Indigo
+    - colors:
+      - {color: '#03A9F4', name: Primary 500}
+      - {color: '#0288D1', name: Primary 700}
+      name: Light Blue
+    - colors:
+      - {color: '#00BCD4', name: Primary 500}
+      - {color: '#0097A7', name: Primary 700}
+      name: Cyan
+    - colors:
+      - {color: '#009688', name: Primary 500}
+      - {color: '#00796B', name: Primary 700}
+      name: Teal
+    - colors:
+      - {color: '#4CAF50', name: Primary 500}
+      - {color: '#388E3C', name: Primary 700}
+      name: Green
+    - colors:
+      - {color: '#8BC34A', name: Primary 500}
+      - {color: '#689F38', name: Primary 700}
+      name: Light Green
+    - colors:
+      - {color: '#CDDC39', name: Primary 500}
+      - {color: '#AFB42B', name: Primary 700}
+      name: Lime
+    - colors:
+      - {color: '#FF5722', name: Primary 500}
+      - {color: '#E64A19', name: Primary 700}
+      name: Deep orange
+    - colors:
+      - {color: '#795548', name: Primary 500}
+      - {color: '#5D4037', name: Primary 700}
+      name: Brown
+    - colors:
+      - {color: '#9E9E9E', name: Primary 500}
+      - {color: '#616161', name: Primary 700}
+      name: Grey
   - name: Secondary Colour
     options:
-    - name: Blue
-      colors:
-      - {name: Secondary 500, color: '#2196F3'}
-      - {name: Secondary 700, color: '#1976D2'}
-    - name: Orange
-      colors:
-      - {name: Secondary 500, color: '#FF9800'}
-      - {name: Secondary 700, color: '#F57C00'}
-    - name: Red
-      colors:
-      - {name: Secondary 500, color: '#F44336'}
-      - {name: Secondary 700, color: '#D32F2F'}
-    - name: Pink
-      colors:
-      - {name: Secondary 500, color: '#E91E63'}
-      - {name: Secondary 700, color: '#C2185B'}
-    - name: Purple
-      colors:
-      - {name: Secondary 500, color: '#9C27B0'}
-      - {name: Secondary 700, color: '#7B1FA2'}
-    - name: Deep Purple
-      colors:
-      - {name: Secondary 500, color: '#673AB7'}
-      - {name: Secondary 700, color: '#512DA8'}
-    - name: Indigo
-      colors:
-      - {name: Secondary 500, color: '#3F51B5'}
-      - {name: Secondary 700, color: '#303F9F'}
-    - name: Light Blue
-      colors:
-      - {name: Secondary 500, color: '#03A9F4'}
-      - {name: Secondary 700, color: '#0288D1'}
-    - name: Cyan
-      colors:
-      - {name: Secondary 500, color: '#00BCD4'}
-      - {name: Secondary 700, color: '#0097A7'}
-    - name: Teal
-      colors:
-      - {name: Secondary 500, color: '#009688'}
-      - {name: Secondary 700, color: '#00796B'}
-    - name: Green
-      colors:
-      - {name: Secondary 500, color: '#4CAF50'}
-      - {name: Secondary 700, color: '#388E3C'}
-    - name: Light Green
-      colors:
-      - {name: Secondary 500, color: '#8BC34A'}
-      - {name: Secondary 700, color: '#689F38'}
-    - name: Lime
-      colors:
-      - {name: Secondary 500, color: '#CDDC39'}
-      - {name: Secondary 700, color: '#AFB42B'}
-    - name: Deep orange
-      colors:
-      - {name: Secondary 500, color: '#FF5722'}
-      - {name: Secondary 700, color: '#E64A19'}
-    - name: Brown
-      colors:
-      - {name: Secondary 500, color: '#795548'}
-      - {name: Secondary 700, color: '#5D4037'}
-    - name: Grey
-      colors:
-      - {name: Secondary 500, color: '#9E9E9E'}
-      - {name: Secondary 700, color: '#616161'}
-  colors:
-  - {name: Primary, color: '#FF8906'}
-  - {name: Primary Container, color: '#716040'}
-  - {name: Secondary, color: '#FFFFFE'}
-  - {name: Secondary Container, color: '#F25F4C'}
-  - {name: Tertiary, color: '#EADDCF'}
-  - {name: Tertiary Container, color: '#F25F4C'}
-  - {name: Error, color: '#FD0600'}
-  - {name: Background, color: '#0F0E17'}
-  - {name: On Background, color: '#E1E3DF'}
-  - {name: Surface, color: '#A7A9BE'}
-  - {name: On Surface, color: '#0F0E17'}
-  - {name: Surface Variant, color: 'rgba(140, 120, 100, 1)'}
-  - {name: On Surface Variant, color: '#C0C9C1'}
-  - {name: Outline, color: '#A7A9BE'}
-  - {name: Dark Overlay 1, color: 'rgba(238, 210, 168, 0.2)'}
-  - {name: Dark Overlay 2, color: 'rgba(238, 210, 168, 0.5)'}
-  - {name: Light Overlay 1, color: 'rgba(238, 210, 168, 0.2)'}
-  - {name: Light Overlay 2, color: 'rgba(238, 210, 168, 0.5)'}
-  - {name: Disabled Container, color: 'rgba(133, 133, 139, 0.12)'}
-  - {name: On Disabled, color: '#85858B'}
-  - {name: Primary Overlay 1, color: 'rgba(238, 210, 168, 0.05)'}
-  - {name: Primary Overlay 2, color: 'rgba(238, 210, 168, 0.08)'}
-  - {name: Primary Overlay 3, color: 'rgba(238, 210, 168, 0.11)'}
-  - {name: Pure Red, color: Red}
-  - {name: Pure Green, color: Green}
+    - colors:
+      - {color: '#2196F3', name: Secondary 500}
+      - {color: '#1976D2', name: Secondary 700}
+      name: Blue
+    - colors:
+      - {color: '#FF9800', name: Secondary 500}
+      - {color: '#F57C00', name: Secondary 700}
+      name: Orange
+    - colors:
+      - {color: '#F44336', name: Secondary 500}
+      - {color: '#D32F2F', name: Secondary 700}
+      name: Red
+    - colors:
+      - {color: '#E91E63', name: Secondary 500}
+      - {color: '#C2185B', name: Secondary 700}
+      name: Pink
+    - colors:
+      - {color: '#9C27B0', name: Secondary 500}
+      - {color: '#7B1FA2', name: Secondary 700}
+      name: Purple
+    - colors:
+      - {color: '#673AB7', name: Secondary 500}
+      - {color: '#512DA8', name: Secondary 700}
+      name: Deep Purple
+    - colors:
+      - {color: '#3F51B5', name: Secondary 500}
+      - {color: '#303F9F', name: Secondary 700}
+      name: Indigo
+    - colors:
+      - {color: '#03A9F4', name: Secondary 500}
+      - {color: '#0288D1', name: Secondary 700}
+      name: Light Blue
+    - colors:
+      - {color: '#00BCD4', name: Secondary 500}
+      - {color: '#0097A7', name: Secondary 700}
+      name: Cyan
+    - colors:
+      - {color: '#009688', name: Secondary 500}
+      - {color: '#00796B', name: Secondary 700}
+      name: Teal
+    - colors:
+      - {color: '#4CAF50', name: Secondary 500}
+      - {color: '#388E3C', name: Secondary 700}
+      name: Green
+    - colors:
+      - {color: '#8BC34A', name: Secondary 500}
+      - {color: '#689F38', name: Secondary 700}
+      name: Light Green
+    - colors:
+      - {color: '#CDDC39', name: Secondary 500}
+      - {color: '#AFB42B', name: Secondary 700}
+      name: Lime
+    - colors:
+      - {color: '#FF5722', name: Secondary 500}
+      - {color: '#E64A19', name: Secondary 700}
+      name: Deep orange
+    - colors:
+      - {color: '#795548', name: Secondary 500}
+      - {color: '#5D4037', name: Secondary 700}
+      name: Brown
+    - colors:
+      - {color: '#9E9E9E', name: Secondary 500}
+      - {color: '#616161', name: Secondary 700}
+      name: Grey
+roles:
+- components: [Label, Link]
+  name: text
+- components: [Label]
+  name: subheading
+- components: [Label]
+  name: input-prompt
+- components: [Label]
+  displayInToolbox: true
+  display_in_toolbox: true
+  name: headline
+  title: Headline
+- components: [ColumnPanel, LinearPanel, XYPanel, RepeatingPanel]
+  displayInToolbox: true
+  display_in_toolbox: true
+  name: card
+  title: Card
+- components: [Link]
+  name: selected
+- components: [Button, FileLoader]
+  name: filled
+- components: [Button, FileLoader]
+  name: outlined
+- components: [TextArea, TextBox, DatePicker]
+  display_in_toolbox: false
+  name: input-error
+- components: [Label]
+  name: label-error
+- components: [DataRowPanel]
+  name: table-manual-header
+- components: [DataGrid]
+  name: investment-input-table
+- components: [Label]
+  name: positive-amount-label
+- components: [Label]
+  name: negative-amount-label
+- components: [Button]
+  name: app-label-button
+- components: [Button]
+  name: button-removal
+- components: [Button]
+  name: button-no-icon

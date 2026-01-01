@@ -16,6 +16,34 @@ class Account(BaseEntity):
     def get_column_definition():
         return ', '.join(c for c in Account.__db_column_def__)
 
+    @staticmethod
+    def field_user_id():
+        return Account.__property_def__[0]
+
+    @staticmethod
+    def field_id():
+        return Account.__property_def__[1]
+
+    @staticmethod
+    def field_name():
+        return Account.__property_def__[2]
+
+    @staticmethod
+    def field_base_currency():
+        return Account.__property_def__[3]
+
+    @staticmethod
+    def field_valid_datefrom():
+        return Account.__property_def__[4]
+
+    @staticmethod
+    def field_valid_dateo():
+        return Account.__property_def__[5]
+
+    @staticmethod
+    def field_status():
+        return Account.__property_def__[6]
+
     def get_user_id(self):
         return getattr(self, self.__property_def__[0], None)
 

@@ -139,8 +139,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
 
         """This method is called when the button is clicked"""
         self.input_repeating_panel.items = ExpenseInputController.populate_repeating_panel_items(self.input_repeating_panel.items, reload=True)
-        """Some label ID list in repeating panel items are not refreshed as list type as not navigated and triggerd the ExpenseInputRPTemplate init method"""
-        self.input_repeating_panel.items = ExpenseInputController.update_label_id_list(self.input_repeating_panel.items)
+        self.input_repeating_panel.items = ExpenseInputController.patch_repeating_panel_items(self.input_repeating_panel.items)
 
         tab_original_id, tab_original_name = self.dropdown_tabs.selected_value if self.dropdown_tabs.selected_value is not None else [None, None]
         tab_name = self.tab_name.text

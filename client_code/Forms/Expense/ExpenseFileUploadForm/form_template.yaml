@@ -1,171 +1,171 @@
-container:
-  type: ColumnPanel
-  properties: {col_widths: '{}'}
 components:
-- name: flow_panel_1
+- components:
+  - event_bindings: {click: button_nav_upload_mapping_click}
+    layout_properties: {}
+    name: button_nav_upload_mapping
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Manage Upload Mappings, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_nav_input_exp_click}
+    layout_properties: {}
+    name: button_nav_input_exp
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:chevron-circle-left', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Back to Input Expense, tooltip: '', underline: false, visible: true}
+    type: Button
+  layout_properties: {grid_position: 'EIJXNA,OUXXOH'}
+  name: flow_panel_1
   properties: {align: right}
   type: FlowPanel
-  layout_properties: {grid_position: 'EIJXNA,OUXXOH'}
-  components:
-  - type: Button
-    properties: {role: filled, bold: false, align: center, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: Manage Upload Mappings}
-    name: button_nav_upload_mapping
-    layout_properties: {}
-    event_bindings: {click: button_nav_upload_mapping_click}
-  - type: Button
-    properties: {role: filled, bold: false, align: center, spacing_above: small, background: '', icon: 'fa:chevron-circle-left', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: Back to Input Expense}
-    name: button_nav_input_exp
-    layout_properties: {}
-    event_bindings: {click: button_nav_input_exp_click}
-- type: Label
-  properties: {role: label-error, bold: false, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: false, border: '', italic: false, font_size: 14, tooltip: '', text: 'Error(s):'}
-  name: valerror_title
-  layout_properties:
+- layout_properties:
     col_widths: {}
     grid_position: XCVPUM,VVXPQF
-- type: Label
-  properties: {role: label-error, bold: false, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: false, border: '', italic: false, font_size: 12, tooltip: '', text: '- Uploaded file type is not supported'}
-  name: valerror_1
-  layout_properties:
+  name: valerror_title
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 14, foreground: '', icon: '', icon_align: left, italic: false, role: label-error, spacing_above: small, spacing_below: small, text: 'Error(s):', tooltip: '', underline: false, visible: false}
+  type: Label
+- layout_properties:
     col_widths: {}
     grid_position: EROHIT,HFUOGS
-- type: FlowPanel
-  properties: {}
-  name: flow_panel_uploadfile
-  layout_properties: {grid_position: 'BZYDBC,KRUBSF'}
-  components:
-  - type: Label
-    properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: 'fa:long-arrow-right', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: Step 1}
+  name: valerror_1
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: label-error, spacing_above: small, spacing_below: small, text: '- Uploaded file type is not supported', tooltip: '', underline: false, visible: false}
+  type: Label
+- components:
+  - layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
     name: label_step_uploadfile
-    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
-  - type: Label
-    properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: 'Upload a file                                             '}
+    properties: {align: left, background: '', bold: true, border: '', font: '', font_size: 16, foreground: '', icon: 'fa:long-arrow-right', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Step 1, tooltip: '', underline: false, visible: true}
+    type: Label
+  - layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
     name: label_step_uploadfile2
-    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - type: FileLoader
-    properties:
-      role: null
-      bold: false
-      file_types: null
-      align: center
-      spacing_above: small
-      file: null
-      background: ''
-      icon: fa:upload
-      multiple: false
-      underline: false
-      font: ''
-      icon_align: left
-      foreground: ''
-      show_state: true
-      files: []
-      spacing_below: small
-      visible: true
-      border: ''
-      italic: false
-      enabled: true
-      font_size: 12
-      tooltip: ''
-      text: Upload
-    name: file_loader_1
+    properties: {align: left, background: '', bold: true, border: '', font: '', font_size: 16, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: 'Upload a file                                             ', tooltip: '', underline: false, visible: true}
+    type: Label
+  - event_bindings: {change: file_loader_1_change}
     layout_properties: {grid_position: 'NYUFTO,QFHPHS', width: 164.55}
-    event_bindings: {change: file_loader_1_change}
-  - type: DropDown
+    name: file_loader_1
     properties:
-      role: null
-      include_placeholder: true
-      bold: false
-      align: full
-      placeholder: ''
-      spacing_above: small
+      align: center
       background: ''
-      underline: false
-      font: ''
-      foreground: ''
-      items: []
-      spacing_below: small
-      visible: true
-      border: ''
-      italic: false
-      enabled: false
-      font_size: 12
-      tooltip: ''
-    name: dropdown_filetype
-    layout_properties: {grid_position: 'ZYDOOZ,HXSXTZ'}
-    event_bindings: {}
-  - type: Label
-    properties: {role: null, bold: false, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 12, tooltip: '', text: ''}
-    name: label_filename
-    layout_properties: {grid_position: 'NYUFTO,EAOLZO'}
-- type: FlowPanel
-  properties: {}
-  name: flow_panel_mappingrule
-  layout_properties: {grid_position: 'ZKTWAT,XJNNQQ'}
-  components:
-  - type: Label
-    properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: 'fa:long-arrow-right', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: Step 2}
-    name: label_step_mappingrule
-    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
-  - type: Label
-    properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: 'Choose a mapping rule                             '}
-    name: label_step_mappingrule2
-    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - type: DropDown
-    properties:
-      role: null
-      include_placeholder: true
       bold: false
-      align: full
-      placeholder: Choose mapping rule
-      spacing_above: small
-      background: ''
-      underline: false
-      font: ''
-      foreground: ''
-      items: []
-      spacing_below: small
-      visible: true
       border: ''
-      italic: false
       enabled: true
+      file: null
+      file_types: null
+      files: []
+      font: ''
       font_size: 12
+      foreground: ''
+      icon: fa:upload
+      icon_align: left
+      italic: false
+      multiple: false
+      role: null
+      show_state: true
+      spacing_above: small
+      spacing_below: small
+      text: Upload
       tooltip: ''
-    name: dropdown_mapping_rule
-    layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
-    event_bindings: {change: dropdown_mapping_rule_change}
-- type: FlowPanel
+      underline: false
+      visible: true
+    type: FileLoader
+  - event_bindings: {}
+    layout_properties: {grid_position: 'ZYDOOZ,HXSXTZ'}
+    name: dropdown_filetype
+    properties:
+      align: full
+      background: ''
+      bold: false
+      border: ''
+      enabled: false
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: true
+      italic: false
+      items: []
+      placeholder: ''
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  - layout_properties: {grid_position: 'NYUFTO,EAOLZO'}
+    name: label_filename
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    type: Label
+  layout_properties: {grid_position: 'BZYDBC,KRUBSF'}
+  name: flow_panel_uploadfile
   properties: {}
-  name: flow_panel_xlstab
-  layout_properties: {grid_position: 'ZLOVHY,UKBUMM'}
-  components:
-  - type: Label
-    properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: 'fa:long-arrow-right', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: Step 3}
+  type: FlowPanel
+- components:
+  - layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
+    name: label_step_mappingrule
+    properties: {align: left, background: '', bold: true, border: '', font: '', font_size: 16, foreground: '', icon: 'fa:long-arrow-right', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Step 2, tooltip: '', underline: false, visible: true}
+    type: Label
+  - layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
+    name: label_step_mappingrule2
+    properties: {align: left, background: '', bold: true, border: '', font: '', font_size: 16, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: 'Choose a mapping rule                             ', tooltip: '', underline: false, visible: true}
+    type: Label
+  - event_bindings: {change: dropdown_mapping_rule_change}
+    layout_properties: {grid_position: 'ZYDOOZ,YIWBVD'}
+    name: dropdown_mapping_rule
+    properties:
+      align: full
+      background: ''
+      bold: false
+      border: ''
+      enabled: true
+      font: ''
+      font_size: 12
+      foreground: ''
+      include_placeholder: true
+      italic: false
+      items: []
+      placeholder: Choose mapping rule
+      role: null
+      spacing_above: small
+      spacing_below: small
+      tooltip: ''
+      underline: false
+      visible: true
+    type: DropDown
+  layout_properties: {grid_position: 'ZKTWAT,XJNNQQ'}
+  name: flow_panel_mappingrule
+  properties: {}
+  type: FlowPanel
+- components:
+  - layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
     name: label_step_xlstab
-    layout_properties: {grid_position: 'JLMDAX,OCYHYJ'}
-  - type: Label
-    properties: {role: null, bold: true, align: left, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, font_size: 16, tooltip: '', text: 'Select Excel tabs to import                       '}
+    properties: {align: left, background: '', bold: true, border: '', font: '', font_size: 16, foreground: '', icon: 'fa:long-arrow-right', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Step 3, tooltip: '', underline: false, visible: true}
+    type: Label
+  - layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
     name: label_step_xlstab2
-    layout_properties: {grid_position: 'UNEXRN,IJZFQD'}
-  - type: FlowPanel
-    properties: {}
-    name: sheet_tabs_panel
+    properties: {align: left, background: '', bold: true, border: '', font: '', font_size: 16, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: 'Select Excel tabs to import                       ', tooltip: '', underline: false, visible: true}
+    type: Label
+  - components: []
     layout_properties: {grid_position: 'LGISGY,BTGCWR'}
-    components: []
-- type: FlowPanel
-  properties: {role: null, align: right, spacing_above: small, background: '', foreground: '', spacing_below: small, visible: true, border: '', tooltip: '', spacing: medium}
-  name: flow_panel_last
+    name: sheet_tabs_panel
+    properties: {}
+    type: FlowPanel
+  layout_properties: {grid_position: 'ZLOVHY,UKBUMM'}
+  name: flow_panel_xlstab
+  properties: {}
+  type: FlowPanel
+- components:
+  - event_bindings: {click: button_excel_next_click}
+    layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
+    name: button_excel_next
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Next, tooltip: '', underline: false, visible: true}
+    type: Button
+  - event_bindings: {click: button_pdf_next_click}
+    layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
+    name: button_pdf_next
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Next, tooltip: '', underline: false, visible: true}
+    type: Button
   layout_properties:
     col_widths: {}
     grid_position: IOQWIW,WLFDFK
-  components:
-  - type: Button
-    properties: {role: null, bold: false, align: center, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: Next}
-    name: button_excel_next
-    layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
-    event_bindings: {click: button_excel_next_click}
-  - type: Button
-    properties: {role: null, bold: false, align: center, spacing_above: small, background: '', icon: '', underline: false, font: '', icon_align: left, foreground: '', spacing_below: small, visible: true, border: '', italic: false, enabled: true, font_size: 12, tooltip: '', text: Next}
-    name: button_pdf_next
-    layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
-    event_bindings: {click: button_pdf_next_click}
+  name: flow_panel_last
+  properties: {align: right, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+  type: FlowPanel
+container:
+  properties: {col_widths: '{}'}
+  type: ColumnPanel
 is_package: true

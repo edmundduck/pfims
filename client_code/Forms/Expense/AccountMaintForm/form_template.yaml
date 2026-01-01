@@ -1,143 +1,143 @@
-container:
-  type: ColumnPanel
-  properties: {foreground: ''}
 components:
-- name: flow_panel_1
+- components:
+  - event_bindings: {click: button_exp_input_click}
+    name: button_exp_input
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:chevron-circle-left', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Expense Input, tooltip: '', underline: false, visible: true}
+    type: Button
+  layout_properties: {grid_position: 'NBRPTZ,YXDHQW'}
+  name: flow_panel_1
   properties: {align: right}
   type: FlowPanel
-  layout_properties: {grid_position: 'NBRPTZ,YXDHQW'}
-  components:
-  - type: Button
-    properties: {role: filled, align: right, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Expense Input, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: 'fa:chevron-circle-left'}
-    name: button_exp_input
-    event_bindings: {click: button_exp_input_click}
-- type: Label
-  properties: {role: subheading, align: left, tooltip: '', border: '', foreground: '', visible: true, text: ' Account Maintenace', font_size: null, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-  name: headline
-  layout_properties:
+- layout_properties:
     col_widths: {}
-    grid_position: FWJEWC,NNRRXT
     full_width_row: false
-- type: ColumnPanel
-  properties: {role: null, tooltip: '', border: '', foreground: '', visible: true, wrap_on: mobile, col_spacing: medium, spacing_above: small, col_widths: '{}', spacing_below: small, background: ''}
-  name: column_panel_2
+    grid_position: FWJEWC,NNRRXT
+  name: headline
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: subheading, spacing_above: small, spacing_below: small, text: ' Account Maintenace', tooltip: '', underline: false, visible: true}
+  type: Label
+- components:
+  - components:
+    - event_bindings: {change: dropdown_acct_list_change}
+      layout_properties: {full_width_row: false, grid_position: 'OOWIVP,ESJAKD'}
+      name: dropdown_acct_list
+      properties:
+        align: full
+        background: ''
+        bold: false
+        border: ''
+        enabled: true
+        font: ''
+        font_size: 12
+        foreground: ''
+        include_placeholder: true
+        italic: false
+        items: []
+        placeholder: Choose an account
+        role: null
+        spacing_above: small
+        spacing_below: small
+        tooltip: ''
+        underline: false
+        visible: true
+      type: DropDown
+    - event_bindings: {}
+      layout_properties: {grid_position: 'OOWIVP,RBPAWF'}
+      name: text_acct_name
+      properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Account name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+      type: TextBox
+    layout_properties: {grid_position: 'OZHOVC,IALVFD'}
+    name: column_panel_3
+    properties: {col_widths: '{}'}
+    type: ColumnPanel
+  - components:
+    - event_bindings: {}
+      layout_properties: {grid_position: 'NLSSIJ,VSMJOG'}
+      name: dropdown_ccy
+      properties:
+        align: full
+        background: ''
+        bold: false
+        border: ''
+        enabled: true
+        font: ''
+        font_size: 12
+        foreground: ''
+        include_placeholder: true
+        italic: false
+        items: []
+        placeholder: Choose a base currency
+        role: null
+        spacing_above: small
+        spacing_below: small
+        tooltip: ''
+        underline: false
+        visible: true
+      type: DropDown
+    - event_bindings: {show: dropdown_status_show}
+      layout_properties: {grid_position: 'NLSSIJ,RJJFPI'}
+      name: dropdown_status
+      properties:
+        align: full
+        background: ''
+        bold: false
+        border: ''
+        enabled: true
+        font: ''
+        font_size: 12
+        foreground: ''
+        include_placeholder: false
+        italic: false
+        items: ['']
+        placeholder: ''
+        role: null
+        spacing_above: small
+        spacing_below: small
+        tooltip: ''
+        underline: false
+        visible: true
+      type: DropDown
+    layout_properties: {grid_position: 'OZHOVC,WUARSE'}
+    name: column_panel_4
+    properties: {col_widths: '{}'}
+    type: ColumnPanel
+  - components:
+    - layout_properties: {grid_position: 'LPDTWG,TUQFYK'}
+      name: date_valid_from
+      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: Date valid from, role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+      type: DatePicker
+    - layout_properties: {grid_position: 'LPDTWG,LOEVRQ'}
+      name: date_valid_to
+      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: Date valid to, role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+      type: DatePicker
+    layout_properties: {grid_position: 'KULKXZ,IAMAPO'}
+    name: column_panel_5
+    properties: {col_widths: '{}'}
+    type: ColumnPanel
+  - components:
+    - event_bindings: {click: button_accounts_create_click}
+      name: button_accounts_create
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: primary-color, spacing_above: small, spacing_below: small, text: Create, tooltip: '', underline: false, visible: true}
+      type: Button
+    - event_bindings: {click: button_accounts_update_click}
+      name: button_accounts_update
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: secondary-color, spacing_above: small, spacing_below: small, text: Update, tooltip: '', underline: false, visible: true}
+      type: Button
+    - event_bindings: {click: button_accounts_delete_click}
+      layout_properties: {}
+      name: button_accounts_delete
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:Tertiary Container', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
+      type: Button
+    layout_properties: {grid_position: 'KULKXZ,CYNLHE HPMUKS,ALVPMT'}
+    name: flow_panel_2
+    properties: {align: right}
+    type: FlowPanel
   layout_properties:
     col_widths: {}
     grid_position: FVMCAK,BJEJJA
-  components:
-  - type: ColumnPanel
-    properties: {col_widths: '{}'}
-    name: column_panel_3
-    layout_properties: {grid_position: 'OZHOVC,IALVFD'}
-    components:
-    - type: DropDown
-      properties:
-        role: null
-        align: full
-        tooltip: ''
-        placeholder: Choose an account
-        border: ''
-        enabled: true
-        foreground: ''
-        items: []
-        visible: true
-        font_size: 12
-        font: ''
-        spacing_above: small
-        spacing_below: small
-        italic: false
-        background: ''
-        bold: false
-        underline: false
-        include_placeholder: true
-      name: dropdown_acct_list
-      layout_properties: {grid_position: 'OOWIVP,ESJAKD', full_width_row: false}
-      event_bindings: {change: dropdown_acct_list_change}
-    - type: TextBox
-      properties: {role: null, align: left, hide_text: false, tooltip: '', placeholder: Account name, border: '', enabled: true, foreground: '', visible: true, text: '', font_size: 12, font: '', spacing_above: small, type: text, spacing_below: small, italic: false, background: '', bold: false, underline: false}
-      name: text_acct_name
-      layout_properties: {grid_position: 'OOWIVP,RBPAWF'}
-      event_bindings: {}
-  - type: ColumnPanel
-    properties: {col_widths: '{}'}
-    name: column_panel_4
-    layout_properties: {grid_position: 'OZHOVC,WUARSE'}
-    components:
-    - type: DropDown
-      properties:
-        role: null
-        align: full
-        tooltip: ''
-        placeholder: Choose a base currency
-        border: ''
-        enabled: true
-        foreground: ''
-        items: []
-        visible: true
-        font_size: 12
-        font: ''
-        spacing_above: small
-        spacing_below: small
-        italic: false
-        background: ''
-        bold: false
-        underline: false
-        include_placeholder: true
-      name: dropdown_ccy
-      layout_properties: {grid_position: 'NLSSIJ,VSMJOG'}
-      event_bindings: {}
-    - type: DropDown
-      properties:
-        role: null
-        align: full
-        tooltip: ''
-        placeholder: ''
-        border: ''
-        enabled: true
-        foreground: ''
-        items: ['']
-        visible: true
-        font_size: 12
-        font: ''
-        spacing_above: small
-        spacing_below: small
-        italic: false
-        background: ''
-        bold: false
-        underline: false
-        include_placeholder: false
-      name: dropdown_status
-      layout_properties: {grid_position: 'NLSSIJ,RJJFPI'}
-      event_bindings: {show: dropdown_status_show}
-  - type: ColumnPanel
-    properties: {col_widths: '{}'}
-    name: column_panel_5
-    layout_properties: {grid_position: 'KULKXZ,IAMAPO'}
-    components:
-    - type: DatePicker
-      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '', placeholder: Date valid from, border: '', enabled: true, foreground: '', visible: true, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: date_valid_from
-      layout_properties: {grid_position: 'LPDTWG,TUQFYK'}
-    - type: DatePicker
-      properties: {role: null, align: left, max_date: '', pick_time: false, tooltip: '', placeholder: Date valid to, border: '', enabled: true, foreground: '', visible: true, font_size: 12, font: '', spacing_above: small, spacing_below: small, italic: false, date: '', min_date: '', background: '', bold: false, underline: false, format: '%Y-%m-%d'}
-      name: date_valid_to
-      layout_properties: {grid_position: 'LPDTWG,LOEVRQ'}
-  - name: flow_panel_2
-    properties: {align: right}
-    type: FlowPanel
-    layout_properties: {grid_position: 'KULKXZ,CYNLHE HPMUKS,ALVPMT'}
-    components:
-    - type: Button
-      properties: {role: primary-color, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Create, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-      name: button_accounts_create
-      event_bindings: {click: button_accounts_create_click}
-    - type: Button
-      properties: {role: secondary-color, align: center, tooltip: '', border: '', enabled: true, foreground: '', visible: true, text: Update, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-      name: button_accounts_update
-      event_bindings: {click: button_accounts_update_click}
-    - type: Button
-      properties: {role: null, align: center, tooltip: '', border: '', enabled: true, foreground: 'theme:Tertiary Container', visible: true, text: Delete, font_size: 12, font: '', spacing_above: small, icon_align: left, spacing_below: small, italic: false, background: '', bold: false, underline: false, icon: ''}
-      name: button_accounts_delete
-      layout_properties: {}
-      event_bindings: {click: button_accounts_delete_click}
+  name: column_panel_2
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  type: ColumnPanel
+container:
+  properties: {foreground: ''}
+  type: ColumnPanel
 is_package: true

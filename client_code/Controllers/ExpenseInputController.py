@@ -1,4 +1,6 @@
 import anvil.server
+import re
+from ..Utils import Helper
 from ..Utils.Constants import CacheKey, ExpenseConfig
 from ..Utils.Logger import ClientLogger
 
@@ -225,11 +227,19 @@ def get_transactions(group_dropdown_selected, reload=False):
     Returns:
         exp_grp.get_transactions (list of dict): Selected expense transaction group's transactions in serialized form for frontend.
     """
+    from ..Entities.ExpenseTransaction import ExpenseTransaction
     from ..Utils.ClientCache import ClientPersistentCache
+    from ..Utils import Helper
     cache = ClientPersistentCache(CacheKey.EXP_INPUT_DEL_IID)
     exp_grp = __get_expense_transaction_group__(group_dropdown_selected, reload)
     cache.clear_cache()
-    return list(j.get_dict() for j in exp_grp.get_transactions()) if exp_grp.get_transactions() else []
+    result = []
+    if exp_grp.get_transactions():
+        for j in exp_grp.get_transactions():
+            tmp = j.get_dict()
+            tmp[ExpenseTransaction.field_amount()] = add_currency_symbol(tmp.get(ExpenseTransaction.field_account()), tmp.get(ExpenseTransaction.field_amount()))
+            result.append(tmp)
+    return result
 
 def get_blank_row_button_text(button_text):
     """
@@ -299,6 +309,35 @@ def enable_expense_group_delete_button(group_selection):
     group_id = group_selection[0] if isinstance(group_selection, (list, tuple)) else group_selection
     return False if group_id in (None, '') or str(group_id).isspace() else True
 
+def add_currency_symbol(selected_acct, amount_without_symbol):
+    """
+    Add currency symbol or abbreviation in front of the amount field.
+
+    Parameters:
+        selected_acct (list or int): Selected account.
+        amount_without_symbol (string): The amount field with only numbers and dp.
+
+    Returns:
+        amount (string): The amount field with currency symbol or abbreviation.
+    """
+    if isinstance(selected_acct, (list, tuple)) and len(selected_acct) > 0:
+        return re.sub("(-*)([0-9,.]+)", f"\1{Helper.get_account_currency_symbol(selected_acct[0])}\2", str(amount_without_symbol))
+    elif isinstance(selected_acct, int):
+        return re.sub("(-*)([0-9,.]+)", f"\1{Helper.get_account_currency_symbol(selected_acct)}\2", str(amount_without_symbol))
+    return amount_without_symbol
+
+def remove_currency_symbol(amount_with_symbol):
+    """
+    Remove currency symbol or abbreviation from the amount field.
+
+    Parameters:
+        amount_with_symbol (string): The amount field with currency symbol or abbreviation.
+        
+    Returns:
+        amount (string): The amount field with only numbers and dp.
+    """
+    return re.sub("[^0-9,.-]*", "", str(amount_with_symbol))
+
 def populate_repeating_panel_items(rp_items=None, reload=False):
     """
     Populate repeating panel items with data padded with a list of blank items.
@@ -336,20 +375,24 @@ def populate_repeating_panel_items(rp_items=None, reload=False):
         logger.trace('rp_items blank=', result)
     return result
 
-def update_label_id_list(rp_items):
+def patch_repeating_panel_items(rp_items):
     """
-    Update label ID list to be list type for the provided repeating items.
+    Perform repeating items patching pre-submission to server processing.
 
     Parameters:
-        rp_items (list of dict): Repeating panel item.
+        rp_items (list of dict): Repeating panel items.
 
     Returns:
-        rp_items (list of dict): A list of data refreshed with list type for all labels field.
+        rp_items (list of dict): Updated repeating panel items.
     """
 
     from ..Entities.ExpenseTransaction import ExpenseTransaction
     for i in rp_items:
+        # Some label ID list in repeating panel items are not refreshed as list type as not navigated and triggerd the ExpenseInputRPTemplate init method,
+        # Hence update label ID list to be list type for the provided repeating items.
         i[ExpenseTransaction.field_labels()] = generate_label_id_list(i.get(ExpenseTransaction.field_labels()))
+        # Remove currency symbol for all amount fields.
+        i[ExpenseTransaction.field_amount()] = remove_currency_symbol(i.get(ExpenseTransaction.field_amount()))
     return rp_items
 
 @logger.log_function
