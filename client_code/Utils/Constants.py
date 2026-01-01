@@ -182,6 +182,9 @@ class Database:
     """
     SCHEMA_FIN = 'fin'
     SCHEMA_REFDATA = 'refdata'
+    SSLKEY = 'sslcert'
+    SSLMODE = 'verify-full'
+    SSLCERTLOC = '/tmp/root.crt'
 
 class LinkRole:
     """
