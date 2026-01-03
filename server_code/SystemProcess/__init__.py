@@ -1,6 +1,9 @@
 import anvil.secrets
 import anvil.users
 import anvil.server
+from anvil.files import data_files
+from ..Utils.Constants import Database
+import os.path
 
 # This is a server package. It runs on the Anvil server,
 # rather than in the user's browser.
@@ -44,18 +47,27 @@ def db_connect():
 # Establish Postgres DB connection (Yugabyte DB)
 def psqldb_connect():
     import psycopg2
+    if not os.path.isfile(Database.SSLCERTLOC):
+        with open(Database.SSLCERTLOC,'w') as f:
+            f.write(open(data_files[Database.SSLKEY]).read())
     if anvil.app.environment.name in 'Prod':
         connection = psycopg2.connect(
             dbname=anvil.secrets.get_secret('proddb_name'),
             host=anvil.secrets.get_secret('proddb_host'),
             port=anvil.secrets.get_secret('proddb_port'),
             user=anvil.secrets.get_secret('proddb_app_usr'),
-            password=anvil.secrets.get_secret('proddb_app_pw'))
+            password=anvil.secrets.get_secret('proddb_app_pw'),
+            sslmode=Database.SSLMODE,
+            sslrootcert=Database.SSLCERTLOC
+        )
     else:
         connection = psycopg2.connect(
             dbname=anvil.secrets.get_secret('devdb_name'),
             host=anvil.secrets.get_secret('devdb_host'),
             port=anvil.secrets.get_secret('devdb_port'),
             user=anvil.secrets.get_secret('devdb_app_usr'),
-            password=anvil.secrets.get_secret('devdb_app_pw'))
+            password=anvil.secrets.get_secret('devdb_app_pw'),
+            sslmode=Database.SSLMODE,
+            sslrootcert=Database.SSLCERTLOC
+        )
     return connection
