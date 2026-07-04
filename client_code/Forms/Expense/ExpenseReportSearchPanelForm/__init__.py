@@ -135,16 +135,26 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
 
     def build_bar_chart(self, data, **event_args):
         label_list, amount_list = data if data and isinstance(data, (list, tuple)) else [None, None]
-        self.subform.plot_bar_chart.data = [go.Bar(x=label_list, y=amount_list)]
+        colors = ["#7ec98f" if v >= 0 else "#e06c6c" for v in amount_list] if amount_list else []
+        self.subform.plot_bar_chart.data = [go.Bar(x=amount_list, y=label_list, orientation="h", marker=dict(color=colors))]
         self.style_plot(self.subform.plot_bar_chart)
-        self.subform.plot_bar_chart.layout.xaxis.title = "Label"
-        self.subform.plot_bar_chart.layout.yaxis.title = "Amount"
 
     def style_plot(self, plot):
-        # expand the graphs
         plot.layout = go.Layout(
-            margin=dict(l=50, r=50, b=120, t=50),
-            font=dict(family='Arial', size=12),
-            xaxis=dict(zeroline=False, tickfont=dict(family='Arial', size=11, color='#808080')),
-            yaxis=dict(zeroline=False, tickfont=dict(family='Arial', size=11, color='#808080'))
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(family="Inter, Arial, sans-serif", color="#b5b1a6", size=12),
+            height=460,
+            margin=dict(l=16, r=16, t=8, b=32),
+            xaxis=dict(
+                gridcolor="rgba(255,255,255,0.08)",
+                zerolinecolor="rgba(255,255,255,0.30)",
+                tickfont=dict(color="#b5b1a6", size=11),
+            ),
+            yaxis=dict(
+                showgrid=False,
+                autorange="reversed",
+                automargin=True,
+                tickfont=dict(color="#b5b1a6", size=11),
+            ),
         )

@@ -95,9 +95,9 @@ components:
   type: Plot
 - layout_properties: {full_width_row: false, grid_position: 'ZLVMXC,PXXYBG'}
   name: plot_bar_chart
-  properties: {height: 704}
+  properties: {height: 460, role: card}
   type: Plot
 container:
-  properties: {background: '', border: '', col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{"PHMUMA": 58, "PXXYBG": 42}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
 is_package: true

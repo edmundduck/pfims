@@ -396,6 +396,7 @@ input[disabled] ~ span {
   font-variant-numeric: tabular-nums;
 }
 
+
 .anvil-role-app-label-button .btn {
   background-color: %color:Secondary Container%;
   padding: 4px 8px;
@@ -1281,6 +1282,8 @@ select.anvil-role-compact:focus,
 .anvil-role-data-row:hover {
   background: rgba(255, 255, 255, 0.03);
 }
+
+
 
 /* Amount column — right-aligned, tabular figures (covers both input fields and report labels) */
 .anvil-role-amount input,
