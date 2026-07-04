@@ -9,19 +9,19 @@ components:
   - {code: '"${0:.2f}".format(self.item[''AMT''])', property: text}
   layout_properties: {column: JRLRWP}
   name: row_label_amt
-  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - data_bindings:
   - {code: '"${0:.2f}".format(self.item[''debt''])', property: text}
   layout_properties: {column: WXPMEY}
   name: row_label_debt
-  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - data_bindings:
   - {code: '"${0:.2f}".format(self.item[''debt_pym''])', property: text}
   layout_properties: {column: LMHMKP}
   name: row_label_debt_pym
-  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - data_bindings:
   - {code: 'self.item[''tab_id'']', property: text}
@@ -46,7 +46,7 @@ components:
     italic: false
     items: []
     placeholder: ''
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -64,5 +64,5 @@ components:
   properties: {align: center, background: '', bold: false, border: '', col_spacing: medium, col_widths: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, url: '', visible: true, wrap_on: mobile}
   type: Link
 container:
-  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel

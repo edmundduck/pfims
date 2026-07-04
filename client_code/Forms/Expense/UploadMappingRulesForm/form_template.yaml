@@ -2,7 +2,7 @@ components:
 - components:
   - event_bindings: {click: button_create_mapping_click}
     name: button_create_mapping
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:filter', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Create Mapping, tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:filter', icon_align: left, italic: false, role: primary, spacing_above: small, spacing_below: small, text: Create Mapping, tooltip: '', underline: false, visible: true}
     type: Button
   - event_bindings: {click: button_file_import_click}
     name: button_file_import
@@ -18,7 +18,7 @@ components:
       icon: fa:chevron-circle-left
       icon_align: left
       italic: false
-      role: filled
+      role: ghost
       spacing_above: small
       spacing_below: small
       text: |

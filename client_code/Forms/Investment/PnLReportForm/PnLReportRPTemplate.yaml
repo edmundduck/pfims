@@ -3,19 +3,19 @@ components:
   - {code: '"${0:.2f}".format(self.item[''sales''])', property: text}
   layout_properties: {column: JRLRWP}
   name: row_label_sales
-  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - data_bindings:
   - {code: '"${0:.2f}".format(self.item[''cost''])', property: text}
   layout_properties: {column: WXPMEY}
   name: row_label_cost
-  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - data_bindings:
   - {code: '"${0:.2f}".format(self.item[''fee''])', property: text}
   layout_properties: {column: LMHMKP}
   name: row_label_fee
-  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - data_bindings:
   - {code: '"${0:.2f}".format(self.item[''pnl''])', property: text}

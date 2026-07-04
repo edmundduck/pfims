@@ -17,7 +17,7 @@ components:
     italic: false
     items: []
     placeholder: Map a label
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -48,7 +48,7 @@ components:
     italic: false
     items: []
     placeholder: Choose action
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -63,7 +63,7 @@ components:
   - {code: 'self.item[''new'']', property: text, writeback: true}
   layout_properties: {column: WIDMCS}
   name: input_label
-  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: New label name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: New label name, role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
   type: TextBox
 - data_bindings:
   - {code: 'self.item[''tgtlbl2'']', property: selected_value, writeback: true}
@@ -83,7 +83,7 @@ components:
     italic: false
     items: []
     placeholder: Additional label
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -108,7 +108,7 @@ components:
     italic: false
     items: []
     placeholder: Additional label
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -132,7 +132,7 @@ components:
     italic: false
     items: []
     placeholder: Additional label
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -142,6 +142,6 @@ components:
 container:
   data_bindings: []
   event_bindings: {show: form_show}
-  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel
 is_package: true

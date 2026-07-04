@@ -184,7 +184,7 @@ class Database:
     SCHEMA_REFDATA = 'refdata'
     SSLKEY = 'sslcert'
     SSLMODE = 'verify-full'
-    SSLCERTLOC = '/tmp/root.crt'
+    SSLCERTLOC = '/apps/root.crt'
 
 class LinkRole:
     """

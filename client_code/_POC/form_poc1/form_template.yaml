@@ -9,7 +9,7 @@ components:
     - event_bindings: {pressed_enter: text_taglabel_pressed_enter}
       layout_properties: {column: XORDJK, grid_position: 'MINMMX,BMBTZB'}
       name: text_taglabel
-      properties: {}
+      properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
       type: TextBox
     - layout_properties: {column: WUWOAB, grid_position: 'MINMMX,QLWWMO'}
       name: panel_tags
@@ -17,7 +17,7 @@ components:
       type: FlowPanel
     - layout_properties: {column: QRNHED}
       name: text_remarks
-      properties: {}
+      properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
       type: TextBox
     layout_properties: {}
     name: data_row_panel_1

@@ -36,9 +36,9 @@ components:
 - event_bindings: {click: button_vis_click}
   layout_properties: {column: JKIJSW}
   name: button_vis
-  properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:plus-square', icon_align: left_edge, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+  properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:plus-square', icon_align: left_edge, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Button
 container:
   data_bindings: []
-  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel

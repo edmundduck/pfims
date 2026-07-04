@@ -11,7 +11,7 @@ components:
     event_bindings: {change: row_stmt_dtl_change}
     layout_properties: {column: ROQBQR}
     name: row_stmt_dtl
-    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Add a note, role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - data_bindings: []
     event_bindings: {click: button_delete_click}
@@ -29,14 +29,14 @@ components:
     event_bindings: {change: row_remarks_change}
     layout_properties: {column: DGKRSZ}
     name: row_remarks
-    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Add a note, role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - data_bindings:
     - {code: 'self.item[''DTE'']', property: date, writeback: true}
     event_bindings: {change: row_date_change}
     layout_properties: {column: DNGCRO}
     name: row_date
-    properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+    properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: yyyy-mm-dd, role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
     type: DatePicker
   - data_bindings:
     - {code: 'self.item[''ACC'']', property: selected_value, writeback: true}
@@ -55,8 +55,8 @@ components:
       include_placeholder: true
       italic: false
       items: []
-      placeholder: Choose an account
-      role: null
+      placeholder: Choose account
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -68,7 +68,7 @@ components:
     event_bindings: {change: row_amt_change, focus: row_amt_focus, lost_focus: row_amt_lost_focus}
     layout_properties: {column: JRLRWP}
     name: row_amt
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '0.00', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - data_bindings:
     - {code: 'self.item[''LBL'']', property: text, writeback: true}
@@ -88,6 +88,6 @@ components:
   type: DataRowPanel
 container:
   data_bindings: []
-  properties: {align: left, auto_display_data: false, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  properties: {align: left, auto_display_data: false, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel
 is_package: true

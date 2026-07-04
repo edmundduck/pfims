@@ -1,7 +1,7 @@
 components:
 - layout_properties: {column: XORDJK}
   name: row_texttag
-  properties: {}
+  properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
   type: Label
 - layout_properties: {column: WUWOAB}
   name: row_panel_tag
@@ -9,7 +9,9 @@ components:
   type: FlowPanel
 - layout_properties: {column: QRNHED}
   name: row_remarks
-  properties: {}
+  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
   type: TextBox
-container: {type: DataRowPanel}
+container:
+  properties: {align: left, auto_display_data: false, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  type: DataRowPanel
 is_package: true

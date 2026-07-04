@@ -2,42 +2,42 @@ components:
 - components:
   - layout_properties: {column: DNGCRO}
     name: row_selldate
-    properties: {align: right, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
     type: DatePicker
   - layout_properties: {column: MOWHRG}
     name: row_buydate
-    properties: {align: right, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
     type: DatePicker
   - data_bindings: []
     layout_properties: {column: RMITXR}
     name: row_symbol
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - layout_properties: {column: DMKCOL}
     name: row_qty
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - event_bindings: {}
     layout_properties: {column: JRLRWP}
     name: row_sales
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - layout_properties: {column: WXPMEY}
     name: row_cost
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - event_bindings: {}
     layout_properties: {column: LMHMKP}
     name: row_fee
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, text: '0', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '0', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - layout_properties: {column: DGKRSZ}
     name: row_sell_price
-    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Label
   - layout_properties: {column: IFVNQY}
     name: row_buy_price
-    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Label
   - layout_properties: {column: NMAPTI}
     name: row_pnl
@@ -46,11 +46,11 @@ components:
   - components:
     - event_bindings: {click: button_save_click}
       name: button_save
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:floppy-o', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:floppy-o', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
       type: Button
     - event_bindings: {click: button_cancel_click}
       name: button_cancel
-      properties: {icon: 'fa:close', text: ''}
+      properties: {icon: 'fa:close', role: ghost, text: ''}
       type: Button
     - name: row_iid
       properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
@@ -92,31 +92,31 @@ components:
     - {code: '"${0:.2f}".format(self.item[''sales''])', property: text}
     layout_properties: {column: JRLRWP}
     name: row_label_sales
-    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Label
   - data_bindings:
     - {code: '"${0:.2f}".format(self.item[''cost''])', property: text}
     layout_properties: {column: WXPMEY}
     name: row_label_cost
-    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Label
   - data_bindings:
     - {code: '"${0:.2f}".format(self.item[''fee''])', property: text}
     layout_properties: {column: LMHMKP}
     name: row_label_fee
-    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Label
   - data_bindings:
     - {code: '"${0:.2f}".format(self.item[''sell_price''])', property: text}
     layout_properties: {column: DGKRSZ}
     name: row_label_sell_price
-    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Label
   - data_bindings:
     - {code: '"${0:.2f}".format(self.item[''buy_price''])', property: text}
     layout_properties: {column: IFVNQY}
     name: row_label_buy_price
-    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: amount, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Label
   - data_bindings:
     - {code: '"${0:.2f}".format(self.item[''pnl''])', property: text}
@@ -128,11 +128,11 @@ components:
     - data_bindings: []
       event_bindings: {click: button_edit_click}
       name: button_edit
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:pencil', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:pencil', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
       type: Button
     - event_bindings: {click: button_delete_click}
       name: button_delete
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:minus', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: 'fa:minus', icon_align: left, italic: false, role: destructive-ghost, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
       type: Button
     - name: row_label_iid
       properties: {align: right, font_size: 12, visible: false}
@@ -149,6 +149,6 @@ components:
   type: DataRowPanel
 container:
   data_bindings: []
-  properties: {align: left, auto_display_data: false, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  properties: {align: left, auto_display_data: false, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel
 is_package: true
