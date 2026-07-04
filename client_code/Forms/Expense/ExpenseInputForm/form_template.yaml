@@ -2,19 +2,19 @@ components:
 - components:
   - event_bindings: {click: button_file_import_click}
     name: button_file_import
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:files-o', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: File Import, tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:files-o', icon_align: left, italic: false, role: secondary, spacing_above: small, spacing_below: small, text: Import, tooltip: '', underline: false, visible: true}
     type: Button
   - event_bindings: {click: button_add_rows_click}
     name: button_add_rows
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:list', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Add %n rows, tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:plus', icon_align: left, italic: false, role: secondary, spacing_above: small, spacing_below: small, text: Add %n rows, tooltip: '', underline: false, visible: true}
     type: Button
   - event_bindings: {click: button_lbl_maint_click}
     name: button_lbl_maint
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:tags', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Manage Labels, tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:tags', icon_align: left, italic: false, role: secondary, spacing_above: small, spacing_below: small, text: Manage labels, tooltip: '', underline: false, visible: true}
     type: Button
   - event_bindings: {click: button_acct_maint_click}
     name: button_acct_maint
-    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:cc', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Manage Accounts, tooltip: '', underline: false, visible: true}
+    properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:cc', icon_align: left, italic: false, role: secondary, spacing_above: small, spacing_below: small, text: Manage accounts, tooltip: '', underline: false, visible: true}
     type: Button
   layout_properties: {grid_position: 'HTVRIO,EFASUB'}
   name: flow_panel_1
@@ -24,7 +24,7 @@ components:
   - event_bindings: {change: tab_name_change}
     layout_properties: {width: 180}
     name: tab_name
-    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Enter tab name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Enter tab name, role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - event_bindings: {change: dropdown_labels_change}
     layout_properties: {width: 180}
@@ -42,7 +42,7 @@ components:
       italic: false
       items: []
       placeholder: Apply labels
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -65,7 +65,7 @@ components:
       italic: false
       items: ['']
       placeholder: Create new tab
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -79,11 +79,11 @@ components:
 - components:
   - event_bindings: {change: cb_hide_remarks_change}
     name: cb_hide_remarks
-    properties: {align: right, allow_indeterminate: false, background: '', bold: false, border: '', checked: false, enabled: true, font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: small, spacing_below: small, text: Hide Remarks, tooltip: '', underline: false, visible: true}
+    properties: {align: right, allow_indeterminate: false, background: '', bold: false, border: '', checked: false, enabled: true, font: '', font_size: 12, foreground: '', italic: false, role: chip, spacing_above: small, spacing_below: small, text: Remarks, tooltip: '', underline: false, visible: true}
     type: CheckBox
   - event_bindings: {change: cb_hide_stmtdtl_change}
     name: cb_hide_stmtdtl
-    properties: {align: right, allow_indeterminate: false, background: '', bold: false, border: '', checked: false, enabled: true, font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: small, spacing_below: small, text: Hide Statement Detail, tooltip: '', underline: false, visible: true}
+    properties: {align: right, allow_indeterminate: false, background: '', bold: false, border: '', checked: false, enabled: true, font: '', font_size: 12, foreground: '', italic: false, role: chip, spacing_above: small, spacing_below: small, text: Statement detail, tooltip: '', underline: false, visible: true}
     type: CheckBox
   layout_properties: {grid_position: 'AZDSCP,AETLRR'}
   name: flow_panel_4
@@ -144,19 +144,28 @@ components:
     wrap_on: never
   type: DataGrid
 - components:
-  - event_bindings: {click: button_save_click}
+  - layout_properties: {}
+    name: label_row_count
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    type: Label
+  - event_bindings: {click: button_add_rows_click}
     layout_properties: {}
-    name: button_save_exptab
-    properties: {align: center, background: 'theme:Secondary 500', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:Black', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Save, tooltip: '', underline: false, visible: true}
+    name: button_add_row
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:plus', icon_align: left, italic: false, role: ghost-dashed, spacing_above: small, spacing_below: small, text: Add row, tooltip: '', underline: false, visible: true}
+    type: Button
+  - layout_properties: {}
+    name: button_clear
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: Clear, tooltip: '', underline: false, visible: true}
     type: Button
   - event_bindings: {click: button_delete_click}
     layout_properties: {}
     name: button_delete_exptab
-    properties: {align: center, background: 'theme:Gray 800', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:White', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:trash', icon_align: left, italic: false, role: destructive-ghost, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
     type: Button
-  - layout_properties: {}
-    name: button_clear
-    properties: {align: center, background: 'theme:Gray 300', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:White', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Clear, tooltip: '', underline: false, visible: true}
+  - event_bindings: {click: button_save_click}
+    layout_properties: {}
+    name: button_save_exptab
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:check', icon_align: left, italic: false, role: primary, spacing_above: small, spacing_below: small, text: Save, tooltip: '', underline: false, visible: true}
     type: Button
   layout_properties: {grid_position: 'PJYNLV,PJONAN', slot: footer}
   name: flow_panel_2

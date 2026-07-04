@@ -17,7 +17,7 @@ components:
     italic: false
     items: []
     placeholder: Choose mapping column
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -61,6 +61,6 @@ components:
   type: CheckBox
 container:
   data_bindings: []
-  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel
 is_package: true

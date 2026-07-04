@@ -3,15 +3,17 @@ components:
   - {code: 'self.item[''test'']', property: text, writeback: true}
   layout_properties: {column: UUWVZS}
   name: text_box_1
-  properties: {}
+  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
   type: TextBox
 - layout_properties: {column: TUSTXE}
   name: drop_down_1
-  properties: {}
+  properties: {align: full, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', include_placeholder: true, italic: false, items: [], placeholder: '', role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
   type: DropDown
 - layout_properties: {column: SXNLWL}
   name: date_picker_1
-  properties: {}
+  properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
   type: DatePicker
-container: {type: DataRowPanel}
+container:
+  properties: {align: left, auto_display_data: false, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  type: DataRowPanel
 is_package: true

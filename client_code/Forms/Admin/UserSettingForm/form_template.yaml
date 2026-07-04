@@ -27,7 +27,7 @@ components:
         italic: false
         items: []
         placeholder: Choose one below
-        role: null
+        role: compact
         spacing_above: small
         spacing_below: small
         tooltip: ''
@@ -47,7 +47,7 @@ components:
         col_widths: {}
         grid_position: HNAOUS,JHBMKY
       name: time_datefrom
-      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
       type: DatePicker
     layout_properties: {grid_position: 'RECMTZ,QXWIJH IYQTEB,WSMILU'}
     name: column_panel_3
@@ -62,7 +62,7 @@ components:
         col_widths: {}
         grid_position: XMUJCJ,VEBSOW
       name: time_dateto
-      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+      properties: {align: left, background: '', bold: false, border: '', date: '', enabled: true, font: '', font_size: 12, foreground: '', format: '%Y-%m-%d', italic: false, max_date: '', min_date: '', pick_time: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
       type: DatePicker
     layout_properties: {grid_position: 'RECMTZ,QXWIJH GNCWSV,PWKHWZ'}
     name: column_panel_10
@@ -107,7 +107,7 @@ components:
         italic: false
         items: ['']
         placeholder: Choose one below
-        role: null
+        role: compact
         spacing_above: small
         spacing_below: small
         tooltip: ''
@@ -139,7 +139,7 @@ components:
         italic: false
         items: ['']
         placeholder: Server Default
-        role: null
+        role: compact
         spacing_above: small
         spacing_below: small
         tooltip: ''
@@ -154,7 +154,7 @@ components:
     - event_bindings: {click: button_submit_click}
       layout_properties: {}
       name: button_submit
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Submit, tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: primary, spacing_above: small, spacing_below: small, text: Submit, tooltip: '', underline: false, visible: true}
       type: Button
     layout_properties: {grid_position: 'RECMTZ,JZNTED CLDCJP,VKUTDT'}
     name: flow_panel_1
@@ -162,7 +162,7 @@ components:
     type: FlowPanel
   layout_properties: {grid_position: 'JIJHPB,RIRYKN'}
   name: column_panel_6
-  properties: {background: '', border: solid, col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{}', foreground: '', role: card, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
 - components: []
   layout_properties: {grid_position: 'KOVFNQ,VDSMHH'}
@@ -198,7 +198,7 @@ components:
         italic: false
         items: []
         placeholder: Choose one existing brokers below
-        role: null
+        role: compact
         spacing_above: small
         spacing_below: small
         tooltip: ''
@@ -213,7 +213,7 @@ components:
     - event_bindings: {lost_focus: text_broker_name_lost_focus}
       layout_properties: {grid_position: 'NLSSIJ,YOHYYB'}
       name: text_broker_name
-      properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Broker Name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+      properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Broker Name, role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
       type: TextBox
     - event_bindings: {}
       layout_properties: {grid_position: 'NLSSIJ,VSMJOG'}
@@ -231,7 +231,7 @@ components:
         italic: false
         items: []
         placeholder: Broker Currency
-        role: null
+        role: compact
         spacing_above: small
         spacing_below: small
         tooltip: ''
@@ -246,17 +246,17 @@ components:
     - event_bindings: {click: button_broker_create_click}
       layout_properties: {}
       name: button_broker_create
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Create, tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: secondary, spacing_above: small, spacing_below: small, text: Create, tooltip: '', underline: false, visible: true}
       type: Button
     - event_bindings: {click: button_broker_update_click}
       layout_properties: {}
       name: button_broker_update
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Update, tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: Update, tooltip: '', underline: false, visible: true}
       type: Button
     - event_bindings: {click: button_broker_delete_click}
       layout_properties: {}
       name: button_broker_delete
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: 'theme:Tertiary Container', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: destructive-ghost, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
       type: Button
     layout_properties: {grid_position: 'NUFNPJ,NOVOCV'}
     name: flow_panel_3
@@ -264,7 +264,7 @@ components:
     type: FlowPanel
   layout_properties: {grid_position: 'UXWOAG,FJCQHU'}
   name: column_panel_8
-  properties: {background: '', border: solid, col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{}', foreground: '', role: card, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
 - layout_properties: {grid_position: 'RMULFR,ODQVDN'}
   name: column_panel_15
@@ -299,7 +299,7 @@ components:
         italic: false
         items: []
         placeholder: Choose one below
-        role: null
+        role: compact
         spacing_above: small
         spacing_below: small
         tooltip: ''
@@ -314,7 +314,7 @@ components:
     - event_bindings: {click: button_jrn_grp_edit_click}
       layout_properties: {}
       name: button_jrn_grp_edit
-      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Enable Edit, tooltip: '', underline: false, visible: true}
+      properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: Enable Edit, tooltip: '', underline: false, visible: true}
       type: Button
     layout_properties: {grid_position: 'KULKXZ,CYNLHE QUCAAY,MWUXDW'}
     name: flow_panel_2
@@ -324,7 +324,7 @@ components:
     col_widths: {}
     grid_position: THJPMM,XDHTXP
   name: column_panel_16
-  properties: {background: '', border: solid, col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{}', foreground: '', role: card, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
 - layout_properties:
     col_widths: {}

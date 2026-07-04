@@ -16,7 +16,7 @@ components:
     italic: false
     items: []
     placeholder: Choose mapping account
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -27,7 +27,7 @@ components:
   - {code: 'self.item[''newacct'']', property: text, writeback: true}
   layout_properties: {column: WIDMCS}
   name: input_account
-  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: New account name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: New account name, role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
   type: TextBox
 - data_bindings:
   - {code: 'self.item[''srcacct'']', property: text}
@@ -53,7 +53,7 @@ components:
     italic: false
     items: []
     placeholder: Choose action
-    role: null
+    role: compact
     spacing_above: small
     spacing_below: small
     tooltip: ''
@@ -66,6 +66,6 @@ components:
   type: Label
 container:
   data_bindings: []
-  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: null, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  properties: {align: left, auto_display_data: true, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
   type: DataRowPanel
 is_package: true

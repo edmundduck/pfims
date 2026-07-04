@@ -8,13 +8,13 @@ components:
     - {code: 'self.item[''name'']', property: text, writeback: true}
     layout_properties: {}
     name: row_mapping_name
-    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Enter mapping rule name, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
+    properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: Enter mapping rule name, role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
     type: TextBox
   - data_bindings:
     - {code: 'self.item[''description'']', property: text, writeback: false}
     layout_properties: {width: 336}
     name: row_desc
-    properties: {font_size: 12, placeholder: Enter description}
+    properties: {font_size: 12, placeholder: Enter description, role: compact}
     type: TextBox
   - layout_properties: {}
     name: label_3
@@ -37,7 +37,7 @@ components:
       italic: false
       items: ['']
       placeholder: ''
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -62,16 +62,16 @@ components:
   - event_bindings: {click: row_button_save_click}
     layout_properties: {}
     name: row_button_save
-    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Save, tooltip: '', underline: false, visible: true}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: secondary, spacing_above: small, spacing_below: small, text: Save, tooltip: '', underline: false, visible: true}
     type: Button
   - event_bindings: {click: row_button_delete_click}
     layout_properties: {}
     name: row_button_delete
-    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: 'theme:Tertiary Container', icon: '', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: destructive-ghost, spacing_above: small, spacing_below: small, text: Delete, tooltip: '', underline: false, visible: true}
     type: Button
   layout_properties: {grid_position: 'ZDRSSJ,HYEEHZ'}
   name: flow_panel_1
-  properties: {background: 'theme:Primary Container'}
+  properties: {background: ''}
   type: FlowPanel
 - components:
   - layout_properties: {width: 32}
@@ -98,7 +98,7 @@ components:
       italic: false
       items: [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z]
       placeholder: ''
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -124,7 +124,7 @@ components:
       italic: false
       items: []
       placeholder: ''
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -151,7 +151,7 @@ components:
       italic: false
       items: []
       placeholder: Choose additional action
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -173,7 +173,7 @@ components:
       italic: false
       items: []
       placeholder: Choose label
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -195,7 +195,7 @@ components:
       italic: false
       items: [Choose account]
       placeholder: ''
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -205,13 +205,13 @@ components:
   - event_bindings: {click: row_button_add_click}
     layout_properties: {}
     name: row_button_add
-    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:plus', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:plus', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: '', tooltip: '', underline: false, visible: true}
     type: Button
   layout_properties: {grid_position: 'TDATED,WTSLHX'}
   name: flow_panel_2
   properties: {background: ''}
   type: FlowPanel
 container:
-  properties: {background: '', border: groove, col_spacing: medium, col_widths: '{}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  properties: {background: '', border: '', col_spacing: medium, col_widths: '{}', foreground: '', role: card, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
 is_package: true

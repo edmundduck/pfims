@@ -1,30 +1,30 @@
 color_scheme:
   colors:
-  - {color: '#FF8906', name: Primary}
-  - {color: '#716040', name: Primary Container}
+  - {color: '#E8722A', name: Primary}
+  - {color: '#303030', name: Primary Container}
   - {color: '#FFFFFE', name: Secondary}
   - {color: '#F25F4C', name: Secondary Container}
   - {color: '#EADDCF', name: Tertiary}
   - {color: '#F25F4C', name: Tertiary Container}
   - {color: '#FD0600', name: Error}
-  - {color: '#0F0E17', name: Background}
-  - {color: '#E1E3DF', name: On Background}
-  - {color: '#A7A9BE', name: Surface}
-  - {color: '#0F0E17', name: On Surface}
-  - {color: 'rgba(140, 120, 100, 1)', name: Surface Variant}
-  - {color: '#C0C9C1', name: On Surface Variant}
-  - {color: '#A7A9BE', name: Outline}
-  - {color: 'rgba(238, 210, 168, 0.2)', name: Dark Overlay 1}
-  - {color: 'rgba(238, 210, 168, 0.5)', name: Dark Overlay 2}
-  - {color: 'rgba(238, 210, 168, 0.2)', name: Light Overlay 1}
-  - {color: 'rgba(238, 210, 168, 0.5)', name: Light Overlay 2}
+  - {color: '#242424', name: Background}
+  - {color: '#E8E8E8', name: On Background}
+  - {color: '#2C2C2C', name: Surface}
+  - {color: '#E8E8E8', name: On Surface}
+  - {color: '#2C2C2C', name: Surface Variant}
+  - {color: '#CACACA', name: On Surface Variant}
+  - {color: '#3E3E3E', name: Outline}
+  - {color: 'rgba(255, 255, 255, 0.2)', name: Dark Overlay 1}
+  - {color: 'rgba(255, 255, 255, 0.5)', name: Dark Overlay 2}
+  - {color: 'rgba(255, 255, 255, 0.2)', name: Light Overlay 1}
+  - {color: 'rgba(255, 255, 255, 0.5)', name: Light Overlay 2}
   - {color: 'rgba(133, 133, 139, 0.12)', name: Disabled Container}
   - {color: '#85858B', name: On Disabled}
-  - {color: 'rgba(238, 210, 168, 0.05)', name: Primary Overlay 1}
-  - {color: 'rgba(238, 210, 168, 0.08)', name: Primary Overlay 2}
-  - {color: 'rgba(238, 210, 168, 0.11)', name: Primary Overlay 3}
-  - {color: Red, name: Pure Red}
-  - {color: Green, name: Pure Green}
+  - {color: 'rgba(255, 255, 255, 0.05)', name: Primary Overlay 1}
+  - {color: 'rgba(255, 255, 255, 0.08)', name: Primary Overlay 2}
+  - {color: 'rgba(255, 255, 255, 0.11)', name: Primary Overlay 3}
+  - {color: '#F87171', name: Pure Red}
+  - {color: '#34D399', name: Pure Green}
   preset_groups:
   - name: Primary Colour
     options:
@@ -200,3 +200,15 @@ roles:
   name: button-removal
 - components: [Button]
   name: button-no-icon
+- components: [Button, FileLoader]
+  name: primary
+- components: [Button, FileLoader]
+  name: secondary
+- components: [Button, FileLoader]
+  name: ghost
+- components: [Button]
+  name: destructive
+- components: [TextBox, DatePicker, DropDown]
+  name: compact
+- components: [CheckBox]
+  name: chip

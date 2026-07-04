@@ -95,7 +95,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             pos = 0
             for c in self.data_grid_1.columns:
-                if c['data_key'] is not ExpenseTransaction.field_amount():
+                if c['data_key'] != ExpenseTransaction.field_amount():
                     pos = pos + 1
                 else:
                     break
@@ -117,7 +117,7 @@ class ExpenseInputForm(ExpenseInputFormTemplate):
         else:
             pos = 0
             for c in self.data_grid_1.columns:
-                if c['data_key'] is not ExpenseTransaction.field_amount():
+                if c['data_key'] != ExpenseTransaction.field_amount():
                     pos = pos + 1
                 else:
                     break

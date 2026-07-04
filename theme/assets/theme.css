@@ -3,10 +3,27 @@
     src: url("_/theme/SecularOne-Regular.ttf")
 }
 
+/* FIM$ Design tokens */
+:root {
+  --fims-bg:        #242424;
+  --fims-surface:   #2C2C2C;
+  --fims-input-bg:  #303030;
+  --fims-border:    #3E3E3E;
+  --fims-border-em:   #3A4150;
+  --fims-text:      #E8E8E8;
+  --fims-text-2:    #A1A1A1;
+  --fims-text-3:    #767676;
+  --fims-accent:      #E8722A;
+  --fims-accent-hov:  #D5641F;
+  --fims-negative:    #F87171;
+  --fims-positive:    #34D399;
+  --control-h:      32px;
+}
+
 body {
-  font-family: 'Trebuchet MS', sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   background-color: %color:Background%;
   color: %color:On Background%;
 }
@@ -88,13 +105,13 @@ a:active:not(disabled), a:focus:not(disabled){
 
 /* Buttons */
 
-.btn, .btn-default, .file-loader, .file-loader > label { 
-  font-family: "Secular One";
-  font-size: 12px;
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 2px;
-  
+.btn, .btn-default, .file-loader, .file-loader > label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+  text-transform: none;
+  font-weight: 400;
+  letter-spacing: 0;
+
   border: 0;
   background-color: transparent;
   background-image: none;
@@ -102,7 +119,7 @@ a:active:not(disabled), a:focus:not(disabled){
   text-shadow: none;
   box-shadow: none;
   -webkit-box-shadow: none;
-  
+
   position: relative;
 }
 
@@ -303,10 +320,11 @@ input[disabled] ~ span {
 /* Roles */
 
 .anvil-role-card {
-  background: %color:Primary Container%;
-  border-radius: 5px;
-  box-shadow: 0px 0px 10px %color:Light Overlay 2%;
-  padding: 8px 8px;
+  background: var(--fims-surface);
+  border: 0.5px solid var(--fims-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: none;
 }
 
 .anvil-role-heading {
@@ -367,11 +385,15 @@ input[disabled] ~ span {
 }
 
 .anvil-role-positive-amount-label > .label-text {
-  color: %color:Pure Green%;
+  color: var(--fims-positive);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .anvil-role-negative-amount-label > .label-text {
-  color: %color:Pure Red%;
+  color: var(--fims-negative);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 .anvil-role-app-label-button .btn {
@@ -391,37 +413,27 @@ input[disabled] ~ span {
   font-size: 12px;
 }
 
-/* Report title subheading styling */
+/* Report / section title — left accent bar + clear hierarchy */
 .content .anvil-role-subheading {
-    border-bottom: 5px solid %color:Tertiary Container%;
-    width: 1000px;
-    height: 30px;
-    position: relative;
-    /* transform: translate(-50%, -50%); */
-    overflow: hidden;
+  border-left: 3px solid var(--fims-accent);
+  border-bottom: none;
+  padding: 2px 0 2px 10px;
+  margin-bottom: 12px;
+  width: auto;
+  height: auto;
+  position: static;
+  overflow: visible;
 }
-
-/* Report title subheading styling */
 .content .anvil-role-subheading > .label-text {
-    color: %color:Tertiary%;
-    background-color: %color:Tertiary Container%;
-    font-weight: bold;
-    font-size: 16px;
-    display: inline-block;
-    padding: 4px 20px;
-    text-transform: uppercase;
-}
-
-/* Report title subheading styling */
-.content .anvil-role-subheading > .label-text::after {
-    position: absolute;
-    top: 25px;
-    content: "";
-    width: 10%;
-    height: 100%;
-    background: %color:Tertiary Container%;
-    z-index: -1;
-    transform:rotate(45deg);
+  color: var(--fims-text);
+  background-color: transparent;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  display: block;
+  padding: 0;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 /* Other classes */
@@ -813,14 +825,14 @@ input[disabled] ~ span {
 .nav-holder .left-nav, .left-nav-placeholder {
   display: flex;
   flex-direction: column;
-  background: linear-gradient(0deg, %color:Primary Overlay 1%, %color:Primary Overlay 1%), %color:Background%;
-/*   background: %color:Background%; */
-  font-family: 'Secular One';
+  background: var(--fims-bg);
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 14px;
-  font-weight: 500;
-  color: %color:On Surface Variant%;
+  font-weight: 400;
+  color: var(--fims-text-2);
   overflow-x: hidden;
   overflow-y: auto;
+  border-right: 0.5px solid var(--fims-border);
 }
 
 .left-nav-placeholder {
@@ -883,7 +895,12 @@ input[disabled] ~ span {
 }
 
 .has-text > .anvil-component-icon.left-icon {
-    margin-right: 1.3em !important; 
+    margin-right: 1.3em !important;
+}
+
+/* Sidebar overrides: neutralise the global 1.3em hack so gap: 10px controls spacing */
+.left-nav .btn.has-text > .anvil-component-icon.left-icon {
+  margin-right: 0 !important;
 }
 
 /* Sidebar links (and labels with edge icons) go +16px wider
@@ -925,21 +942,371 @@ input[disabled] ~ span {
 
 .nav-holder > .logo > .placeholder { outline: 1px dotted; padding-left: 16px; padding-right: 16px; margin: 8px 8px 0;}
 
-/* Standardize the label settings in the left navigation menu */
+/* Section labels (INVESTMENT, EXPENSE) — small, subdued, no orange */
 .left-nav .anvil-role-subheading > .label-text {
-  color: %color:Tertiary%;
-  font-size: 18px;
+  color: var(--fims-text-3);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: block;
+  padding: 20px 8px 4px;
 }
 
-/* Buttons in left navigation menu bar display in different size according to having icon or not */
+/* Nav item buttons — flex so icon and label sit on one baseline */
+.left-nav .btn,
 .left-nav .anvil-role-button-no-icon .btn {
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  width: 100%;
+  text-align: left;
+  color: var(--fims-text-2) !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
-.left-nav .btn {
+/* Override Anvil's icon width:0 hack — give icons a real slot */
+.left-nav .btn .anvil-component-icon,
+.left-nav .btn .anvil-component-icon.left-icon {
+  width: 16px !important;
+  margin-right: 0 !important;
+  position: static !important;
   font-size: 14px;
+  flex-shrink: 0;
+  text-align: center;
+  color: inherit !important;
+  opacity: 0.75;
+}
+
+/* Hover */
+.left-nav .btn:hover,
+.left-nav .btn:focus {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: var(--fims-text) !important;
+  outline: none;
+}
+.left-nav .btn:hover .anvil-component-icon,
+.left-nav .btn:focus .anvil-component-icon {
+  opacity: 1;
+  color: var(--fims-text) !important;
+}
+
+/* Active / selected — orange pill */
+.left-nav .anvil-role-selected .btn {
+  background: rgba(232, 114, 42, 0.12) !important;
+  color: var(--fims-accent) !important;
+  font-weight: 500;
+}
+.left-nav .anvil-role-selected .btn .anvil-component-icon {
+  opacity: 1;
+  color: var(--fims-accent) !important;
 }
 
 html:not(.designer) .visible-false {
   width: 1px;
 }
+
+/* =========================================================
+   FIM$ v2 role classes — Expense Input redesign
+   ========================================================= */
+
+/* Primary button — filled orange, exactly one per screen */
+.anvil-role-primary .btn,
+.anvil-role-primary > label {
+  background-color: var(--fims-accent) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none !important;
+}
+.anvil-role-primary .btn:hover,
+.anvil-role-primary > label:hover {
+  background-color: var(--fims-accent-hov) !important;
+  color: #fff !important;
+}
+
+/* Secondary button — transparent, hairline border */
+.anvil-role-secondary .btn,
+.anvil-role-secondary > label {
+  background: transparent !important;
+  color: var(--fims-text-2) !important;
+  border: 0.5px solid var(--fims-border) !important;
+  border-radius: 8px;
+  padding: 6px 16px;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none !important;
+}
+.anvil-role-secondary .btn:hover,
+.anvil-role-secondary > label:hover {
+  background-color: var(--fims-surface) !important;
+  color: var(--fims-text) !important;
+  border-color: var(--fims-border-em) !important;
+}
+
+/* Ghost button — text/icon only, no border */
+.anvil-role-ghost .btn,
+.anvil-role-ghost > label {
+  background: transparent !important;
+  color: var(--fims-text-2) !important;
+  border: none !important;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none !important;
+}
+.anvil-role-ghost .btn:hover,
+.anvil-role-ghost > label:hover {
+  color: var(--fims-text) !important;
+  background: transparent !important;
+}
+
+/* Destructive button — ghost but red text on hover */
+.anvil-role-destructive .btn,
+.anvil-role-destructive > label {
+  background: transparent !important;
+  color: var(--fims-text-2) !important;
+  border: none !important;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none !important;
+}
+.anvil-role-destructive .btn:hover,
+.anvil-role-destructive > label:hover {
+  color: var(--fims-negative) !important;
+  background: transparent !important;
+}
+
+/* Destructive-ghost — transparent, no border, red text always visible */
+.anvil-role-destructive-ghost .btn,
+.anvil-role-destructive-ghost > label {
+  background: transparent !important;
+  border: none !important;
+  color: #F87171 !important;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none !important;
+}
+.anvil-role-destructive-ghost .btn:hover,
+.anvil-role-destructive-ghost > label:hover {
+  background: rgba(248, 113, 113, 0.08) !important;
+}
+
+/* Compact inputs — role class sits ON the field itself (TextBox/DropDown);
+   DatePicker keeps its input nested in .anvil-datepicker, so cover both forms. */
+.anvil-role-compact.form-control,
+.anvil-role-compact.anvil-text-box,
+select.anvil-role-compact,
+.anvil-role-compact select,
+.anvil-role-compact input:not([type="checkbox"]):not([type="radio"]),
+.anvil-role-compact .anvil-datepicker input {
+  background-color: var(--fims-input-bg) !important;
+  border: 0.5px solid var(--fims-border) !important;
+  border-radius: 6px !important;
+  color: var(--fims-text) !important;
+  font-size: 13px;
+  height: var(--control-h) !important;
+  box-sizing: border-box;
+  padding: 0 10px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: none !important;
+}
+
+/* Strip native select chrome and draw a consistent SVG chevron */
+.anvil-role-compact select,
+select.anvil-role-compact {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A8A29E' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+
+.anvil-role-compact.form-control:focus,
+.anvil-role-compact.anvil-text-box:focus,
+select.anvil-role-compact:focus,
+.anvil-role-compact select:focus,
+.anvil-role-compact input:focus,
+.anvil-role-compact .anvil-datepicker input:focus {
+  border-color: var(--fims-accent) !important;
+  box-shadow: 0 0 0 2px rgba(232, 114, 42, 0.25) !important;
+  outline: none;
+}
+.anvil-role-compact.form-control::placeholder,
+.anvil-role-compact.anvil-text-box::placeholder,
+.anvil-role-compact input::placeholder {
+  color: var(--fims-text-3);
+}
+
+/* Compact inputs inside card containers — survives Validator.highlight_when_invalid()
+   which resets role to None (VALID_NORMAL) when valid, stripping the compact class. */
+.anvil-role-card select,
+.anvil-role-card .anvil-text-box,
+.anvil-role-card input:not([type="checkbox"]):not([type="radio"]),
+.anvil-role-card .anvil-datepicker input {
+  background-color: var(--fims-input-bg) !important;
+  border: 0.5px solid var(--fims-border) !important;
+  border-radius: 6px !important;
+  color: var(--fims-text) !important;
+  font-size: 13px;
+  height: var(--control-h) !important;
+  box-sizing: border-box;
+  padding: 0 10px;
+  font-variant-numeric: tabular-nums;
+  box-shadow: none !important;
+}
+.anvil-role-card select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A8A29E' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+}
+.anvil-role-card select:focus,
+.anvil-role-card input:focus,
+.anvil-role-card .anvil-datepicker input:focus {
+  border-color: var(--fims-accent) !important;
+  box-shadow: 0 0 0 2px rgba(232, 114, 42, 0.25) !important;
+  outline: none;
+}
+.anvil-role-card input::placeholder,
+.anvil-role-card .anvil-datepicker input::placeholder {
+  color: var(--fims-text-3);
+}
+/* Error state inside card: keep compact base but flag border with error colour */
+.anvil-role-card .anvil-role-input-error select,
+.anvil-role-card select.anvil-role-input-error,
+.anvil-role-card .anvil-role-input-error .anvil-text-box,
+.anvil-role-card .anvil-role-input-error input:not([type="checkbox"]):not([type="radio"]),
+.anvil-role-card .anvil-datepicker .anvil-role-input-error input {
+  border-color: %color:Error% !important;
+  box-shadow: none !important;
+}
+
+/* Chip toggle — column visibility toggle pill
+   unchecked = column visible = chip ON (subtle tint, eye open)
+   checked    = column hidden  = chip OFF (grey, eye closed)        */
+.anvil-role-chip .checkbox label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+  height: 26px;
+  border-radius: 13px;
+  border: 1px solid var(--fims-border);
+  background: transparent;
+  color: var(--fims-text-2);
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+  font-weight: 400;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.anvil-role-chip .checkbox input {
+  display: none;
+}
+
+/* Eye-open icon when column is visible (unchecked) */
+.anvil-role-chip .checkbox label::before {
+  font-family: 'FontAwesome';
+  content: "\f06e";
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.anvil-role-chip .checkbox label:hover {
+  border-color: var(--fims-border-em);
+  color: var(--fims-text);
+}
+
+/* checked = column hidden: grey out, switch to eye-slash */
+.anvil-role-chip .checkbox:has(input:checked) label {
+  border-color: var(--fims-border);
+  color: var(--fims-text-3);
+  background: transparent;
+  text-decoration: line-through;
+  text-decoration-color: var(--fims-text-3);
+}
+.anvil-role-chip .checkbox:has(input:checked) label::before {
+  content: "\f070";  /* fa-eye-slash */
+  opacity: 0.5;
+  text-decoration: none;
+}
+.anvil-role-chip .checkbox:has(input:checked) label:hover {
+  border-color: var(--fims-border-em);
+  color: var(--fims-text-2);
+}
+
+/* Ghost dashed — "Add row" inline affordance */
+.anvil-role-ghost-dashed .btn,
+.anvil-role-ghost-dashed > label {
+  background: transparent !important;
+  border: 1px dashed #454545 !important;
+  color: #A8A29E !important;
+  border-radius: 6px;
+  text-transform: none;
+  letter-spacing: 0;
+  box-shadow: none !important;
+}
+.anvil-role-ghost-dashed .btn:hover,
+.anvil-role-ghost-dashed > label:hover {
+  border-color: var(--fims-border-em) !important;
+  color: var(--fims-text) !important;
+  background: transparent !important;
+}
+
+/* Focus ring on compact inputs — orange, consistent with primary action */
+.anvil-role-compact input:focus,
+.anvil-role-compact select:focus,
+.anvil-role-compact .anvil-datepicker input:focus {
+  border-color: #E8722A !important;
+  box-shadow: 0 0 0 2px rgba(232, 114, 42, 0.22) !important;
+  outline: none;
+}
+
+/* Row hover — subtle highlight on the active row */
+.anvil-role-data-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Amount column — right-aligned, tabular figures (covers both input fields and report labels) */
+.anvil-role-amount input,
+.anvil-role-amount .label-text,
+.anvil-role-amount {
+  text-align: right !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Data grid hairlines */
+.anvil-data-grid > .data-grid-child-panel > div.auto-grid-header,
+.anvil-data-grid > .data-grid-child-panel > .anvil-role-table-manual-header {
+  border-bottom: 0.5px solid var(--fims-border);
+}
+.anvil-data-grid > .data-grid-child-panel > div.auto-grid-header th {
+  color: var(--fims-text-3);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 6px 4px;
+}
+.anvil-data-row-panel > .data-row-col {
+  border-bottom: 0.5px solid var(--fims-border);
+}
+.anvil-data-row-panel > .data-row-col:not(:last-child) {
+  border-right: none;
+}
+

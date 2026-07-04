@@ -3,12 +3,12 @@ components:
   - event_bindings: {click: button_nav_upload_mapping_click}
     layout_properties: {}
     name: button_nav_upload_mapping
-    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Manage Upload Mappings, tooltip: '', underline: false, visible: true}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: Manage Upload Mappings, tooltip: '', underline: false, visible: true}
     type: Button
   - event_bindings: {click: button_nav_input_exp_click}
     layout_properties: {}
     name: button_nav_input_exp
-    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:chevron-circle-left', icon_align: left, italic: false, role: filled, spacing_above: small, spacing_below: small, text: Back to Input Expense, tooltip: '', underline: false, visible: true}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:chevron-circle-left', icon_align: left, italic: false, role: ghost, spacing_above: small, spacing_below: small, text: Back to Input Expense, tooltip: '', underline: false, visible: true}
     type: Button
   layout_properties: {grid_position: 'RYYBSX,QRWSIW'}
   name: flow_panel_1
@@ -39,7 +39,7 @@ components:
       italic: false
       items: []
       placeholder: Create new tab
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -76,7 +76,7 @@ components:
       italic: false
       items: []
       placeholder: Choose an action for all labels
-      role: null
+      role: compact
       spacing_above: small
       spacing_below: small
       tooltip: ''
@@ -147,7 +147,7 @@ components:
           italic: false
           items: []
           placeholder: Choose an action for all accounts
-          role: null
+          role: compact
           spacing_above: small
           spacing_below: small
           tooltip: ''
@@ -201,7 +201,7 @@ components:
   - event_bindings: {click: button_next_click}
     layout_properties: {grid_position: 'UNEXRN,MQCDXX'}
     name: button_next
-    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Proceed, tooltip: '', underline: false, visible: true}
+    properties: {align: center, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: primary, spacing_above: small, spacing_below: small, text: Proceed, tooltip: '', underline: false, visible: true}
     type: Button
   layout_properties:
     col_widths: {}

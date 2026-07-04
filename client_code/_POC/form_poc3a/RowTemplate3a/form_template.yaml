@@ -3,7 +3,9 @@ components:
   - {code: 'self.item[''test'']', property: text, writeback: true}
   layout_properties: {column: UUWVZS}
   name: text_box_1
-  properties: {}
+  properties: {align: left, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', hide_text: false, italic: false, placeholder: '', role: compact, spacing_above: small, spacing_below: small, text: '', tooltip: '', type: text, underline: false, visible: true}
   type: TextBox
-container: {type: DataRowPanel}
+container:
+  properties: {align: left, auto_display_data: false, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', italic: false, role: data-row, spacing_above: none, spacing_below: none, tooltip: '', underline: false, visible: true}
+  type: DataRowPanel
 is_package: true
