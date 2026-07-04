@@ -7,7 +7,25 @@ components:
   type: TextBox
 - layout_properties: {column: TUSTXE}
   name: drop_down_1
-  properties: {align: full, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', include_placeholder: true, italic: false, items: [], placeholder: '', role: compact, spacing_above: small, spacing_below: small, tooltip: '', underline: false, visible: true}
+  properties:
+    align: full
+    background: ''
+    bold: false
+    border: ''
+    enabled: true
+    font: ''
+    font_size: 12
+    foreground: ''
+    include_placeholder: true
+    italic: false
+    items: []
+    placeholder: ''
+    role: compact
+    spacing_above: small
+    spacing_below: small
+    tooltip: ''
+    underline: false
+    visible: true
   type: DropDown
 - layout_properties: {column: SXNLWL}
   name: date_picker_1
