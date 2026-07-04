@@ -53,9 +53,9 @@ components:
     background: ''
     border: ''
     columns:
-    - {$$hashKey: 'object:4905', data_key: LBL, expand: false, id: RMITXR, title: Labels, width: '250'}
-    - {data_key: ACC, id: QJYSBH, title: Account, width: '250'}
-    - {$$hashKey: 'object:4907', data_key: AMT, expand: false, id: JRLRWP, title: Amount, width: '220'}
+    - {$$hashKey: 'object:4905', data_key: LBL, expand: false, id: RMITXR, title: Labels, width: 199}
+    - {data_key: ACC, expand: false, id: QJYSBH, title: Account, width: 199}
+    - {$$hashKey: 'object:4907', data_key: AMT, expand: false, id: JRLRWP, title: Amount, width: 149}
     foreground: ''
     role: null
     rows_per_page: 50
