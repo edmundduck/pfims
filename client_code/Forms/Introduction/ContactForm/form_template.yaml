@@ -1,12 +1,18 @@
 components:
 - layout_properties: {grid_position: 'JSYWAH,FZKDDE'}
   name: label_1
-  properties: {role: subheading, text: Contact Us}
+  properties: {role: feature-heading, spacing_above: small, spacing_below: small, text: Contact Us}
+  type: Label
+- layout_properties: {grid_position: 'AABCDE,FZKDDE'}
+  name: label_intro
+  properties: {role: feature-body, spacing_above: none, spacing_below: small, text: 'For support, feedback, or access requests, send us an email and we will get back to you.'}
   type: Label
 - data_bindings: []
   layout_properties: {grid_position: 'SOSVSG,XTNYFO'}
   name: link_1
-  properties: {icon: 'fa:envelope', text: support@pfims.co.uk, url: 'mailto: support@pfims.co.uk'}
+  properties: {icon: 'fa:envelope', role: feature-body, spacing_above: small, spacing_below: small, text: support@pfims.co.uk, url: 'mailto:support@pfims.co.uk'}
   type: Link
-container: {type: ColumnPanel}
+container:
+  properties: {role: form-content}
+  type: ColumnPanel
 is_package: true

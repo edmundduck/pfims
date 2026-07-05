@@ -1,7 +1,25 @@
 components:
 - layout_properties: {grid_position: 'GGBLKN,ORPMFR'}
-  name: label_1
-  properties: {text: Currently it is in closed beta. Only invited participants may have access to the application.}
+  name: label_status
+  properties: {role: feature-body, spacing_above: small, spacing_below: medium, text: 'FIM$ is currently in closed beta — access is granted by invitation only.'}
   type: Label
-container: {type: ColumnPanel}
+- layout_properties: {grid_position: 'AABCDE,ORPMFR'}
+  name: label_included_heading
+  properties: {role: feature-heading, spacing_above: none, spacing_below: small, text: "What's included"}
+  type: Label
+- layout_properties: {grid_position: 'BBCDEF,ORPMFR'}
+  name: label_included
+  properties: {role: feature-body, spacing_above: none, spacing_below: medium, text: "Full access to all current features — expense tracking, investment reporting, and subscription monitoring.\n\nDedicated support via email.\n\nNo charge during the beta period."}
+  type: Label
+- layout_properties: {grid_position: 'CCDEFG,ORPMFR'}
+  name: label_access_heading
+  properties: {role: feature-heading, spacing_above: none, spacing_below: small, text: How to get access}
+  type: Label
+- layout_properties: {grid_position: 'DDEFGH,ORPMFR'}
+  name: label_access
+  properties: {role: feature-body, spacing_above: none, spacing_below: small, text: 'If you have received an invitation, you can register immediately. To request access, reach out via the Contact page.'}
+  type: Label
+container:
+  properties: {role: form-content}
+  type: ColumnPanel
 is_package: true
