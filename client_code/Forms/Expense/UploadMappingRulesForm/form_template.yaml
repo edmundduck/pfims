@@ -36,6 +36,6 @@ components:
   properties: {item_template: Forms.Expense.UploadMappingRulesForm.UploadMappingRulesRPTemplate}
   type: RepeatingPanel
 container:
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{}', role: form-content}
   type: ColumnPanel
 is_package: true

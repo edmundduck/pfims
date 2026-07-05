@@ -16,5 +16,7 @@ components:
   name: column_panel_1
   properties: {}
   type: ColumnPanel
-container: {type: ColumnPanel}
+container:
+  properties: {role: form-content}
+  type: ColumnPanel
 is_package: true
