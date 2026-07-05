@@ -195,6 +195,6 @@ components:
   type: DataGrid
 container:
   event_bindings: {}
-  properties: {background: '', border: '', col_spacing: small, col_widths: '{"IEWBUN":14}', foreground: '', role: null, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  properties: {background: '', border: '', col_spacing: small, col_widths: '{"IEWBUN":14}', foreground: '', role: form-content, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
 is_package: true

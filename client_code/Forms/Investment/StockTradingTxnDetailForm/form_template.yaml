@@ -282,6 +282,6 @@ components:
   type: FlowPanel
 container:
   event_bindings: {}
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{}', role: form-content}
   type: ColumnPanel
 is_package: true
