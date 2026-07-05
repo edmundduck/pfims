@@ -47,19 +47,17 @@ def open_setting_form(self, **event_args):
     anvil.get_open_form().content_panel.add_component(UserSettingForm())
 
 def open_stock_txn_input_form(self, **event_args):
-    from ..Forms.BlankForm import BlankForm
     from ..Forms.Investment.StockTradingTxnDetailForm import StockTradingTxnDetailForm
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(BlankForm(StockTradingTxnDetailForm()))
+    anvil.get_open_form().content_panel.add_component(StockTradingTxnDetailForm())
 
 def open_exp_input_form(self, tab_id=None, data=None, **event_args):
-    from ..Forms.BlankForm import BlankForm
     from ..Forms.Expense.ExpenseInputForm import ExpenseInputForm
     # The following doesn't work, but open_acct_maint_form one works, no idea why
     # self.clear()
     # self.add_component(ExpenseInputForm())
     anvil.get_open_form().content_panel.clear()
-    anvil.get_open_form().content_panel.add_component(BlankForm(ExpenseInputForm(tab_id=tab_id, data=data)))
+    anvil.get_open_form().content_panel.add_component(ExpenseInputForm(tab_id=tab_id, data=data))
 
 def open_exp_file_upload_form(self, **event_args):
     from ..Forms.Expense.ExpenseFileUploadForm import ExpenseFileUploadForm
