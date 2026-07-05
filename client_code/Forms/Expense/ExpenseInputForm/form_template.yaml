@@ -1,5 +1,14 @@
 components:
 - components:
+  - layout_properties: {}
+    name: report_name
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: subheading, spacing_above: small, spacing_below: small, text: Expense Input, tooltip: '', underline: false, visible: true}
+    type: Label
+  layout_properties: {grid_position: 'DADEES,ATMRIA'}
+  name: flow_panel_5
+  properties: {align: left, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+  type: FlowPanel
+- components:
   - event_bindings: {click: button_file_import_click}
     name: button_file_import
     properties: {align: right, background: '', bold: false, border: '', enabled: true, font: '', font_size: 12, foreground: '', icon: 'fa:files-o', icon_align: left, italic: false, role: secondary, spacing_above: small, spacing_below: small, text: Import, tooltip: '', underline: false, visible: true}
@@ -195,6 +204,6 @@ components:
   type: DataGrid
 container:
   event_bindings: {}
-  properties: {background: '', border: '', col_spacing: small, col_widths: '{"IEWBUN":14}', foreground: '', role: form-content, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
+  properties: {background: '', border: '', col_spacing: small, col_widths: '{}', foreground: '', role: form-content, spacing_above: small, spacing_below: small, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
 is_package: true
