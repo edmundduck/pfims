@@ -327,6 +327,32 @@ input[disabled] ~ span {
   box-shadow: none;
 }
 
+/* Restore breathing room to the content that sits below the search panel. */
+.anvil-role-form-content {
+  padding-top: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+@media(min-width: 991px) {
+  .anvil-role-form-content {
+    padding-top: 16px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
+.anvil-role-search-panel {
+  background: var(--fims-surface);
+  border: none;
+  border-bottom: 0.5px solid var(--fims-border);
+  border-radius: 0;
+  padding: 8px 8px;
+  box-shadow: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .anvil-role-heading {
   font-size: 40px;
 }
@@ -612,24 +638,32 @@ input[disabled] ~ span {
   }
 }
 
-/* Mobile and desktop margins for content */
+/* No padding on content_panel — search bar sits flush with the top edge.
+   Per-component breathing room is handled via roles (e.g. .anvil-role-form-content). */
 .content > * > .anvil-container {
-  padding: 8px;
+  padding: 0;
 }
 
-@media(min-width:991px) {
-  .content > * > .anvil-container {
-    padding: 16px 24px;
-  }
+/* Force section-containers to fill the full content width on all screen sizes.
+   Anvil's default CSS centers them with max-width + margin:auto. */
+.content .anvil-panel-section-container {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
 
-  /* Enlarge the data grid to fill in most of the content div */
-  .content .anvil-panel-section-container {
-    /* Cannot use fit-content or the last column will expand unlimited way. */
-    /* min-width: fit-content; */
-    /* Following is a temp solution. */
-    min-width: 70%;
-    max-width: max(85%, 1300px);
-  }
+/* Two sources of top gap, both from Anvil's anvil-spacing-above-small (5px each):
+   1. content_panel itself has this class — zero its margin-top.
+   2. The form added to content_panel gets spacing_above:small by default —
+      zero the col-padding that wraps the top-level form inside content_panel. */
+.content > .anvil-measure-this > .anvil-spacing-above-small {
+  margin-top: 0 !important;
+}
+.content > .anvil-measure-this > .anvil-container > .anvil-panel-section > .anvil-panel-section-container > .anvil-panel-section-gutter > .anvil-panel-row > .anvil-panel-col > .col-padding {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 .content .anvil-measure-this {
