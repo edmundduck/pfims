@@ -120,9 +120,7 @@ components:
     name: panel_exp_list
     properties: {align: right, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: none, spacing_below: none, tooltip: '', visible: true}
     type: FlowPanel
-  layout_properties:
-    full_width_row: true
-    grid_position: IWWXTN,ELVDQC
+  layout_properties: {full_width_row: true, grid_position: 'IWWXTN,ELVDQC'}
   name: colpanel_search
   properties: {background: '', border: '', col_spacing: medium, col_widths: '{"FILTER_COL": 80, "BUTTON_COL": 20}', foreground: '', role: search-panel, spacing_above: none, spacing_below: none, tooltip: '', visible: true, wrap_on: mobile}
   type: ColumnPanel
@@ -131,6 +129,6 @@ components:
   properties: {role: form-content}
   type: ColumnPanel
 container:
-  properties: {col_widths: '{}', col_spacing: none}
+  properties: {col_spacing: none, col_widths: '{}'}
   type: ColumnPanel
 is_package: true
