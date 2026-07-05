@@ -1347,3 +1347,42 @@ select.anvil-role-compact:focus,
   border-right: none;
 }
 
+/* =========================================================
+   Feature / intro page roles
+   ========================================================= */
+
+/* Large section heading — bigger than app subheadings, same accent bar */
+.anvil-role-feature-heading > .label-text {
+  color: var(--fims-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 26px;
+  line-height: 1.3;
+  border-left: 3px solid var(--fims-accent);
+  padding: 4px 0 4px 12px;
+  display: block;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Body copy — readable line-height, secondary text colour; covers Label and Link */
+.anvil-role-feature-body > .label-text,
+.anvil-role-feature-body > .link-text {
+  font-size: 16px !important;
+  line-height: 1.8;
+  color: var(--fims-text-2);
+  display: block;
+}
+
+/* Feature image — rounded corners + subtle border to lift off dark background */
+.anvil-role-feature-img {
+  display: block;
+}
+.anvil-role-feature-img img {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+}
+
