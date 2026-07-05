@@ -33,7 +33,11 @@ class InvestmentReportSearchPanelForm(InvestmentReportSearchPanelFormTemplate):
             self.colpanel_list.add_component(self.subform, full_width_row=True)
             self.panel_symbol.visible = True
             self.panel_tranx_list.visible = True
-            self.panel_pnl_report.visible = False
+            self.button_tranx_gen_csv.visible = True
+            self.button_tranx_search.visible = True
+            self.button_tranx_reset.visible = True
+            self.button_pnl_search.visible = False
+            self.button_pnl_reset.visible = False
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
             self.tag = {self.symbol_key: {None: 1}}
             self._update_stock_enablement()
@@ -41,8 +45,12 @@ class InvestmentReportSearchPanelForm(InvestmentReportSearchPanelFormTemplate):
             self.subform = PnLReportForm()
             self.colpanel_list.add_component(self.subform, full_width_row=True)
             self.panel_symbol.visible = True
-            self.panel_tranx_list.visible = False
-            self.panel_pnl_report.visible = True
+            self.panel_tranx_list.visible = True
+            self.button_tranx_gen_csv.visible = False
+            self.button_tranx_search.visible = False
+            self.button_tranx_reset.visible = False
+            self.button_pnl_search.visible = True
+            self.button_pnl_reset.visible = True
             # Prevent from adding default value "[Symbol]" by registering to the dictionary
             self.tag = {self.symbol_key: {None: 1}}
             self._update_stock_enablement()
@@ -50,7 +58,6 @@ class InvestmentReportSearchPanelForm(InvestmentReportSearchPanelFormTemplate):
             # If error, show no buttons
             self.panel_symbol.visible = False
             self.panel_tranx_list.visible = False
-            self.panel_pnl_report.visible = False
 
     # NOTE - If use self.tag['added_symbols'] approach, need to consider the registered default value "[Symbol]"
     # Return selected symbols which appear in blue buttons

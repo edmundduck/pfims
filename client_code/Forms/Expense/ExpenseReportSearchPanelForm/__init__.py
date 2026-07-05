@@ -96,6 +96,7 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
     def button_exp_reset_click(self, **event_args):
         """This method is called when the button is clicked"""
         self._reset_search()
+        self.colpanel_error.visible = False
 
     def exp_rpt_button_plus_click(self, **event_args):
         """This method is called when the button is clicked"""
@@ -122,12 +123,14 @@ class ExpenseReportSearchPanelForm(ExpenseReportSearchPanelFormTemplate):
     def button_exp_analysis_search_click(self, **event_args):
         """This method is called when the button is clicked"""
         from ....Utils.Validation import Validator
-        v = Validator()    
+        v = Validator()
         v.display_when_invalid(self.valerror_title)
         v.require_selected(self.dropdown_rpt_type, self.valerror_1, True)
         v.highlight_when_invalid(self.dropdown_rpt_type)
-    
-        if v.is_valid():
+        is_valid = v.is_valid()
+        self.colpanel_error.visible = not is_valid
+
+        if is_valid:
             label_list = self._getall_selected_labels()
             self.subform.rpt_panel.items, bar_chart_data, _ = ReportSearchPanelController.populate_expense_analysis_data(self.dropdown_rpt_type.selected_value, self.dropdown_interval.selected_value, self.time_datefrom.date, self.time_dateto.date, label_list)
             self.subform.set_column_visibility(self.dropdown_rpt_type.selected_value)
