@@ -333,6 +333,6 @@ components:
   properties: {}
   type: ColumnPanel
 container:
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{}', role: form-content}
   type: ColumnPanel
 is_package: true

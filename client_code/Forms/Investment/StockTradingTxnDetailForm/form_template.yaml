@@ -1,5 +1,14 @@
 components:
 - components:
+  - layout_properties: {}
+    name: report_name
+    properties: {align: left, background: '', bold: false, border: '', font: '', font_size: null, foreground: '', icon: '', icon_align: left, italic: false, role: subheading, spacing_above: small, spacing_below: small, text: Investment Record Input, tooltip: '', underline: false, visible: true}
+    type: Label
+  layout_properties: {grid_position: 'SVXUKB,RPCQDV'}
+  name: flow_panel_4
+  properties: {align: left, background: '', border: '', foreground: '', role: null, spacing: medium, spacing_above: small, spacing_below: small, tooltip: '', visible: true}
+  type: FlowPanel
+- components:
   - data_bindings: []
     name: label_1
     properties: {align: right, background: '', bold: false, border: '', font: '', font_size: 12, foreground: '', icon: '', icon_align: left, italic: false, role: null, spacing_above: small, spacing_below: small, text: Template Name, tooltip: '', underline: false, visible: true}
@@ -282,6 +291,6 @@ components:
   type: FlowPanel
 container:
   event_bindings: {}
-  properties: {col_widths: '{}'}
+  properties: {col_widths: '{}', role: form-content}
   type: ColumnPanel
 is_package: true
